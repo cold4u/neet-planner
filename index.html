@@ -674,11 +674,11 @@
           <h2>1. Upload Question Paper</h2>
           <div class="form-group">
             <input type="file" id="ai-file-input" style="display:none;" accept="application/pdf, image/*">
-            <div id="drag-zone" class="drag-zone" onclick="document.getElementById('ai-file-input').click()">
+            <label id="drag-zone" class="drag-zone" for="ai-file-input" style="display:block;">
               <i class="stethoscope-icon" style="font-size:40px; display:block; margin-bottom:12px;">📄</i>
               <p>Drag & drop your question paper PDF or Image here</p>
               <span>Supports PDF, PNG, JPG, JPEG</span>
-            </div>
+            </label>
             <div id="file-info" style="margin-top:12px; font-size:13px; color:#FFD700; display:none; text-align:center; font-weight:600;"></div>
           </div>
 
