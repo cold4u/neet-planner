@@ -1302,3 +1302,37 @@ table tr.done-row td {
     display: flex;
   }
 }
+/* STETHOSCOPE CENTER ANIMATION */
+.stethoscope-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.stethoscope-icon {
+  font-size: 26px;
+  display: inline-block;
+  animation: spinStethoscope 5s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.4));
+}
+
+@keyframes spinStethoscope {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 576px) {
+  .stethoscope-icon {
+    font-size: 20px;
+  }
+}
