@@ -48,6 +48,7 @@
       <button class="drawer-item" data-tab="analytics" onclick="navigateTab('analytics')">Real-time Analytics</button>
       <button class="drawer-item" data-tab="papers" onclick="navigateTab('papers')">Yearly Papers</button>
       <button class="drawer-item" data-tab="ai-test" onclick="navigateTab('ai-test')">🤖 AI CBT Generator</button>
+      <button class="drawer-item" data-tab="settings" onclick="navigateTab('settings')">⚙️ Settings</button>
     </div>
   </div>
 
@@ -68,6 +69,7 @@
       <button class="tab-btn" data-tab="analytics" onclick="showTab('analytics')">Real-time Analytics</button>
       <button class="tab-btn" data-tab="papers" onclick="showTab('papers')">Yearly Papers</button>
       <button class="tab-btn" data-tab="ai-test" onclick="showTab('ai-test')">🤖 AI CBT</button>
+      <button class="tab-btn" data-tab="settings" onclick="showTab('settings')">⚙️ Settings</button>
     </div>
     <button class="hamburger-btn" onclick="toggleMenu()">
       <span></span>
@@ -666,19 +668,10 @@
         <p class="page-desc">Upload a PDF or image of a question paper, and let AI build an interactive test with detailed explanations.</p>
       </div>
 
-      <!-- Config & Upload Screen -->
+      <!-- Upload Screen -->
       <div id="ai-setup-view">
         <div class="ai-config-card">
-          <h2>1. Configure API Key</h2>
-          <div class="form-group">
-            <label for="gemini-key">Gemini API Key</label>
-            <input type="password" id="gemini-key" class="form-input" placeholder="Paste your API key here...">
-            <p style="font-size:11px; color:var(--text-muted); margin-top:8px;">
-              Get a free API key from **<a href="https://aistudio.google.com/" target="_blank" style="color:#FFD700; text-decoration:underline;">Google AI Studio</a>**.
-            </p>
-          </div>
-
-          <h2>2. Upload Question Paper</h2>
+          <h2>1. Upload Question Paper</h2>
           <div class="form-group">
             <input type="file" id="ai-file-input" style="display:none;" accept="application/pdf, image/*">
             <div id="drag-zone" class="drag-zone" onclick="document.getElementById('ai-file-input').click()">
@@ -689,7 +682,7 @@
             <div id="file-info" style="margin-top:12px; font-size:13px; color:#FFD700; display:none; text-align:center; font-weight:600;"></div>
           </div>
 
-          <h2>3. Test Settings</h2>
+          <h2>2. Test Settings</h2>
           <div class="form-group">
             <label for="ai-test-duration">Test Duration (Minutes)</label>
             <input type="number" id="ai-test-duration" class="form-input" value="30" min="5" max="180">
@@ -804,6 +797,26 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- 11. CONFIGURATION & SETTINGS TAB -->
+    <section id="settings" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">Settings & Configuration</h1>
+        <p class="page-desc">Manage your Gemini API Key locally in this browser.</p>
+      </div>
+
+      <div class="ai-config-card" style="max-width: 600px; margin: 0 auto;">
+        <h2>⚙️ Gemini API Key Setup</h2>
+        <div class="form-group" style="margin-top: 15px;">
+          <label for="gemini-key">Gemini API Key</label>
+          <input type="password" id="gemini-key" class="form-input" placeholder="Paste your API key here...">
+          <p style="font-size:11px; color:var(--text-muted); margin-top:8px;">
+            Get a free API key from **<a href="https://aistudio.google.com/" target="_blank" style="color:#FFD700; text-decoration:underline;">Google AI Studio</a>**.
+          </p>
+        </div>
+        <button class="btn btn-primary" style="width:100%; padding:12px; margin-top:20px; font-weight:700;" onclick="saveApiKey()">Save Settings</button>
       </div>
     </section>
 

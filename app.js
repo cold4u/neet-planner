@@ -2248,19 +2248,13 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
 }
 
 async function startAiParse() {
-  const keyInput = document.getElementById('gemini-key');
-  let apiKey = keyInput ? keyInput.value.trim() : '';
+  const apiKey = localStorage.getItem('gemini_api_key');
   
   if (!apiKey) {
-    apiKey = localStorage.getItem('gemini_api_key') || '';
-  }
-  
-  if (!apiKey) {
-    alert("Please enter your Gemini API Key.");
+    alert("Please configure your Gemini API Key first in the '⚙️ Settings' tab.");
+    showTab('settings');
     return;
   }
-  
-  localStorage.setItem('gemini_api_key', apiKey);
   
   if (!selectedFile) {
     alert("Please drag & drop or select a question paper PDF or Image.");
@@ -2722,3 +2716,17 @@ window.cbtSubmitTest = cbtSubmitTest;
 window.cbtShowReview = cbtShowReview;
 window.cbtExitResults = cbtExitResults;
 window.cbtJumpToQuestion = cbtJumpToQuestion;
+
+function saveApiKey() {
+  const keyInput = document.getElementById('gemini-key');
+  const key = keyInput ? keyInput.value.trim() : '';
+  if (key) {
+    localStorage.setItem('gemini_api_key', key);
+    alert("API Key saved successfully!");
+  } else {
+    localStorage.removeItem('gemini_api_key');
+    alert("API Key cleared!");
+  }
+}
+
+window.saveApiKey = saveApiKey;
