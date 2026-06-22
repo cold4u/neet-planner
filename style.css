@@ -1358,3 +1358,46 @@ body.exam-mode-active .main-wrapper {
   max-width: 1200px !important;
   margin: 0 auto !important;
 }
+
+/* CHAPTERS GUIDE FILTERS */
+.chapters-filter-container {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.chap-filter-select-wrapper {
+  flex: 1;
+  min-width: 140px;
+}
+
+.chap-filter-search-wrapper {
+  flex: 2;
+  min-width: 200px;
+}
+
+.chap-filter-control {
+  width: 100%;
+}
+
+/* Chapters Guide Filters on Mobile Viewports Only */
+@media (max-width: 768px) {
+  .chapters-filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .chap-filter-select-wrapper,
+  .chap-filter-search-wrapper {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+  }
+  .chap-filter-control {
+    font-size: 11.5px !important;
+    padding: 5px 8px !important;
+    height: 30px !important;
+  }
+}
