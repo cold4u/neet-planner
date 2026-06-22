@@ -24,9 +24,12 @@
     }
   }
 
-  // Check login state on load
+  // Check login state on load (temporarily bypassed for 24 hours)
   document.addEventListener('DOMContentLoaded', function() {
-    if (sessionStorage.getItem('neet_logged_in') === 'true') {
+    const bypassUntil = new Date("2026-06-23T10:25:10+05:30");
+    const isBypassActive = new Date() < bypassUntil;
+    
+    if (isBypassActive || sessionStorage.getItem('neet_logged_in') === 'true') {
       document.getElementById('login-overlay').style.display = 'none';
     }
   });
