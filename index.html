@@ -47,6 +47,7 @@
       <button class="drawer-item" data-tab="tracker" onclick="navigateTab('tracker')">Daily Tracker</button>
       <button class="drawer-item" data-tab="analytics" onclick="navigateTab('analytics')">Real-time Analytics</button>
       <button class="drawer-item" data-tab="papers" onclick="navigateTab('papers')">Yearly Papers</button>
+      <button class="drawer-item" data-tab="ai-test" onclick="navigateTab('ai-test')">🤖 AI CBT Generator</button>
     </div>
   </div>
 
@@ -66,6 +67,7 @@
       <button class="tab-btn" data-tab="tracker" onclick="showTab('tracker')">Daily Tracker</button>
       <button class="tab-btn" data-tab="analytics" onclick="showTab('analytics')">Real-time Analytics</button>
       <button class="tab-btn" data-tab="papers" onclick="showTab('papers')">Yearly Papers</button>
+      <button class="tab-btn" data-tab="ai-test" onclick="showTab('ai-test')">🤖 AI CBT</button>
     </div>
     <button class="hamburger-btn" onclick="toggleMenu()">
       <span></span>
@@ -653,6 +655,154 @@
         <div style="display:flex; justify-content:center; gap:12px;">
           <button class="btn btn-primary" onclick="reviewPaperQuestions()">Review All Answers</button>
           <button class="btn btn-secondary" onclick="exitPaperResults()">Close Results</button>
+        </div>
+      </div>
+    </section>
+
+      <!-- 10. AI CBT GENERATOR TAB -->
+    <section id="ai-test" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">AI CBT Generator & Test Engine</h1>
+        <p class="page-desc">Upload a PDF or image of a question paper, and let AI build an interactive test with detailed explanations.</p>
+      </div>
+
+      <!-- Config & Upload Screen -->
+      <div id="ai-setup-view">
+        <div class="ai-config-card">
+          <h2>1. Configure API Key</h2>
+          <div class="form-group">
+            <label for="gemini-key">Gemini API Key</label>
+            <input type="password" id="gemini-key" class="form-input" placeholder="Paste your API key here...">
+            <p style="font-size:11px; color:var(--text-muted); margin-top:8px;">
+              Get a free API key from **<a href="https://aistudio.google.com/" target="_blank" style="color:#FFD700; text-decoration:underline;">Google AI Studio</a>**.
+            </p>
+          </div>
+
+          <h2>2. Upload Question Paper</h2>
+          <div class="form-group">
+            <div id="drag-zone" class="drag-zone" onclick="document.getElementById('ai-file-input').click()">
+              <i class="stethoscope-icon" style="font-size:40px; display:block; margin-bottom:12px;">📄</i>
+              <p>Drag & drop your question paper PDF or Image here</p>
+              <span>Supports PDF, PNG, JPG, JPEG</span>
+              <input type="file" id="ai-file-input" style="display:none;" accept="application/pdf, image/*">
+            </div>
+            <div id="file-info" style="margin-top:12px; font-size:13px; color:#FFD700; display:none; text-align:center; font-weight:600;"></div>
+          </div>
+
+          <h2>3. Test Settings</h2>
+          <div class="form-group">
+            <label for="ai-test-duration">Test Duration (Minutes)</label>
+            <input type="number" id="ai-test-duration" class="form-input" value="30" min="5" max="180">
+          </div>
+
+          <button class="btn btn-primary" style="width:100%; padding:14px; font-size:14px; font-weight:700;" onclick="startAiParse()">Generate CBT Test</button>
+        </div>
+      </div>
+
+      <!-- Loading View -->
+      <div id="ai-loading-view" class="ai-loading" style="display:none;">
+        <div class="spinner-outer">
+          <div class="spinner"></div>
+          <span class="ai-icon-pulse">🤖</span>
+        </div>
+        <h3 id="ai-loading-title">AI is analyzing your document...</h3>
+        <p id="ai-loading-desc">This can take up to 20-30 seconds depending on the file size. Please wait.</p>
+      </div>
+
+      <!-- CBT Exam Interface -->
+      <div id="ai-exam-view" style="display:none;">
+        <div class="cbt-container">
+          <!-- Active Question Area -->
+          <div class="cbt-main">
+            <div class="cbt-header">
+              <span class="q-num" id="cbt-q-number">Question 1 of --</span>
+              <div class="cbt-timer" id="cbt-timer-display">--:--</div>
+            </div>
+            
+            <div class="cbt-question" id="cbt-question-text">
+              Loading question...
+            </div>
+            
+            <div class="cbt-options" id="cbt-options-container">
+              <!-- Dynamically populated options -->
+            </div>
+            
+            <div class="cbt-controls">
+              <button class="btn btn-secondary" id="cbt-btn-prev" onclick="cbtPrev()">Previous</button>
+              <button class="btn btn-secondary" id="cbt-btn-flag" onclick="cbtToggleFlag()" style="border-color:#ffa500; color:#ffa500;">Flag Question</button>
+              <button class="btn btn-primary" id="cbt-btn-next" onclick="cbtNext()" style="margin-left:auto;">Next</button>
+            </div>
+          </div>
+
+          <!-- Question Grid Navigation -->
+          <div class="cbt-sidebar">
+            <span class="sidebar-title">Question Grid</span>
+            <div class="q-grid" id="cbt-grid-container">
+              <!-- Nodes populated by JS -->
+            </div>
+            
+            <div class="cbt-legend">
+              <div class="legend-item">
+                <div class="legend-color unanswered"></div>
+                <span>Not Visited</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color answered"></div>
+                <span>Attempted</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color flagged"></div>
+                <span>Flagged</span>
+              </div>
+            </div>
+            
+            <button class="btn btn-primary" style="background:#ff6b6b; border-color:#ff6b6b; width:100%; padding:12px; margin-top:auto;" onclick="cbtSubmitTest()">Submit Test</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results & Detailed Review Dashboard -->
+      <div id="ai-results-view" style="display:none;">
+        <div class="results-card">
+          <div class="results-header">
+            <h2>Test Performance Analytics</h2>
+            <p style="color:var(--text-muted); margin-top:4px;">Official NEET Marking Scheme Applied (+4 / -1)</p>
+          </div>
+          
+          <div class="results-score-row">
+            <div class="score-box">
+              <span class="val gold" id="cbt-score-total">-- / --</span>
+              <span class="lbl">Total Score</span>
+            </div>
+            <div class="score-box">
+              <span class="val green" id="cbt-score-correct">--</span>
+              <span class="lbl">Correct</span>
+            </div>
+            <div class="score-box">
+              <span class="val red" id="cbt-score-incorrect">--</span>
+              <span class="lbl">Incorrect</span>
+            </div>
+            <div class="score-box">
+              <span class="val" id="cbt-score-unanswered" style="color:#9ca3af;">--</span>
+              <span class="lbl">Unanswered</span>
+            </div>
+            <div class="score-box">
+              <span class="val" id="cbt-score-accuracy" style="color:#00f0c2;">--%</span>
+              <span class="lbl">Accuracy</span>
+            </div>
+          </div>
+          
+          <div style="display:flex; justify-content:center; gap:12px; margin-bottom:40px;">
+            <button class="btn btn-primary" onclick="cbtShowReview()">Review Questions & Explanations</button>
+            <button class="btn btn-secondary" onclick="cbtExitResults()">Go to Home</button>
+          </div>
+          
+          <div id="cbt-review-section" style="display:none;">
+            <h3 class="review-title">Detailed Question Review & Explanations</h3>
+            <div id="cbt-review-container">
+              <!-- Dynamically populated review cards -->
+            </div>
+          </div>
         </div>
       </div>
     </section>
