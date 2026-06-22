@@ -2322,10 +2322,10 @@ async function generateAiChapterTest(chapterName) {
   document.getElementById('ai-results-view').style.display = 'none';
   document.getElementById('ai-loading-view').style.display = 'flex';
   document.getElementById('ai-loading-title').textContent = `Generating Test for: ${chapterName}`;
-  document.getElementById('ai-loading-desc').textContent = "AI is drafting 10 high-quality, NEET-level MCQs with detailed explanations for this chapter. Please wait.";
+  document.getElementById('ai-loading-desc').textContent = "AI is drafting 30 high-quality, NEET-level MCQs with detailed explanations for this chapter. Please wait.";
   
   try {
-    const prompt = `You are a premium NEET question bank generator. Generate exactly 10 high-quality, NEET-level MCQs for the chapter: '${chapterName}'. The questions should cover key concepts, theories, and numericals from this chapter, matching the standard and style of the NEET exam. Each question must have exactly 4 plausible options, a single correct option (0-based index), and a detailed educational explanation explaining why the correct option is right and others are wrong.`;
+    const prompt = `You are a premium NEET question bank generator. Generate exactly 30 high-quality, NEET-level MCQs for the chapter: '${chapterName}'. The questions should cover key concepts, theories, and numericals from this chapter, matching the standard and style of the NEET exam. Each question must have exactly 4 plausible options, a single correct option (0-based index), and a detailed educational explanation explaining why the correct option is right and others are wrong.`;
     
     const requestPayload = {
       contents: [
@@ -2386,7 +2386,7 @@ async function generateAiChapterTest(chapterName) {
       throw new Error("Failed to generate questions for the chapter. Please try again.");
     }
     
-    initCbt(parsedData.questions, 15);
+    initCbt(parsedData.questions, 45);
     
   } catch (error) {
     console.error("AI Chapter Test Generation Error:", error);
