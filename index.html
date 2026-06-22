@@ -607,8 +607,11 @@
 
       <!-- Yearly Paper Questions Container -->
       <div id="paper-questions-view" class="glass-card" style="display:none; margin-top:24px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:16px;">
-          <h2 id="paper-view-title" style="margin:0;">Paper Questions</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:16px; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <button class="btn btn-secondary" onclick="exitYearlyPaper()">← Back to Papers</button>
+            <h2 id="paper-view-title" style="margin:0;">Paper Questions</h2>
+          </div>
           <div style="display:flex; gap:8px;">
             <button class="btn btn-secondary" id="btn-filter-all" onclick="filterPaperSubject('all')">All</button>
             <button class="btn btn-secondary" id="btn-filter-phy" onclick="filterPaperSubject('physics')">Physics</button>

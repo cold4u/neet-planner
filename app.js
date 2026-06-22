@@ -2021,7 +2021,7 @@
     }
 
     function exitYearlyPaper() {
-      if (confirm("Are you sure you want to exit? Your progress in this paper will be lost.")) {
+      if (yearlyTestMode === 'practice' || confirm("Are you sure you want to exit? Your progress in this paper will be lost.")) {
         clearInterval(yearlyTestTimer);
         renderPapersPicker();
       }
