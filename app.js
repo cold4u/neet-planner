@@ -2286,7 +2286,7 @@ async function startAiParse() {
           role: "user",
           parts: [
             {
-              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper. Ensure each question has exactly 4 options. Identify the correct option and provide a detailed step-by-step scientific/medical explanation for each. Return the results in the required JSON schema format."
+              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper. Ensure each question has exactly 4 options. Identify the correct option and provide a very concise, 1-2 sentence explanation for each. Return the results in the required JSON schema format."
             },
             {
               inlineData: {
@@ -2361,7 +2361,7 @@ async function generateAiChapterTest(chapterName) {
   document.getElementById('ai-loading-desc').textContent = "AI is drafting 30 high-quality, NEET-level MCQs with detailed explanations for this chapter. Please wait.";
   
   try {
-    const prompt = `You are a premium NEET question bank generator. Generate exactly 30 high-quality, NEET-level MCQs for the chapter: '${chapterName}'. The questions should cover key concepts, theories, and numericals from this chapter, matching the standard and style of the NEET exam. Each question must have exactly 4 plausible options, a single correct option (0-based index), and a detailed educational explanation explaining why the correct option is right and others are wrong.`;
+    const prompt = `You are a premium NEET question bank generator. Generate exactly 30 high-quality, NEET-level MCQs for the chapter: '${chapterName}'. The questions should cover key concepts, theories, and numericals from this chapter, matching the standard and style of the NEET exam. Keep questions, options, and explanations extremely concise and brief (explanations must be at most 1-2 short sentences) to ensure super fast response generation. Each question must have exactly 4 plausible options, a single correct option (0-based index), and a concise explanation.`;
     
     const requestPayload = {
       contents: [
