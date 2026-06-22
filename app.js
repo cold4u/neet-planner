@@ -2719,14 +2719,38 @@ window.cbtJumpToQuestion = cbtJumpToQuestion;
 
 function saveApiKey() {
   const keyInput = document.getElementById('gemini-key');
+  const statusEl = document.getElementById('settings-status');
   const key = keyInput ? keyInput.value.trim() : '';
+  
+  if (!statusEl) return;
+  
+  statusEl.style.display = 'block';
+  
   if (key) {
+    if (!key.startsWith('AIzaSy')) {
+      statusEl.style.background = 'rgba(255, 107, 107, 0.1)';
+      statusEl.style.color = 'var(--tertiary)';
+      statusEl.style.border = '1px solid var(--tertiary)';
+      statusEl.textContent = '⚠️ Invalid API Key format. It should start with "AIzaSy".';
+      return;
+    }
+    
     localStorage.setItem('gemini_api_key', key);
-    alert("API Key saved successfully!");
+    statusEl.style.background = 'rgba(0, 212, 170, 0.1)';
+    statusEl.style.color = 'var(--primary)';
+    statusEl.style.border = '1px solid var(--primary)';
+    statusEl.textContent = '✓ API Key saved successfully!';
   } else {
     localStorage.removeItem('gemini_api_key');
-    alert("API Key cleared!");
+    statusEl.style.background = 'rgba(255, 165, 0, 0.1)';
+    statusEl.style.color = '#ffa500';
+    statusEl.style.border = '1px solid #ffa500';
+    statusEl.textContent = '✓ API Key cleared successfully.';
   }
+  
+  setTimeout(() => {
+    statusEl.style.display = 'none';
+  }, 4000);
 }
 
 window.saveApiKey = saveApiKey;
