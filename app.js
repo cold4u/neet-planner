@@ -2114,14 +2114,14 @@ window.initYearlyPaper = initYearlyPaper;
    AI CBT & CHAPTER TEST ENGINE
    ========================================== */
 
-let selectedFile = null;
-let cbtQuestions = [];
-let cbtAnswers = {};
-let cbtFlagged = new Set();
-let cbtCurrentIdx = 0;
-let cbtTimer = null;
-let cbtTimeRemaining = 0;
-let cbtTotalQuestions = 0;
+var selectedFile = null;
+var cbtQuestions = [];
+var cbtAnswers = {};
+var cbtFlagged = new Set();
+var cbtCurrentIdx = 0;
+var cbtTimer = null;
+var cbtTimeRemaining = 0;
+var cbtTotalQuestions = 0;
 
 function initAiDragAndDrop() {
   const dragZone = document.getElementById('drag-zone');
