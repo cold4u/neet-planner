@@ -1368,13 +1368,11 @@ body.exam-mode-active .main-wrapper {
 }
 
 .chap-filter-select-wrapper {
-  flex: 1;
-  min-width: 140px;
+  flex: 0 0 auto;
 }
 
 .chap-filter-search-wrapper {
-  flex: 2;
-  min-width: 200px;
+  flex: 1 1 auto;
 }
 
 .chap-filter-control {
