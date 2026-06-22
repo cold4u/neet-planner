@@ -2200,6 +2200,53 @@ function fileToBase64(file) {
   });
 }
 
+async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs = 1500) {
+  let model = "gemini-2.5-flash";
+  let attempt = 0;
+  
+  while (attempt <= retries) {
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/\${model}:generateContent?key=\${apiKey}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestPayload)
+      });
+      
+      if (response.ok) {
+        return response;
+      }
+      
+      if (response.status === 503 || response.status === 429 || response.status >= 500) {
+        attempt++;
+        if (attempt <= retries) {
+          console.warn(`Gemini API returned \${response.status}. Retrying in \${delayMs}ms with alternative model...`);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+          if (model === "gemini-2.5-flash") {
+            model = "gemini-1.5-flash";
+          }
+          continue;
+        }
+      }
+      
+      const errorText = await response.text();
+      throw new Error(`Gemini API Error: \${response.status} - \${errorText}`);
+      
+    } catch (err) {
+      if (attempt >= retries) {
+        throw err;
+      }
+      attempt++;
+      console.warn(`Fetch error: \${err.message}. Retrying in \${delayMs}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+      if (model === "gemini-2.5-flash") {
+        model = "gemini-1.5-flash";
+      }
+    }
+  }
+}
+
 async function startAiParse() {
   const keyInput = document.getElementById('gemini-key');
   let apiKey = keyInput ? keyInput.value.trim() : '';
@@ -2277,18 +2324,7 @@ async function startAiParse() {
       }
     };
     
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestPayload)
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
-    }
+    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
     
     const responseData = await response.json();
     const responseText = responseData.candidates[0].content.parts[0].text;
@@ -2365,18 +2401,7 @@ async function generateAiChapterTest(chapterName) {
       }
     };
     
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestPayload)
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
-    }
+    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
     
     const responseData = await response.json();
     const responseText = responseData.candidates[0].content.parts[0].text;
