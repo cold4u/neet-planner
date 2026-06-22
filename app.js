@@ -2206,7 +2206,7 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
   
   while (attempt <= retries) {
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/\${model}:generateContent?key=\${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -2221,7 +2221,7 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
       if (response.status === 503 || response.status === 429 || response.status >= 500) {
         attempt++;
         if (attempt <= retries) {
-          console.warn(`Gemini API returned \${response.status}. Retrying in \${delayMs}ms with alternative model...`);
+          console.warn(`Gemini API returned ${response.status}. Retrying in ${delayMs}ms with alternative model...`);
           await new Promise(resolve => setTimeout(resolve, delayMs));
           if (model === "gemini-2.5-flash") {
             model = "gemini-1.5-flash";
@@ -2231,14 +2231,14 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
       }
       
       const errorText = await response.text();
-      throw new Error(`Gemini API Error: \${response.status} - \${errorText}`);
+      throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
       
     } catch (err) {
       if (attempt >= retries) {
         throw err;
       }
       attempt++;
-      console.warn(`Fetch error: \${err.message}. Retrying in \${delayMs}ms...`);
+      console.warn(`Fetch error: ${err.message}. Retrying in ${delayMs}ms...`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
       if (model === "gemini-2.5-flash") {
         model = "gemini-1.5-flash";
