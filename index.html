@@ -55,9 +55,6 @@
   <!-- Classic Topbar Navigation -->
   <div class="topbar">
     <h1>SHUBxCOLD <span class="sub">June 19, 2026 → May 3, 2027</span></h1>
-    <div class="stethoscope-container">
-      <span class="stethoscope-icon">🩺</span>
-    </div>
     <div class="tabs">
       <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')">Overview</button>
       <button class="tab-btn" data-tab="calendar" onclick="showTab('calendar')">Day-by-Day</button>
@@ -673,7 +670,7 @@
         <div class="ai-config-card">
           <h2>1. Upload Question Paper</h2>
           <div class="form-group">
-            <input type="file" id="ai-file-input" style="display:none;" accept="application/pdf, image/*">
+            <input type="file" id="ai-file-input" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;" accept="application/pdf, image/*">
             <label id="drag-zone" class="drag-zone" for="ai-file-input" style="display:block;">
               <i class="stethoscope-icon" style="font-size:40px; display:block; margin-bottom:12px;">📄</i>
               <p>Drag & drop your question paper PDF or Image here</p>
