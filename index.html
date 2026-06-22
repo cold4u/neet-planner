@@ -264,17 +264,17 @@
         <p class="page-desc">Comprehensive list of all 96 NEET chapters, study methods, weightage, and PYQ access.</p>
       </div>
 
-      <div class="glass-card" style="display:flex; gap:16px; margin-bottom:20px; align-items:center;">
-        <div>
-          <select id="chap-subf" class="form-control" onchange="renderChapters()">
+      <div class="glass-card" style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:20px; align-items:center; padding:12px 16px;">
+        <div style="flex: 1; min-width: 140px;">
+          <select id="chap-subf" class="form-control" onchange="renderChapters()" style="width:100%; padding:6px 12px; font-size:12px;">
             <option value="">All Subjects</option>
             <option value="phy">Physics</option>
             <option value="che">Chemistry</option>
             <option value="bio">Biology</option>
           </select>
         </div>
-        <div style="flex:1;">
-          <input type="text" id="chap-srch" class="form-control" placeholder="Filter chapters..." oninput="renderChapters()">
+        <div style="flex: 2; min-width: 200px;">
+          <input type="text" id="chap-srch" class="form-control" placeholder="Filter chapters..." oninput="renderChapters()" style="width:100%; padding:6px 12px; font-size:12px;">
         </div>
       </div>
 

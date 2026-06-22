@@ -1776,6 +1776,7 @@
       }
       
       if (mode === 'mock') {
+        document.body.classList.add('exam-mode-active');
         yearlyTestQuestions = allYearQs;
         yearlyTestAnswers = new Array(yearlyTestQuestions.length).fill(null);
         
@@ -1973,6 +1974,7 @@
     }
 
     function submitYearlyPaper() {
+      document.body.classList.remove('exam-mode-active');
       clearInterval(yearlyTestTimer);
       
       let correct = 0;
@@ -2017,11 +2019,13 @@
     }
 
     function exitPaperResults() {
+      document.body.classList.remove('exam-mode-active');
       renderPapersPicker();
     }
 
     function exitYearlyPaper() {
       if (yearlyTestMode === 'practice' || confirm("Are you sure you want to exit? Your progress in this paper will be lost.")) {
+        document.body.classList.remove('exam-mode-active');
         clearInterval(yearlyTestTimer);
         renderPapersPicker();
       }

@@ -1336,3 +1336,25 @@ table tr.done-row td {
     font-size: 20px;
   }
 }
+
+/* DISTRACTION-FREE EXAM MODE STYLES */
+body.exam-mode-active .topbar {
+  display: none !important;
+}
+body.exam-mode-active .nav-drawer {
+  display: none !important;
+}
+body.exam-mode-active .drawer-overlay {
+  display: none !important;
+}
+body.exam-mode-active .hamburger-btn {
+  display: none !important;
+}
+body.exam-mode-active #papers .page-header {
+  display: none !important;
+}
+body.exam-mode-active .main-wrapper {
+  padding: 12px !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
