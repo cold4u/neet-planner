@@ -579,18 +579,20 @@
 
       <!-- Test Active Panel -->
       <div class="glass-card" id="active-test-container" style="display:none; background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(0, 240, 194, 0.03)); border-color: var(--primary);">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-          <div>
-            <h2 id="active-test-title" style="margin:0;">NEET 2024 Exam Paper</h2>
-            <span id="active-test-mode" class="type-badge tb-mock" style="margin-top:6px;">Mock Test Mode</span>
+        <div class="active-test-header">
+          <div class="active-test-meta-block">
+            <h2 id="active-test-title">NEET 2024 Exam Paper</h2>
+            <span id="active-test-mode" class="type-badge tb-mock">Mock Test Mode</span>
           </div>
-          <div style="display:flex; align-items:center; gap:20px;">
-            <div style="text-align:right;">
-              <span class="stat-title" style="font-size:10px;">Time Remaining</span>
-              <span id="test-timer" class="stat-val" style="display:block; font-size:24px; color:var(--tertiary);">03:20:00</span>
+          <div class="active-test-controls-block">
+            <div class="active-test-timer-wrapper">
+              <span class="stat-title">Time Remaining</span>
+              <span id="test-timer" class="stat-val">03:20:00</span>
             </div>
-            <button class="btn btn-primary" onclick="submitYearlyPaper()">Submit Paper</button>
-            <button class="btn btn-secondary" onclick="exitYearlyPaper()">Cancel / Exit</button>
+            <div class="active-test-buttons-wrapper">
+              <button class="btn btn-primary" onclick="submitYearlyPaper()">Submit Paper</button>
+              <button class="btn btn-secondary" onclick="exitYearlyPaper()">Cancel / Exit</button>
+            </div>
           </div>
         </div>
         <!-- Progress bar -->
@@ -610,16 +612,16 @@
 
       <!-- Yearly Paper Questions Container -->
       <div id="paper-questions-view" class="glass-card" style="display:none; margin-top:24px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:16px; flex-wrap:wrap; gap:12px;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <button class="btn btn-secondary" onclick="exitYearlyPaper()">← Back to Papers</button>
-            <h2 id="paper-view-title" style="margin:0;">Paper Questions</h2>
+        <div class="paper-view-filter-bar">
+          <div class="paper-view-back-title">
+            <button class="btn btn-secondary paper-back-btn" onclick="exitYearlyPaper()">← Back</button>
+            <h2 id="paper-view-title">Paper Questions</h2>
           </div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-secondary" id="btn-filter-all" onclick="filterPaperSubject('all')">All</button>
-            <button class="btn btn-secondary" id="btn-filter-phy" onclick="filterPaperSubject('physics')">Physics</button>
-            <button class="btn btn-secondary" id="btn-filter-chem" onclick="filterPaperSubject('chemistry')">Chemistry</button>
-            <button class="btn btn-secondary" id="btn-filter-bio" onclick="filterPaperSubject('biology')">Biology</button>
+          <div class="paper-view-subject-filters">
+            <button class="btn btn-secondary paper-filter-btn" id="btn-filter-all" onclick="filterPaperSubject('all')">All</button>
+            <button class="btn btn-secondary paper-filter-btn" id="btn-filter-phy" onclick="filterPaperSubject('physics')">Physics</button>
+            <button class="btn btn-secondary paper-filter-btn" id="btn-filter-chem" onclick="filterPaperSubject('chemistry')">Chemistry</button>
+            <button class="btn btn-secondary paper-filter-btn" id="btn-filter-bio" onclick="filterPaperSubject('biology')">Biology</button>
           </div>
         </div>
         <div id="paper-questions-list" style="max-height: 60vh; overflow-y:auto; padding-right:8px;">
