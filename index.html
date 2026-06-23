@@ -109,6 +109,11 @@
       <div style="margin-left: auto; display: flex; align-items: center; gap: 16px;">
         <span class="sub-date" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">June 29, 2026 → May 3, 2027</span>
         <button id="theme-toggle-btn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 14px; cursor:pointer;" onclick="toggleTheme()">☀️</button>
+        <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Toggle navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
     </header>
   <!-- Main Area -->
@@ -986,7 +991,28 @@
     </div>
   </div>
 
-  
+  <!-- Navigation Drawer (Mobile Only) -->
+  <div id="drawer-overlay" class="drawer-overlay" onclick="toggleMenu()"></div>
+  <aside id="nav-drawer" class="nav-drawer">
+    <div class="drawer-header">
+      <h2>Menu</h2>
+      <button class="close-btn" onclick="toggleMenu()">&times;</button>
+    </div>
+    <nav class="drawer-menu">
+      <button class="drawer-item" data-tab="overview" onclick="navigateTab('overview')">📊 Overview</button>
+      <button class="drawer-item" data-tab="calendar" onclick="navigateTab('calendar')">📅 Day-by-Day Plan</button>
+      <button class="drawer-item" data-tab="timing" onclick="navigateTab('timing')">⏱️ Daily Timing</button>
+      <button class="drawer-item" data-tab="chapters" onclick="navigateTab('chapters')">📚 Chapters Guide</button>
+      <button class="drawer-item" data-tab="tests" onclick="navigateTab('tests')">📝 Tests & Mocks</button>
+      <button class="drawer-item" data-tab="strategy" onclick="navigateTab('strategy')">💡 Strategy Hub</button>
+      <button class="drawer-item" data-tab="tracker" onclick="navigateTab('tracker')">🔥 Daily Tracker</button>
+      <button class="drawer-item" data-tab="analytics" onclick="navigateTab('analytics')">📈 Analytics</button>
+      <button class="drawer-item" data-tab="papers" onclick="navigateTab('papers')">📄 Yearly Papers</button>
+      <button class="drawer-item" data-tab="ai-test" onclick="navigateTab('ai-test')">🤖 AI CBT</button>
+      <button class="drawer-item" data-tab="settings" onclick="navigateTab('settings')">⚙️ Settings</button>
+    </nav>
+  </aside>
+
   <script defer src="app.js?v=3.0.2"></script>
 </body>
 </html>

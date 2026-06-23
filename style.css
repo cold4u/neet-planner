@@ -2123,28 +2123,10 @@ body.exam-mode-active .main-wrapper {
   flex-direction: column;
 }
 
-/* Collapsible to icon-only on mobile */
-@media (max-width: 768px) {
+/* Hide sidebar completely on mobile/tablets and let it fit using the hamburger menu drawer navigation */
+@media (max-width: 991px) {
   .sidebar {
-    width: 72px;
-  }
-  .brand-full, .nav-label {
-    display: none;
-  }
-  .brand-short {
-    display: inline-block;
-  }
-  .nav-item {
-    justify-content: center;
-    padding: 12px;
-  }
-  .nav-item.active {
-    box-shadow: none;
-    border-left: 3px solid var(--primary);
-    border-radius: 4px;
-  }
-  .sidebar-brand {
-    padding: 24px 10px;
+    display: none !important;
   }
 }
 
