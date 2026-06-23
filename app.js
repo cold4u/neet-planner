@@ -2232,8 +2232,6 @@ function safeSetSessionStorage(key, value) {
   
 
 // Bind functions to window so they are globally accessible from inline HTML event handlers
-window.getChapterWeight = getChapterWeight;
-window.makeRows = makeRows;
 window.reviewPaperQuestions = reviewPaperQuestions;
 window.renderAnalytics = renderAnalytics;
 window.updateTestProgress = updateTestProgress;
@@ -2248,7 +2246,6 @@ window.getSubjectForChapter = getSubjectForChapter;
 window.calculateStreak = calculateStreak;
 window.handleLogin = handleLogin;
 window.renderPaperQuestions = renderPaperQuestions;
-window.cellHtml = cellHtml;
 window.saveDone = saveDone;
 window.renderPapersPicker = renderPapersPicker;
 window.logStudy = logStudy;
@@ -2263,7 +2260,6 @@ window.toggleDone = toggleDone;
 window.exportLogs = exportLogs;
 window.quickSearch = quickSearch;
 window.toggleChapterStep = toggleChapterStep;
-window.typeBadge = typeBadge;
 window.exitYearlyPaper = exitYearlyPaper;
 window.buildPlan = buildPlan;
 window.renderCal = renderCal;
