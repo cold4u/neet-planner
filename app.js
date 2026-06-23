@@ -935,8 +935,10 @@
     
     // Chapter List Progress Table
     function renderChapters() {
-      const q = document.getElementById('chap-srch').value.toLowerCase();
-      const sub = document.getElementById('chap-subf').value;
+      const qEl = document.getElementById('chap-srch');
+      const subEl = document.getElementById('chap-subf');
+      const q = qEl ? qEl.value.toLowerCase() : '';
+      const sub = subEl ? subEl.value : '';
       
       let list11 = [];
       let list12 = [];
@@ -1022,8 +1024,10 @@
       const filtered11 = list11.filter(c => !q || c.ch.toLowerCase().includes(q));
       const filtered12 = list12.filter(c => !q || c.ch.toLowerCase().includes(q));
       
-      document.getElementById('chaps-body-11').innerHTML = makeRows(filtered11);
-      document.getElementById('chaps-body-12').innerHTML = makeRows(filtered12);
+      const tb11 = document.getElementById('chaps-body-11');
+      if (tb11) tb11.innerHTML = makeRows(filtered11);
+      const tb12 = document.getElementById('chaps-body-12');
+      if (tb12) tb12.innerHTML = makeRows(filtered12);
     }
     
     function toggleChapterStep(chName, step) {
@@ -1448,7 +1452,8 @@
           </tr>`;
         });
       }
-      document.getElementById('test-list-body').innerHTML = html;
+      const tlb = document.getElementById('test-list-body');
+      if (tlb) tlb.innerHTML = html;
     }
     
     // Tracker Session Management
@@ -1505,6 +1510,7 @@
     
     function renderTrackerTable() {
       const tbody = document.getElementById('tracker-table-body');
+      if (!tbody) return;
       
       // Render heatmap
       if (typeof renderHeatmap === 'function') {
@@ -1593,7 +1599,8 @@
     function renderAnalytics() {
       // 1. Streak
       const streak = calculateStreak();
-      document.getElementById('an-streak').textContent = `${streak} Days`;
+      const anStreak = document.getElementById('an-streak');
+      if (anStreak) anStreak.textContent = `${streak} Days`;
       
       // 2. Average Hours & Total MCQs
       let totalH = 0;
@@ -1611,8 +1618,10 @@
       });
       
       const avg = trackerLogs.length ? (totalH / trackerLogs.length).toFixed(1) : '0.0';
-      document.getElementById('an-avg-hours').textContent = `${avg}h`;
-      document.getElementById('an-total-mcqs').textContent = totalMcqs.toLocaleString();
+      const anAvgHours = document.getElementById('an-avg-hours');
+      if (anAvgHours) anAvgHours.textContent = `${avg}h`;
+      const anTotalMcqs = document.getElementById('an-total-mcqs');
+      if (anTotalMcqs) anTotalMcqs.textContent = totalMcqs.toLocaleString();
       
       // 3. Subject Progress Bars (derived from chapter checkboxes progress)
       // count steps
@@ -1650,19 +1659,22 @@
       const chemPct = chemTot ? Math.round((chemDone / chemTot) * 100) : 0;
       const bioPct = bioTot ? Math.round((bioDone / bioTot) * 100) : 0;
       
-      document.getElementById('progress-phy-text').textContent = phyPct + '%';
+      const pgPhy = document.getElementById('progress-phy-text');
+      if (pgPhy) pgPhy.textContent = phyPct + '%';
       const phyCircle = document.getElementById('progress-phy-circle');
       if (phyCircle) {
         phyCircle.style.strokeDashoffset = 238.76 * (1 - phyPct / 100);
       }
       
-      document.getElementById('progress-chem-text').textContent = chemPct + '%';
+      const pgChem = document.getElementById('progress-chem-text');
+      if (pgChem) pgChem.textContent = chemPct + '%';
       const chemCircle = document.getElementById('progress-chem-circle');
       if (chemCircle) {
         chemCircle.style.strokeDashoffset = 238.76 * (1 - chemPct / 100);
       }
       
-      document.getElementById('progress-bio-text').textContent = bioPct + '%';
+      const pgBio = document.getElementById('progress-bio-text');
+      if (pgBio) pgBio.textContent = bioPct + '%';
       const bioCircle = document.getElementById('progress-bio-circle');
       if (bioCircle) {
         bioCircle.style.strokeDashoffset = 238.76 * (1 - bioPct / 100);
@@ -1671,73 +1683,85 @@
       // 4. Subject Study Balance stacked bar
       const sumH = phyH + chemH + bioH;
       const pSeg = document.getElementById('stacked-bar');
-      if (sumH === 0) {
-        pSeg.innerHTML = `
-          <div class="stacked-segment" style="width:33.3%; background:var(--phy);"></div>
-          <div class="stacked-segment" style="width:33.3%; background:var(--che);"></div>
-          <div class="stacked-segment" style="width:33.4%; background:var(--bio);"></div>
-        `;
-        document.getElementById('bal-phy-label').textContent = 'Phy: 0h (33%)';
-        document.getElementById('bal-chem-label').textContent = 'Chem: 0h (33%)';
-        document.getElementById('bal-bio-label').textContent = 'Bio: 0h (33%)';
-      } else {
-        const pP = Math.round((phyH / sumH) * 100);
-        const cP = Math.round((chemH / sumH) * 100);
-        const bP = 100 - pP - cP;
-        
-        pSeg.innerHTML = `
-          <div class="stacked-segment" style="width:${pP}%; background:var(--phy);"></div>
-          <div class="stacked-segment" style="width:${cP}%; background:var(--che);"></div>
-          <div class="stacked-segment" style="width:${bP}%; background:var(--bio);"></div>
-        `;
-        document.getElementById('bal-phy-label').textContent = `Phy: ${phyH.toFixed(1)}h (${pP}%)`;
-        document.getElementById('bal-chem-label').textContent = `Chem: ${chemH.toFixed(1)}h (${cP}%)`;
-        document.getElementById('bal-bio-label').textContent = `Bio: ${bioH.toFixed(1)}h (${bP}%)`;
+      if (pSeg) {
+        if (sumH === 0) {
+          pSeg.innerHTML = `
+            <div class="stacked-segment" style="width:33.3%; background:var(--phy);"></div>
+            <div class="stacked-segment" style="width:33.3%; background:var(--che);"></div>
+            <div class="stacked-segment" style="width:33.4%; background:var(--bio);"></div>
+          `;
+          const lblPhy = document.getElementById('bal-phy-label');
+          if (lblPhy) lblPhy.textContent = 'Phy: 0h (33%)';
+          const lblChem = document.getElementById('bal-chem-label');
+          if (lblChem) lblChem.textContent = 'Chem: 0h (33%)';
+          const lblBio = document.getElementById('bal-bio-label');
+          if (lblBio) lblBio.textContent = 'Bio: 0h (33%)';
+        } else {
+          const pP = Math.round((phyH / sumH) * 100);
+          const cP = Math.round((chemH / sumH) * 100);
+          const bP = 100 - pP - cP;
+          
+          pSeg.innerHTML = `
+            <div class="stacked-segment" style="width:${pP}%; background:var(--phy);"></div>
+            <div class="stacked-segment" style="width:${cP}%; background:var(--che);"></div>
+            <div class="stacked-segment" style="width:${bP}%; background:var(--bio);"></div>
+          `;
+          const lblPhy2 = document.getElementById('bal-phy-label');
+          if (lblPhy2) lblPhy2.textContent = `Phy: ${phyH.toFixed(1)}h (${pP}%)`;
+          const lblChem2 = document.getElementById('bal-chem-label');
+          if (lblChem2) lblChem2.textContent = `Chem: ${chemH.toFixed(1)}h (${cP}%)`;
+          const lblBio2 = document.getElementById('bal-bio-label');
+          if (lblBio2) lblBio2.textContent = `Bio: ${bioH.toFixed(1)}h (${bP}%)`;
+        }
       }
       
       // 5. Daily study hours chart (last 7 logs)
       const chartBody = document.getElementById('hours-chart-body');
-      if (trackerLogs.length === 0) {
-        chartBody.innerHTML = '<div style="align-self:center; color:var(--text-muted); font-size:13px;">No study sessions logged yet.</div>';
-      } else {
-        const last7 = trackerLogs.slice(0, 7).reverse();
-        let chartHtml = '';
-        last7.forEach(l => {
-          const total = l.phyHours + l.cheHours + l.bioHours;
-          // cap height at 12 hours max scale
-          const hPct = Math.min(100, Math.round((total / 12) * 100));
-          // label is MM-DD
-          const dLabel = l.date.substring(5);
-          chartHtml += `
-            <div class="chart-bar-col">
-              <div class="chart-bar-fill" style="height:${hPct}%;">
-                <div class="chart-bar-tooltip">${total.toFixed(1)}h</div>
+      if (chartBody) {
+        if (trackerLogs.length === 0) {
+          chartBody.innerHTML = '<div style="align-self:center; color:var(--text-muted); font-size:13px;">No study sessions logged yet.</div>';
+        } else {
+          const last7 = trackerLogs.slice(0, 7).reverse();
+          let chartHtml = '';
+          last7.forEach(l => {
+            const total = l.phyHours + l.cheHours + l.bioHours;
+            // cap height at 12 hours max scale
+            const hPct = Math.min(100, Math.round((total / 12) * 100));
+            // label is MM-DD
+            const dLabel = l.date.substring(5);
+            chartHtml += `
+              <div class="chart-bar-col">
+                <div class="chart-bar-fill" style="height:${hPct}%;">
+                  <div class="chart-bar-tooltip">${total.toFixed(1)}h</div>
+                </div>
+                <span class="chart-label">${dLabel}</span>
               </div>
-              <span class="chart-label">${dLabel}</span>
-            </div>
-          `;
-        });
-        chartBody.innerHTML = chartHtml;
+            `;
+          });
+          chartBody.innerHTML = chartHtml;
+        }
       }
       
       // 6. Weak chapters
       const weakList = document.getElementById('weak-topics-list');
-      const weakEntries = trackerLogs.filter(l => l.confidence <= 2);
-      if (weakEntries.length === 0) {
-        weakList.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">No weak areas flagged. You are doing great! 🌟</span>';
-      } else {
-        let wHtml = '<ul style="list-style:none; padding:0; margin:0; font-size:12.5px; display:flex; flex-direction:column; gap:8px;">';
-        weakEntries.slice(0, 10).forEach(e => {
-          wHtml += `<li style="padding:8px; background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px;">
-            <div style="display:flex; justify-content:space-between; font-weight:600; margin-bottom:4px;">
-              <span>${e.date}</span>
-              <span style="color:var(--tertiary);">${e.confidence === 2 ? '⭐ Weak' : '⭐ Critical'}</span>
-            </div>
-            <div style="color:var(--text-muted); font-size:11.5px; line-height:1.4;">${e.notes || 'No specific notes recorded.'}</div>
-          </li>`;
-        });
-        wHtml += '</ul>';
-        weakList.innerHTML = wHtml;
+      if (weakList) {
+        const weakEntries = trackerLogs.filter(l => l.confidence <= 2);
+        if (weakEntries.length === 0) {
+          weakList.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">No weak areas flagged. You are doing great! 🌟</span>';
+        } else {
+          let wHtml = '<ul style="list-style:none; padding:0; margin:0; font-size:12.5px; display:flex; flex-direction:column; gap:8px;">';
+          weakEntries.slice(0, 10).forEach(e => {
+            wHtml += `<li style="padding:8px; background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px;">
+              <div style="display:flex; justify-content:space-between; font-weight:600; margin-bottom:4px;">
+                <span>${e.date}</span>
+                <span style="color:var(--tertiary);">${e.confidence === 2 ? '⭐ Weak' : '⭐ Critical'}</span>
+              </div>
+              <div style="color:var(--text-muted); font-size:11.5px; line-height:1.4;">${e.notes || 'No specific notes recorded.'}</div>
+            </li>`;
+          });
+          wHtml += '</ul>';
+          weakList.innerHTML = wHtml;
+        }
       }
     }
     
@@ -1752,8 +1776,11 @@
       const cdSecs = document.getElementById('cd-seconds');
       
       if (diff <= 0) {
-        document.getElementById('over-countdown').textContent = 'Exam Day!';
-        document.getElementById('over-countdown').classList.add('pulse');
+        const overCd1 = document.getElementById('over-countdown');
+        if (overCd1) {
+          overCd1.textContent = 'Exam Day!';
+          overCd1.classList.add('pulse');
+        }
         
         if (cdDays) cdDays.textContent = '00';
         if (cdHours) cdHours.textContent = '00';
@@ -1766,7 +1793,8 @@
       const mins = Math.floor((diff / (1000 * 60)) % 60);
       const secs = Math.floor((diff / 1000) % 60);
       
-      document.getElementById('over-countdown').textContent = `${days}d ${hours}h`;
+      const overCd2 = document.getElementById('over-countdown');
+      if (overCd2) overCd2.textContent = `${days}d ${hours}h`;
       
       if (cdDays) cdDays.textContent = String(days).padStart(2, '0');
       if (cdHours) cdHours.textContent = String(hours).padStart(2, '0');
@@ -1780,19 +1808,22 @@
       
       // Streak
       const streak = calculateStreak();
-      document.getElementById('over-streak').textContent = `${streak} Days`;
+      const elStreak = document.getElementById('over-streak');
+      if (elStreak) elStreak.textContent = `${streak} Days`;
       
       // Total Hours
       let totalH = 0;
       trackerLogs.forEach(l => {
         totalH += (l.phyHours + l.cheHours + l.bioHours);
       });
-      document.getElementById('over-hours').textContent = `${totalH.toFixed(1)}h`;
+      const elHours = document.getElementById('over-hours');
+      if (elHours) elHours.textContent = `${totalH.toFixed(1)}h`;
       
       // Syllabus Progress %
       const doneCnt = Object.values(done).filter(Boolean).length;
       const pct = PLAN.length ? Math.round((doneCnt / PLAN.length) * 100) : 0;
-      document.getElementById('over-progress').textContent = `${pct}%`;
+      const elProg = document.getElementById('over-progress');
+      if (elProg) elProg.textContent = `${pct}%`;
 
       // Update Today's Plan Hero Card
       if (typeof updateTodayPlanCard === 'function') {
@@ -2908,45 +2939,49 @@ function updateLoginStats() {
 }
 
 function updateTodayPlanCard() {
-  const dayNum = getTodayDayNum();
-  const heroDayTitle = document.getElementById('hero-day-title');
-  const heroPhy = document.getElementById('hero-phy-topic');
-  const heroChe = document.getElementById('hero-che-topic');
-  const heroBio = document.getElementById('hero-bio-topic');
-  const heroBadges = document.getElementById('hero-badges');
-  
-  if (!heroDayTitle) return;
-  
-  const now = new Date();
-  const weekday = now.toLocaleDateString('en-IN', { weekday: 'long' });
-  const month = now.toLocaleDateString('en-IN', { month: 'short' });
-  const day = now.toLocaleDateString('en-IN', { day: 'numeric' });
-  
-  const r = PLAN.find(item => item.day === dayNum);
-  if (r) {
-    heroDayTitle.textContent = `Day ${r.day} — ${weekday}, ${month} ${day}`;
+  try {
+    const dayNum = getTodayDayNum();
+    const heroDayTitle = document.getElementById('hero-day-title');
+    const heroPhy = document.getElementById('hero-phy-topic');
+    const heroChe = document.getElementById('hero-che-topic');
+    const heroBio = document.getElementById('hero-bio-topic');
+    const heroBadges = document.getElementById('hero-badges');
     
-    // Prep subject badges
-    const hours = getTodayTargetHours(r.day, r.type);
-    if (heroBadges) {
-      heroBadges.innerHTML = `
-        <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics: ${hours.phy}h</span>
-        <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chem: ${hours.che}h</span>
-        <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Bio: ${hours.bio}h</span>
-      `;
-    }
+    if (!heroDayTitle) return;
     
-    if (heroPhy) heroPhy.innerHTML = formatTopic(r.phy, r.phyNote);
-    if (heroChe) heroChe.innerHTML = formatTopic(r.che, r.cheNote);
-    if (heroBio) heroBio.innerHTML = formatTopic(r.bio, r.bioNote);
-  } else {
-    const rDefault = PLAN[0];
-    if (rDefault) {
-      heroDayTitle.textContent = `Day 1 — ${weekday}, ${month} ${day}`;
-      if (heroPhy) heroPhy.innerHTML = formatTopic(rDefault.phy, rDefault.phyNote);
-      if (heroChe) heroChe.innerHTML = formatTopic(rDefault.che, rDefault.cheNote);
-      if (heroBio) heroBio.innerHTML = formatTopic(rDefault.bio, rDefault.bioNote);
+    const now = new Date();
+    const weekday = now.toLocaleDateString('en-IN', { weekday: 'long' });
+    const month = now.toLocaleDateString('en-IN', { month: 'short' });
+    const day = now.toLocaleDateString('en-IN', { day: 'numeric' });
+    
+    const r = PLAN.find(item => item.day === dayNum);
+    if (r) {
+      heroDayTitle.textContent = `Day ${r.day} — ${weekday}, ${month} ${day}`;
+      
+      // Prep subject badges
+      const hours = getTodayTargetHours(r.day, r.type);
+      if (heroBadges) {
+        heroBadges.innerHTML = `
+          <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics: ${hours.phy}h</span>
+          <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chem: ${hours.che}h</span>
+          <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Bio: ${hours.bio}h</span>
+        `;
+      }
+      
+      if (heroPhy) heroPhy.innerHTML = formatTopic(r.phy, r.phyNote);
+      if (heroChe) heroChe.innerHTML = formatTopic(r.che, r.cheNote);
+      if (heroBio) heroBio.innerHTML = formatTopic(r.bio, r.bioNote);
+    } else {
+      const rDefault = PLAN[0];
+      if (rDefault) {
+        heroDayTitle.textContent = `Day 1 — ${weekday}, ${month} ${day}`;
+        if (heroPhy) heroPhy.innerHTML = formatTopic(rDefault.phy, rDefault.phyNote);
+        if (heroChe) heroChe.innerHTML = formatTopic(rDefault.che, rDefault.cheNote);
+        if (heroBio) heroBio.innerHTML = formatTopic(rDefault.bio, rDefault.bioNote);
+      }
     }
+  } catch (e) {
+    console.error("Error in updateTodayPlanCard:", e);
   }
   
   function formatTopic(topic, note) {
@@ -3111,25 +3146,37 @@ function initOnLoad() {
     }
   }
 
-  // Render initial components and data tables
-  renderPlan();
-  renderChapters();
-  renderTestList();
-  renderTrackerTable();
-  renderAnalytics();
-  if (typeof renderHeatmap === 'function') {
-    renderHeatmap();
-  }
+  // Render initial components and data tables safely
+  try { renderPlan(); } catch(e) { console.error("Error in renderPlan:", e); }
+  try { renderChapters(); } catch(e) { console.error("Error in renderChapters:", e); }
+  try { renderTestList(); } catch(e) { console.error("Error in renderTestList:", e); }
+  try { renderTrackerTable(); } catch(e) { console.error("Error in renderTrackerTable:", e); }
+  try { renderAnalytics(); } catch(e) { console.error("Error in renderAnalytics:", e); }
+  try {
+    if (typeof renderHeatmap === 'function') {
+      renderHeatmap();
+    }
+  } catch(e) { console.error("Error in renderHeatmap:", e); }
 
   // Render login statistics
-  updateLoginStats();
+  try { updateLoginStats(); } catch(e) { console.error("Error in updateLoginStats:", e); }
   
   // Load dark/light mode preference
-  loadTheme();
+  try { loadTheme(); } catch(e) { console.error("Error in loadTheme:", e); }
 
   // Initial stats updates & start countdown timer
-  updateOverviewStats();
-  setInterval(updateCountdown, 1000);
+  try { updateOverviewStats(); } catch(e) { console.error("Error in updateOverviewStats:", e); }
+  try {
+    setInterval(() => {
+      try {
+        updateCountdown();
+      } catch(e) {
+        console.error("Error in countdown interval:", e);
+      }
+    }, 1000);
+  } catch(e) {
+    console.error("Error setting countdown interval:", e);
+  }
 }
 
 if (document.readyState === 'loading') {
