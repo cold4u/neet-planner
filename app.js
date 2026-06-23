@@ -61,8 +61,8 @@ function safeSetSessionStorage(key, value) {
     }
     if (pass === 'SHUBxCOLD') {
       safeSetSessionStorage('neet_logged_in', 'true');
-      if (!safeGetLocalStorage("planStart")) {
-        safeSetLocalStorage("planStart", new Date().toISOString());
+      if (safeGetLocalStorage("planStart") !== "2026-06-29T00:00:00") {
+        safeSetLocalStorage("planStart", "2026-06-29T00:00:00");
       }
       const loginOverlay = document.getElementById('login-overlay');
       if (loginOverlay) loginOverlay.style.display = 'none';
@@ -78,8 +78,8 @@ function safeSetSessionStorage(key, value) {
     const isBypassActive = new Date() < bypassUntil;
     
     if (isBypassActive || safeGetSessionStorage('neet_logged_in') === 'true') {
-      if (!safeGetLocalStorage("planStart")) {
-        safeSetLocalStorage("planStart", new Date().toISOString());
+      if (safeGetLocalStorage("planStart") !== "2026-06-29T00:00:00") {
+        safeSetLocalStorage("planStart", "2026-06-29T00:00:00");
       }
       const loginOverlay = document.getElementById('login-overlay');
       if (loginOverlay) loginOverlay.style.display = 'none';
@@ -506,13 +506,13 @@ function safeSetSessionStorage(key, value) {
     window.CHEM_CHAPS_SET = new Set(P1_CHE.concat(P2_CHE).map(c => c.ch.toLowerCase().replace(/[^a-z0-9]/g, '')));
     
     // 318-Day Plan Engine
-    let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-06-19T00:00:00");
+    let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-06-29T00:00:00");
     if (isNaN(parsedStartDate.getTime())) {
-      parsedStartDate = new Date(2026, 5, 19, 0, 0, 0); // June 19, 2026
+      parsedStartDate = new Date(2026, 5, 29, 0, 0, 0); // June 29, 2026
     }
     const START_DATE = parsedStartDate;
     const EXAM_DATE = new Date(2027, 4, 3, 0, 0, 0); // May 3, 2027
-    const DIFF = Math.ceil((EXAM_DATE - START_DATE) / (1000 * 60 * 60 * 24)) + 1; // 319 days
+    const DIFF = Math.ceil((EXAM_DATE - START_DATE) / (1000 * 60 * 60 * 24)) + 1; // 309 days
 
     
     function buildPlan() {
@@ -570,7 +570,7 @@ function safeSetSessionStorage(key, value) {
             cheNote = 'Practice mole conversions';
             bioNote = 'Learn the art of highlighting NCERT';
           }
-        } else if (dayNum <= 120) {
+        } else if (dayNum <= 115) {
           phase = 1;
           if (isSunday) {
             type = 'test';
@@ -613,7 +613,7 @@ function safeSetSessionStorage(key, value) {
               bioNote = "Active recall of yesterday's Bio topic";
             }
           }
-        } else if (dayNum <= 220) {
+        } else if (dayNum <= 215) {
           phase = 2;
           if (isSunday) {
             type = 'test';
@@ -656,7 +656,7 @@ function safeSetSessionStorage(key, value) {
               bioNote = "Active recall of yesterday's Bio topic";
             }
           }
-        } else if (dayNum <= 280) {
+        } else if (dayNum <= 275) {
           phase = 3;
           if (isSunday) {
             type = 'mock';
@@ -683,8 +683,8 @@ function safeSetSessionStorage(key, value) {
           }
         } else {
           phase = 4;
-          const mockNum = dayNum - 280;
-          if (dayNum >= 315) {
+          const mockNum = dayNum - 275;
+          if (dayNum >= 305) {
             type = 'rest';
             phy = '🟢 Physics formula overview';
             che = '🟢 Chemistry reaction overview';
@@ -3004,30 +3004,48 @@ function updateTodayPlanCard() {
     const month = now.toLocaleDateString('en-IN', { month: 'short' });
     const day = now.toLocaleDateString('en-IN', { day: 'numeric' });
     
-    const r = PLAN.find(item => item.day === dayNum);
-    if (r) {
-      heroDayTitle.textContent = `Day ${r.day} — ${weekday}, ${month} ${day}`;
+    if (dayNum <= 0) {
+      const daysUntil = Math.abs(dayNum) + 1;
+      const daysUntilText = daysUntil === 1 ? "tomorrow" : `in ${daysUntil} days`;
+      heroDayTitle.textContent = `Plan Starts 29 June (${daysUntilText})`;
       
-      // Prep subject badges
-      const hours = getTodayTargetHours(r.day, r.type);
       if (heroBadges) {
         heroBadges.innerHTML = `
-          <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics: ${hours.phy}h</span>
-          <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chem: ${hours.che}h</span>
-          <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Bio: ${hours.bio}h</span>
+          <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics: 0h</span>
+          <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chem: 0h</span>
+          <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Bio: 0h</span>
         `;
       }
       
-      if (heroPhy) heroPhy.innerHTML = formatTopic(r.phy, r.phyNote);
-      if (heroChe) heroChe.innerHTML = formatTopic(r.che, r.cheNote);
-      if (heroBio) heroBio.innerHTML = formatTopic(r.bio, r.bioNote);
+      if (heroPhy) heroPhy.innerHTML = `<div>Pre-Study: Physics foundations</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">Plan officially begins on 29 June. Check the Day-by-Day calendar tab below for the full schedule.</div>`;
+      if (heroChe) heroChe.innerHTML = `<div>Pre-Study: Chemistry fundamentals</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">Prepare your NCERT textbooks and notebooks.</div>`;
+      if (heroBio) heroBio.innerHTML = `<div>Pre-Study: Biology overview</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">Set up your daily schedule and rest up.</div>`;
     } else {
-      const rDefault = PLAN[0];
-      if (rDefault) {
-        heroDayTitle.textContent = `Day 1 — ${weekday}, ${month} ${day}`;
-        if (heroPhy) heroPhy.innerHTML = formatTopic(rDefault.phy, rDefault.phyNote);
-        if (heroChe) heroChe.innerHTML = formatTopic(rDefault.che, rDefault.cheNote);
-        if (heroBio) heroBio.innerHTML = formatTopic(rDefault.bio, rDefault.bioNote);
+      const r = PLAN.find(item => item.day === dayNum);
+      if (r) {
+        heroDayTitle.textContent = `Day ${r.day} — ${weekday}, ${month} ${day}`;
+        
+        // Prep subject badges
+        const hours = getTodayTargetHours(r.day, r.type);
+        if (heroBadges) {
+          heroBadges.innerHTML = `
+            <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics: ${hours.phy}h</span>
+            <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chem: ${hours.che}h</span>
+            <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Bio: ${hours.bio}h</span>
+          `;
+        }
+        
+        if (heroPhy) heroPhy.innerHTML = formatTopic(r.phy, r.phyNote);
+        if (heroChe) heroChe.innerHTML = formatTopic(r.che, r.cheNote);
+        if (heroBio) heroBio.innerHTML = formatTopic(r.bio, r.bioNote);
+      } else {
+        const rDefault = PLAN[0];
+        if (rDefault) {
+          heroDayTitle.textContent = `Day 1 — ${weekday}, ${month} ${day}`;
+          if (heroPhy) heroPhy.innerHTML = formatTopic(rDefault.phy, rDefault.phyNote);
+          if (heroChe) heroChe.innerHTML = formatTopic(rDefault.che, rDefault.cheNote);
+          if (heroBio) heroBio.innerHTML = formatTopic(rDefault.bio, rDefault.bioNote);
+        }
       }
     }
   } catch (e) {
@@ -3041,9 +3059,9 @@ function updateTodayPlanCard() {
 }
 
 function getTodayDayNum() {
-  let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-06-19T00:00:00");
+  let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-06-29T00:00:00");
   if (isNaN(parsedStartDate.getTime())) {
-    parsedStartDate = new Date(2026, 5, 19, 0, 0, 0);
+    parsedStartDate = new Date(2026, 5, 29, 0, 0, 0);
   }
   const START_DATE = parsedStartDate;
   const now = new Date();
@@ -3059,9 +3077,9 @@ function getTodayTargetHours(dayNum, type) {
   }
   if (dayNum <= 15) {
     return { phy: 1.5, che: 1.5, bio: 1.5 };
-  } else if (dayNum <= 120) {
+  } else if (dayNum <= 115) {
     return { phy: 2, che: 2, bio: 3.5 };
-  } else if (dayNum <= 240) {
+  } else if (dayNum <= 275) {
     return { phy: 3, che: 2.5, bio: 3.5 };
   } else {
     return { phy: 3.5, che: 3, bio: 4 };
@@ -3078,12 +3096,12 @@ function renderHeatmap() {
     hoursMap[log.date] = (hoursMap[log.date] || 0) + totalH;
   });
   
-  const START_DATE_RAW = safeGetLocalStorage("planStart") || "2026-06-19T00:00:00";
+  const START_DATE_RAW = safeGetLocalStorage("planStart") || "2026-06-29T00:00:00";
   const startPlan = new Date(START_DATE_RAW);
   const startDate = new Date(startPlan);
   startDate.setDate(startPlan.getDate() - startPlan.getDay()); // Go to previous Sunday
   const endDate = new Date(startPlan);
-  endDate.setDate(startPlan.getDate() + 322); // Show the full 319-day range plus padding to fill the week grid
+  endDate.setDate(startPlan.getDate() + 312); // Show the full 309-day range plus padding to fill the week grid
   
   let html = '<div class="heatmap-grid">';
   const tempDate = new Date(startDate);
@@ -3172,9 +3190,10 @@ function initOnLoad() {
     keyInput.value = storedKey;
   }
   
-  // Initialize planStart date if not already set
-  if (!safeGetLocalStorage("planStart")) {
-    safeSetLocalStorage("planStart", new Date().toISOString());
+  // Initialize planStart date if not already set or if it's not the target start date
+  const storedPlanStart = safeGetLocalStorage("planStart");
+  if (storedPlanStart !== "2026-06-29T00:00:00") {
+    safeSetLocalStorage("planStart", "2026-06-29T00:00:00");
   }
   
   // Set date input defaults to today
