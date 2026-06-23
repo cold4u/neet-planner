@@ -1,3 +1,47 @@
+function safeGetLocalStorage(key, fallback = null) {
+  try {
+    const val = localStorage.getItem(key);
+    return val !== null ? val : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function safeSetLocalStorage(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function safeRemoveLocalStorage(key) {
+  try {
+    localStorage.removeItem(key);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function safeGetSessionStorage(key, fallback = null) {
+  try {
+    const val = sessionStorage.getItem(key);
+    return val !== null ? val : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function safeSetSessionStorage(key, value) {
+  try {
+    sessionStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
   function handleLogin() {
     const user = document.getElementById('login-username').value.trim();
@@ -16,11 +60,12 @@
       return;
     }
     if (pass === 'SHUBxCOLD') {
-      sessionStorage.setItem('neet_logged_in', 'true');
-      if (!localStorage.getItem("planStart")) {
-        localStorage.setItem("planStart", new Date().toISOString());
+      safeSetSessionStorage('neet_logged_in', 'true');
+      if (!safeGetLocalStorage("planStart")) {
+        safeSetLocalStorage("planStart", new Date().toISOString());
       }
-      document.getElementById('login-overlay').style.display = 'none';
+      const loginOverlay = document.getElementById('login-overlay');
+      if (loginOverlay) loginOverlay.style.display = 'none';
     } else {
       errorEl.textContent = 'Incorrect password!';
       errorEl.style.display = 'block';
@@ -29,14 +74,15 @@
 
   // Check login state on load (temporarily bypassed for 24 hours)
   document.addEventListener('DOMContentLoaded', function() {
-    const bypassUntil = new Date("2026-06-23T10:25:10+05:30");
+    const bypassUntil = new Date(Date.UTC(2026, 5, 23, 4, 55, 10));
     const isBypassActive = new Date() < bypassUntil;
     
-    if (isBypassActive || sessionStorage.getItem('neet_logged_in') === 'true') {
-      if (!localStorage.getItem("planStart")) {
-        localStorage.setItem("planStart", new Date().toISOString());
+    if (isBypassActive || safeGetSessionStorage('neet_logged_in') === 'true') {
+      if (!safeGetLocalStorage("planStart")) {
+        safeSetLocalStorage("planStart", new Date().toISOString());
       }
-      document.getElementById('login-overlay').style.display = 'none';
+      const loginOverlay = document.getElementById('login-overlay');
+      if (loginOverlay) loginOverlay.style.display = 'none';
     }
   });
 
@@ -460,8 +506,12 @@
     window.CHEM_CHAPS_SET = new Set(P1_CHE.concat(P2_CHE).map(c => c.ch.toLowerCase().replace(/[^a-z0-9]/g, '')));
     
     // 318-Day Plan Engine
-    const START_DATE = new Date(localStorage.getItem("planStart") || "2026-06-19T00:00:00");
-    const EXAM_DATE = new Date("2027-05-03T00:00:00");
+    let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-06-19T00:00:00");
+    if (isNaN(parsedStartDate.getTime())) {
+      parsedStartDate = new Date(2026, 5, 19, 0, 0, 0); // June 19, 2026
+    }
+    const START_DATE = parsedStartDate;
+    const EXAM_DATE = new Date(2027, 4, 3, 0, 0, 0); // May 3, 2027
     const DIFF = Math.ceil((EXAM_DATE - START_DATE) / (1000 * 60 * 60 * 24)) + 1; // 319 days
 
     
@@ -678,17 +728,17 @@
     // LocalStorage states
     let done = {};
     try {
-      done = JSON.parse(localStorage.getItem('neet_v3_done') || '{}');
+      done = JSON.parse(safeGetLocalStorage('neet_v3_done') || '{}');
     } catch(e){}
     
     let trackerLogs = [];
     try {
-      trackerLogs = JSON.parse(localStorage.getItem('neet_v3_tracker') || '[]');
+      trackerLogs = JSON.parse(safeGetLocalStorage('neet_v3_tracker') || '[]');
     } catch(e){}
     
     let chapterProgress = {};
     try {
-      chapterProgress = JSON.parse(localStorage.getItem('neet_v3_chapter_progress') || '{}');
+      chapterProgress = JSON.parse(safeGetLocalStorage('neet_v3_chapter_progress') || '{}');
     } catch(e){}
     
     // Pagination & Filters
@@ -697,7 +747,7 @@
     
     function saveDone() {
       try {
-        localStorage.setItem('neet_v3_done', JSON.stringify(done));
+        safeSetLocalStorage('neet_v3_done', JSON.stringify(done));
       } catch(e){}
     }
     
@@ -1035,7 +1085,7 @@
         chapterProgress[chName] = { understand: false, practice: false, revise: false };
       }
       chapterProgress[chName][step] = !chapterProgress[chName][step];
-      localStorage.setItem('neet_v3_chapter_progress', JSON.stringify(chapterProgress));
+      safeSetLocalStorage('neet_v3_chapter_progress', JSON.stringify(chapterProgress));
       renderChapters();
       updateOverviewStats();
     }
@@ -1484,7 +1534,7 @@
       // Sort by date descending
       trackerLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
       
-      localStorage.setItem('neet_v3_tracker', JSON.stringify(trackerLogs));
+      safeSetLocalStorage('neet_v3_tracker', JSON.stringify(trackerLogs));
       renderTrackerTable();
       updateOverviewStats();
       
@@ -1501,7 +1551,7 @@
     function deleteTrackerEntry(date) {
       if (confirm(`Delete study entry for ${date}?`)) {
         trackerLogs = trackerLogs.filter(l => l.date !== date);
-        localStorage.setItem('neet_v3_tracker', JSON.stringify(trackerLogs));
+        safeSetLocalStorage('neet_v3_tracker', JSON.stringify(trackerLogs));
         renderTrackerTable();
         updateOverviewStats();
         showToast('Study session deleted.');
@@ -2361,7 +2411,7 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
 }
 
 async function startAiParse() {
-  const apiKey = localStorage.getItem('gemini_api_key');
+  const apiKey = safeGetLocalStorage('gemini_api_key');
   
   if (!apiKey) {
     alert("Please configure your Gemini API Key first in the '⚙️ Settings' tab.");
@@ -2452,7 +2502,7 @@ async function startAiParse() {
 }
 
 async function generateAiChapterTest(chapterName) {
-  const apiKey = localStorage.getItem('gemini_api_key');
+  const apiKey = safeGetLocalStorage('gemini_api_key');
   if (!apiKey) {
     alert("Please configure your Gemini API Key first in the '🤖 AI CBT' tab.");
     showTab('ai-test');
@@ -2869,7 +2919,7 @@ function logQuickStudy(e) {
   // Sort by date descending
   trackerLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
   
-  localStorage.setItem('neet_v3_tracker', JSON.stringify(trackerLogs));
+  safeSetLocalStorage('neet_v3_tracker', JSON.stringify(trackerLogs));
   
   renderTrackerTable();
   updateOverviewStats();
@@ -2887,7 +2937,7 @@ function logQuickStudy(e) {
 
 function updateLoginStats() {
   // 1. Days left
-  const EXAM_DATE = new Date("2027-05-03T00:00:00");
+  const EXAM_DATE = new Date(2027, 4, 3, 0, 0, 0);
   const diff = EXAM_DATE - new Date();
   const daysLeft = diff > 0 ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : 0;
   const daysEl = document.getElementById('login-stat-days');
@@ -2896,7 +2946,7 @@ function updateLoginStats() {
   // 2. Syllabus progress
   let localDone = {};
   try {
-    localDone = JSON.parse(localStorage.getItem('neet_v3_done') || '{}');
+    localDone = JSON.parse(safeGetLocalStorage('neet_v3_done') || '{}');
   } catch(e){}
   const doneCnt = Object.values(localDone).filter(Boolean).length;
   const pct = PLAN.length ? Math.round((doneCnt / PLAN.length) * 100) : 0;
@@ -2906,7 +2956,7 @@ function updateLoginStats() {
   // 3. Streak
   let localLogs = [];
   try {
-    localLogs = JSON.parse(localStorage.getItem('neet_v3_tracker') || '[]');
+    localLogs = JSON.parse(safeGetLocalStorage('neet_v3_tracker') || '[]');
   } catch(e){}
   
   let streak = 0;
@@ -2991,7 +3041,11 @@ function updateTodayPlanCard() {
 }
 
 function getTodayDayNum() {
-  const START_DATE = new Date(localStorage.getItem("planStart") || "2026-06-19T00:00:00");
+  let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-06-19T00:00:00");
+  if (isNaN(parsedStartDate.getTime())) {
+    parsedStartDate = new Date(2026, 5, 19, 0, 0, 0);
+  }
+  const START_DATE = parsedStartDate;
   const now = new Date();
   const d1 = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), START_DATE.getDate());
   const d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -3024,7 +3078,7 @@ function renderHeatmap() {
     hoursMap[log.date] = (hoursMap[log.date] || 0) + totalH;
   });
   
-  const START_DATE_RAW = localStorage.getItem("planStart") || "2026-06-19T00:00:00";
+  const START_DATE_RAW = safeGetLocalStorage("planStart") || "2026-06-19T00:00:00";
   const startPlan = new Date(START_DATE_RAW);
   const startDate = new Date(startPlan);
   startDate.setDate(startPlan.getDate() - startPlan.getDay()); // Go to previous Sunday
@@ -3090,7 +3144,7 @@ function sortTable(thEl, colIdx, isNumeric = false) {
 
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light-mode');
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  safeSetLocalStorage('theme', isLight ? 'light' : 'dark');
   
   const btn = document.getElementById('theme-toggle-btn');
   if (btn) {
@@ -3099,7 +3153,7 @@ function toggleTheme() {
 }
 
 function loadTheme() {
-  const savedTheme = localStorage.getItem('theme');
+  const savedTheme = safeGetLocalStorage('theme');
   const btn = document.getElementById('theme-toggle-btn');
   if (savedTheme === 'light') {
     document.body.classList.add('light-mode');
@@ -3112,15 +3166,15 @@ function loadTheme() {
 
 function initOnLoad() {
   initAiDragAndDrop();
-  const storedKey = localStorage.getItem('gemini_api_key');
+  const storedKey = safeGetLocalStorage('gemini_api_key');
   const keyInput = document.getElementById('gemini-key');
   if (storedKey && keyInput) {
     keyInput.value = storedKey;
   }
   
   // Initialize planStart date if not already set
-  if (!localStorage.getItem("planStart")) {
-    localStorage.setItem("planStart", new Date().toISOString());
+  if (!safeGetLocalStorage("planStart")) {
+    safeSetLocalStorage("planStart", new Date().toISOString());
   }
   
   // Set date input defaults to today
@@ -3220,13 +3274,13 @@ function saveApiKey() {
       return;
     }
     
-    localStorage.setItem('gemini_api_key', key);
+    safeSetLocalStorage('gemini_api_key', key);
     statusEl.style.background = 'rgba(0, 212, 170, 0.1)';
     statusEl.style.color = 'var(--primary)';
     statusEl.style.border = '1px solid var(--primary)';
     statusEl.textContent = '✓ API Key saved successfully!';
   } else {
-    localStorage.removeItem('gemini_api_key');
+    safeRemoveLocalStorage('gemini_api_key');
     statusEl.style.background = 'rgba(255, 165, 0, 0.1)';
     statusEl.style.color = '#ffa500';
     statusEl.style.border = '1px solid #ffa500';
