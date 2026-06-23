@@ -505,7 +505,12 @@ function safeSetSessionStorage(key, value) {
     window.PHYS_CHAPS_SET = new Set(P1_PHY.concat(P2_PHY).map(c => c.ch.toLowerCase().replace(/[^a-z0-9]/g, '')));
     window.CHEM_CHAPS_SET = new Set(P1_CHE.concat(P2_CHE).map(c => c.ch.toLowerCase().replace(/[^a-z0-9]/g, '')));
     
-    // 318-Day Plan Engine
+    // Force plan start date to exactly June 29, 2026 before evaluation
+    if (safeGetLocalStorage("planStart") !== "2026-06-29T00:00:00") {
+      safeSetLocalStorage("planStart", "2026-06-29T00:00:00");
+    }
+
+    // 309-Day Plan Engine
     let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-06-29T00:00:00");
     if (isNaN(parsedStartDate.getTime())) {
       parsedStartDate = new Date(2026, 5, 29, 0, 0, 0); // June 29, 2026
