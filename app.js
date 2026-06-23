@@ -17,6 +17,9 @@
     }
     if (pass === 'SHUBxCOLD') {
       sessionStorage.setItem('neet_logged_in', 'true');
+      if (!localStorage.getItem("planStart")) {
+        localStorage.setItem("planStart", new Date().toISOString());
+      }
       document.getElementById('login-overlay').style.display = 'none';
     } else {
       errorEl.textContent = 'Incorrect password!';
@@ -30,6 +33,9 @@
     const isBypassActive = new Date() < bypassUntil;
     
     if (isBypassActive || sessionStorage.getItem('neet_logged_in') === 'true') {
+      if (!localStorage.getItem("planStart")) {
+        localStorage.setItem("planStart", new Date().toISOString());
+      }
       document.getElementById('login-overlay').style.display = 'none';
     }
   });
@@ -443,7 +449,7 @@
       REAL_YEARLY_PAPERS = yearlyData;
       console.log('Successfully loaded PYQ and Yearly Papers database.');
       // Re-render components once data is available
-      if (typeof renderCal === 'function') renderCal();
+      if (typeof renderPlan === 'function') renderPlan();
       if (typeof renderPapersPicker === 'function') renderPapersPicker();
     }).catch(err => {
       console.error('Error loading database JSON files:', err);
@@ -454,9 +460,10 @@
     window.CHEM_CHAPS_SET = new Set(P1_CHE.concat(P2_CHE).map(c => c.ch.toLowerCase().replace(/[^a-z0-9]/g, '')));
     
     // 318-Day Plan Engine
-    const START_DATE = new Date(2026, 5, 19); // 19th June 2026
-    const EXAM_DATE = new Date(2027, 4, 3); // 3rd May 2027
+    const START_DATE = new Date(localStorage.getItem("planStart") || "2026-06-19T00:00:00");
+    const EXAM_DATE = new Date("2027-05-03T00:00:00");
     const DIFF = Math.ceil((EXAM_DATE - START_DATE) / (1000 * 60 * 60 * 24)) + 1; // 319 days
+
     
     function buildPlan() {
       const plan = [];
@@ -697,21 +704,10 @@
     function toggleDone(dayNum) {
       done[dayNum] = !done[dayNum];
       saveDone();
-      renderCal();
+      renderPlan();
       updateOverviewStats();
     }
-    
-    // Load week options in select
-    const wkSel = document.getElementById('wkf');
-    if (wkSel) {
-      const totalWeeks = Math.ceil(PLAN.length / 7);
-      for (let w = 1; w <= totalWeeks; w++) {
-        const o = document.createElement('option');
-        o.value = w;
-        o.textContent = `Week ${w}`;
-        wkSel.appendChild(o);
-      }
-    }
+
     
     function getWeek(dayNum) {
       return Math.ceil(dayNum / 7);
@@ -839,8 +835,17 @@
     
     function calGo(p) {
       calPage = p;
-      renderCal();
+      renderPlan();
     }
+
+    function renderPlan() {
+      try {
+        renderCal();
+      } catch (e) {
+        console.error("Error rendering plan:", e);
+      }
+    }
+
     
     // Tab switching
     function showTab(tabId) {
@@ -872,7 +877,7 @@
       if (drawerItem) drawerItem.classList.add('active');
       
       if (tabId === 'calendar') {
-        renderCal();
+        renderPlan();
       } else if (tabId === 'timing') {
         showSched('p1', document.querySelector('.sched-btn'));
       } else if (tabId === 'chapters') {
@@ -1852,7 +1857,7 @@
       // Hide active test container and list view initially
       document.getElementById('active-test-container').style.display = 'none';
       document.getElementById('paper-questions-view').style.display = 'none';
-      document.getElementById('paper-results-view').style.display = 'none';
+      document.getElementById('exam-results').style.display = 'none';
       document.getElementById('papers-picker-grid').style.display = 'grid';
     }
 
@@ -1904,7 +1909,7 @@
         document.getElementById('active-test-container').style.display = 'block';
         document.getElementById('paper-questions-view').style.display = 'block';
         document.getElementById('papers-picker-grid').style.display = 'none';
-        document.getElementById('paper-results-view').style.display = 'none';
+        document.getElementById('exam-results').style.display = 'none';
         
         updateTestProgress();
         renderPaperQuestions();
@@ -1921,7 +1926,7 @@
         document.getElementById('active-test-container').style.display = 'none';
         document.getElementById('paper-questions-view').style.display = 'block';
         document.getElementById('papers-picker-grid').style.display = 'none';
-        document.getElementById('paper-results-view').style.display = 'none';
+        document.getElementById('exam-results').style.display = 'none';
         
         renderPaperQuestions();
       }
@@ -2098,14 +2103,14 @@
       // Hide active test bar and show result view
       document.getElementById('active-test-container').style.display = 'none';
       document.getElementById('paper-questions-view').style.display = 'none';
-      document.getElementById('paper-results-view').style.display = 'block';
+      document.getElementById('exam-results').style.display = 'block';
     }
 
     function reviewPaperQuestions() {
       // Switch mode to practice so answers are shown
       yearlyTestMode = 'practice';
       
-      document.getElementById('paper-results-view').style.display = 'none';
+      document.getElementById('exam-results').style.display = 'none';
       document.getElementById('paper-questions-view').style.display = 'block';
       
       renderPaperQuestions();
@@ -2137,18 +2142,7 @@
       window.open('https://www.google.com/search?q=' + encodeURIComponent(query), '_blank');
     }
 
-    // Initial run
-    setInterval(updateCountdown, 1000);
-    
-    // Set date input default to today
-    window.addEventListener('load', () => {
-      const today = new Date().toISOString().split('T')[0];
-      const dInput = document.getElementById('track-date');
-      if (dInput) dInput.value = today;
-      
-      // Initial stats updates
-      updateOverviewStats();
-    });
+
   
 
 // Bind functions to window so they are globally accessible from inline HTML event handlers
@@ -2187,6 +2181,7 @@ window.typeBadge = typeBadge;
 window.exitYearlyPaper = exitYearlyPaper;
 window.buildPlan = buildPlan;
 window.renderCal = renderCal;
+window.renderPlan = renderPlan;
 window.exitPaperResults = exitPaperResults;
 window.renderChapters = renderChapters;
 window.updateOverviewStats = updateOverviewStats;
@@ -2861,7 +2856,7 @@ function logQuickStudy(e) {
 
 function updateLoginStats() {
   // 1. Days left
-  const EXAM_DATE = new Date(2027, 4, 3); // 3rd May 2027
+  const EXAM_DATE = new Date("2027-05-03T00:00:00");
   const diff = EXAM_DATE - new Date();
   const daysLeft = diff > 0 ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : 0;
   const daysEl = document.getElementById('login-stat-days');
@@ -2961,7 +2956,7 @@ function updateTodayPlanCard() {
 }
 
 function getTodayDayNum() {
-  const START_DATE = new Date(2026, 5, 19); // 19th June 2026
+  const START_DATE = new Date(localStorage.getItem("planStart") || "2026-06-19T00:00:00");
   const now = new Date();
   const d1 = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), START_DATE.getDate());
   const d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -2994,10 +2989,12 @@ function renderHeatmap() {
     hoursMap[log.date] = (hoursMap[log.date] || 0) + totalH;
   });
   
-  // Sunday June 14, 2026
-  const startDate = new Date(2026, 5, 14);
-  // Saturday May 8, 2027
-  const endDate = new Date(2027, 4, 8);
+  const START_DATE_RAW = localStorage.getItem("planStart") || "2026-06-19T00:00:00";
+  const startPlan = new Date(START_DATE_RAW);
+  const startDate = new Date(startPlan);
+  startDate.setDate(startPlan.getDate() - startPlan.getDay()); // Go to previous Sunday
+  const endDate = new Date(startPlan);
+  endDate.setDate(startPlan.getDate() + 322); // Show the full 319-day range plus padding to fill the week grid
   
   let html = '<div class="heatmap-grid">';
   const tempDate = new Date(startDate);
@@ -3086,11 +3083,53 @@ function initOnLoad() {
     keyInput.value = storedKey;
   }
   
+  // Initialize planStart date if not already set
+  if (!localStorage.getItem("planStart")) {
+    localStorage.setItem("planStart", new Date().toISOString());
+  }
+  
+  // Set date input defaults to today
+  const today = new Date().toISOString().split('T')[0];
+  const dInput = document.getElementById('track-date');
+  if (dInput) dInput.value = today;
+  const qdInput = document.getElementById('quick-track-date');
+  if (qdInput) qdInput.value = today;
+
+  // Dynamically load week options in select
+  const wkSel = document.getElementById('wkf');
+  if (wkSel) {
+    // Clear out existing options except first
+    while (wkSel.options.length > 1) {
+      wkSel.remove(1);
+    }
+    const totalWeeks = Math.ceil(PLAN.length / 7);
+    for (let w = 1; w <= totalWeeks; w++) {
+      const o = document.createElement('option');
+      o.value = w;
+      o.textContent = `Week ${w}`;
+      wkSel.appendChild(o);
+    }
+  }
+
+  // Render initial components and data tables
+  renderPlan();
+  renderChapters();
+  renderTestList();
+  renderTrackerTable();
+  renderAnalytics();
+  if (typeof renderHeatmap === 'function') {
+    renderHeatmap();
+  }
+
   // Render login statistics
   updateLoginStats();
   
   // Load dark/light mode preference
   loadTheme();
+
+  // Initial stats updates & start countdown timer
+  updateOverviewStats();
+  setInterval(updateCountdown, 1000);
 }
 
 if (document.readyState === 'loading') {
