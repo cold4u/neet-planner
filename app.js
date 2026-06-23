@@ -774,7 +774,7 @@
         return '';
       }
       
-      function cellHtml(text, note) {
+      function cellHtml(text, note, subject) {
         if (!text) return '<span style="color:var(--text-muted);">—</span>';
         const isRev = text.startsWith('REV: ');
         const ch = isRev ? text.slice(5) : text;
@@ -788,8 +788,17 @@
         
         const wtLabel = !isSp ? getChapterWeight(ch) : '';
         
+        // Prep subject tag badge
+        let subBadge = '';
+        if (!isSp) {
+          if (subject === 'phy') subBadge = '<span class="subject-badge badge-phy" style="padding:1.5px 5px; font-size:8.5px; margin-bottom:4px; display:inline-flex;">⚡ Physics</span><br>';
+          if (subject === 'che') subBadge = '<span class="subject-badge badge-che" style="padding:1.5px 5px; font-size:8.5px; margin-bottom:4px; display:inline-flex;">🧪 Chem</span><br>';
+          if (subject === 'bio') subBadge = '<span class="subject-badge badge-bio" style="padding:1.5px 5px; font-size:8.5px; margin-bottom:4px; display:inline-flex;">🧬 Bio</span><br>';
+        }
+        
         return `<div class="ch-cell">
           ${isRev ? '<span style="font-size:9.5px; background:var(--primary-glow); color:var(--primary); padding:1px 4px; border-radius:3px; display:inline-block; margin-bottom:2px; font-weight:700;">REV</span><br>' : ''}
+          ${subBadge}
           <span class="ch-main">${ch}</span>${wtLabel}
           ${note ? `<div class="ch-sub">${note}</div>` : ''}
           ${pyqBtn}
@@ -804,9 +813,9 @@
           <td><span class="day-num" style="font-weight:700;">${r.day}</span></td>
           <td class="day-date">${r.date}</td>
           <td>${typeBadge(r.type)}</td>
-          <td>${cellHtml(r.phy, r.phyNote)}</td>
-          <td>${cellHtml(r.che, r.cheNote)}</td>
-          <td>${cellHtml(r.bio, r.bioNote)}</td>
+          <td>${cellHtml(r.phy, r.phyNote, 'phy')}</td>
+          <td>${cellHtml(r.che, r.cheNote, 'che')}</td>
+          <td>${cellHtml(r.bio, r.bioNote, 'bio')}</td>
           <td style="text-align:center;"><input type="checkbox" class="done-cb" ${isDone ? 'checked' : ''} onchange="toggleDone(${r.day})"></td>
         </tr>`;
       });
@@ -838,6 +847,20 @@
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.drawer-item').forEach(el => el.classList.remove('active'));
+      
+      // Update persistent sidebar active nav item
+      document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => el.classList.remove('active'));
+      const sidebarNavItem = document.querySelector(`.sidebar-nav .nav-item[data-tab="${tabId}"]`);
+      if (sidebarNavItem) {
+        sidebarNavItem.classList.add('active');
+        
+        // Update topbar title
+        const topbarTitle = document.getElementById('topbar-page-title');
+        if (topbarTitle) {
+          const navLabel = sidebarNavItem.querySelector('.nav-label');
+          topbarTitle.textContent = navLabel ? navLabel.textContent : tabId;
+        }
+      }
       
       const activeTabEl = document.getElementById(tabId);
       if (activeTabEl) activeTabEl.classList.add('active');
@@ -936,8 +959,20 @@
           const prog = chapterProgress[chName] || { understand: false, practice: false, revise: false };
           
           let subClr = 'var(--phy)';
-          if (c.sub === 'Chemistry') subClr = 'var(--che)';
-          if (c.sub === 'Biology') subClr = 'var(--bio)';
+          let badgeCls = 'badge-phy';
+          let rowCls = 'row-phy';
+          let prefix = '⚡ ';
+          if (c.sub === 'Chemistry') {
+            subClr = 'var(--che)';
+            badgeCls = 'badge-che';
+            rowCls = 'row-che';
+            prefix = '🧪 ';
+          } else if (c.sub === 'Biology') {
+            subClr = 'var(--bio)';
+            badgeCls = 'badge-bio';
+            rowCls = 'row-bio';
+            prefix = '🧬 ';
+          }
           
           let wtBadge = '<span class="type-badge" style="background:rgba(255,255,255,0.03); color:var(--text-muted);">L</span>';
           if (c.wt === 'h') wtBadge = '<span class="type-badge" style="background:rgba(255,107,107,0.1); color:var(--tertiary);">High</span>';
@@ -945,8 +980,8 @@
           
           const connTip = CONNS[chName] ? `<div style="font-size:10px; color:var(--text-muted); margin-top:2px;">${CONNS[chName]}</div>` : '';
           
-          html += `<tr>
-            <td style="color:${subClr}; font-weight:700;">${c.sub}</td>
+          html += `<tr class="${rowCls}">
+            <td><span class="subject-badge ${badgeCls}" style="font-size: 10px; padding: 2px 8px;">${prefix}${c.sub}</span></td>
             <td>
               <div style="font-weight:600;">${c.ch}</div>
               ${connTip}
@@ -1377,16 +1412,28 @@
     
     // Tests & Mocks list
     function renderTestList() {
-      const tests = PLAN.filter(r => r.type === 'test' || r.type === 'mock');
+      const q = (document.getElementById('test-srch') || {value:''}).value.toLowerCase();
+      
+      const tests = PLAN.filter(r => (r.type === 'test' || r.type === 'mock') && 
+        (!q || r.phy.toLowerCase().includes(q) || r.che.toLowerCase().includes(q) || r.bio.toLowerCase().includes(q) || `day ${r.day}`.includes(q) || r.date.toLowerCase().includes(q))
+      );
+      
       let html = '';
       if (tests.length === 0) {
-        html = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No tests scheduled.</td></tr>';
+        html = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 30px;">No tests match the filter.</td></tr>';
       } else {
         tests.forEach(r => {
           const isDone = !!done[r.day];
           const testDesc = `
-            <div style="font-weight:600; font-size:13.5px;">${r.phy}</div>
-            <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">${r.che} &middot; ${r.bio}</div>
+            <div style="font-weight:600; font-size:13.5px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:4px;">
+              <span class="subject-badge badge-phy" style="padding:1.5px 5px; font-size:9px;">⚡ Physics</span>
+              <span style="color:var(--text-primary);">${r.phy}</span>
+            </div>
+            <div style="font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <span style="display:inline-flex; align-items:center; gap:4px;"><span class="subject-badge badge-che" style="padding:1px 4px; font-size:8px;">🧪 Chem</span> ${r.che}</span>
+              <span>&middot;</span>
+              <span style="display:inline-flex; align-items:center; gap:4px;"><span class="subject-badge badge-bio" style="padding:1px 4px; font-size:8px;">🧬 Bio</span> ${r.bio}</span>
+            </div>
           `;
           html += `<tr class="${isDone ? 'done-row' : ''}">
             <td style="font-weight:600;">Day ${r.day}</td>
@@ -1437,6 +1484,8 @@
       document.getElementById('track-bio').value = '';
       document.getElementById('track-mcqs').value = '';
       document.getElementById('track-notes').value = '';
+      
+      showToast('Study session saved successfully!');
     }
     
     function deleteTrackerEntry(date) {
@@ -1445,13 +1494,26 @@
         localStorage.setItem('neet_v3_tracker', JSON.stringify(trackerLogs));
         renderTrackerTable();
         updateOverviewStats();
+        showToast('Study session deleted.');
       }
     }
     
     function renderTrackerTable() {
       const tbody = document.getElementById('tracker-table-body');
+      
+      // Render heatmap
+      if (typeof renderHeatmap === 'function') {
+        renderHeatmap();
+      }
+      
       if (trackerLogs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:30px;">No entries logged yet.</td></tr>';
+        tbody.innerHTML = `<tr>
+          <td colspan="5" style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+            <div style="font-size:32px; margin-bottom:12px;">📅</div>
+            <div style="font-weight:600; font-size:14px; color:var(--text-primary);">No sessions logged yet</div>
+            <p style="margin:4px 0 0 0; font-size:12px; color:var(--text-muted);">Start your first session using the floating "+" button or Daily Tracker form!</p>
+          </td>
+        </tr>`;
         return;
       }
       
@@ -1584,13 +1646,22 @@
       const bioPct = bioTot ? Math.round((bioDone / bioTot) * 100) : 0;
       
       document.getElementById('progress-phy-text').textContent = phyPct + '%';
-      document.getElementById('progress-phy-bar').style.width = phyPct + '%';
+      const phyCircle = document.getElementById('progress-phy-circle');
+      if (phyCircle) {
+        phyCircle.style.strokeDashoffset = 238.76 * (1 - phyPct / 100);
+      }
       
       document.getElementById('progress-chem-text').textContent = chemPct + '%';
-      document.getElementById('progress-chem-bar').style.width = chemPct + '%';
+      const chemCircle = document.getElementById('progress-chem-circle');
+      if (chemCircle) {
+        chemCircle.style.strokeDashoffset = 238.76 * (1 - chemPct / 100);
+      }
       
       document.getElementById('progress-bio-text').textContent = bioPct + '%';
-      document.getElementById('progress-bio-bar').style.width = bioPct + '%';
+      const bioCircle = document.getElementById('progress-bio-circle');
+      if (bioCircle) {
+        bioCircle.style.strokeDashoffset = 238.76 * (1 - bioPct / 100);
+      }
       
       // 4. Subject Study Balance stacked bar
       const sumH = phyH + chemH + bioH;
@@ -1717,6 +1788,22 @@
       const doneCnt = Object.values(done).filter(Boolean).length;
       const pct = PLAN.length ? Math.round((doneCnt / PLAN.length) * 100) : 0;
       document.getElementById('over-progress').textContent = `${pct}%`;
+
+      // Update Today's Plan Hero Card
+      if (typeof updateTodayPlanCard === 'function') {
+        updateTodayPlanCard();
+      }
+
+      // Sync background stats on the login screen
+      const loginDays = document.getElementById('login-stat-days');
+      if (loginDays) {
+        const diffCd = EXAM_DATE - new Date();
+        loginDays.textContent = diffCd > 0 ? Math.ceil(diffCd / (1000 * 60 * 60 * 24)) : 0;
+      }
+      const loginProg = document.getElementById('login-stat-progress');
+      if (loginProg) loginProg.textContent = `${pct}%`;
+      const loginStreak = document.getElementById('login-stat-streak');
+      if (loginStreak) loginStreak.textContent = streak;
     }
     
     function renderOverviewStats() {
@@ -2691,6 +2778,306 @@ function cbtExitResults() {
   showTab('calendar');
 }
 
+// ==========================================
+// UI/UX UPGRADE HELPER FUNCTIONS
+// ==========================================
+
+function showToast(message) {
+  let toast = document.getElementById('app-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'app-toast';
+    toast.className = 'toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+function openQuickLog() {
+  const modal = document.getElementById('quick-log-modal');
+  if (modal) {
+    // Pre-fill date with local YYYY-MM-DD
+    const dateInput = document.getElementById('quick-track-date');
+    if (dateInput) {
+      const offset = new Date().getTimezoneOffset();
+      const localDate = new Date(Date.now() - offset * 60 * 1000).toISOString().split('T')[0];
+      dateInput.value = localDate;
+    }
+    modal.classList.add('open');
+  }
+}
+
+function closeQuickLog() {
+  const modal = document.getElementById('quick-log-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function logQuickStudy(e) {
+  e.preventDefault();
+  const date = document.getElementById('quick-track-date').value;
+  const phy = parseFloat(document.getElementById('quick-track-phy').value) || 0;
+  const chem = parseFloat(document.getElementById('quick-track-chem').value) || 0;
+  const bio = parseFloat(document.getElementById('quick-track-bio').value) || 0;
+  const mcqs = parseInt(document.getElementById('quick-track-mcqs').value) || 0;
+  const confidence = parseInt(document.getElementById('quick-track-confidence').value) || 3;
+  const notes = document.getElementById('quick-track-notes').value;
+  
+  if (phy === 0 && chem === 0 && bio === 0) {
+    alert('Please log study hours for at least one subject.');
+    return;
+  }
+  
+  const newEntry = { date, phyHours: phy, cheHours: chem, bioHours: bio, mcqs, confidence, notes };
+  
+  const idx = trackerLogs.findIndex(l => l.date === date);
+  if (idx !== -1) {
+    trackerLogs[idx] = newEntry;
+  } else {
+    trackerLogs.push(newEntry);
+  }
+  
+  // Sort by date descending
+  trackerLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  localStorage.setItem('neet_v3_tracker', JSON.stringify(trackerLogs));
+  
+  renderTrackerTable();
+  updateOverviewStats();
+  
+  // Reset inputs
+  document.getElementById('quick-track-phy').value = '';
+  document.getElementById('quick-track-chem').value = '';
+  document.getElementById('quick-track-bio').value = '';
+  document.getElementById('quick-track-mcqs').value = '';
+  document.getElementById('quick-track-notes').value = '';
+  
+  closeQuickLog();
+  showToast('Study session logged successfully!');
+}
+
+function updateLoginStats() {
+  // 1. Days left
+  const EXAM_DATE = new Date(2027, 4, 3); // 3rd May 2027
+  const diff = EXAM_DATE - new Date();
+  const daysLeft = diff > 0 ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : 0;
+  const daysEl = document.getElementById('login-stat-days');
+  if (daysEl) daysEl.textContent = daysLeft;
+  
+  // 2. Syllabus progress
+  let localDone = {};
+  try {
+    localDone = JSON.parse(localStorage.getItem('neet_v3_done') || '{}');
+  } catch(e){}
+  const doneCnt = Object.values(localDone).filter(Boolean).length;
+  const pct = PLAN.length ? Math.round((doneCnt / PLAN.length) * 100) : 0;
+  const progEl = document.getElementById('login-stat-progress');
+  if (progEl) progEl.textContent = pct + '%';
+  
+  // 3. Streak
+  let localLogs = [];
+  try {
+    localLogs = JSON.parse(localStorage.getItem('neet_v3_tracker') || '[]');
+  } catch(e){}
+  
+  let streak = 0;
+  if (localLogs.length > 0) {
+    const logDates = new Set(localLogs.map(l => l.date));
+    let checkDate = new Date();
+    const todayStr = checkDate.toISOString().split('T')[0];
+    
+    let yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yestStr = yesterday.toISOString().split('T')[0];
+    
+    if (logDates.has(todayStr) || logDates.has(yestStr)) {
+      if (!logDates.has(todayStr)) {
+        checkDate = yesterday;
+      }
+      while (true) {
+        const dateStr = checkDate.toISOString().split('T')[0];
+        if (logDates.has(dateStr)) {
+          streak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+    }
+  }
+  const streakEl = document.getElementById('login-stat-streak');
+  if (streakEl) streakEl.textContent = streak;
+}
+
+function updateTodayPlanCard() {
+  const dayNum = getTodayDayNum();
+  const heroDayTitle = document.getElementById('hero-day-title');
+  const heroPhy = document.getElementById('hero-phy-topic');
+  const heroChe = document.getElementById('hero-che-topic');
+  const heroBio = document.getElementById('hero-bio-topic');
+  const heroBadges = document.getElementById('hero-badges');
+  
+  if (!heroDayTitle) return;
+  
+  const now = new Date();
+  const weekday = now.toLocaleDateString('en-IN', { weekday: 'long' });
+  const month = now.toLocaleDateString('en-IN', { month: 'short' });
+  const day = now.toLocaleDateString('en-IN', { day: 'numeric' });
+  
+  const r = PLAN.find(item => item.day === dayNum);
+  if (r) {
+    heroDayTitle.textContent = `Day ${r.day} — ${weekday}, ${month} ${day}`;
+    
+    // Prep subject badges
+    const hours = getTodayTargetHours(r.day, r.type);
+    if (heroBadges) {
+      heroBadges.innerHTML = `
+        <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics: ${hours.phy}h</span>
+        <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chem: ${hours.che}h</span>
+        <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Bio: ${hours.bio}h</span>
+      `;
+    }
+    
+    if (heroPhy) heroPhy.innerHTML = formatTopic(r.phy, r.phyNote);
+    if (heroChe) heroChe.innerHTML = formatTopic(r.che, r.cheNote);
+    if (heroBio) heroBio.innerHTML = formatTopic(r.bio, r.bioNote);
+  } else {
+    const rDefault = PLAN[0];
+    if (rDefault) {
+      heroDayTitle.textContent = `Day 1 — ${weekday}, ${month} ${day}`;
+      if (heroPhy) heroPhy.innerHTML = formatTopic(rDefault.phy, rDefault.phyNote);
+      if (heroChe) heroChe.innerHTML = formatTopic(rDefault.che, rDefault.cheNote);
+      if (heroBio) heroBio.innerHTML = formatTopic(rDefault.bio, rDefault.bioNote);
+    }
+  }
+  
+  function formatTopic(topic, note) {
+    if (!topic) return '<span style="color:var(--text-muted);">Rest or Review Day</span>';
+    return `<div>${topic}</div>${note ? `<div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">${note}</div>` : ''}`;
+  }
+}
+
+function getTodayDayNum() {
+  const START_DATE = new Date(2026, 5, 19); // 19th June 2026
+  const now = new Date();
+  const d1 = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), START_DATE.getDate());
+  const d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffTime = d2 - d1;
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+}
+
+function getTodayTargetHours(dayNum, type) {
+  if (type === 'rest') {
+    return { phy: 0, che: 0, bio: 0 };
+  }
+  if (dayNum <= 15) {
+    return { phy: 1.5, che: 1.5, bio: 1.5 };
+  } else if (dayNum <= 120) {
+    return { phy: 2, che: 2, bio: 3.5 };
+  } else if (dayNum <= 240) {
+    return { phy: 3, che: 2.5, bio: 3.5 };
+  } else {
+    return { phy: 3.5, che: 3, bio: 4 };
+  }
+}
+
+function renderHeatmap() {
+  const container = document.getElementById('study-heatmap-container');
+  if (!container) return;
+  
+  const hoursMap = {};
+  trackerLogs.forEach(log => {
+    const totalH = (log.phyHours || 0) + (log.cheHours || 0) + (log.bioHours || 0);
+    hoursMap[log.date] = (hoursMap[log.date] || 0) + totalH;
+  });
+  
+  // Sunday June 14, 2026
+  const startDate = new Date(2026, 5, 14);
+  // Saturday May 8, 2027
+  const endDate = new Date(2027, 4, 8);
+  
+  let html = '<div class="heatmap-grid">';
+  const tempDate = new Date(startDate);
+  
+  while (tempDate <= endDate) {
+    const yyyy = tempDate.getFullYear();
+    const mm = String(tempDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(tempDate.getDate()).padStart(2, '0');
+    const dateKey = `${yyyy}-${mm}-${dd}`;
+    
+    const hours = hoursMap[dateKey] || 0;
+    
+    let bg = 'rgba(255, 255, 255, 0.05)';
+    if (hours > 0 && hours < 2) bg = '#e0f2fe';
+    else if (hours >= 2 && hours < 4) bg = '#7dd3fc';
+    else if (hours >= 4 && hours < 6) bg = '#0284c7';
+    else if (hours >= 6) bg = '#0369a1';
+    
+    const formattedDate = tempDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    const tooltip = `${formattedDate}: ${hours.toFixed(1)} hours studied`;
+    
+    html += `<div class="heatmap-cell" style="background: ${bg};" title="${tooltip}"></div>`;
+    
+    tempDate.setDate(tempDate.getDate() + 1);
+  }
+  
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function sortTable(thEl, colIdx, isNumeric = false) {
+  const table = thEl.closest('table');
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  
+  const asc = !thEl.classList.contains('sort-asc');
+  
+  table.querySelectorAll('th').forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
+  thEl.classList.add(asc ? 'sort-asc' : 'sort-desc');
+  
+  rows.sort((rowA, rowB) => {
+    const cellA = rowA.cells[colIdx] ? rowA.cells[colIdx].textContent.trim() : '';
+    const cellB = rowB.cells[colIdx] ? rowB.cells[colIdx].textContent.trim() : '';
+    
+    if (isNumeric) {
+      const numA = parseFloat(cellA.replace(/[^0-9.-]/g, '')) || 0;
+      const numB = parseFloat(cellB.replace(/[^0-9.-]/g, '')) || 0;
+      return asc ? numA - numB : numB - numA;
+    }
+    
+    return asc 
+      ? cellA.localeCompare(cellB, undefined, { numeric: true, sensitivity: 'base' })
+      : cellB.localeCompare(cellA, undefined, { numeric: true, sensitivity: 'base' });
+  });
+  
+  rows.forEach(row => tbody.appendChild(row));
+}
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light-mode');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) {
+    btn.textContent = isLight ? '🌙' : '☀️';
+  }
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  const btn = document.getElementById('theme-toggle-btn');
+  if (savedTheme === 'light') {
+    document.body.classList.add('light-mode');
+    if (btn) btn.textContent = '🌙';
+  } else {
+    document.body.classList.remove('light-mode');
+    if (btn) btn.textContent = '☀️';
+  }
+}
+
 function initOnLoad() {
   initAiDragAndDrop();
   const storedKey = localStorage.getItem('gemini_api_key');
@@ -2698,6 +3085,12 @@ function initOnLoad() {
   if (storedKey && keyInput) {
     keyInput.value = storedKey;
   }
+  
+  // Render login statistics
+  updateLoginStats();
+  
+  // Load dark/light mode preference
+  loadTheme();
 }
 
 if (document.readyState === 'loading') {
@@ -2716,6 +3109,12 @@ window.cbtSubmitTest = cbtSubmitTest;
 window.cbtShowReview = cbtShowReview;
 window.cbtExitResults = cbtExitResults;
 window.cbtJumpToQuestion = cbtJumpToQuestion;
+window.openQuickLog = openQuickLog;
+window.closeQuickLog = closeQuickLog;
+window.logQuickStudy = logQuickStudy;
+window.sortTable = sortTable;
+window.toggleTheme = toggleTheme;
+window.showToast = showToast;
 
 function saveApiKey() {
   const keyInput = document.getElementById('gemini-key');

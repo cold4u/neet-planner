@@ -10,70 +10,107 @@
 </head>
 <body>
 
-<div id="login-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0e1a; z-index: 10000; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif;">
-  <div class="login-card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 16px; padding: 40px; width: 90%; max-width: 400px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); text-align: center;">
-    <h1 style="font-family: 'Share Tech', sans-serif; font-size: 42px; font-weight: bold; color: #FFD700; letter-spacing: 4px; margin-bottom: 24px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); text-transform: uppercase;">SHUBxCOLD</h1>
-    <div style="margin-bottom: 20px; text-align: left;">
-      <label style="display: block; color: rgba(255, 255, 255, 0.6); font-size: 12px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px;">Username</label>
-      <input type="text" id="login-username" placeholder="Username" style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='rgba(255, 215, 0, 0.5)'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+<div id="login-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1f6e, #2d1b8c); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; overflow: hidden;">
+  <!-- Stats Background Layer -->
+  <div class="login-bg-stats" style="position: absolute; width: 100%; height: 100%; display: flex; justify-content: space-around; align-items: center; opacity: 0.08; pointer-events: none; z-index: 1; padding: 0 40px; flex-wrap: wrap;">
+    <div style="text-align: center; min-width: 200px; margin: 10px;">
+      <div id="login-stat-days" style="font-size: 100px; font-weight: 900; font-family: 'Share Tech', sans-serif; color: #fff;">318</div>
+      <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #fff;">Days Left</div>
     </div>
-    <div style="margin-bottom: 28px; text-align: left;">
-      <label style="display: block; color: rgba(255, 255, 255, 0.6); font-size: 12px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px;">Password</label>
-      <input type="password" id="login-password" placeholder="Password" style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='rgba(255, 215, 0, 0.5)'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+    <div style="text-align: center; min-width: 200px; margin: 10px;">
+      <div id="login-stat-progress" style="font-size: 100px; font-weight: 900; font-family: 'Share Tech', sans-serif; color: #fff;">0%</div>
+      <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #fff;">Syllabus Complete</div>
     </div>
-    <button onclick="handleLogin()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #FFD700, #FFA500); border: none; border-radius: 8px; color: #000; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)';" onmouseout="this.style.transform='scale(1)';" onmousedown="this.style.transform='scale(0.98)';">LOGIN</button>
+    <div style="text-align: center; min-width: 200px; margin: 10px;">
+      <div id="login-stat-streak" style="font-size: 100px; font-weight: 900; font-family: 'Share Tech', sans-serif; color: #fff;">0</div>
+      <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #fff;">Streak Days</div>
+    </div>
+  </div>
+
+  <!-- Centered Login Card -->
+  <div class="login-card" style="position: relative; z-index: 10; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 20px; padding: 40px; width: 90%; max-width: 420px; box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4); text-align: center;">
+    <div style="margin-bottom: 28px;">
+      <h1 style="font-family: 'Share Tech', sans-serif; font-size: 36px; font-weight: bold; color: #FFD700; letter-spacing: 2px; margin: 0 0 6px 0; text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);">SHUBxCOLD</h1>
+      <p style="font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin: 0;">318-Day NEET 2027 Planner</p>
+    </div>
+    <div style="margin-bottom: 18px; text-align: left;">
+      <label style="display: block; color: rgba(255, 255, 255, 0.6); font-size: 11px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Username</label>
+      <input type="text" id="login-username" placeholder="Username" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#FFD700'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+    </div>
+    <div style="margin-bottom: 24px; text-align: left;">
+      <label style="display: block; color: rgba(255, 255, 255, 0.6); font-size: 11px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Password</label>
+      <input type="password" id="login-password" placeholder="Password" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#FFD700'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+    </div>
+    <button onclick="handleLogin()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #FFD700, #FFA500); border: none; border-radius: 8px; color: #000; font-size: 15px; font-weight: bold; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-transform: uppercase; letter-spacing: 1px;" onmouseover="this.style.transform='scale(1.02)';" onmouseout="this.style.transform='scale(1)';" onmousedown="this.style.transform='scale(0.98)';">LOGIN</button>
     <p id="login-error" style="color: #ff6b6b; font-size: 13px; margin-top: 16px; display: none; font-weight: 500;"></p>
   </div>
 </div>
 
-
-
-  <!-- Navigation Drawer Overlay -->
-  <div id="drawer-overlay" class="drawer-overlay" onclick="toggleMenu()"></div>
-
-  <!-- Navigation Drawer -->
-  <div id="nav-drawer" class="nav-drawer">
-    <div class="drawer-header">
-      <h2>Menu</h2>
-      <button class="close-btn" onclick="toggleMenu()">&times;</button>
+<div class="app-layout">
+  <!-- Persistent Left Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-full">SHUBxCOLD</span>
+      <span class="brand-short">SC</span>
     </div>
-    <div class="drawer-menu">
-      <button class="drawer-item active" data-tab="overview" onclick="navigateTab('overview')">Overview</button>
-      <button class="drawer-item" data-tab="calendar" onclick="navigateTab('calendar')">Day-by-Day</button>
-      <button class="drawer-item" data-tab="timing" onclick="navigateTab('timing')">Daily Timing</button>
-      <button class="drawer-item" data-tab="chapters" onclick="navigateTab('chapters')">Chapters Guide</button>
-      <button class="drawer-item" data-tab="tests" onclick="navigateTab('tests')">Tests & Mocks</button>
-      <button class="drawer-item" data-tab="strategy" onclick="navigateTab('strategy')">Strategy Hub</button>
-      <button class="drawer-item" data-tab="tracker" onclick="navigateTab('tracker')">Daily Tracker</button>
-      <button class="drawer-item" data-tab="analytics" onclick="navigateTab('analytics')">Real-time Analytics</button>
-      <button class="drawer-item" data-tab="papers" onclick="navigateTab('papers')">Yearly Papers</button>
-      <button class="drawer-item" data-tab="ai-test" onclick="navigateTab('ai-test')">🤖 AI CBT Generator</button>
-      <button class="drawer-item" data-tab="settings" onclick="navigateTab('settings')">⚙️ Settings</button>
-    </div>
-  </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="overview" onclick="showTab('overview')">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Overview</span>
+      </button>
+      <button class="nav-item" data-tab="calendar" onclick="showTab('calendar')">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Day-by-Day</span>
+      </button>
+      <button class="nav-item" data-tab="timing" onclick="showTab('timing')">
+        <span class="nav-icon">⏱️</span>
+        <span class="nav-label">Daily Timing</span>
+      </button>
+      <button class="nav-item" data-tab="chapters" onclick="showTab('chapters')">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Chapters Guide</span>
+      </button>
+      <button class="nav-item" data-tab="tests" onclick="showTab('tests')">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Tests & Mocks</span>
+      </button>
+      <button class="nav-item" data-tab="strategy" onclick="showTab('strategy')">
+        <span class="nav-icon">💡</span>
+        <span class="nav-label">Strategy Hub</span>
+      </button>
+      <button class="nav-item" data-tab="tracker" onclick="showTab('tracker')">
+        <span class="nav-icon">🔥</span>
+        <span class="nav-label">Daily Tracker</span>
+      </button>
+      <button class="nav-item" data-tab="analytics" onclick="showTab('analytics')">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Analytics</span>
+      </button>
+      <button class="nav-item" data-tab="papers" onclick="showTab('papers')">
+        <span class="nav-icon">📄</span>
+        <span class="nav-label">Yearly Papers</span>
+      </button>
+      <button class="nav-item" data-tab="ai-test" onclick="showTab('ai-test')">
+        <span class="nav-icon">🤖</span>
+        <span class="nav-label">AI CBT</span>
+      </button>
+      <button class="nav-item" data-tab="settings" onclick="showTab('settings')">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+  </aside>
 
-  <!-- Classic Topbar Navigation -->
-  <div class="topbar">
-    <h1>SHUBxCOLD <span class="sub">June 19, 2026 → May 3, 2027</span></h1>
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')">Overview</button>
-      <button class="tab-btn" data-tab="calendar" onclick="showTab('calendar')">Day-by-Day</button>
-      <button class="tab-btn" data-tab="timing" onclick="showTab('timing')">Daily Timing</button>
-      <button class="tab-btn" data-tab="chapters" onclick="showTab('chapters')">Chapters Guide</button>
-      <button class="tab-btn" data-tab="tests" onclick="showTab('tests')">Tests & Mocks</button>
-      <button class="tab-btn" data-tab="strategy" onclick="showTab('strategy')">Strategy Hub</button>
-      <button class="tab-btn" data-tab="tracker" onclick="showTab('tracker')">Daily Tracker</button>
-      <button class="tab-btn" data-tab="analytics" onclick="showTab('analytics')">Real-time Analytics</button>
-      <button class="tab-btn" data-tab="papers" onclick="showTab('papers')">Yearly Papers</button>
-      <button class="tab-btn" data-tab="ai-test" onclick="showTab('ai-test')">🤖 AI CBT</button>
-      <button class="tab-btn" data-tab="settings" onclick="showTab('settings')">⚙️ Settings</button>
-    </div>
-    <button class="hamburger-btn" onclick="toggleMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
+  <!-- Content Area -->
+  <div class="content-area">
+    <!-- Restructured Topbar -->
+    <header class="topbar">
+      <h1 id="topbar-page-title" style="margin:0; font-family:var(--font-mono); font-size:22px; color:var(--primary);">Overview</h1>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 16px;">
+        <span class="sub-date" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">June 19, 2026 → May 3, 2027</span>
+        <button id="theme-toggle-btn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 14px; cursor:pointer;" onclick="toggleTheme()">☀️</button>
+      </div>
+    </header>
   <!-- Main Area -->
   <main class="main-wrapper">
 
@@ -82,6 +119,40 @@
       <div class="page-header">
         <h1 class="page-title">Preparation Overview</h1>
         <p class="page-desc">Your customized 318-day timeline to achieve NEET 2027 success.</p>
+      </div>
+
+      <!-- Today's Plan Hero Card -->
+      <div class="glass-card hero-card" style="margin-bottom: 24px; border-left: 5px solid var(--primary); background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(12, 18, 34, 0.85)); padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-bottom: 1px solid var(--border-color); padding-bottom:12px; margin-bottom:12px;">
+          <div>
+            <span style="font-size:11px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:1px;">Today's Target Plan</span>
+            <h2 id="hero-day-title" style="margin:4px 0 0 0; font-family: var(--font-mono); font-size:22px; color: var(--text-primary);">Day -- — --</h2>
+          </div>
+          <div id="hero-badges" style="display:flex; gap:8px;">
+            <!-- Time Badges populated dynamically -->
+          </div>
+        </div>
+        
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
+          <div class="hero-subject-block">
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+              <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics</span>
+            </div>
+            <p id="hero-phy-topic" style="margin:0; font-weight:600; font-size:13px; color:var(--text-primary);">Loading topic...</p>
+          </div>
+          <div class="hero-subject-block">
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+              <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chemistry</span>
+            </div>
+            <p id="hero-che-topic" style="margin:0; font-weight:600; font-size:13px; color:var(--text-primary);">Loading topic...</p>
+          </div>
+          <div class="hero-subject-block">
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+              <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Biology</span>
+            </div>
+            <p id="hero-bio-topic" style="margin:0; font-weight:600; font-size:13px; color:var(--text-primary);">Loading topic...</p>
+          </div>
+        </div>
       </div>
 
       <div class="stats-grid">
@@ -222,13 +293,13 @@
           <table>
             <thead>
               <tr>
-                <th style="width:70px;">Day</th>
-                <th style="width:100px;">Date</th>
-                <th style="width:100px;">Type</th>
-                <th>Physics Tasks</th>
-                <th>Chemistry Tasks</th>
-                <th>Biology Tasks</th>
-                <th style="width:70px; text-align:center;">Done</th>
+                <th style="width:70px;" class="sortable" onclick="sortTable(this, 0, true)">Day</th>
+                <th style="width:100px;" class="sortable" onclick="sortTable(this, 1)">Date</th>
+                <th style="width:100px;" class="sortable" onclick="sortTable(this, 2)">Type</th>
+                <th class="sortable" onclick="sortTable(this, 3)">Physics Tasks</th>
+                <th class="sortable" onclick="sortTable(this, 4)">Chemistry Tasks</th>
+                <th class="sortable" onclick="sortTable(this, 5)">Biology Tasks</th>
+                <th style="width:70px; text-align:center;" class="sortable" onclick="sortTable(this, 6)">Done</th>
               </tr>
             </thead>
             <tbody id="cal-body"></tbody>
@@ -286,10 +357,10 @@
           <table>
             <thead>
               <tr>
-                <th style="width:150px;">Subject</th>
-                <th>Chapter Name</th>
-                <th style="width:100px; text-align:center;">Weight</th>
-                <th style="width:260px; text-align:center;">3-Step Progress</th>
+                <th style="width:150px;" class="sortable" onclick="sortTable(this, 0)">Subject</th>
+                <th class="sortable" onclick="sortTable(this, 1)">Chapter Name</th>
+                <th style="width:100px; text-align:center;" class="sortable" onclick="sortTable(this, 2)">Weight</th>
+                <th style="width:260px; text-align:center;" class="sortable" onclick="sortTable(this, 3)">3-Step Progress</th>
                 <th style="width:160px; text-align:center;">Action</th>
               </tr>
             </thead>
@@ -305,10 +376,10 @@
           <table>
             <thead>
               <tr>
-                <th style="width:150px;">Subject</th>
-                <th>Chapter Name</th>
-                <th style="width:100px; text-align:center;">Weight</th>
-                <th style="width:260px; text-align:center;">3-Step Progress</th>
+                <th style="width:150px;" class="sortable" onclick="sortTable(this, 0)">Subject</th>
+                <th class="sortable" onclick="sortTable(this, 1)">Chapter Name</th>
+                <th style="width:100px; text-align:center;" class="sortable" onclick="sortTable(this, 2)">Weight</th>
+                <th style="width:260px; text-align:center;" class="sortable" onclick="sortTable(this, 3)">3-Step Progress</th>
                 <th style="width:160px; text-align:center;">Action</th>
               </tr>
             </thead>
@@ -332,15 +403,19 @@
         </p>
       </div>
 
+      <div class="glass-card" style="margin-top: 16px; margin-bottom: 16px;">
+        <input type="text" id="test-srch" class="form-control" placeholder="Search test day, date, or syllabus..." oninput="renderTestList()">
+      </div>
+
       <div class="glass-card" style="padding:0; overflow:hidden;">
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th style="width:80px;">Day</th>
-                <th style="width:100px;">Date</th>
-                <th>Test Details</th>
-                <th style="width:100px; text-align:center;">Mark Done</th>
+                <th style="width:80px;" class="sortable" onclick="sortTable(this, 0, true)">Day</th>
+                <th style="width:100px;" class="sortable" onclick="sortTable(this, 1)">Date</th>
+                <th class="sortable" onclick="sortTable(this, 2)">Test Details</th>
+                <th style="width:100px; text-align:center;" class="sortable" onclick="sortTable(this, 3)">Mark Done</th>
               </tr>
             </thead>
             <tbody id="test-list-body"></tbody>
@@ -466,6 +541,25 @@
           </div>
         </div>
       </div>
+
+      <!-- Study Heatmap -->
+      <div class="glass-card" style="margin-top: 24px;">
+        <h2 style="margin-top:0; margin-bottom: 12px;">Study Consistency Heatmap</h2>
+        <div style="overflow-x: auto; white-space: nowrap;">
+          <div id="study-heatmap-container" style="display: inline-block; padding: 10px 0;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center; font-size: 11px; color: var(--text-muted); margin-top: 10px;">
+          <span>Less</span>
+          <div style="width: 12px; height: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.05); border-radius: 2px;"></div> <!-- 0h -->
+          <div style="width: 12px; height: 12px; background: #e0f2fe; border-radius: 2px;"></div> <!-- 1-2h -->
+          <div style="width: 12px; height: 12px; background: #7dd3fc; border-radius: 2px;"></div> <!-- 2-4h -->
+          <div style="width: 12px; height: 12px; background: #0284c7; border-radius: 2px;"></div> <!-- 4-6h -->
+          <div style="width: 12px; height: 12px; background: #0369a1; border-radius: 2px;"></div> <!-- 6h+ -->
+          <span>More</span>
+        </div>
+      </div>
     </section>
 
     <!-- 8. REAL-TIME ANALYTICS TAB -->
@@ -496,34 +590,40 @@
       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:24px; margin-bottom:24px;">
         <!-- Syllabus progress -->
         <div class="glass-card">
-          <h2 style="margin-top:0;">Subject Syllabus Coverage</h2>
-          <div style="display:flex; flex-direction:column; gap:16px;">
-            <div>
-              <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600;">
-                <span style="color:var(--phy);">Physics</span>
-                <span id="progress-phy-text">0%</span>
+          <h2 style="margin-top:0; margin-bottom: 20px;">Subject Syllabus Coverage</h2>
+          <div style="display:flex; justify-content:space-around; align-items:center; gap:16px; flex-wrap:wrap; padding: 10px 0;">
+            <!-- Physics -->
+            <div style="text-align:center;">
+              <div style="position:relative; width:90px; height:90px; margin:0 auto 8px;">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                  <circle cx="45" cy="45" r="38" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="none"></circle>
+                  <circle id="progress-phy-circle" cx="45" cy="45" r="38" stroke="var(--phy)" stroke-width="8" fill="none" stroke-dasharray="238.76" stroke-dashoffset="238.76" stroke-linecap="round" transform="rotate(-90 45 45)"></circle>
+                </svg>
+                <div id="progress-phy-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:16px; font-weight:800; color:var(--text-primary);">0%</div>
               </div>
-              <div class="progress-bar-glow">
-                <div id="progress-phy-bar" class="progress-fill-glow" style="width:0%; background:var(--phy);"></div>
-              </div>
+              <span class="subject-badge badge-phy" style="padding: 2px 8px; font-size: 10px;">⚡ Physics</span>
             </div>
-            <div>
-              <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600;">
-                <span style="color:var(--che);">Chemistry</span>
-                <span id="progress-chem-text">0%</span>
+            <!-- Chemistry -->
+            <div style="text-align:center;">
+              <div style="position:relative; width:90px; height:90px; margin:0 auto 8px;">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                  <circle cx="45" cy="45" r="38" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="none"></circle>
+                  <circle id="progress-chem-circle" cx="45" cy="45" r="38" stroke="var(--che)" stroke-width="8" fill="none" stroke-dasharray="238.76" stroke-dashoffset="238.76" stroke-linecap="round" transform="rotate(-90 45 45)"></circle>
+                </svg>
+                <div id="progress-chem-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:16px; font-weight:800; color:var(--text-primary);">0%</div>
               </div>
-              <div class="progress-bar-glow">
-                <div id="progress-chem-bar" class="progress-fill-glow" style="width:0%; background:var(--che);"></div>
-              </div>
+              <span class="subject-badge badge-che" style="padding: 2px 8px; font-size: 10px;">🧪 Chemistry</span>
             </div>
-            <div>
-              <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600;">
-                <span style="color:var(--bio);">Biology</span>
-                <span id="progress-bio-text">0%</span>
+            <!-- Biology -->
+            <div style="text-align:center;">
+              <div style="position:relative; width:90px; height:90px; margin:0 auto 8px;">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                  <circle cx="45" cy="45" r="38" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="none"></circle>
+                  <circle id="progress-bio-circle" cx="45" cy="45" r="38" stroke="var(--bio)" stroke-width="8" fill="none" stroke-dasharray="238.76" stroke-dashoffset="238.76" stroke-linecap="round" transform="rotate(-90 45 45)"></circle>
+                </svg>
+                <div id="progress-bio-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:16px; font-weight:800; color:var(--text-primary);">0%</div>
               </div>
-              <div class="progress-bar-glow">
-                <div id="progress-bio-bar" class="progress-fill-glow" style="width:0%; background:var(--bio);"></div>
-              </div>
+              <span class="subject-badge badge-bio" style="padding: 2px 8px; font-size: 10px;">🧬 Biology</span>
             </div>
           </div>
         </div>
@@ -819,6 +919,63 @@
     </section>
 
   </main>
+  </div> <!-- end content-area -->
+</div> <!-- end app-layout -->
+
+  <!-- Floating Action Button -->
+  <button id="floating-add-btn" class="floating-btn" onclick="openQuickLog()" title="Log Study Session">+</button>
+
+  <!-- QUICK STUDY LOG MODAL -->
+  <div class="modal" id="quick-log-modal">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="close-btn" onclick="closeQuickLog()">✕</button>
+      <h2 style="margin-top:0;">Quick Log Study Session</h2>
+      <form id="quick-study-log-form" onsubmit="logQuickStudy(event)">
+        <div class="form-group">
+          <label for="quick-track-date">Date</label>
+          <input type="date" id="quick-track-date" class="form-control" required>
+        </div>
+        
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:15px;">
+          <div class="form-group">
+            <label for="quick-track-phy" style="color:var(--phy);">Physics (h)</label>
+            <input type="number" id="quick-track-phy" step="0.5" min="0" max="24" class="form-control" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label for="quick-track-chem" style="color:var(--che);">Chemistry (h)</label>
+            <input type="number" id="quick-track-chem" step="0.5" min="0" max="24" class="form-control" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label for="quick-track-bio" style="color:var(--bio);">Biology (h)</label>
+            <input type="number" id="quick-track-bio" step="0.5" min="0" max="24" class="form-control" placeholder="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="quick-track-mcqs">MCQs Solved</label>
+          <input type="number" id="quick-track-mcqs" min="0" class="form-control" placeholder="e.g. 50">
+        </div>
+
+        <div class="form-group">
+          <label for="quick-track-confidence">Confidence Level (1-5)</label>
+          <select id="quick-track-confidence" class="form-control">
+            <option value="5">⭐⭐⭐⭐⭐ Excellent (Crystal Clear)</option>
+            <option value="4">⭐⭐⭐⭐ Good (Minor doubts)</option>
+            <option value="3" selected>⭐⭐⭐ Average (Needs practice)</option>
+            <option value="2">⭐⭐ Weak (Struggling)</option>
+            <option value="1">⭐ Critical (Don't understand)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="quick-track-notes">Key Notes / Difficulties</label>
+          <textarea id="quick-track-notes" rows="3" class="form-control" placeholder="e.g. Weak in Mechanics formula..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; padding: 12px; font-weight:700;">Save Session</button>
+      </form>
+    </div>
+  </div>
 
   <!-- PYQ POPUP MODAL -->
   <div class="modal" id="pyq-modal">
