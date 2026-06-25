@@ -74,7 +74,7 @@ function safeSetSessionStorage(key, value) {
 
   // Check login state on load (temporarily bypassed for 24 hours)
   document.addEventListener('DOMContentLoaded', function() {
-    const bypassUntil = new Date(Date.UTC(2026, 5, 23, 4, 55, 10));
+    const bypassUntil = new Date(2026, 5, 29, 0, 0, 0); // June 29, 2026 local time
     const isBypassActive = new Date() < bypassUntil;
     
     if (isBypassActive || safeGetSessionStorage('neet_logged_in') === 'true') {
