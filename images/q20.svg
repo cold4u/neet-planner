@@ -1,0 +1,21 @@
+<svg width="220" height="140" viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; display:block; margin:0 auto;">
+  <!-- Support ceiling -->
+  <line x1="70" y1="15" x2="150" y2="15" stroke="#334155" stroke-width="3"/>
+  <line x1="110" y1="15" x2="110" y2="30" stroke="#475569" stroke-width="2"/>
+  
+  <!-- Pulley -->
+  <circle cx="110" cy="35" r="15" fill="#f8fafc" stroke="#334155" stroke-width="2.5"/>
+  <circle cx="110" cy="35" r="3" fill="#334155"/>
+  
+  <!-- Strings -->
+  <line x1="95" y1="35" x2="95" y2="80" stroke="#475569" stroke-width="1.5"/>
+  <line x1="125" y1="35" x2="125" y2="70" stroke="#475569" stroke-width="1.5"/>
+  
+  <!-- Mass 10 kg -->
+  <rect x="83" y="80" width="24" height="24" fill="#eff6ff" stroke="#2563eb" stroke-width="2" rx="2"/>
+  <text x="95" y="95" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#1e40af" text-anchor="middle" font-weight="bold">10 kg</text>
+  
+  <!-- Mass 6 kg -->
+  <rect x="113" y="70" width="24" height="20" fill="#fff1f2" stroke="#e11d48" stroke-width="2" rx="2"/>
+  <text x="125" y="83" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#9f1239" text-anchor="middle" font-weight="bold">6 kg</text>
+</svg>

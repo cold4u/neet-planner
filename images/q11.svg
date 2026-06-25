@@ -1,0 +1,34 @@
+<svg width="220" height="140" viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; display:block; margin:0 auto;">
+  <defs>
+    <radialGradient id="rgrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ddd6fe"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </radialGradient>
+    <linearGradient id="lgrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fed7aa"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Histone Octamer (Core) -->
+  <circle cx="100" cy="70" r="35" fill="url(#rgrad)" stroke="#7c3aed" stroke-width="2"/>
+  <text x="100" y="74" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff" text-anchor="middle" font-weight="bold">Histone Octamer</text>
+  
+  <!-- DNA wrapping threads -->
+  <!-- Back loop -->
+  <path d="M 68,54 C 65,30, 135,30, 132,54" fill="none" stroke="#10b981" stroke-width="4.5" stroke-linecap="round" opacity="0.6"/>
+  <!-- Front loop -->
+  <path d="M 68,54 C 65,95, 135,95, 132,54" fill="none" stroke="#10b981" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Second loop front -->
+  <path d="M 66,74 C 65,115, 135,115, 133,74" fill="none" stroke="#10b981" stroke-width="4.5" stroke-linecap="round"/>
+  
+  <!-- H1 Histone -->
+  <rect x="135" y="45" width="20" height="40" rx="6" fill="url(#lgrad)" stroke="#ea580c" stroke-width="2"/>
+  <text x="145" y="68" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#7c2d12" text-anchor="middle" font-weight="bold" transform="rotate(90,145,68)">H1</text>
+  
+  <!-- Label lines pointing to components -->
+  <!-- DNA label -->
+  <line x1="90" y1="102" x2="70" y2="122" stroke="#475569" stroke-width="1"/>
+  <circle cx="90" cy="102" r="2" fill="#475569"/>
+  <text x="50" y="125" font-family="Inter, system-ui, sans-serif" font-size="8" fill="#475569" font-weight="bold">DNA Thread</text>
+</svg>

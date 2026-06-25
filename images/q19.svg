@@ -1,0 +1,49 @@
+<svg width="220" height="140" viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; display:block; margin:0 auto;">
+  <defs>
+    <linearGradient id="glom" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fca5a5"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Glomerulus & Bowman Capsule -->
+  <circle cx="50" cy="40" r="14" fill="#fee2e2" stroke="#f87171" stroke-width="2"/>
+  <circle cx="50" cy="40" r="8" fill="url(#glom)"/>
+  
+  <!-- PCT -->
+  <path d="M 64,40 C 70,30, 85,25, 95,35 C 105,45, 90,55, 100,60" fill="none" stroke="#fbbf24" stroke-width="4.5" stroke-linecap="round"/>
+  
+  <!-- Loop of Henle -->
+  <!-- Descending limb -->
+  <line x1="100" y1="60" x2="100" y2="120" stroke="#60a5fa" stroke-width="3" stroke-linecap="round"/>
+  <!-- Hairpin bend -->
+  <path d="M 100,120 A 10 10 0 0 0 120,120" fill="none" stroke="#60a5fa" stroke-width="3"/>
+  <!-- Ascending limb -->
+  <line x1="120" y1="120" x2="120" y2="60" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- DCT -->
+  <path d="M 120,60 C 130,50, 140,40, 155,45 C 170,50, 160,65, 175,60" fill="none" stroke="#a7f3d0" stroke-width="4.5" stroke-linecap="round"/>
+  
+  <!-- Collecting Duct -->
+  <line x1="175" y1="60" x2="175" y2="130" stroke="#34d399" stroke-width="5" stroke-linecap="round"/>
+  
+  <!-- Label pointers -->
+  <!-- Bowman / Glomerulus (A) -->
+  <line x1="38" y1="28" x2="25" y2="15" stroke="#333" stroke-width="1"/>
+  <text x="22" y="12" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#dc2626">A</text>
+  
+  <!-- PCT (B) -->
+  <line x1="88" y1="30" x2="88" y2="12" stroke="#333" stroke-width="1"/>
+  <circle cx="88" cy="30" r="1.5" fill="#333"/>
+  <text x="88" y="10" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#d97706" text-anchor="middle">B</text>
+  
+  <!-- Loop of Henle (C) -->
+  <line x1="110" y1="100" x2="140" y2="100" stroke="#333" stroke-width="1"/>
+  <circle cx="110" cy="100" r="1.5" fill="#333"/>
+  <text x="145" y="104" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#2563eb">C</text>
+  
+  <!-- DCT / Collecting Duct (D) -->
+  <line x1="175" y1="90" x2="195" y2="90" stroke="#333" stroke-width="1"/>
+  <circle cx="175" cy="90" r="1.5" fill="#333"/>
+  <text x="200" y="94" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#059669">D</text>
+</svg>

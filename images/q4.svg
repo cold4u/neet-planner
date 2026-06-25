@@ -1,0 +1,22 @@
+<svg width="220" height="140" viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; display:block; margin:0 auto;">
+  <rect x="25" y="30" width="170" height="70" fill="none" stroke="#475569" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Resistor R -->
+  <rect x="50" y="22" width="20" height="16" fill="#f8fafc" stroke="#3b82f6" stroke-width="2"/>
+  <text x="60" y="15" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#1e3a8a" text-anchor="middle" font-weight="bold">R</text>
+  
+  <!-- Inductor L -->
+  <rect x="90" y="29" width="30" height="2" fill="#ffffff" stroke="#ffffff" stroke-width="2"/>
+  <path d="M90,30 C92,20 96,20 98,30 C100,20 104,20 106,30 C108,20 112,20 114,30 C116,20 120,20 120,30" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+  <text x="105" y="15" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#065f46" text-anchor="middle" font-weight="bold">L</text>
+  
+  <!-- Capacitor C -->
+  <rect x="145" y="29" width="10" height="2" fill="#ffffff" stroke="#ffffff" stroke-width="2"/>
+  <line x1="148" y1="20" x2="148" y2="40" stroke="#f43f5e" stroke-width="2.5"/>
+  <line x1="153" y1="20" x2="153" y2="40" stroke="#f43f5e" stroke-width="2.5"/>
+  <text x="151" y="15" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#9f1239" text-anchor="middle" font-weight="bold">C</text>
+  
+  <!-- AC Source -->
+  <circle cx="110" cy="100" r="12" fill="#f8fafc" stroke="#4f46e5" stroke-width="2"/>
+  <path d="M104,100 Q107,95 110,100 T116,100" fill="none" stroke="#4f46e5" stroke-width="2"/>
+  <text x="110" y="124" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#4338ca" text-anchor="middle" font-weight="bold">V = V₀ sin(ωt)</text>
+</svg>

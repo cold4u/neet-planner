@@ -1413,7 +1413,11 @@ function safeSetSessionStorage(key, value) {
       qs.forEach((q, qIdx) => {
         let diagHtml = '';
         if (q.diagram) {
-          diagHtml = `<div class="pyq-diagram" style="margin:16px 0; text-align:center;">${q.diagram}</div>`;
+          if (q.diagram.startsWith('images/') || q.diagram.startsWith('data:image') || q.diagram.startsWith('http')) {
+            diagHtml = `<div class="pyq-diagram" style="margin:16px 0; text-align:center;"><img src="${q.diagram}" style="max-width:100%; max-height:220px; border-radius:8px; border:1px solid #e2e8f0; padding:6px; background:#fff;" alt="Diagram"></div>`;
+          } else {
+            diagHtml = `<div class="pyq-diagram" style="margin:16px 0; text-align:center;">${q.diagram}</div>`;
+          }
         } else {
           const pDiag = getProceduralDiagram(chName, q.q, qIdx);
           diagHtml = `<div class="pyq-diagram" style="margin:16px 0; text-align:center;">${pDiag}</div>`;
@@ -2122,7 +2126,11 @@ function safeSetSessionStorage(key, value) {
         
         let diagramHtml = '';
         if (q.diagram) {
-          diagramHtml = `<div class="pyq-diagram" style="margin: 16px 0; text-align: center;">${q.diagram}</div>`;
+          if (q.diagram.startsWith('images/') || q.diagram.startsWith('data:image') || q.diagram.startsWith('http')) {
+            diagramHtml = `<div class="pyq-diagram" style="margin: 16px 0; text-align: center;"><img src="${q.diagram}" style="max-width:100%; max-height:220px; border-radius:8px; border:1px solid #e2e8f0; padding:6px; background:#fff;" alt="Diagram"></div>`;
+          } else {
+            diagramHtml = `<div class="pyq-diagram" style="margin: 16px 0; text-align: center;">${q.diagram}</div>`;
+          }
         } else {
           const pDiag = getProceduralDiagram(q.chapter || '', q.q, idx);
           diagramHtml = `<div class="pyq-diagram" style="margin: 16px 0; text-align: center;">${pDiag}</div>`;
