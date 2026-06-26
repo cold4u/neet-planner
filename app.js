@@ -1419,8 +1419,7 @@ function safeSetSessionStorage(key, value) {
             diagHtml = `<div class="pyq-diagram" style="margin:16px 0; text-align:center;">${q.diagram}</div>`;
           }
         } else {
-          const pDiag = getProceduralDiagram(chName, q.q, qIdx);
-          diagHtml = `<div class="pyq-diagram" style="margin:16px 0; text-align:center;">${pDiag}</div>`;
+          diagHtml = '';
         }
         html += `
         <div class="pyq-card" id="q-card-${qIdx}">
@@ -2132,8 +2131,7 @@ function safeSetSessionStorage(key, value) {
             diagramHtml = `<div class="pyq-diagram" style="margin: 16px 0; text-align: center;">${q.diagram}</div>`;
           }
         } else {
-          const pDiag = getProceduralDiagram(q.chapter || '', q.q, idx);
-          diagramHtml = `<div class="pyq-diagram" style="margin: 16px 0; text-align: center;">${pDiag}</div>`;
+          diagramHtml = '';
         }
         
         html += `

@@ -9353,7 +9353,7 @@
       ],
       "ans": 0,
       "exp": "Metaphase is characterized by all chromosomes aligning at the equator of the cell (metaphase plate) with spindle fibers from opposite poles attached to the kinetochores of sister chromatids.",
-      "diagram": "images/q2.svg"
+      "diagram": "images/q2.jpg"
     },
     {
       "year": "NEET 2010",
@@ -9522,7 +9522,7 @@
       ],
       "ans": 0,
       "exp": "The cell cycle is divided into Interphase (comprising G1, S, and G2 phases) and M-phase (mitosis/meiosis). The sequential order of phases is G1 (first growth gap) \u2192 S (DNA replication) \u2192 G2 (second growth gap) \u2192 M (division phase).",
-      "diagram": "images/q6.svg"
+      "diagram": "images/q6.png"
     },
     {
       "year": "NEET 2014",
@@ -9990,7 +9990,7 @@
       ],
       "ans": 0,
       "exp": "In Anaphase I, homologous chromosomes separate, while sister chromatids remain associated at their centromeres. In Anaphase II, sister chromatids separate.",
-      "diagram": "images/q25.svg"
+      "diagram": "images/q25.png"
     },
     {
       "year": "NEET 2025",
@@ -12078,7 +12078,7 @@
       ],
       "ans": 0,
       "exp": "Activation energy (Ea) is the minimum extra energy required by reactant molecules to form the transition state complex. Hence, Ea = E_transition_state - E_reactants.",
-      "diagram": "images/q15.svg"
+      "diagram": "images/q15.png"
     },
     {
       "year": "NEET 2020",
@@ -13007,7 +13007,7 @@
       ],
       "ans": 0,
       "exp": "For a balanced Wheatstone bridge: R1/R2 = R3/R4. In the given diagram, 10/20 = 2/X => 1/2 = 2/X => X = 4 \u03a9.",
-      "diagram": "images/q18.svg"
+      "diagram": "images/q18.png"
     },
     {
       "year": "NEET 2022",
@@ -14028,7 +14028,7 @@
       ],
       "ans": 0,
       "exp": "The resonant angular frequency is \u03c90 = 1 / \u221a(L*C). Substituting L = 1 H and C = 25 * 10\u207b\u2076 F gives \u03c90 = 1 / \u221a(25 * 10\u207b\u2076) = 1 / (5 * 10\u207b\u00b3) = 200 rad/s. Frequency f0 = \u03c90 / 2\u03c0 = 200 / (2 * 3.14159) \u2248 31.8 Hz \u2248 32 Hz.",
-      "diagram": "images/q4.svg"
+      "diagram": "images/q4.png"
     },
     {
       "year": "NEET 2013",
@@ -15607,7 +15607,7 @@
       ],
       "ans": 0,
       "exp": "Since the capacitor is split vertically down the middle, it acts as two capacitors connected in parallel. Each has plate area A/2 and separation d. C1 = K1 \u03b5\u2080 (A/2) / d; C2 = K2 \u03b5\u2080 (A/2) / d. C_eq = C1 + C2 = (\u03b5\u2080 A / 2d) * (K1 + K2).",
-      "diagram": "images/q8.svg"
+      "diagram": "images/q8.png"
     },
     {
       "year": "NEET 2016",
@@ -19329,7 +19329,7 @@
       ],
       "ans": 0,
       "exp": "Antigen-binding sites are located at the variable (V) regions of both the heavy (H) and light (L) chains at the N-terminal ends of the antibody arm, providing specificity for binding.",
-      "diagram": "images/q17.svg"
+      "diagram": "images/q17.png"
     },
     {
       "year": "NEET 2021",
@@ -21288,7 +21288,7 @@
       ],
       "ans": 0,
       "exp": "For equilibrium, the forces parallel to the incline must balance. Tension T = Mg. Along the incline: T = mg sin 30\u00b0 => Mg = mg * 0.5 => m/M = 2.",
-      "diagram": "images/q10.svg"
+      "diagram": "images/q10.png"
     },
     {
       "year": "NEET 2018",
@@ -21327,7 +21327,7 @@
       ],
       "ans": 0,
       "exp": "Resolving gravity components: mg sin \u03b8 acts parallel to the incline causing acceleration, and mg cos \u03b8 acts perpendicular to the incline. In the perpendicular direction, the block is in equilibrium, so Normal force N = mg cos \u03b8.",
-      "diagram": "images/q12.svg"
+      "diagram": ""
     },
     {
       "year": "NEET 2019",
@@ -21366,7 +21366,7 @@
       ],
       "ans": 0,
       "exp": "At the highest point, the vertical component of velocity (vy) becomes zero due to gravity, while the horizontal component (vx = 3 m/s) remains constant throughout the flight. Hence, the velocity vector is 3i m/s.",
-      "diagram": "images/q14.svg"
+      "diagram": ""
     },
     {
       "year": "NEET 2020",
@@ -25505,7 +25505,7 @@
       ],
       "ans": 0,
       "exp": "A nucleosome is composed of negatively charged DNA wrapped around a positively charged histone octamer. Histone H1 (labeled H1) acts as a linker histone keeping the DNA thread securely locked in place.",
-      "diagram": "images/q11.svg"
+      "diagram": "images/q11.png"
     },
     {
       "year": "NEET 2018",
@@ -25752,7 +25752,7 @@
       ],
       "ans": 0,
       "exp": "Label A is the leading strand which is synthesized continuously in the 5' to 3' direction. Label B represents Okazaki fragments on the lagging strand synthesized discontinuously. Label C represents DNA Polymerase/Helicase.",
-      "diagram": "images/q23.svg"
+      "diagram": "images/q23.png"
     },
     {
       "year": "NEET 2024",
@@ -33007,7 +33007,7 @@
       ],
       "ans": 0,
       "exp": "For an equilateral prism, A = 60\u00b0. Refractive index \u03bc = sin((A + \u03b4)/2) / sin(A/2). Given \u03bc = \u221a2 and A = 60\u00b0, we get \u221a2 = sin((60 + \u03b4)/2) / sin(30\u00b0) => sin((60 + \u03b4)/2) = \u221a2 * 0.5 = 1/\u221a2 => (60 + \u03b4)/2 = 45\u00b0 => 60 + \u03b4 = 90\u00b0 => \u03b4 = 30\u00b0.",
-      "diagram": "images/q24.svg"
+      "diagram": "images/q24.png"
     },
     {
       "year": "NEET 2025",
@@ -33425,7 +33425,7 @@
       ],
       "ans": 0,
       "exp": "In a Zn-Cu galvanic cell, Zinc undergoes oxidation at the anode (Zn \u2192 Zn\u00b2\u207a + 2e\u207b). The generated electrons flow through the external circuit from the anode (Zn) to the cathode (Cu) where reduction of Cu\u00b2\u207a ions takes place.",
-      "diagram": "images/q21.svg"
+      "diagram": "images/q21.png"
     },
     {
       "year": "NEET 2023",
@@ -34587,7 +34587,7 @@
       ],
       "ans": 0,
       "exp": "Label A points to grana/thylakoids where light absorption, water photolysis, and ATP/NADPH synthesis (light reactions) occur. Label B points to the stroma where carbon dioxide fixation (dark reactions) takes place.",
-      "diagram": "images/q13.svg"
+      "diagram": "images/q13.jpg"
     },
     {
       "year": "NEET 2019",
@@ -35579,7 +35579,7 @@
       ],
       "ans": 1,
       "exp": "A NAND gate followed by a NOT gate behaves as an AND gate. For inputs A=1 and B=0, output Y = A \u2022 B = 1 \u2022 0 = 0.",
-      "diagram": "images/q16.svg"
+      "diagram": "images/q16.png"
     },
     {
       "year": "NEET 2021",
@@ -35670,7 +35670,7 @@
       ],
       "ans": 0,
       "exp": "The circuit contains two NOT gates leading to a NOR gate. The inputs to the NOR gate are A' and B'. The output is Y = (A' + B')' = A'' \u2022 B'' = A \u2022 B. This represents an AND gate.",
-      "diagram": "images/q22.svg"
+      "diagram": "images/q22.png"
     },
     {
       "year": "NEET 2024",
@@ -38665,7 +38665,7 @@
       ],
       "ans": 0,
       "exp": "Least count LC = 1 MSD - 1 VSD = 1 mm - 0.9 mm = 0.1 mm. Reading = Main Scale Reading + (Vernier scale division coinciding * LC) = 3 mm + 3 * 0.1 mm = 3.3 mm.",
-      "diagram": "images/q1.svg"
+      "diagram": ""
     },
     {
       "year": "NEET 2010",
@@ -39109,7 +39109,7 @@
       ],
       "ans": 0,
       "exp": "Fringe width \u03b2 = \u03bb D / d. If d' = d/2 and D' = 2D, the new fringe width is \u03b2' = \u03bb (2D) / (d/2) = 4 (\u03bb D / d) = 4 \u03b2. Hence, the fringe width becomes 4 times.",
-      "diagram": "images/q3.svg"
+      "diagram": ""
     },
     {
       "year": "NEET 2012",
@@ -39997,7 +39997,7 @@
       ],
       "ans": 0,
       "exp": "Maximum static friction f_max = \u03bcs * m * g = 0.4 * 2 kg * 10 m/s\u00b2 = 8 N. Since the applied force (5 N) is less than f_max, the block remains in static equilibrium. The friction force must exactly balance the applied force, hence f = 5 N.",
-      "diagram": "images/q5.svg"
+      "diagram": ""
     },
     {
       "year": "NEET 2014",
@@ -40231,7 +40231,7 @@
       ],
       "ans": 0,
       "exp": "Using Newton's Second Law for Atwood machine: a = (m1 - m2)g / (m1 + m2). Substituting m1 = 10 kg, m2 = 6 kg, and g = 10 m/s\u00b2 gives a = (10 - 6)*10 / (10 + 6) = 40 / 16 = 2.5 m/s\u00b2.",
-      "diagram": "images/q20.svg"
+      "diagram": "images/q20.png"
     },
     {
       "year": "NEET 2023",
