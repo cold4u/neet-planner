@@ -3261,6 +3261,11 @@ function initOnLoad() {
   }
 }
 
+function closeWelcomeSummary() {
+  const modal = document.getElementById('welcome-summary-modal');
+  if (modal) modal.classList.remove('active');
+}
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initOnLoad);
 } else {
@@ -3282,6 +3287,7 @@ window.closeQuickLog = closeQuickLog;
 window.logQuickStudy = logQuickStudy;
 window.sortTable = sortTable;
 window.toggleTheme = toggleTheme;
+window.closeWelcomeSummary = closeWelcomeSummary;
 window.showToast = showToast;
 
 function saveApiKey() {
