@@ -2639,6 +2639,64 @@ tag in <head>
   opacity: 0.8;
 }
 
+/* ── Emotional Support card ── */
+.support-emotional-card {
+  flex: 1 1 100%;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(239, 68, 68, 0.15); /* warm red tint border */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.support-emotional-card::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, transparent 70%); /* warm red glow */
+  pointer-events: none;
+}
+.support-emotional-badge {
+  display: inline-block;
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  margin-bottom: 12px;
+}
+.support-emotional-insta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.93rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 15px rgba(238, 42, 123, 0.25);
+  border: none;
+  cursor: pointer;
+}
+.support-emotional-insta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(238, 42, 123, 0.45);
+  color: #ffffff;
+}
+
 /* ── Mobile responsive ── */
 @media (max-width: 640px) {
   .support-wrapper   { flex-direction: column; gap: 20px; }
