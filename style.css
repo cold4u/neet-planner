@@ -46,6 +46,57 @@
   --bio-light: #FCEBEB;
 }
 
+body.theme-midnight-cyber {
+  --bg-base: #030008;
+  --bg-surface: #0a0314;
+  --bg-surface-hover: #160a2c;
+  --bg-glass: rgba(10, 3, 20, 0.65);
+  --primary: #00f2fe;
+  --primary-hover: #4facfe;
+  --primary-glow: rgba(0, 242, 254, 0.12);
+  --primary-glow-thick: rgba(0, 242, 254, 0.25);
+  --secondary: #f35588;
+  --secondary-glow: rgba(243, 85, 136, 0.12);
+  --accent-success: #00ff87;
+  --accent-success-glow: rgba(0, 255, 135, 0.12);
+  --accent-danger: #ff007f;
+  --accent-danger-glow: rgba(255, 0, 127, 0.12);
+}
+
+body.theme-forest-mint {
+  --bg-base: #040807;
+  --bg-surface: #0a1110;
+  --bg-surface-hover: #12201e;
+  --bg-glass: rgba(10, 17, 16, 0.65);
+  --primary: #00d4aa;
+  --primary-hover: #05b08e;
+  --primary-glow: rgba(0, 212, 170, 0.12);
+  --primary-glow-thick: rgba(0, 212, 170, 0.25);
+  --secondary: #e2b4bd;
+  --secondary-glow: rgba(226, 180, 189, 0.12);
+  --accent-success: #52b788;
+  --accent-success-glow: rgba(82, 183, 136, 0.12);
+  --accent-danger: #f26419;
+  --accent-danger-glow: rgba(242, 100, 25, 0.12);
+}
+
+body.theme-deep-cosmos {
+  --bg-base: #02020a;
+  --bg-surface: #08081a;
+  --bg-surface-hover: #121235;
+  --bg-glass: rgba(8, 8, 26, 0.65);
+  --primary: #ff9f1c;
+  --primary-hover: #ffbf69;
+  --primary-glow: rgba(255, 159, 28, 0.12);
+  --primary-glow-thick: rgba(255, 159, 28, 0.25);
+  --secondary: #9d4edd;
+  --secondary-glow: rgba(157, 78, 221, 0.12);
+  --accent-success: #4cc9f0;
+  --accent-success-glow: rgba(76, 201, 240, 0.12);
+  --accent-danger: #ff5d8f;
+  --accent-danger-glow: rgba(255, 93, 143, 0.12);
+}
+
 body.light-mode {
   --bg-base: #f8fafc;
   --bg-surface: #ffffff;
@@ -2707,4 +2758,104 @@ tag in <head>
   .support-qr-card   { flex: 1 1 auto; width: 100%; }
   .support-stat-num  { font-size: 1.3rem; }
   .support-heading   { font-size: 1.25rem; }
+}
+
+/* FLASHCARDS TAB STYLING */
+.flashcards-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+.flashcard-card-outer {
+  perspective: 1000px;
+  width: 100%;
+  height: 320px;
+  cursor: pointer;
+}
+.flashcard-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flashcard-card-outer.flipped .flashcard-card-inner {
+  transform: rotateY(180deg);
+}
+.flashcard-front, .flashcard-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-smooth);
+}
+.flashcard-front {
+  color: var(--text-primary);
+}
+.flashcard-back {
+  color: var(--text-primary);
+  transform: rotateY(180deg);
+  border-color: var(--primary-glow-thick);
+}
+.flashcard-deck-select {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  outline: none;
+}
+.flashcard-controls {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+}
+/* Micro-animations and hover transitions */
+.glass-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.glass-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-glow-thick);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Confetti particles */
+.confetti-particle {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 50%;
+  animation: confettiFall 2.5s ease-out forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--x), var(--y), 0) rotate(720deg);
+    opacity: 0;
+  }
 }

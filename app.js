@@ -419,6 +419,37 @@ function safeSetSessionStorage(key, value) {
     // Real Yearly Papers (exact questions with diagrams)
     let REAL_YEARLY_PAPERS = {};
 
+    // Global variables for Error Book & Flashcards (declared at top to prevent TDZ errors)
+    let errorBookItems = [];
+    try {
+      errorBookItems = JSON.parse(safeGetLocalStorage('neet_v3_errorbook_items') || '[]');
+    } catch(e){}
+    let currentDeckKey = 'physics';
+    let currentCardIdx = 0;
+    const FLASHCARD_DECKS = {
+      physics: [
+        { q: "What is the value of Rydberg Constant (R)?", a: "1.097 × 10^7 m^-1", cat: "Physics" },
+        { q: "Formula for drift velocity of electrons (v_d)?", a: "v_d = I / (n * e * A)", cat: "Physics" },
+        { q: "What is the formula for De Broglie Wavelength?", a: "λ = h / p = h / (m * v)", cat: "Physics" },
+        { q: "What is the value of permittivity of free space (ε_0)?", a: "8.854 × 10^-12 F/m (or C^2 N^-1 m^-2)", cat: "Physics" },
+        { q: "Formula for focal length of a lens in medium (Lens Maker's Formula)?", a: "1/f = (μ_rel - 1) * (1/R_1 - 1/R_2)", cat: "Physics" }
+      ],
+      chemistry: [
+        { q: "Reagent used in Rosenmund Reduction?", a: "H_2 / Pd-BaSO_4 (Palladium on barium sulfate poisoned with quinoline)", cat: "Chemistry" },
+        { q: "What organic reaction converts phenol to salicylaldehyde?", a: "Reimer-Tiemann Reaction (using CHCl_3 + aqueous NaOH)", cat: "Chemistry" },
+        { q: "Reagent used in Tollens' Test?", a: "Ammoniacal Silver Nitrate solution [Ag(NH_3)_2]+", cat: "Chemistry" },
+        { q: "What reaction is used to prepare primary amines from primary amides?", a: "Hoffmann Bromamide Degradation (using Br_2 + NaOH/KOH)", cat: "Chemistry" },
+        { q: "What catalyst is used in Ziegler-Natta polymerization?", a: "TiCl_4 + Al(C_2H_5)_3 (Titanium tetrachloride + Triethylaluminium)", cat: "Chemistry" }
+      ],
+      biology: [
+        { q: "Example of a Haplontic Life Cycle?", a: "Volvox, Spirogyra, and some species of Chlamydomonas", cat: "Biology" },
+        { q: "Name the non-membranous organelle found in animal cells that helps in cell division.", a: "Centrosome (containing Centrioles)", cat: "Biology" },
+        { q: "Example of a hormone-releasing IUD?", a: "Progestasert and LNG-20", cat: "Biology" },
+        { q: "Which NCERT example represents an egg-laying mammal (Monotreme)?", a: "Ornithorhynchus (Platypus)", cat: "Biology" },
+        { q: "What is the key respiratory pigment in earthworms?", a: "Hemoglobin dissolved in plasma (Earthworms have closed circulatory system)", cat: "Biology" }
+      ]
+    };
+
     // Asynchronously fetch databases for faster page load
     Promise.all([
       fetch('pyq_bank.json').then(res => {
@@ -825,7 +856,7 @@ function safeSetSessionStorage(key, value) {
         return '';
       }
       
-      function cellHtml(text, note, subject, chapName) {
+      function cellHtml(text, note, subject, chapName, dayNum) {
         if (!text) return '<span style="color:var(--text-muted);">—</span>';
         const isRev = text.startsWith('REV: ');
         const ch = isRev ? text.slice(5) : text;
@@ -847,6 +878,14 @@ function safeSetSessionStorage(key, value) {
           if (subject === 'che') subBadge = '<span class="subject-badge badge-che" style="padding:1.5px 5px; font-size:8.5px; margin-bottom:4px; display:inline-flex;">🧪 Chem</span><br>';
           if (subject === 'bio') subBadge = '<span class="subject-badge badge-bio" style="padding:1.5px 5px; font-size:8.5px; margin-bottom:4px; display:inline-flex;">🧬 Bio</span><br>';
         }
+
+        let backlogHtml = '';
+        if (dayNum && typeof getBacklogTasksForDay === 'function') {
+          const backlog = getBacklogTasksForDay(dayNum);
+          if (backlog && backlog[subject]) {
+            backlogHtml = `<div style="margin-top:6px; padding:4px 6px; border-radius:6px; background:rgba(248,113,113,0.06); border:1px dashed rgba(248,113,113,0.3); font-size:11px; color:var(--tertiary); font-weight:600; text-align:left; line-height:1.3;">⚠️ Backlog:<br><span style="font-weight:normal; opacity:0.85; font-size:10px;">${backlog[subject]}</span></div>`;
+          }
+        }
         
         return `<div class="ch-cell">
           ${isRev ? '<span style="font-size:9.5px; background:var(--primary-glow); color:var(--primary); padding:1px 4px; border-radius:3px; display:inline-block; margin-bottom:2px; font-weight:700;">REV</span><br>' : ''}
@@ -854,6 +893,7 @@ function safeSetSessionStorage(key, value) {
           <span class="ch-main">${ch}</span>${wtLabel}
           ${note ? `<div class="ch-sub">${note}</div>` : ''}
           ${pyqBtn}
+          ${backlogHtml}
         </div>`;
       }
       
@@ -865,9 +905,9 @@ function safeSetSessionStorage(key, value) {
           <td><span class="day-num" style="font-weight:700;">${r.day}</span></td>
           <td class="day-date">${r.date}</td>
           <td>${typeBadge(r.type)}</td>
-          <td>${cellHtml(r.phy, r.phyNote, 'phy', r.phyChap)}</td>
-          <td>${cellHtml(r.che, r.cheNote, 'che', r.cheChap)}</td>
-          <td>${cellHtml(r.bio, r.bioNote, 'bio', r.bioChap)}</td>
+          <td>${cellHtml(r.phy, r.phyNote, 'phy', r.phyChap, r.day)}</td>
+          <td>${cellHtml(r.che, r.cheNote, 'che', r.cheChap, r.day)}</td>
+          <td>${cellHtml(r.bio, r.bioNote, 'bio', r.bioChap, r.day)}</td>
           <td style="text-align:center;"><input type="checkbox" class="done-cb" ${isDone ? 'checked' : ''} onchange="toggleDone(${r.day})"></td>
         </tr>`;
       });
@@ -2225,6 +2265,43 @@ function safeSetSessionStorage(key, value) {
       const streak = calculateStreak();
       const elStreak = document.getElementById('over-streak');
       if (elStreak) elStreak.textContent = `${streak} Days`;
+
+      // Update topbar Streak & Rank
+      const topStreak = document.getElementById('user-streak');
+      if (topStreak) topStreak.textContent = streak;
+      
+      const topRank = document.getElementById('user-rank');
+      if (topRank) {
+        let rank = 'Aspirant';
+        const doneTotal = Object.values(done).filter(Boolean).length;
+        if (doneTotal > 300) rank = 'AIIMS Master';
+        else if (doneTotal > 100) rank = 'Ranker';
+        else if (doneTotal > 25) rank = 'Challenger';
+        
+        topRank.textContent = `Rank: ${rank}`;
+        // Update badge styling based on rank
+        topRank.className = 'subject-badge';
+        if (rank === 'AIIMS Master') {
+          topRank.classList.add('badge-bio');
+          topRank.style.background = 'rgba(226, 75, 74, 0.15)';
+          topRank.style.color = '#E24B4A';
+          topRank.style.border = '1px solid #E24B4A';
+        } else if (rank === 'Ranker') {
+          topRank.classList.add('badge-che');
+          topRank.style.background = 'rgba(52, 211, 153, 0.15)';
+          topRank.style.color = '#34d399';
+          topRank.style.border = '1px solid #34d399';
+        } else if (rank === 'Challenger') {
+          topRank.classList.add('badge-phy');
+          topRank.style.background = 'rgba(96, 165, 250, 0.15)';
+          topRank.style.color = '#60a5fa';
+          topRank.style.border = '1px solid #60a5fa';
+        } else {
+          topRank.style.background = 'rgba(255, 255, 255, 0.05)';
+          topRank.style.color = 'var(--text-secondary)';
+          topRank.style.border = '1px solid var(--border-color)';
+        }
+      }
       
       // Total Hours
       let totalH = 0;
@@ -3395,6 +3472,17 @@ function updateTodayPlanCard() {
       if (heroPhy) heroPhy.innerHTML = `<div>Pre-Study: Physics foundations</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">Plan officially begins on 29 June. Check the Day-by-Day calendar tab below for the full schedule.</div>`;
       if (heroChe) heroChe.innerHTML = `<div>Pre-Study: Chemistry fundamentals</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">Prepare your NCERT textbooks and notebooks.</div>`;
       if (heroBio) heroBio.innerHTML = `<div>Pre-Study: Biology overview</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">Set up your daily schedule and rest up.</div>`;
+      
+      const circle = document.getElementById('today-progress-circle');
+      const pctText = document.getElementById('today-progress-pct');
+      const toggleBtn = document.getElementById('hero-toggle-done-btn');
+      if (circle && pctText) {
+        pctText.textContent = '0%';
+        circle.style.strokeDashoffset = 213.6;
+      }
+      if (toggleBtn) {
+        toggleBtn.style.display = 'none';
+      }
     } else {
       const r = PLAN.find(item => item.day === dayNum);
       if (r) {
@@ -3413,6 +3501,27 @@ function updateTodayPlanCard() {
         if (heroPhy) heroPhy.innerHTML = formatTopic(r.phy, r.phyNote);
         if (heroChe) heroChe.innerHTML = formatTopic(r.che, r.cheNote);
         if (heroBio) heroBio.innerHTML = formatTopic(r.bio, r.bioNote);
+
+        // Circular progress & button
+        const circle = document.getElementById('today-progress-circle');
+        const pctText = document.getElementById('today-progress-pct');
+        const toggleBtn = document.getElementById('hero-toggle-done-btn');
+        const isDone = done[r.day] || false;
+        const pctVal = isDone ? 100 : 0;
+        
+        if (circle && pctText) {
+          pctText.textContent = `${pctVal}%`;
+          const circumference = 213.6;
+          const offset = circumference - (pctVal / 100) * circumference;
+          circle.style.strokeDashoffset = offset;
+        }
+        if (toggleBtn) {
+          toggleBtn.style.display = 'inline-block';
+          toggleBtn.textContent = isDone ? '✓ Completed' : 'Mark Completed';
+          toggleBtn.style.background = isDone ? 'rgba(0, 212, 170, 0.15)' : 'var(--bg-surface)';
+          toggleBtn.style.color = isDone ? 'var(--accent-success)' : 'var(--text-primary)';
+          toggleBtn.style.borderColor = isDone ? 'rgba(0, 212, 170, 0.4)' : 'var(--border-color)';
+        }
       } else {
         const rDefault = PLAN[0];
         if (rDefault) {
@@ -3536,26 +3645,45 @@ function sortTable(thEl, colIdx, isNumeric = false) {
 }
 
 function toggleTheme() {
-  const isLight = document.body.classList.toggle('light-mode');
-  safeSetLocalStorage('theme', isLight ? 'light' : 'dark');
+  const currentTheme = safeGetLocalStorage('theme') || 'dark';
+  if (currentTheme === 'light') {
+    applyTheme('default-dark');
+  } else {
+    applyTheme('light');
+  }
+}
+
+function applyTheme(themeName) {
+  document.body.classList.remove('theme-midnight-cyber', 'theme-forest-mint', 'theme-deep-cosmos', 'light-mode');
+  
+  if (themeName === 'light') {
+    document.body.classList.add('light-mode');
+    safeSetLocalStorage('theme', 'light');
+  } else if (themeName === 'midnight-cyber') {
+    document.body.classList.add('theme-midnight-cyber');
+    safeSetLocalStorage('theme', 'midnight-cyber');
+  } else if (themeName === 'forest-mint') {
+    document.body.classList.add('theme-forest-mint');
+    safeSetLocalStorage('theme', 'forest-mint');
+  } else if (themeName === 'deep-cosmos') {
+    document.body.classList.add('theme-deep-cosmos');
+    safeSetLocalStorage('theme', 'deep-cosmos');
+  } else {
+    safeSetLocalStorage('theme', 'dark');
+  }
   
   const btn = document.getElementById('theme-toggle-btn');
   if (btn) {
-    btn.textContent = isLight ? '🌙' : '☀️';
+    btn.textContent = (themeName === 'light') ? '🌙' : '☀️';
   }
 }
 
 function loadTheme() {
-  const savedTheme = safeGetLocalStorage('theme');
-  const btn = document.getElementById('theme-toggle-btn');
-  if (savedTheme === 'light') {
-    document.body.classList.add('light-mode');
-    if (btn) btn.textContent = '🌙';
-  } else {
-    document.body.classList.remove('light-mode');
-    if (btn) btn.textContent = '☀️';
-  }
+  const savedTheme = safeGetLocalStorage('theme') || 'dark';
+  applyTheme(savedTheme);
 }
+
+window.applyTheme = applyTheme;
 
 function initOnLoad() {
   initAiDragAndDrop();
@@ -3625,6 +3753,9 @@ function initOnLoad() {
   } catch(e) {
     console.error("Error setting countdown interval:", e);
   }
+
+  try { renderErrorBookList(); } catch(e) { console.error("Error in renderErrorBookList:", e); }
+  try { loadSelectedFlashcardDeck(); } catch(e) { console.error("Error in loadSelectedFlashcardDeck:", e); }
 }
 
 function closeWelcomeSummary() {
@@ -3693,3 +3824,358 @@ function saveApiKey() {
 }
 
 window.saveApiKey = saveApiKey;
+
+
+/* ==========================================================================
+   ULTIMATE UPGRADE FEATURES: ERROR BOOK, FLASHCARDS, BACKLOG RESCUE & CONFETTI
+   ========================================================================== */
+
+// 1. CONFETTI EFFECT
+function triggerConfetti() {
+  const colors = ['#fbbf24', '#8b5cf6', '#10b981', '#f87171', '#00f2fe', '#f35588'];
+  const particleCount = 60;
+  
+  // Left corner launcher
+  launchConfetti(0, window.innerHeight, 45, colors, particleCount / 2);
+  // Right corner launcher
+  launchConfetti(window.innerWidth, window.innerHeight, 135, colors, particleCount / 2);
+}
+
+function launchConfetti(x, y, angleDeg, colors, count) {
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-particle';
+    
+    // Choose random color & size
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    p.style.backgroundColor = color;
+    const size = Math.floor(Math.random() * 8) + 6;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    
+    // Position at launcher
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    
+    // Randomize path velocities
+    const angleRad = (angleDeg + (Math.random() * 40 - 20)) * Math.PI / 180;
+    const speed = Math.random() * 15 + 10;
+    const vx = Math.cos(angleRad) * speed;
+    const vy = -Math.sin(angleRad) * speed;
+    
+    // Set variables for animation
+    p.style.setProperty('--x', (vx * 20) + 'px');
+    p.style.setProperty('--y', (vy * 20 + 200) + 'px'); // simulate gravity drop
+    
+    document.body.appendChild(p);
+    
+    // Clean up
+    setTimeout(() => p.remove(), 2500);
+  }
+}
+
+// 2. TODAY DONE TOGGLE
+function toggleTodayDone() {
+  const dayNum = getTodayDayNum();
+  if (dayNum > 0 && dayNum <= PLAN.length) {
+    toggleDone(dayNum);
+    // If just completed today's target, fire confetti!
+    if (done[dayNum]) {
+      triggerConfetti();
+    }
+  }
+}
+
+// 3. BACKLOG RESCUE SYSTEM
+function getBacklogTasksForDay(dayNum) {
+  const rescued = JSON.parse(safeGetLocalStorage('neet_v3_rescued_backlog_days') || '[]');
+  if (rescued.length === 0) return null;
+  
+  const today = getTodayDayNum();
+  if (dayNum <= today) return null; // Show backlogs only on future days
+  
+  // Future study days
+  const futureStudyDays = PLAN.filter(r => r.day > today && r.type === 'study').map(r => r.day);
+  const idx = futureStudyDays.indexOf(dayNum);
+  
+  if (idx !== -1 && idx < rescued.length) {
+    const backlogDayNum = rescued[idx];
+    const backlogDay = PLAN.find(r => r.day === backlogDayNum);
+    if (backlogDay) {
+      return {
+        day: backlogDayNum,
+        phy: backlogDay.phy,
+        che: backlogDay.che,
+        bio: backlogDay.bio
+      };
+    }
+  }
+  return null;
+}
+
+function openBacklogModal() {
+  const modal = document.getElementById('backlog-modal');
+  const listContainer = document.getElementById('backlog-modal-list');
+  if (!modal || !listContainer) return;
+  
+  const today = getTodayDayNum();
+  const rescuedDays = new Set(JSON.parse(safeGetLocalStorage('neet_v3_rescued_backlog_days') || '[]'));
+  
+  // Find skipped days up to yesterday
+  const skipped = PLAN.filter(r => r.day < today && r.type !== 'rest' && !done[r.day] && !rescuedDays.has(r.day));
+  
+  if (skipped.length === 0) {
+    listContainer.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary); font-weight:600;">✓ Excellent! You have no backlog days to rescue. All past days are completed or on-track!</div>`;
+  } else {
+    let html = '';
+    skipped.forEach(r => {
+      html += `
+        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px; color:var(--text-primary); padding:6px; background:var(--bg-surface-hover); border-radius:6px;">
+          <input type="checkbox" class="backlog-rescue-cb" value="${r.day}" checked style="width:16px; height:16px;">
+          <span><strong>Day ${r.day}</strong>: P: ${r.phy ? 'Yes' : 'No'} | C: ${r.che ? 'Yes' : 'No'} | B: ${r.bio ? 'Yes' : 'No'}</span>
+        </label>
+      `;
+    });
+    listContainer.innerHTML = html;
+  }
+  
+  modal.classList.add('active');
+}
+
+function closeBacklogModal() {
+  const modal = document.getElementById('backlog-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function executeBacklogRescue() {
+  const cbs = document.querySelectorAll('.backlog-rescue-cb:checked');
+  if (cbs.length === 0) {
+    alert("Please select at least one day to rescue!");
+    return;
+  }
+  
+  const selectedDays = Array.from(cbs).map(cb => parseInt(cb.value));
+  let rescuedDays = JSON.parse(safeGetLocalStorage('neet_v3_rescued_backlog_days') || '[]');
+  
+  // Merge and save
+  rescuedDays = Array.from(new Set(rescuedDays.concat(selectedDays)));
+  safeSetLocalStorage('neet_v3_rescued_backlog_days', JSON.stringify(rescuedDays));
+  
+  alert(`Successfully rescued ${selectedDays.length} backlog day(s)! Skipped lectures have been distributed sequentially across your upcoming study days.`);
+  closeBacklogModal();
+  renderPlan();
+  updateTodayPlanCard();
+}
+
+// 4. ERROR BOOK CONTROLLERS
+
+function populateErrorChapters() {
+  const subEl = document.getElementById('err-subject');
+  const chapEl = document.getElementById('err-chapter');
+  if (!subEl || !chapEl) return;
+  
+  const subject = subEl.value;
+  let chList = [];
+  if (subject === 'Physics') chList = P1_PHY.concat(P2_PHY);
+  else if (subject === 'Chemistry') chList = P1_CHE.concat(P2_CHE);
+  else if (subject === 'Biology') chList = P1_BIO.concat(P2_BIO);
+  
+  let html = '<option value="">Select Chapter</option>';
+  chList.forEach(c => {
+    html += `<option value="${c.ch.trim()}">${c.ch.trim()}</option>`;
+  });
+  chapEl.innerHTML = html;
+}
+
+function saveErrorBookItem(e) {
+  if (e && typeof e.preventDefault === 'function') e.preventDefault();
+  
+  const subject = document.getElementById('err-subject').value;
+  const chapter = document.getElementById('err-chapter').value;
+  const category = document.getElementById('err-category').value;
+  const description = document.getElementById('err-description').value.trim();
+  const correct = document.getElementById('err-correct').value.trim();
+  
+  if (!subject || !chapter || !category || !description) return;
+  
+  const item = {
+    id: Date.now(),
+    subject,
+    chapter,
+    category,
+    description,
+    correct,
+    done: false,
+    date: new Date().toLocaleDateString('en-IN')
+  };
+  
+  errorBookItems.unshift(item);
+  safeSetLocalStorage('neet_v3_errorbook_items', JSON.stringify(errorBookItems));
+  
+  // Reset form
+  document.getElementById('errorbook-form').reset();
+  populateErrorChapters();
+  
+  renderErrorBookList();
+  alert("Error saved to your notebook!");
+}
+
+function deleteErrorBookItem(id) {
+  if (!confirm("Are you sure you want to delete this error entry?")) return;
+  errorBookItems = errorBookItems.filter(item => item.id !== id);
+  safeSetLocalStorage('neet_v3_errorbook_items', JSON.stringify(errorBookItems));
+  renderErrorBookList();
+}
+
+function toggleErrorBookItemDone(id) {
+  const item = errorBookItems.find(item => item.id === id);
+  if (item) {
+    item.done = !item.done;
+    safeSetLocalStorage('neet_v3_errorbook_items', JSON.stringify(errorBookItems));
+    renderErrorBookList();
+    if (item.done) {
+      triggerConfetti();
+    }
+  }
+}
+
+function renderErrorBookList() {
+  const container = document.getElementById('errorbook-list-container');
+  if (!container) return;
+  
+  const searchQ = (document.getElementById('err-srch') || {value:''}).value.toLowerCase();
+  const subFilter = (document.getElementById('err-filter-sub') || {value:''}).value;
+  const catFilter = (document.getElementById('err-filter-cat') || {value:''}).value;
+  
+  const filtered = errorBookItems.filter(item => {
+    if (subFilter && item.subject !== subFilter) return false;
+    if (catFilter && item.category !== catFilter) return false;
+    if (searchQ) {
+      const matchText = (item.chapter + ' ' + item.description + ' ' + item.correct).toLowerCase();
+      if (!matchText.includes(searchQ)) return false;
+    }
+    return true;
+  });
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="glass-card" style="text-align:center; padding:30px; color:var(--text-secondary);">No errors logged matching the selected filters. Log mistakes from tests to keep track!</div>`;
+    return;
+  }
+  
+  let html = '';
+  filtered.forEach(item => {
+    const isChecked = item.done ? 'checked' : '';
+    const cardCls = item.done ? 'done-row' : '';
+    
+    // Category badges
+    let catBadge = '';
+    if (item.category === 'Silly') catBadge = '<span class="subject-badge badge-phy" style="background:rgba(96, 165, 250, 0.15); color:#60a5fa; border:1px solid #60a5fa; font-size:10px;">🤡 Silly</span>';
+    else if (item.category === 'Conceptual') catBadge = '<span class="subject-badge badge-che" style="background:rgba(52, 211, 153, 0.15); color:#34d399; border:1px solid #34d399; font-size:10px;">🧠 Conceptual</span>';
+    else if (item.category === 'Memory') catBadge = '<span class="subject-badge badge-bio" style="background:rgba(226, 75, 74, 0.15); color:#E24B4A; border:1px solid #E24B4A; font-size:10px;">💾 Memory</span>';
+    else catBadge = '<span class="subject-badge badge-mock" style="background:rgba(245, 158, 11, 0.15); color:#f59e0b; border:1px solid #f59e0b; font-size:10px;">⏱️ Time</span>';
+    
+    html += `
+      <div class="glass-card ${cardCls}" style="padding:16px; border-left:4px solid ${item.subject === 'Physics' ? 'var(--primary)' : item.subject === 'Chemistry' ? 'var(--accent-success)' : 'var(--secondary)'}; display:flex; justify-content:space-between; gap:16px; align-items:start;">
+        <div style="flex:1; display:flex; gap:12px; align-items:start;">
+          <input type="checkbox" ${isChecked} onchange="toggleErrorBookItemDone(${item.id})" style="width:18px; height:18px; margin-top:3px; cursor:pointer;">
+          <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+              <strong style="font-size:13px; color:var(--text-primary);">${item.subject}: ${item.chapter}</strong>
+              ${catBadge}
+              <span style="font-size:10px; color:var(--text-muted);">${item.date}</span>
+            </div>
+            <p style="margin:0; font-size:13px; color:var(--text-secondary); line-height:1.4;">❌ <strong>Mistake:</strong> ${item.description}</p>
+            ${item.correct ? `<p style="margin:4px 0 0 0; font-size:12.5px; color:var(--accent-success); line-height:1.4;">✅ <strong>Correct Concept:</strong> ${item.correct}</p>` : ''}
+          </div>
+        </div>
+        <button onclick="deleteErrorBookItem(${item.id})" style="background:transparent; border:none; color:var(--accent-danger); font-size:16px; cursor:pointer; opacity:0.75;" title="Delete Entry">✕</button>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+// 5. FLASHCARDS CONTROLLERS
+
+
+function loadSelectedFlashcardDeck() {
+  const select = document.getElementById('flashcard-deck-select');
+  if (select) {
+    currentDeckKey = select.value;
+  }
+  currentCardIdx = 0;
+  
+  // Unflip card structure
+  const inner = document.getElementById('flashcard-inner');
+  if (inner) inner.classList.remove('flipped');
+  
+  showFlashcard();
+}
+
+function showFlashcard() {
+  const deck = FLASHCARD_DECKS[currentDeckKey] || [];
+  const progText = document.getElementById('flashcard-progress');
+  const catBadge = document.getElementById('flashcard-front-cat');
+  const frontText = document.getElementById('flashcard-front-text');
+  const backText = document.getElementById('flashcard-back-text');
+  
+  if (deck.length === 0) return;
+  const card = deck[currentCardIdx];
+  
+  if (progText) progText.textContent = `Card ${currentCardIdx + 1} / ${deck.length}`;
+  if (catBadge) {
+    catBadge.textContent = card.cat;
+    catBadge.className = 'subject-badge';
+    if (card.cat === 'Physics') catBadge.classList.add('badge-phy');
+    else if (card.cat === 'Chemistry') catBadge.classList.add('badge-che');
+    else catBadge.classList.add('badge-bio');
+  }
+  if (frontText) frontText.textContent = card.q;
+  if (backText) backText.textContent = card.a;
+}
+
+function flipFlashcard() {
+  const inner = document.getElementById('flashcard-inner');
+  if (inner) {
+    inner.classList.toggle('flipped');
+  }
+}
+
+function handleFlashcardAction(isEasy) {
+  const deck = FLASHCARD_DECKS[currentDeckKey] || [];
+  
+  // Reset card rotation
+  const inner = document.getElementById('flashcard-inner');
+  if (inner) inner.classList.remove('flipped');
+  
+  // Simple transition delay for next card
+  setTimeout(() => {
+    if (isEasy) {
+      currentCardIdx = (currentCardIdx + 1) % deck.length;
+    } else {
+      // Shuffle the current card randomly further back
+      const current = deck.splice(currentCardIdx, 1)[0];
+      const insertAt = Math.min(deck.length, currentCardIdx + Math.floor(Math.random() * 3) + 1);
+      deck.splice(insertAt, 0, current);
+    }
+    showFlashcard();
+  }, 200);
+}
+
+// Bind all to window
+window.triggerConfetti = triggerConfetti;
+window.toggleTodayDone = toggleTodayDone;
+window.getBacklogTasksForDay = getBacklogTasksForDay;
+window.openBacklogModal = openBacklogModal;
+window.closeBacklogModal = closeBacklogModal;
+window.executeBacklogRescue = executeBacklogRescue;
+window.populateErrorChapters = populateErrorChapters;
+window.saveErrorBookItem = saveErrorBookItem;
+window.deleteErrorBookItem = deleteErrorBookItem;
+window.toggleErrorBookItemDone = toggleErrorBookItemDone;
+window.renderErrorBookList = renderErrorBookList;
+window.loadSelectedFlashcardDeck = loadSelectedFlashcardDeck;
+window.showFlashcard = showFlashcard;
+window.flipFlashcard = flipFlashcard;
+window.handleFlashcardAction = handleFlashcardAction;

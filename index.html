@@ -68,6 +68,14 @@
         <span class="nav-icon">💛</span>
         <span class="nav-label">Support</span>
       </button>
+      <button class="nav-item" data-tab="errorbook" onclick="showTab('errorbook')">
+        <span class="nav-icon">📕</span>
+        <span class="nav-label">Error Book</span>
+      </button>
+      <button class="nav-item" data-tab="flashcards" onclick="showTab('flashcards')">
+        <span class="nav-icon">🎴</span>
+        <span class="nav-label">Flashcards</span>
+      </button>
       <button class="nav-item" data-tab="settings" onclick="showTab('settings')">
         <span class="nav-icon">⚙️</span>
         <span class="nav-label">Settings</span>
@@ -81,6 +89,10 @@
     <header class="topbar">
       <h1 id="topbar-page-title" style="margin:0; font-family:var(--font-mono); font-size:22px; color:var(--primary);">Overview</h1>
       <div style="margin-left: auto; display: flex; align-items: center; gap: 16px;">
+        <div style="display:flex; align-items:center; gap:6px; background:rgba(255,107,107,0.1); border:1px solid rgba(255,107,107,0.2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; color:var(--tertiary);">
+          <span>🔥</span> <span id="user-streak">0</span> Days
+        </div>
+        <span id="user-rank" class="subject-badge badge-phy" style="padding:3px 8px; font-size:10px; font-weight:700;">Rank: Aspirant</span>
         <span class="sub-date" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">June 29, 2026 → May 3, 2027</span>
         <button id="theme-toggle-btn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 14px; cursor:pointer;" onclick="toggleTheme()">☀️</button>
         <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Toggle navigation menu">
@@ -130,6 +142,20 @@
               <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Biology</span>
             </div>
             <p id="hero-bio-topic" style="margin:0; font-weight:600; font-size:13px; color:var(--text-primary);">Loading topic...</p>
+          </div>
+          
+          <!-- Daily Progress Circular Indicator -->
+          <div class="hero-subject-block" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; border-left:1px dashed var(--border-color); padding-left:16px;">
+            <div style="position:relative; width:80px; height:80px;">
+              <svg width="80" height="80" viewBox="0 0 80 80" style="transform: rotate(-90deg);">
+                <circle cx="40" cy="40" r="34" stroke="var(--border-color)" stroke-width="6" fill="transparent" />
+                <circle id="today-progress-circle" cx="40" cy="40" r="34" stroke="var(--primary)" stroke-width="6" fill="transparent"
+                  stroke-dasharray="213.6" stroke-dashoffset="213.6" style="transition: stroke-dashoffset 0.5s ease;" stroke-linecap="round" />
+              </svg>
+              <div id="today-progress-pct" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; font-family:var(--font-mono); color:var(--text-primary);">0%</div>
+            </div>
+            <span style="font-size:11px; font-weight:600; color:var(--text-secondary); margin-top:8px;">Today's Target Done</span>
+            <button id="hero-toggle-done-btn" onclick="toggleTodayDone()" class="btn btn-secondary" style="padding: 2px 8px; font-size: 10px; margin-top: 6px; font-weight: 700; border-color: rgba(0,212,170,0.3); color: var(--accent-success); cursor:pointer;">Mark Completed</button>
           </div>
         </div>
       </div>
@@ -252,6 +278,9 @@
           <select id="wkf" class="form-control" onchange="calPage=0;renderCal();">
             <option value="">All Weeks</option>
           </select>
+        </div>
+        <div>
+          <button class="btn btn-secondary" style="border-color:rgba(251,191,36,0.3); color:var(--primary); font-weight:700;" onclick="openBacklogModal()"><span style="margin-right:4px;">⚡</span> Rescue Backlogs</button>
         </div>
       </div>
 
@@ -901,6 +930,131 @@
         <button class="btn btn-primary" style="width:100%; padding:12px; margin-top:20px; font-weight:700;" onclick="saveApiKey()">Save Settings</button>
         <div id="settings-status" style="margin-top: 15px; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 600; display: none; text-align: center;"></div>
       </div>
+
+      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
+        <h2>🎨 Custom Curated Themes</h2>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Choose a color palette that suits your focus space.</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <button class="btn btn-secondary" onclick="applyTheme('default-dark')" style="border-left: 4px solid #fbbf24; text-align:left; padding-left:14px;">✨ Obsidian Amber (Dark)</button>
+          <button class="btn btn-secondary" onclick="applyTheme('light')" style="border-left: 4px solid #d97706; text-align:left; padding-left:14px; background:#ffffff; color:#0f172a;">☀️ Amber Classic (Light)</button>
+          <button class="btn btn-secondary" onclick="applyTheme('midnight-cyber')" style="border-left: 4px solid #00f2fe; text-align:left; padding-left:14px;">🌌 Midnight Cyber</button>
+          <button class="btn btn-secondary" onclick="applyTheme('forest-mint')" style="border-left: 4px solid #00d4aa; text-align:left; padding-left:14px;">🌿 Forest Mint</button>
+          <button class="btn btn-secondary" onclick="applyTheme('deep-cosmos')" style="border-left: 4px solid #ff9f1c; text-align:left; padding-left:14px;">🚀 Deep Cosmos</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. ERROR BOOK TAB -->
+    <section id="errorbook" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">📕 Mistake & Error Tracker</h1>
+        <p class="page-desc">Your digital notebook for recording test/practice mistakes, weaknesses, and key revision steps.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start; margin-top:20px;">
+        <!-- Left Column: Add Error Form -->
+        <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:16px;">
+          <h2 style="margin:0; font-size:16px;">Log New Error</h2>
+          <form id="errorbook-form" onsubmit="saveErrorBookItem(event)" style="display:flex; flex-direction:column; gap:12px;">
+            <div>
+              <label style="display:block; font-size:11px; margin-bottom:4px; font-weight:600; color:var(--text-secondary);">Subject</label>
+              <select id="err-subject" class="form-control" style="width:100%;" onchange="populateErrorChapters()" required>
+                <option value="">Select Subject</option>
+                <option value="Physics">⚡ Physics</option>
+                <option value="Chemistry">🧪 Chemistry</option>
+                <option value="Biology">🌿 Biology</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block; font-size:11px; margin-bottom:4px; font-weight:600; color:var(--text-secondary);">Chapter</label>
+              <select id="err-chapter" class="form-control" style="width:100%;" required>
+                <option value="">Select Chapter</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block; font-size:11px; margin-bottom:4px; font-weight:600; color:var(--text-secondary);">Mistake Category</label>
+              <select id="err-category" class="form-control" style="width:100%;" required>
+                <option value="Silly">🤡 Silly Calculation / Reading</option>
+                <option value="Conceptual">🧠 Conceptual Misunderstanding</option>
+                <option value="Memory">💾 Memory Slip / Fact Forgotten</option>
+                <option value="Time">⏱️ Out of Time / Panic</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block; font-size:11px; margin-bottom:4px; font-weight:600; color:var(--text-secondary);">Error Description</label>
+              <textarea id="err-description" class="form-control" style="width:100%; height:80px; resize:none; font-family:inherit; padding:8px;" placeholder="What went wrong? e.g. Used cos theta instead of sin theta..." required></textarea>
+            </div>
+            <div>
+              <label style="display:block; font-size:11px; margin-bottom:4px; font-weight:600; color:var(--text-secondary);">Correct Concept / Formula</label>
+              <textarea id="err-correct" class="form-control" style="width:100%; height:60px; resize:none; font-family:inherit; padding:8px;" placeholder="What is the correct concept or solution?"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:10px; font-weight:700;">Save to Error Book</button>
+          </form>
+        </div>
+
+        <!-- Right Column: Mistake Checklist -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div class="glass-card" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding:12px 16px;">
+            <input type="text" id="err-srch" class="form-control" style="flex:1; min-width:180px;" placeholder="Search errors..." oninput="renderErrorBookList()">
+            <select id="err-filter-sub" class="form-control" onchange="renderErrorBookList()">
+              <option value="">All Subjects</option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Biology">Biology</option>
+            </select>
+            <select id="err-filter-cat" class="form-control" onchange="renderErrorBookList()">
+              <option value="">All Mistakes</option>
+              <option value="Silly">Silly Mistakes</option>
+              <option value="Conceptual">Conceptual Errors</option>
+              <option value="Memory">Memory Slips</option>
+              <option value="Time">Time Issues</option>
+            </select>
+          </div>
+
+          <div id="errorbook-list-container" style="display:flex; flex-direction:column; gap:12px;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13. FLASHCARDS TAB -->
+    <section id="flashcards" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">🎴 Active Recall Flashcards</h1>
+        <p class="page-desc">Test your memory on high-weightage constants, Named reactions, and NCERT examples.</p>
+      </div>
+
+      <div class="flashcards-container">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:12px;">
+          <select id="flashcard-deck-select" class="flashcard-deck-select" onchange="loadSelectedFlashcardDeck()">
+            <option value="physics">⚡ Physics Formulas & Constants</option>
+            <option value="chemistry">🧪 Chemistry Reagents & Named Reactions</option>
+            <option value="biology">🌿 Biology NCERT Key Examples</option>
+          </select>
+          <span id="flashcard-progress" style="font-size:13px; font-weight:600; color:var(--text-secondary);">Card 1 / 10</span>
+        </div>
+
+        <div class="flashcard-card-outer" onclick="flipFlashcard()">
+          <div class="flashcard-card-inner" id="flashcard-inner">
+            <div class="flashcard-front">
+              <span id="flashcard-front-cat" class="subject-badge badge-phy" style="position:absolute; top:20px; left:20px;">Category</span>
+              <h2 id="flashcard-front-text" style="font-size:22px; font-weight:700; max-width:80%;">Question front text</h2>
+              <span style="position:absolute; bottom:20px; font-size:11px; color:var(--text-muted);">👉 Click card to flip</span>
+            </div>
+            <div class="flashcard-back">
+              <span style="position:absolute; top:20px; font-size:12px; font-weight:800; color:var(--primary);">ANSWER</span>
+              <h2 id="flashcard-back-text" style="font-size:20px; font-weight:600; max-width:80%; line-height:1.5;">Answer back text</h2>
+              <span style="position:absolute; bottom:20px; font-size:11px; color:var(--text-muted);">👉 Click card to flip back</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard-controls">
+          <button class="btn btn-secondary" style="border-color:rgba(248,113,113,0.3); color:var(--tertiary);" onclick="handleFlashcardAction(false); event.stopPropagation();">❌ Review Again (Hard)</button>
+          <button class="btn btn-secondary" style="border-color:rgba(16,185,129,0.3); color:var(--accent-success);" onclick="handleFlashcardAction(true); event.stopPropagation();">✅ Got It (Easy)</button>
+        </div>
+      </div>
     </section>
 
     <!-- Emotional Support Section -->
@@ -1185,6 +1339,21 @@
     </div>
   </div>
 
+  <!-- BACKLOG RESCUE MODAL -->
+  <div class="modal" id="backlog-modal">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="close-btn" onclick="closeBacklogModal()">✕</button>
+      <h2 style="margin-top:0;">⚡ Backlog Rescue Engine</h2>
+      <p style="font-size:13px; color:var(--text-muted); margin-top:8px; line-height:1.4;">We found skipped syllabus days. Select the days you want to rescue, and our engine will distribute their topics across your upcoming study days.</p>
+      
+      <div style="max-height: 250px; overflow-y: auto; margin-top:16px; border:1px solid var(--border-color); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:10px;" id="backlog-modal-list">
+        <!-- Skipped days checklist populated by JS -->
+      </div>
+      
+      <button class="btn btn-primary" style="width:100%; padding:12px; margin-top:20px; font-weight:700;" onclick="executeBacklogRescue()">Rescue Selected Days</button>
+    </div>
+  </div>
+
   <!-- Navigation Drawer (Mobile Only) -->
   <div id="drawer-overlay" class="drawer-overlay" onclick="toggleMenu()"></div>
   <aside id="nav-drawer" class="nav-drawer">
@@ -1205,6 +1374,8 @@
       <button class="drawer-item" data-tab="ai-test" onclick="navigateTab('ai-test')">🤖 AI CBT</button>
       <button class="drawer-item" data-tab="emotional-support" onclick="navigateTab('emotional-support')">❤️ Emotional Support</button>
       <button class="drawer-item" data-tab="support" onclick="navigateTab('support')">💛 Support</button>
+      <button class="drawer-item" data-tab="errorbook" onclick="navigateTab('errorbook')">📕 Error Book</button>
+      <button class="drawer-item" data-tab="flashcards" onclick="navigateTab('flashcards')">🎴 Flashcards</button>
       <button class="drawer-item" data-tab="settings" onclick="navigateTab('settings')">⚙️ Settings</button>
     </nav>
   </aside>
