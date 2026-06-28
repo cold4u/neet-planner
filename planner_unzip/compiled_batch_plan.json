@@ -1,0 +1,1750 @@
+{
+  "lectures": {
+    "2026-06-29": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Trigonometry1",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of Chemistry Dalton's Atomic Theory Types of partical and its calculation1",
+      "c_ch": "Basic Concepts",
+      "b": "[Botany] Cell - The Unit of Life What is a Cell ? Discovery of the CellMicroscopyCell Theory (L1)",
+      "b_ch": "Cell: Unit of Life"
+    },
+    "2026-06-30": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Trigonometry2",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryMolar Mass, AMU, Mole2",
+      "c_ch": "Basic Concepts",
+      "b": "[Zoology] Structural Organization in Animals TissuesAnimal Tissues1",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-01": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Algebra (L3)",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryMole concept, Average molar Mass3",
+      "c_ch": "Basic Concepts",
+      "b": "[Zoology] Structural Organization in Animals Epithelium Tissue2",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-02": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Binomial (L4)",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryVD, Mass % Age, Average Molar Mass4",
+      "c_ch": "Basic Concepts",
+      "b": "[Zoology] Structural Organization in Animals Epithelium Tissue3",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-03": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)APGP (L5)",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryStoichiometry, Limiting reagent5",
+      "c_ch": "Basic Concepts",
+      "b": "[Botany] Cell - The Unit of Life Overview of CellTypes of cell2",
+      "b_ch": "Cell: Unit of Life"
+    },
+    "2026-07-04": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Graphs (L6)",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of Chemistry% age yield, Impure sample, Laws of chemical combination6",
+      "c_ch": "Basic Concepts",
+      "b": "[Botany] Cell - The Unit of Life Structure Prokaryotic cellProkaryotic cells (L3)",
+      "b_ch": "Cell: Unit of Life"
+    },
+    "2026-07-06": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Logarithms7",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryEF & EF Concentration Terms7",
+      "c_ch": "Basic Concepts",
+      "b": "[Botany] Cell - The Unit of Life Eukaryotic cells-14",
+      "b_ch": "Cell: Unit of Life"
+    },
+    "2026-07-07": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Coordinate Geometry8",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryConcentration Term Continuous8",
+      "c_ch": "Basic Concepts",
+      "b": "[Botany] Cell - The Unit of Life Eukaryotic cells-25",
+      "b_ch": "Cell: Unit of Life"
+    },
+    "2026-07-08": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Coordinate Geometry9",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryEquivalents Mass, Normality9",
+      "c_ch": "Basic Concepts",
+      "b": "[Zoology] Structural Organization in Animals Cell Junctions4",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-09": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Differentiation10",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryEquivalents Mass, Normality10",
+      "c_ch": "Basic Concepts",
+      "b": "[Zoology] Structural Organization in Animals Connective Tissue5",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-10": {
+      "p": "Basic Maths & Calculus(Mathematical Tools)Question Practice11",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryConcentration of mixture11",
+      "c_ch": "Basic Concepts",
+      "b": "[Zoology] Structural Organization in Animals Connective Tissue6",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-11": {
+      "p": "Vectors Introduction of vector and scalarTypes of vectors1",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of Chemistry Law of equivalent12",
+      "c_ch": "Basic Concepts",
+      "b": "[Botany] Cell - The Unit of Life Eukaryotic cells-36",
+      "b_ch": "Cell: Unit of Life"
+    },
+    "2026-07-13": {
+      "p": "Vectors Vector addition2",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistrySignificant Feature13",
+      "c_ch": "Basic Concepts",
+      "b": "[Botany] Cell - The Unit of Life Endosymbiotic Theory7",
+      "b_ch": "Cell: Unit of Life"
+    },
+    "2026-07-14": {
+      "p": "Vectors vector subtraction3",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistrySignificant Feature14",
+      "c_ch": "Basic Concepts",
+      "b": "[Botany] Cell - The Unit of Life Difference b/w Prokaryotic Vs Eukaryotic cell (L8)",
+      "b_ch": "Cell: Unit of Life"
+    },
+    "2026-07-15": {
+      "p": "Vectors Resolution of vectorsMultiplication of a vector by scalar4",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Some Basic Concept of ChemistryQuestion Practice15",
+      "c_ch": "Basic Concepts",
+      "b": "[Zoology] Structural Organization in Animals Muscular Tissue7",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-16": {
+      "p": "Vectors Scalar productVector productVector Projection5",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Redox ReactionOxidation,Reduction and Oxidation Number Calculation (L1)",
+      "c_ch": "Redox Reactions",
+      "b": "[Zoology] Structural Organization in Animals Nervous TissueFROG (L8)",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-17": {
+      "p": "Vectors Vector product6",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Redox Reactionn-Factor Calculation2",
+      "c_ch": "Redox Reactions",
+      "b": "[Zoology] Structural Organization in Animals FROG (L9)",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-18": {
+      "p": "Vectors Question Practice7",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Redox ReactionBalancing of Redox ReactionsRedox Titrations-13",
+      "c_ch": "Redox Reactions",
+      "b": "[Botany] Cell - The Unit of Life Question Practice9",
+      "b_ch": "Cell: Unit of Life"
+    },
+    "2026-07-20": {
+      "p": "Units and MeasurementsPhysical Quantities and Units1",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Redox ReactionRedox Titrations-24",
+      "c_ch": "Redox Reactions",
+      "b": "[Botany] Cell Cycle and Cell DivisionIntroduction1",
+      "b_ch": "Cell Cycle & Division"
+    },
+    "2026-07-21": {
+      "p": "Units and MeasurementsDimensions and Dimensions formula2",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Redox ReactionQuestion Practice5",
+      "c_ch": "Redox Reactions",
+      "b": "[Botany] Cell Cycle and Cell DivisionPhases of the Cell Cycle2",
+      "b_ch": "Cell Cycle & Division"
+    },
+    "2026-07-22": {
+      "p": "Units and MeasurementsDimensions and Dimensions formulaDimensional Analysis3",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Solutions Solution (L1)",
+      "c_ch": "Solutions",
+      "b": "[Zoology] Structural Organization in Animals COCKROACH (L10)",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-23": {
+      "p": "Units and MeasurementsDimensions and Dimensions formulaDimensional Analysis4",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Solutions Binary Solution and Concentration Terms2",
+      "c_ch": "Solutions",
+      "b": "[Zoology] Structural Organization in Animals COCKROACH (L11)",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-24": {
+      "p": "Units and MeasurementsDimensions and Dimensions formulaDimensional Analysis5",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Solutions Solubility and Henry Law3",
+      "c_ch": "Solutions",
+      "b": "[Zoology] Structural Organization in Animals COCKROACH (L12)",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-25": {
+      "p": "Units and MeasurementsSignificant Figures6",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Solutions Raoult’s law & its application4",
+      "c_ch": "Solutions",
+      "b": "[Botany] Cell Cycle and Cell DivisionMitosis (L3)",
+      "b_ch": "Cell Cycle & Division"
+    },
+    "2026-07-27": {
+      "p": "Units and MeasurementsErrors in Measurement7",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Solutions Ideal & non ideal solutions5",
+      "c_ch": "Solutions",
+      "b": "[Botany] Cell Cycle and Cell DivisionMitotic Inhibitors4",
+      "b_ch": "Cell Cycle & Division"
+    },
+    "2026-07-28": {
+      "p": "Units and MeasurementsErrors in Measurement8",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Solutions Colligative properties- (L16)",
+      "c_ch": "Solutions",
+      "b": "[Botany] Cell Cycle and Cell DivisionSpecial Type of MitosisMeiosis (L5)",
+      "b_ch": "Cell Cycle & Division"
+    },
+    "2026-07-29": {
+      "p": "Units and MeasurementsMeasuring Instruments9",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Solutions Colligative properties -27",
+      "c_ch": "Solutions",
+      "b": "[Zoology] Structural Organization in Animals Question Practice13",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-07-30": {
+      "p": "Units and MeasurementsQuestion Practice10",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Solutions Abnormal molar mass8",
+      "c_ch": "Solutions",
+      "b": "[Zoology] Breathing and Exchange of GasesIntroduction and Respiratory organs in AnimalsHuman respiratory system : Nostrils, Nasal chamber, Pharynx, Larynx, Trachea1",
+      "b_ch": "Breathing & Gas Exchange"
+    },
+    "2026-07-31": {
+      "p": "Motion in a straight lineIntroduction of mechanicsframe of referencedistance and displacement1",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Solutions Abnormal molar mass9",
+      "c_ch": "Solutions",
+      "b": "[Zoology] Breathing and Exchange of GasesHuman respiratory system : Bronchi, Bronchioles (Conducting part), Lungs and Alveoli (Respiratory part)2",
+      "b_ch": "Breathing & Gas Exchange"
+    },
+    "2026-08-01": {
+      "p": "Motion in a straight lineAverage speed and average velocity2",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Solutions Question Practice10",
+      "c_ch": "Solutions",
+      "b": "[Botany] Cell Cycle and Cell DivisionTypes of MeiosisNondisjunction6",
+      "b_ch": "Cell Cycle & Division"
+    },
+    "2026-08-03": {
+      "p": "Motion in a straight lineInstantaneous velocity and its speed3",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Thermodynamics&ThermochemistryThermodynamics Parameters, Pressure – volume workWork done in various processes1",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Botany] Cell Cycle and Cell DivisionQuestion Practice7",
+      "b_ch": "Cell Cycle & Division"
+    },
+    "2026-08-04": {
+      "p": "Motion in a straight lineAcceleration4",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Thermodynamics&ThermochemistryFirst law of thermodynamics2",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Botany] The Living WorldIntroductionWhat is Living?1",
+      "b_ch": "Living World"
+    },
+    "2026-08-05": {
+      "p": "Motion in a straight lineUniform motionUniform acceleration5",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Thermodynamics&ThermochemistryHeat Capacity3",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Zoology] Breathing and Exchange of GasesMechanism of Breathing : Normal Inspiration and ExpirationForceful Inspiration and Expiration, Pulmonary Volumes (L3)",
+      "b_ch": "Breathing & Gas Exchange"
+    },
+    "2026-08-06": {
+      "p": "Motion in a straight lineMotion under gravity (Free fall motion)6",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Thermodynamics&ThermochemistryAdiabatic work4",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Zoology] Breathing and Exchange of GasesPulmonary Capacities, Exchange of gases (factors affecting the rate of diffusion), Diffusion membranesPartial pressures of Oxygen and Carbon dioxide, exchange of gases between blood and Tissues, Transport of Oxygen4",
+      "b_ch": "Structural Org Animals"
+    },
+    "2026-08-07": {
+      "p": "Motion in a straight lineMotion under gravity (Free fall motion)7",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Thermodynamics&ThermochemistrySpontaneity of processes , Entropy5",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Zoology] Breathing and Exchange of GasesTransport of Carbon dioxide and Factors affecting the Haemoglobin oxygen dissociation (L5)",
+      "b_ch": "Breathing & Gas Exchange"
+    },
+    "2026-08-08": {
+      "p": "Motion in a straight lineGraph of 1D motion8",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Thermodynamics&ThermochemistryGibbs Free Energy6",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Botany] The Living WorldDiversity in the Living World Taxonomic Categories2",
+      "b_ch": "Living World"
+    },
+    "2026-08-10": {
+      "p": "Motion in a straight lineGraph of 1D motion9",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Thermodynamics&ThermochemistrySecond law of thermodynamics7",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Botany] The Living WorldQuestion Practice3",
+      "b_ch": "Living World"
+    },
+    "2026-08-11": {
+      "p": "Motion in a straight linevariable acceleration10",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Thermodynamics&Thermochemistrythermodynamics & application8",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Botany] Biological Classification Classification1",
+      "b_ch": "Biological Classification"
+    },
+    "2026-08-12": {
+      "p": "Motion in a straight linevariable acceleration11",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Thermodynamics&ThermochemistryThermochemistry9",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Zoology] Breathing and Exchange of GasesRegulation of Respiration (Nervous and Chemical regulation), Disorders of Respiratory system6",
+      "b_ch": "Breathing & Gas Exchange"
+    },
+    "2026-08-13": {
+      "p": "Motion in a straight lineGraph of 1D motion12",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Thermodynamics&ThermochemistryQuestion Practice10",
+      "c_ch": "Thermodynamics (Chem)",
+      "b": "[Zoology] Breathing and Exchange of GasesQuestion Practice7",
+      "b_ch": "Breathing & Gas Exchange"
+    },
+    "2026-08-14": {
+      "p": "Motion in a straight lineGraph of 1D motion13",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] Chemical EquilibriumIntroduction to Chemical Equilibrium1",
+      "c_ch": "Equilibrium",
+      "b": "[Zoology] Body Fluids and CirculationIntroduction to body fluidsBloodBlood - Formed Element (L1)",
+      "b_ch": "Body Fluids & Circulation"
+    },
+    "2026-08-17": {
+      "p": "Motion in a straight lineQuestion Practice14",
+      "p_ch": "Kinematics 1D",
+      "c": "[Physical Chemistry] Chemical EquilibriumEquilibrium Constant & Characteristics2",
+      "c_ch": "Equilibrium",
+      "b": "[Botany] Biological Classification Kingdom : Monera2",
+      "b_ch": "Biological Classification"
+    },
+    "2026-08-18": {
+      "p": "Motion in a planeProjectile motion1",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Chemical EquilibriumApplications of Equilibrium Constant3",
+      "c_ch": "Equilibrium",
+      "b": "[Botany] Biological Classification Kingdom : ProtistaKingdom : Fungi3",
+      "b_ch": "Biological Classification"
+    },
+    "2026-08-19": {
+      "p": "Motion in a planeProjectile motion2",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Chemical EquilibriumLe Chatelier’s principle4",
+      "c_ch": "Equilibrium",
+      "b": "[Zoology] Body Fluids and CirculationBlood GroupsCoagulation of Blood (L2)",
+      "b_ch": "Body Fluids & Circulation"
+    },
+    "2026-08-20": {
+      "p": "Motion in a planeProjectile motion3",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Chemical EquilibriumQuestion Practice5",
+      "c_ch": "Equilibrium",
+      "b": "[Zoology] Body Fluids and CirculationLymphCirculatory PathwaysDouble Circulation3",
+      "b_ch": "Body Fluids & Circulation"
+    },
+    "2026-08-21": {
+      "p": "Motion in a planeProjectile motion4",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Ionic EquilibriumOstwald’s Dilution law & common ion effect1",
+      "c_ch": "Equilibrium",
+      "b": "[Zoology] Body Fluids and CirculationCoronary CirculationHuman Circulatory System (L4)",
+      "b_ch": "Body Fluids & Circulation"
+    },
+    "2026-08-22": {
+      "p": "Motion in a planeRelative motion5",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Ionic EquilibriumIonic product of water & pH concept2",
+      "c_ch": "Equilibrium",
+      "b": "[Botany] Biological Classification kINGDOM Plantae and animalia Symbiotic Associations4",
+      "b_ch": "Biological Classification"
+    },
+    "2026-08-24": {
+      "p": "Motion in a planeCircular motion-16",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Ionic EquilibriumSalt Hydrolysis3",
+      "c_ch": "Equilibrium",
+      "b": "[Botany] Biological Classification VirusesPrionsViroids (L5)",
+      "b_ch": "Biological Classification"
+    },
+    "2026-08-25": {
+      "p": "Motion in a planeQuestion Practice7",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Ionic EquilibriumpH of salt solutions4",
+      "c_ch": "Equilibrium",
+      "b": "[Botany] Biological Classification Question Practice6",
+      "b_ch": "Biological Classification"
+    },
+    "2026-08-26": {
+      "p": "Laws of motionForceNewton's first law of motion1",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] Ionic EquilibriumBuffer solution5",
+      "c_ch": "Equilibrium",
+      "b": "[Zoology] Body Fluids and CirculationCardiac CycleHeart Sounds (L5)",
+      "b_ch": "Body Fluids & Circulation"
+    },
+    "2026-08-27": {
+      "p": "Laws of motionLinear momentum2",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] Ionic EquilibriumSolubility product6",
+      "c_ch": "Equilibrium",
+      "b": "[Zoology] Body Fluids and CirculationBlood VesselsPortal system ECG6",
+      "b_ch": "Body Fluids & Circulation"
+    },
+    "2026-08-29": {
+      "p": "Laws of motionNewton's second law of motion3",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] Ionic EquilibriumPrecipitation conceptIndicators & titration7",
+      "c_ch": "Equilibrium",
+      "b": "[Botany] Plant KingdomIntroduction (L1)",
+      "b_ch": "Plant Kingdom"
+    },
+    "2026-08-31": {
+      "p": "Laws of motionNewton's third law of motionFree body diagram4",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] Ionic EquilibriumQuestion Practice8",
+      "c_ch": "Equilibrium",
+      "b": "[Botany] Plant KingdomTypes of Classification Systems2",
+      "b_ch": "Plant Kingdom"
+    },
+    "2026-09-01": {
+      "p": "Laws of motionWorking with newton's first law5",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] ElectrochemistryIntroduction to Electrolysis & Laws of electrolysis (L1)",
+      "c_ch": "Electrochemistry",
+      "b": "[Botany] Plant Kingdom Algae (L3)",
+      "b_ch": "Plant Kingdom"
+    },
+    "2026-09-02": {
+      "p": "Laws of motionWorking with newton's second law6",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] ElectrochemistryElectrolytic conductance -12",
+      "c_ch": "Electrochemistry",
+      "b": "[Zoology] Body Fluids and CirculationRegulation of Cardiac ActivityDisorders of Circulatory System7",
+      "b_ch": "Body Fluids & Circulation"
+    },
+    "2026-09-03": {
+      "p": "Laws of motionCalculation of acceleration7",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] ElectrochemistryElectrolytic conductance - (L23)",
+      "c_ch": "Electrochemistry",
+      "b": "[Zoology] Body Fluids and CirculationQuestion Practice8",
+      "b_ch": "Body Fluids & Circulation"
+    },
+    "2026-09-04": {
+      "p": "Laws of motionSpring forceFrame of referenceRocket propulsion8",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] ElectrochemistryKohlrausch's LawQualitative and quantitative aspects of Electrolysis (L4)",
+      "c_ch": "Practical Chemistry",
+      "b": "[Zoology] Excretory Products & their Elimination IntroductionExcretory StructuresHuman Excretory SystemLS of kidney NephronMechanism of Urine formation (L1)",
+      "b_ch": "Excretion"
+    },
+    "2026-09-05": {
+      "p": "Laws of motionFrictionTypes of friction9",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] ElectrochemistryElectrochemical Cell & Galvanic cellsStandard electrode potential & EMF5",
+      "c_ch": "Electrochemistry",
+      "b": "[Botany] Plant Kingdom Bryophytes4",
+      "b_ch": "Plant Kingdom"
+    },
+    "2026-09-07": {
+      "p": "Laws of motionGraph between applied force and force of friction10",
+      "p_ch": "Units & Measurement",
+      "c": "[Physical Chemistry] ElectrochemistryNernst EquationConcentration cellsTypes of Batteries6",
+      "c_ch": "Electrochemistry",
+      "b": "[Botany] Plant KingdomPteridophytes5",
+      "b_ch": "Plant Kingdom"
+    },
+    "2026-09-08": {
+      "p": "Laws of motionAngle of friction and angle of repose11",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] ElectrochemistryQuestion Practice7",
+      "c_ch": "Electrochemistry",
+      "b": "[Botany] Plant KingdomGymnosperms6",
+      "b_ch": "Plant Kingdom"
+    },
+    "2026-09-09": {
+      "p": "Laws of motionAcceleration of body on a rough surface12",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] Chemical KineticsRate of ReactionIntegrated Rate Equations1",
+      "c_ch": "Chemical Kinetics",
+      "b": "[Zoology] Excretory Products & their Elimination Functions of The TubuleMechanism of concentration of filtrateMicturitionUrineRole of Other Organs in Excretion Regulation of Kidney Function - Kidney (L2)",
+      "b_ch": "Excretion"
+    },
+    "2026-09-10": {
+      "p": "Laws of motionDynamics of circular motion13",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Chemical KineticsSimple Methods to determine order of reaction, Order of reaction from mechanismPseudo first order reaction, Zero order reaction- graphs & half life2",
+      "c_ch": "Chemical Kinetics",
+      "b": "[Zoology] Excretory Products & their EliminationRegulation of Kidney Function - Hypothalamus Regulation of Kidney Function - Adrenal cortexCounter current mechanism Regulation of Kidney Function - Adrenal medulla3",
+      "b_ch": "Excretion"
+    },
+    "2026-09-11": {
+      "p": "Laws of motionDynamics of circular motion14",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Chemical KineticsFirst order reaction half life & average life of first order reactionGraphical, half-life etc. based methods to determine order of reaction3",
+      "c_ch": "Chemical Kinetics",
+      "b": "[Zoology] Excretory Products & their EliminationRegulation of Kidney Function - Heart Regulation of GFRDisorders (L4)",
+      "b_ch": "Excretion"
+    },
+    "2026-09-12": {
+      "p": "Laws of motionDynamics of circular motion15",
+      "p_ch": "Kinematics 2D",
+      "c": "[Physical Chemistry] Chemical Kinetics Collision theory of reaction rates Activated complex theory Activation energy Temperature dependence of reaction rates Effect of catalystProperties of alpha,beta and gamma Rays Types of Nuclear Reactions Group Displacement Law (L4)",
+      "c_ch": "Chemical Kinetics",
+      "b": "[Botany] Plant KingdomQuestion Practice7",
+      "b_ch": "Plant Kingdom"
+    },
+    "2026-09-15": {
+      "p": "Laws of motionQuestion Practice16",
+      "p_ch": "Laws of Motion",
+      "c": "[Physical Chemistry] Chemical Kinetics Nuclear Stability Rate of Radioactive Decay Nuclear Fission Nuclear Fusion Radio Carbon Dating (L5)",
+      "c_ch": "Chemical Kinetics",
+      "b": "[Botany] Morphology of Flowering PlantsIntroduction (L1)",
+      "b_ch": "Morphology of Plants"
+    },
+    "2026-09-16": {
+      "p": "Work, energy and powerWork (L1)",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Physical Chemistry] Chemical KineticsQuestion Practice6",
+      "c_ch": "Chemical Kinetics",
+      "b": "[Zoology] Excretory Products & their EliminationDisorders of the Excretory SystemTreatment for renal failure5",
+      "b_ch": "Excretion"
+    },
+    "2026-09-17": {
+      "p": "Work, energy and powerEnergy (L2)",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Physical Chemistry] Structure of AtomDiscovery of Fundamental Particles1",
+      "c_ch": "Atomic Structure",
+      "b": "[Zoology] Excretory Products & their EliminationQuestion Practice6",
+      "b_ch": "Excretion"
+    },
+    "2026-09-18": {
+      "p": "Work, energy and powerwork energy theorem3",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Physical Chemistry] Structure of AtomVarious Models of Atom & failureEnergy as a particle or wave2",
+      "c_ch": "Atomic Structure",
+      "b": "[Zoology] Locomotion & MovementIntroductionLocomotory organsTypes of Movement1",
+      "b_ch": "Locomotion & Movement"
+    },
+    "2026-09-19": {
+      "p": "Work, energy and powerconservative and non-conservative force4",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Physical Chemistry] Structure of AtomPhotoelectric effect & Black Body radiation3",
+      "c_ch": "Atomic Structure",
+      "b": "[Botany] Morphology of Flowering PlantsThe Root (L2)",
+      "b_ch": "Morphology of Plants"
+    },
+    "2026-09-21": {
+      "p": "Work, energy and powerpotential energy5",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Physical Chemistry] Structure of AtomBohr's Atomic ModelAtomic Spectra4",
+      "c_ch": "Atomic Structure",
+      "b": "[Botany] Morphology of Flowering PlantsThe StemThe Leaf (L3)",
+      "b_ch": "Morphology of Plants"
+    },
+    "2026-09-22": {
+      "p": "Work, energy and powerpotential energy6",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Physical Chemistry] Structure of AtomDual nature of Matter & Quantum introductionWave mechanical model of atomQuantum numbers5",
+      "c_ch": "Atomic Structure",
+      "b": "[Botany] Morphology of Flowering PlantsThe InflorescenceThe Flower: Parts and TerminologyThe Seed and The Fruit4",
+      "b_ch": "Morphology of Plants"
+    },
+    "2026-09-23": {
+      "p": "Work, energy and powerequilibrium7",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Physical Chemistry] Structure of AtomQuestion Practice6",
+      "c_ch": "Atomic Structure",
+      "b": "[Zoology] Locomotion & MovementMusclesTypes of MuscleSkeletal musclesStructure of contractile proteins2",
+      "b_ch": "Locomotion & Movement"
+    },
+    "2026-09-24": {
+      "p": "Work, energy and powerQuestion Practice8",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesIntroduction,Need for Classification of Elements (L1)",
+      "c_ch": "Periodic Table",
+      "b": "[Zoology] Locomotion & MovementMechanism of Muscle ContractionMechanism of Muscle RelaxationRed & White Muscles3",
+      "b_ch": "Locomotion & Movement"
+    },
+    "2026-09-25": {
+      "p": "Centre of mass and System of Particlescentre of mass1",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesStructural part of modern periodic table , electronic configurations2",
+      "c_ch": "Periodic Table",
+      "b": "[Zoology] Locomotion & MovementSkeletal systemAxial skeletonAppendicular skeleton4",
+      "b_ch": "Locomotion & Movement"
+    },
+    "2026-09-26": {
+      "p": "Centre of mass and System of Particlescentre of mass2",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesStructural part of modern periodic table , electronic configurations3",
+      "c_ch": "Periodic Table",
+      "b": "[Botany] Morphology of Flowering PlantsSemi -Technical Description of a Typical Flowering Plant and Description of Some Important Families5",
+      "b_ch": "Morphology of Plants"
+    },
+    "2026-09-28": {
+      "p": "Centre of mass and System of Particlescollisionhead-on collision3",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesScreening Effect and effective nuclear charge4",
+      "c_ch": "Periodic Table",
+      "b": "[Botany] Morphology of Flowering PlantsQuestion Practice6",
+      "b_ch": "Morphology of Plants"
+    },
+    "2026-09-29": {
+      "p": "Centre of mass and System of Particlescollisionhead-on collision4",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesAtomic Radius5",
+      "c_ch": "Periodic Table",
+      "b": "[Botany] Anatomy of Flowering PlantsIntroductionMeristematic Tissues1",
+      "b_ch": "Anatomy of Plants"
+    },
+    "2026-09-30": {
+      "p": "Centre of mass and System of Particlescollisionhead-on collision5",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesIonisation Enthalpy6",
+      "c_ch": "Periodic Table",
+      "b": "[Zoology] Locomotion & MovementJointsLever systemDisorders related to muscular system5",
+      "b_ch": "Locomotion & Movement"
+    },
+    "2026-10-01": {
+      "p": "Centre of mass and System of Particlescollisionhead-on collision6",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesElectron affinity7",
+      "c_ch": "Periodic Table",
+      "b": "[Zoology] Locomotion & MovementQuestion Practice6",
+      "b_ch": "Locomotion & Movement"
+    },
+    "2026-10-03": {
+      "p": "Centre of mass and System of ParticlesQuestion Practice7",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesElectronegativity8",
+      "c_ch": "Periodic Table",
+      "b": "[Botany] Anatomy of Flowering PlantsPermanent TissuesThe Tissue System2",
+      "b_ch": "Anatomy of Plants"
+    },
+    "2026-10-05": {
+      "p": "Rotational MotionIntroductionrigid body1",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesElectronegativity9",
+      "c_ch": "Periodic Table",
+      "b": "[Botany] Anatomy of Flowering PlantsAnatomy of Dicotyledonous and Monocotyledonous Plants: Roots3",
+      "b_ch": "Anatomy of Plants"
+    },
+    "2026-10-06": {
+      "p": "Rotational Motionmoment of inertia2",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesNature of Oxides10",
+      "c_ch": "Periodic Table",
+      "b": "[Botany] Anatomy of Flowering PlantsAnatomy of Dicotyledonous and Monocotyledonous Plants : Stem4",
+      "b_ch": "Anatomy of Plants"
+    },
+    "2026-10-07": {
+      "p": "Rotational Motionmoment of inertia3",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesNature of Oxides11",
+      "c_ch": "Periodic Table",
+      "b": "[Zoology] Neural Control & CoordinationIntroductionNeural systemHuman neural system1",
+      "b_ch": "Neural Control"
+    },
+    "2026-10-08": {
+      "p": "Rotational Motiontheorems of moment of inertia4",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesHistorical Development of Classification of Elements Question practice session12",
+      "c_ch": "Periodic Table",
+      "b": "[Zoology] Neural Control & CoordinationNeuron (L2)",
+      "b_ch": "Neural Control"
+    },
+    "2026-10-09": {
+      "p": "Rotational Motionradius of gyrationtorquenewtons laws for rotation5",
+      "p_ch": "Laws of Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesHistorical Development of Classification of Elements Question practice session13",
+      "c_ch": "Periodic Table",
+      "b": "[Zoology] Neural Control & CoordinationGeneration and conduction of nerve impulseTransmission of Impulses3",
+      "b_ch": "Neural Control"
+    },
+    "2026-10-10": {
+      "p": "Rotational Motionangular momentum6",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Classification of Elements and Periodicity in PropertiesQuestion Practice14",
+      "c_ch": "Periodic Table",
+      "b": "[Botany] Anatomy of Flowering PlantsAnatomy of Dicotyledonous and Monocotyledonous Plants : Leaf5",
+      "b_ch": "Anatomy of Plants"
+    },
+    "2026-10-12": {
+      "p": "Rotational Motionrotational kinetic energy7",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureKössel - Lewis Approach to Chemical Bonding ,Octet Rule1",
+      "c_ch": "Chemical Bonding",
+      "b": "[Botany] Anatomy of Flowering PlantsQuestion Practice6",
+      "b_ch": "Anatomy of Plants"
+    },
+    "2026-10-13": {
+      "p": "Rotational Motionconservation of total mechanical energy8",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureFormal Charge, Covalency, coordinate bond2",
+      "c_ch": "Chemical Bonding",
+      "b": "[Botany] Respiration in PlantsIntroductionGlycolysis or EMP pathway1",
+      "b_ch": "Respiration in Plants"
+    },
+    "2026-10-14": {
+      "p": "Rotational Motionrolling motionrolling motion on inclined plane9",
+      "p_ch": "Kinematics 2D",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureVSEPR Theory3",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Neural Control & CoordinationSynapseMechanism of impulse transmission (L4)",
+      "b_ch": "Neural Control"
+    },
+    "2026-10-15": {
+      "p": "Rotational Motioncomparison between translational and rotational motion (L10)",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureVSEPR Theory4",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Neural Control & CoordinationNeurotransmittersCentral nervous system(CNS) (L5)",
+      "b_ch": "Neural Control"
+    },
+    "2026-10-16": {
+      "p": "Rotational Motioncomparison between translational and rotational motion (L11)",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureValence Bond Theory (VBT), hybridisation applications of hybridisation5",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Neural Control & CoordinationHuman BrainSpinal cord (L6)",
+      "b_ch": "Neural Control"
+    },
+    "2026-10-17": {
+      "p": "Rotational MotionQuestion Practice12",
+      "p_ch": "Rotational Motion",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureValence Bond Theory (VBT), hybridisation applications of hybridisation6",
+      "c_ch": "Chemical Bonding",
+      "b": "[Botany] Respiration in PlantsFermentation2",
+      "b_ch": "Respiration in Plants"
+    },
+    "2026-10-19": {
+      "p": "GravitationLaw of Gravitation1",
+      "p_ch": "Gravitation",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureOverlapping (L7)",
+      "c_ch": "Chemical Bonding",
+      "b": "[Botany] Respiration in PlantsAerobic respiration3",
+      "b_ch": "Respiration in Plants"
+    },
+    "2026-10-21": {
+      "p": "GravitationAcceleration due to gravity2",
+      "p_ch": "Gravitation",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureBond identity, bond strength orders8",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Neural Control & CoordinationQuestion Practice7",
+      "b_ch": "Neural Control"
+    },
+    "2026-10-22": {
+      "p": "GravitationGravitational potential energygravitational potential3",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureDipole moment9",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Chemical Coordination & IntegrationIntroductionEndocrine glandsHormones (L1)",
+      "b_ch": "Chemical Coordination"
+    },
+    "2026-10-23": {
+      "p": "GravitationRelation between field and potentialescape velocitySatellite motion4",
+      "p_ch": "Gravitation",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureIonic bond , gen properties of ionic compounds10",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Chemical Coordination & IntegrationTypes of hormonesHypothalamusPituitary gland/HypophysisThyroid glandParathyroid gland2",
+      "b_ch": "Chemical Coordination"
+    },
+    "2026-10-24": {
+      "p": "GravitationKepler's law of planetary motion5",
+      "p_ch": "Kinematics 2D",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureLattice energy ,fajans rule11",
+      "c_ch": "Chemical Bonding",
+      "b": "[Botany] Respiration in PlantsThe Respiratory Balance Sheet and Amphibolic Pathway4",
+      "b_ch": "Respiration in Plants"
+    },
+    "2026-10-26": {
+      "p": "Gravitation Question Practice6",
+      "p_ch": "Gravitation",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureApplications of fajans rule12",
+      "c_ch": "Chemical Bonding",
+      "b": "[Botany] Respiration in PlantsRespiratory Quotient5",
+      "b_ch": "Respiration in Plants"
+    },
+    "2026-10-27": {
+      "p": "Mechanical Properties of SolidsElasticitystressstrainhooke's law1",
+      "p_ch": "Properties of Matter",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureMOT (L13)",
+      "c_ch": "Chemical Bonding",
+      "b": "[Botany] Respiration in PlantsQuestion Practice6",
+      "b_ch": "Respiration in Plants"
+    },
+    "2026-10-28": {
+      "p": "Mechanical Properties of SolidsModulus of elasticityyoung's modulus2",
+      "p_ch": "Properties of Matter",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureHydrogen Bonding14",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Chemical Coordination & Integration Thymus glandAdrenal glandAdrenal cortexAdrenal medullaPancreasGonads (L3)",
+      "b_ch": "Chemical Coordination"
+    },
+    "2026-10-29": {
+      "p": "Mechanical Properties of SolidsQuestion Practice3",
+      "p_ch": "Properties of Matter",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureDipole based forces15",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Chemical Coordination & Integration TestesLeydig cellsDisorders of testesOvariesDisorders of ovaries (L4)",
+      "b_ch": "Chemical Coordination"
+    },
+    "2026-10-30": {
+      "p": "Mechanical Properties of FluidsIntroduction of hydrostatics1",
+      "p_ch": "Properties of Matter",
+      "c": "[Inorganic Chemistry] Chemical Bonding and Molecular StructureQuestion Practice16",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Chemical Coordination & IntegrationHormonal actionHormones of Heart, kidney and Gastrointestinal TractHormonal Feedback5",
+      "b_ch": "Chemical Coordination"
+    },
+    "2026-10-31": {
+      "p": "Mechanical Properties of FluidsPressure (L2)",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming) Tetravalency of carbon: Shapes of Simple molecules - hybridization (s and p): Classification of organic compounds based on functional groups: and those containing halogens, oxygen, nitrogen, and sulphur; Homologous series1",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Photosynthesis in Higher PlantsIntroductionWhat Do we KnowEarly Experiments1",
+      "b_ch": "Photosynthesis"
+    },
+    "2026-11-02": {
+      "p": "Mechanical Properties of Fluidspascal's law3",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming)Degree of Carbon, Hydrogen, Alcohol, Amine, Degree of Unsaturation, Functional Group2",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Photosynthesis in Higher PlantsSite of Photosynthesis and Pigments involved in Photosynthesis2",
+      "b_ch": "Photosynthesis"
+    },
+    "2026-11-03": {
+      "p": "Mechanical Properties of FluidsBuoyancybuoyant force4",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming) IUPAC of Alkane3",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Photosynthesis in Higher PlantsWhat Is Light Reaction and Electron Transport Chain (L3)",
+      "b_ch": "Photosynthesis"
+    },
+    "2026-11-04": {
+      "p": "Mechanical Properties of FluidsHydrodynamicsequation of continuity5",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming)IUPAC of Alkene, Cycloalkene4",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Chemical Coordination & IntegrationQuestion Practice6",
+      "b_ch": "Chemical Coordination"
+    },
+    "2026-11-05": {
+      "p": "Mechanical Properties of FluidsBernoulli theorem6",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming)IUPAC of Functional Group5",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Animal Kingdom IntroductionKingdom-AnimaliaBasis of ClassificationPhylum- PoriferaPhylum- Coelenterata/Cnidaria (L1)",
+      "b_ch": "Animal Kingdom"
+    },
+    "2026-11-10": {
+      "p": "Mechanical Properties of FluidsViscositySurface tension7",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming)Polyfunctional Group6",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Photosynthesis in Higher PlantsATP and NADPH Use and Calvin CycleHatch and Slack Pathway, Photorespiration4",
+      "b_ch": "Photosynthesis"
+    },
+    "2026-11-12": {
+      "p": "Mechanical Properties of FluidsQuestion Practice8",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming)IUPAC of Aromatic CompoundCommon Naming7",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Animal KingdomPhylum- CtenophoraPhylum- PlatyhelminthesPhylum- Aschelminthes/ Nemathelminthes2",
+      "b_ch": "Animal Kingdom"
+    },
+    "2026-11-13": {
+      "p": "Thermal Properties of matterThermal expansion1",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming)Question Practice8",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Animal KingdomPhylum-AnnelidaPhylum-ArthropodaPhylum- Mollusca3",
+      "b_ch": "Animal Kingdom"
+    },
+    "2026-11-14": {
+      "p": "Thermal Properties of matterApplication of thermal expansion2",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism)Isomerism & Type of Isomerism Classification and Structural Isomerism1",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Photosynthesis in Higher PlantsDifference between C3 and C4 pathway, CAM pathway and Factors affecting photosynthesis5",
+      "b_ch": "Photosynthesis"
+    },
+    "2026-11-17": {
+      "p": "Thermal Properties of matterSpecific heat capacity3",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism)Isomerism & Type of Isomerism Classification and Structural Isomerism2",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Photosynthesis in Higher PlantsQuestion Practice6",
+      "b_ch": "Photosynthesis"
+    },
+    "2026-11-18": {
+      "p": "Thermal Properties of matterLatent heatcalorimetry4",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism) Geometrical isomerism & Exhibition Cis trans Z/E CIP rule3",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Animal Kingdom Phylum- EchinodermataPhylum- HemichordataPhylum-ChordataSubphylum- UrochordataSubphylum- CephalochordataSubphylum- VertebrataClass- Cyclostomata (L4)",
+      "b_ch": "Animal Kingdom"
+    },
+    "2026-11-19": {
+      "p": "Thermal Properties of matterHeat transferconductionconvectionRadiation (L5)",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism) Special cases of G.ICalculation of G.I4",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Animal KingdomSuperclass- Pisces (Class- Chondrichthyes)Superclass- Pisces (Class- Osteichthyes)Superclass- Tetrapoda (Class – Amphibia)5",
+      "b_ch": "Animal Kingdom"
+    },
+    "2026-11-20": {
+      "p": "Thermal Properties of matterQuestion Practice6",
+      "p_ch": "Properties of Matter",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism) Conformations: Sawhorse and Newman projections (of ethane,butane cyclohexane )5",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Animal KingdomSuperclass- Tetrapoda (Class – Reptiles)Superclass- Tetrapoda (Class – Aves)Superclass- Tetrapoda (Class – Mammalia)6",
+      "b_ch": "Animal Kingdom"
+    },
+    "2026-11-21": {
+      "p": "Kinetic TheoryIdeal gasesreal gas equation1",
+      "p_ch": "Kinetic Theory",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism)Optical isomerism: Basics Polarimeter experiment and Chiral Centre,Stereo Centre6",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Plant Growth and DevelopmentIntroduction and Seed GerminationGrowth (L1)",
+      "b_ch": "Plant Growth & Dev"
+    },
+    "2026-11-23": {
+      "p": "Kinetic TheoryQuestion Practice2",
+      "p_ch": "Kinetic Theory",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism)Optical isomerism, Plane of symmetry and Center of symmetry (L7)",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Plant Growth and DevelopmentDifferentiation, Dedifferentiation and Redifferentiation and Development (L2)",
+      "b_ch": "Plant Growth & Dev"
+    },
+    "2026-11-24": {
+      "p": "ThermodynamicsIntroductionthermal equilibrium and zeroth lawfirst law of thermodynamics1",
+      "p_ch": "Thermal Properties",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism)Optical isomerism, Fischer Projection & R,S configuration (L8)",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Plant Growth and DevelopmentPlant Growth Regulators3",
+      "b_ch": "Plant Growth & Dev"
+    },
+    "2026-11-25": {
+      "p": "ThermodynamicsDifferent type of processes2",
+      "p_ch": "Thermodynamics",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism)Optical isomerism, Exhibition of Optical isomerism9",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Animal KingdomQuestion Practice7",
+      "b_ch": "Animal Kingdom"
+    },
+    "2026-11-26": {
+      "p": "ThermodynamicsSecond law of thermodynamicsheat enginecarnot cycle and carnot engineheat pumprefrigerator3",
+      "p_ch": "Thermodynamics",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism)Enantiomers, Diastereomers, Racemic Mixture Resolution Meso Compound,10",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Biomolecules IntroductionMethod to analyze chemical composition1",
+      "b_ch": "Biomolecules"
+    },
+    "2026-11-27": {
+      "p": "ThermodynamicsQuestion Practice4",
+      "p_ch": "Thermodynamics",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism) Pseudo Chiral Centre, ,D,L Configuration, Erythro, Threo, Epimer, Anomers, Calculating number of optical and stereoisomersPYQ'S (L11)",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Biomolecules MetabolitesMacromoleculesCarbohydrates2",
+      "b_ch": "Biomolecules"
+    },
+    "2026-11-28": {
+      "p": "OscillationsPeriodic motion and oscillatory motion1",
+      "p_ch": "Oscillations",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism) Pseudo Chiral Centre, ,D,L Configuration, Erythro, Threo, Epimer, Anomers, Calculating number of optical and stereoisomersPYQ'S (L12)",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Plant Growth and DevelopmentQuestion Practice4",
+      "b_ch": "Plant Growth & Dev"
+    },
+    "2026-11-30": {
+      "p": "OscillationsSome basic terms related with oscillatory motion2",
+      "p_ch": "Oscillations",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(Isomerism) Question Practice13",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Sexual Reproduction in Flowering Plant Flower- A Fascinating Organ of AngiospermsPre-Fertilization - Structures and Events1",
+      "b_ch": "Sexual Repro in Plants"
+    },
+    "2026-12-01": {
+      "p": "OscillationsSimple harmonic motion(SHM)equations of SHM3",
+      "p_ch": "Oscillations",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Covalent bond fission - Homolytic and heterolytic & Inductive Effect1",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Sexual Reproduction in Flowering Plant Pre-Fertilization - Structures and Events (L2)",
+      "b_ch": "Sexual Repro in Plants"
+    },
+    "2026-12-02": {
+      "p": "Oscillations Energy in SHM4",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Hyperconjugation2",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Biomolecules Amino acidsProteinsLipids (L3)",
+      "b_ch": "Biomolecules"
+    },
+    "2026-12-03": {
+      "p": "OscillationsCalculation of time period of spring block system5",
+      "p_ch": "Oscillations",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Application of Hyperconjugation3",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] BiomoleculesSimple lipids Compound lipidsDerived lipidsNucleic acids4",
+      "b_ch": "Biomolecules"
+    },
+    "2026-12-04": {
+      "p": "OscillationsQuestion Practice6",
+      "p_ch": "Oscillations",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Resonance (Part-1)4",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Biomolecules RNADNAEnzymes (L5)",
+      "b_ch": "Biomolecules"
+    },
+    "2026-12-05": {
+      "p": "Waves Wavesequation of waves1",
+      "p_ch": "Waves",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Resonance (Part-2), Stability of resonating Structures5",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Sexual Reproduction in Flowering Plant PollinationIncompatibilityPollen-pistil interaction3",
+      "b_ch": "Sexual Repro in Plants"
+    },
+    "2026-12-07": {
+      "p": "Waves Characteristic of waves2",
+      "p_ch": "Waves",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Resonance (Part-2), Stability of resonating Structures6",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Sexual Reproduction in Flowering Plant Artificial HybridizationDouble Fertilization4",
+      "b_ch": "Sexual Repro in Plants"
+    },
+    "2026-12-08": {
+      "p": "Waves Progressive wave on stringvelocity of transverse wave on stringintensity of wavessound wavesspeed of sound wavecharacteristic of sound wave3",
+      "p_ch": "Waves",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Aromaticity, Annulene7",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Sexual Reproduction in Flowering Plant Post-Fertilisation : Structures and Events5",
+      "b_ch": "Sexual Repro in Plants"
+    },
+    "2026-12-09": {
+      "p": "Waves Principle of superposition of waveReflection and refraction of waves4",
+      "p_ch": "Waves",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Mesomeric Effect8",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Biomolecules Question Practice6",
+      "b_ch": "Biomolecules"
+    },
+    "2026-12-10": {
+      "p": "Waves Stationary waves5",
+      "p_ch": "Waves",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Stability of Intermediates, Bond Length and Bond Strength9",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Human ReproductionHuman reproductive systemMale reproductive system1",
+      "b_ch": "Human Reproduction"
+    },
+    "2026-12-11": {
+      "p": "Waves Question Practice6",
+      "p_ch": "Waves",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Stability of Intermediates, Bond Length and Bond Strength10",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Human ReproductionFemale reproductive system2",
+      "b_ch": "Human Reproduction"
+    },
+    "2026-12-12": {
+      "p": "Electric Charges and FieldsIntroductionCharge (L1)",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Stability of Intermediates, Bond Length and Bond Strength11",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Sexual Reproduction in Flowering Plant Post-Fertilisation : Structures and Events6",
+      "b_ch": "Sexual Repro in Plants"
+    },
+    "2026-12-14": {
+      "p": "Electric Charges and FieldsCoulomb's Law2",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Acidic Strength (L12)",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Sexual Reproduction in Flowering Plant SeedFruit (L7)",
+      "b_ch": "Sexual Repro in Plants"
+    },
+    "2026-12-15": {
+      "p": "Electric Charges and FieldsCoulomb's Law3",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Basic Strength13",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Sexual Reproduction in Flowering Plant Question Practice8",
+      "b_ch": "Sexual Repro in Plants"
+    },
+    "2026-12-16": {
+      "p": "Electric Charges and FieldsElectric FieldConductors and Insulators4",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Tautomerism ( Enol Content) electrophiles, and nucleophiles & Type of reactions Substitution, addition, elimination, and rearrangement. PYQ'S (L14)",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Human ReproductionGametogenesisSpermatogenesis3",
+      "b_ch": "Human Reproduction"
+    },
+    "2026-12-17": {
+      "p": "Electric Charges and FieldsElectric Field of a Continuous Charge Distribution5",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Organic Chemistry: Some Basic principles and Techniques(GOC) Question Practice15",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Human ReproductionSpermStructure of sperm4",
+      "b_ch": "Human Reproduction"
+    },
+    "2026-12-18": {
+      "p": "Electric Charges and FieldsElectric Field of a Continuous Charge DistributionMotion of a Charged Particle in Uniform Electric Field6",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Hydrocarbon Basic Organic Chemistry1",
+      "c_ch": "Hydrocarbons",
+      "b": "[Zoology] Human ReproductionOogenesisDifferences between spermatogenesis and oogenesisOvumMenstrual cycle5",
+      "b_ch": "Human Reproduction"
+    },
+    "2026-12-19": {
+      "p": "Electric Charges and FieldsElectric Field LinesElectric Flux7",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] HydrocarbonRearrangement of Carbocation, Types of Reaction2",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritanceIntroductionThe DNA (L1)",
+      "b_ch": "Molecular Basis"
+    },
+    "2026-12-21": {
+      "p": "Electric Charges and FieldsGauss LawApplication of gauss's law8",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] HydrocarbonMethod of Preparation of Alkane (Part-1)Method of Preparation of Alkane (Part-2)3",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritanceCentral Dogma2",
+      "b_ch": "Molecular Basis"
+    },
+    "2026-12-22": {
+      "p": "Electric Charges and FieldsElectric DipoleDipole in a Uniform External FieldShort Dipole in Non-Uniform Electric Field9",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] HydrocarbonChemical Properties of Alkane : Mechanism of halogenation of alkanes, Physical Properties of Alkane4",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritancePackaging of DNA HelixThe Search For Genetic Material3",
+      "b_ch": "Molecular Basis"
+    },
+    "2026-12-23": {
+      "p": "Electric Charges and FieldsQuestion Practice10",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] HydrocarbonMethod of Preparation of Alkene (Part-1)Method of Preparation of Alkene (Part-2)5",
+      "c_ch": "Hydrocarbons",
+      "b": "[Zoology] Human ReproductionFertilisation to Implantation6",
+      "b_ch": "Human Reproduction"
+    },
+    "2026-12-24": {
+      "p": "Electrostatic Potential and CapacitanceRelation between Electric field (E) & Electric potential (V)2",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] HydrocarbonMethod of Preparation of Alkene (Part-3), Mechanism of electrophilic addition: addition of hydrogen, halogens6",
+      "c_ch": "Hydrocarbons",
+      "b": "[Zoology] Human ReproductionSex Determination of Foetus7",
+      "b_ch": "Human Reproduction"
+    },
+    "2026-12-26": {
+      "p": "Electrostatic Potential and CapacitanceEquipotential Surface3",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] HydrocarbonMechanism of electrophilic addition: Water, hydrogen halides (Markownikoff's and peroxide effect)7",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritanceRNA worldDNA ReplicationDNA Repair (L4)",
+      "b_ch": "Molecular Basis"
+    },
+    "2026-12-28": {
+      "p": "Electrostatic Potential and CapacitanceElectrostatic potential energyElectric potential due to dipole4",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Organic Chemistry] Hydrocarbon Ozonolysis and polymerization.Method of Preparation of Alkyne8",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritanceTranscriptionPost Transcriptional Process5",
+      "b_ch": "Molecular Basis"
+    },
+    "2026-12-29": {
+      "p": "Electrostatic Potential and CapacitanceElectrostatics of Conductor5",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] HydrocarbonChemical Properties of Alkyne : Acidic character: Addition of hydrogen, halogens, water, and hydrogen halides: Polymerization.9",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritanceGenetic Code6",
+      "b_ch": "Molecular Basis"
+    },
+    "2026-12-30": {
+      "p": "Electrostatic Potential and CapacitanceElectrostatics of Conductor6",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Hydrocarbon MOP of benzene - Properties of Benzene Mechanism of electrophilic substitution: halogenation, nitration.Friedel - Crafts alkylation and acylation, directive influence of the functional group in mono substituted benzene.PYQs (L10)",
+      "c_ch": "Hydrocarbons",
+      "b": "[Zoology] Human ReproductionPregnancy & embryonic developmentParturition & Lactation8",
+      "b_ch": "Human Reproduction"
+    },
+    "2026-12-31": {
+      "p": "Electrostatic Potential and CapacitanceConductor & its capacitance7",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Hydrocarbon Question Practice11",
+      "c_ch": "Hydrocarbons",
+      "b": "[Zoology] Human ReproductionQuestion Practice9",
+      "b_ch": "Human Reproduction"
+    },
+    "2027-01-02": {
+      "p": "Electrostatic Potential and CapacitanceCapacitor & its capacitance8",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Haloalkanes and HaloarenesMethods of preparation of haloalkanes1",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritancetRNA The Adaptor MoleculeTranslation (L7)",
+      "b_ch": "Molecular Basis"
+    },
+    "2027-01-04": {
+      "p": "Electrostatic Potential and CapacitanceCharging of a capacitorCombination of capacitors9",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Haloalkanes and Haloarenes Chemical Properties of Haloalkane: Nature of C-X bond; Mechanisms of substitution reactions2",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritanceRegulation of Gene Expression8",
+      "b_ch": "Molecular Basis"
+    },
+    "2027-01-05": {
+      "p": "Electrostatic Potential and CapacitanceQuestion Practice10",
+      "p_ch": "Electrostatics",
+      "c": "[Organic Chemistry] Haloalkanes and HaloarenesChemical Properties of Haloalkane-Elimination Reactions3",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritanceHuman Genome Project9",
+      "b_ch": "Molecular Basis"
+    },
+    "2027-01-06": {
+      "p": "Current ElectricityElectric Current1",
+      "p_ch": "Current Electricity",
+      "c": "[Organic Chemistry] Haloalkanes and HaloarenesReaction with metals Uses; Environmental effects of chloroform, iodoform freons, and DDT.4",
+      "c_ch": "Hydrocarbons",
+      "b": "[Zoology] Reproductive HealthReproductive healthPopulationContraceptive methods1",
+      "b_ch": "Reproductive Health"
+    },
+    "2027-01-07": {
+      "p": "Current ElectricityCurrent in Conductors2",
+      "p_ch": "Current Electricity",
+      "c": "[Organic Chemistry] Haloalkanes and HaloarenesMethods of preparation of haloarenes5",
+      "c_ch": "Hydrocarbons",
+      "b": "[Zoology] Reproductive HealthMedical termination of pregnancySexually transmitted diseases(STDs)2",
+      "b_ch": "Reproductive Health"
+    },
+    "2027-01-08": {
+      "p": "Current ElectricityCurrent in Conductors3",
+      "p_ch": "Current Electricity",
+      "c": "[Organic Chemistry] Haloalkanes and HaloarenesChemical Properties of Haloarenes: Mechanism of Aromatic nucleophilic substitution reaction & Benzyne mechanism6",
+      "c_ch": "Hydrocarbons",
+      "b": "[Zoology] Reproductive HealthInfertilityAssisted reproductive technologies(ARTs)3",
+      "b_ch": "Reproductive Health"
+    },
+    "2027-01-09": {
+      "p": "Current ElectricityKirchhoff's Laws and Combination of Resistances4",
+      "p_ch": "Current Electricity",
+      "c": "[Organic Chemistry] Haloalkanes and HaloarenesMethod of Preparation of Grignard reagentChemical Properties of Grignard Reagent7",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritanceDNA Analysis MethodsDNA Binding MotifBlotting TechniquesDNA Fingerprinting10",
+      "b_ch": "Molecular Basis"
+    },
+    "2027-01-11": {
+      "p": "Current ElectricityKirchhoff's Laws and Combination of Resistances5",
+      "p_ch": "Current Electricity",
+      "c": "[Organic Chemistry] Haloalkanes and HaloarenesQuestion Practice8",
+      "c_ch": "Hydrocarbons",
+      "b": "[Botany] Molecular Basis of InheritanceQuestion Practice11",
+      "b_ch": "Molecular Basis"
+    },
+    "2027-01-12": {
+      "p": "Current ElectricityWheatstone Bridge and Symmetric Circuits6",
+      "p_ch": "Current Electricity",
+      "c": "[Organic Chemistry] Alcohols, Ethers and PhenolsIntroduction to alcohols: identification of primary secondary & tertiary alcohols , Preparation of alcohols: mechanism of dehydration1",
+      "c_ch": "Alcohols, Phenols",
+      "b": "[Botany] Principle of Inheritance and Variation IntroductionGenetic Terminology1",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-01-13": {
+      "p": "Current ElectricityElectrical Measuring Instruments7",
+      "p_ch": "Current Electricity",
+      "c": "[Organic Chemistry] Alcohols, Ethers and PhenolsChemical properties of alcohols2",
+      "c_ch": "Alcohols, Phenols",
+      "b": "[Zoology] Reproductive HealthQuestion Practice4",
+      "b_ch": "Reproductive Health"
+    },
+    "2027-01-14": {
+      "p": "Current ElectricityElectrical Measuring Instruments8",
+      "p_ch": "Current Electricity",
+      "c": "[Organic Chemistry] Alcohols, Ethers and PhenolsPreparation of Phenol: Acidic nature, electrophilic substitution reactions: halogenation. nitration and sulphonation (L3)",
+      "c_ch": "Alcohols, Phenols",
+      "b": "[Zoology] Human Health and DiseasesIntroduction (L1)",
+      "b_ch": "Human Health & Disease"
+    },
+    "2027-01-16": {
+      "p": "Current ElectricityQuestion Practice9",
+      "p_ch": "Current Electricity",
+      "c": "[Organic Chemistry] Alcohols, Ethers and PhenolsReimer - Tiemann reaction & Kolbe's Reaction4",
+      "c_ch": "Alcohols, Phenols",
+      "b": "[Botany] Principle of Inheritance and VariationMendel's Experiments on Pea PlantInheritance of One Gene2",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-01-18": {
+      "p": "Moving Charges and MagnetismIntroduction1",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Alcohols, Ethers and PhenolsPreparation, Structure of Ethers, Chemical properties of ethers, Epoxides (Oxiranes)Physical Properties of Alcohol, Phenol and Ether (L5)",
+      "c_ch": "Alcohols, Phenols",
+      "b": "[Botany] Principle of Inheritance and Variation Mendel's' Laws of Inheritance3",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-01-19": {
+      "p": "Moving Charges and MagnetismBiot-Savart's Law2",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Alcohols, Ethers and PhenolsQuestion Practice6",
+      "c_ch": "Alcohols, Phenols",
+      "b": "[Botany] Principle of Inheritance and VariationExceptions to Mendelian Principles4",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-01-20": {
+      "p": "Moving Charges and MagnetismMagnetic-field due to a current carrying Ring and Problems on combination of Ring and Rod3",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Aldehydes, Ketones and Carboxylic AcidsMethod of Preparation of Both Aldehyde and Ketone (L1)",
+      "c_ch": "Aldehydes & Ketones",
+      "b": "[Zoology] Human Health and DiseasesProtozoan DiseaseImmunityInnate immunityAcquired immunity2",
+      "b_ch": "Human Health & Disease"
+    },
+    "2027-01-21": {
+      "p": "Moving Charges and MagnetismMagnetic-field due to a current carrying Ring and Problems on combination of Ring and Rod4",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Aldehydes, Ketones and Carboxylic AcidsMethod of Preparation of Aldehyde only and Ketone only (L2)",
+      "c_ch": "Aldehydes & Ketones",
+      "b": "[Zoology] Human Health and DiseasesLymphoid organsImmunisationVaccination (L3)",
+      "b_ch": "Human Health & Disease"
+    },
+    "2027-01-22": {
+      "p": "Moving Charges and MagnetismAmpere's Law and Its applications5",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Aldehydes, Ketones and Carboxylic AcidsNature of carbonyl group;Nucleophilic addition to >C=O group, relative reactivities of aldehydes and ketones;3",
+      "c_ch": "Aldehydes & Ketones",
+      "b": "[Zoology] Human Health and DiseasesTransplantationAllergyAutoimmunity4",
+      "b_ch": "Human Health & Disease"
+    },
+    "2027-01-23": {
+      "p": "Moving Charges and MagnetismForce on a moving charge in a Magnetic FieldHelical Path,Lorentz Force and Velocity Selector6",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Aldehydes, Ketones and Carboxylic Acids Important reactions such as - Cyanohydrin formation , NaSHO3 addition (L4)",
+      "c_ch": "Aldehydes & Ketones",
+      "b": "[Botany] Principle of Inheritance and Variation Inheritance of Two Gene5",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-01-25": {
+      "p": "Moving Charges and MagnetismQuestion Practice7",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Aldehydes, Ketones and Carboxylic AcidsReaction of carbonyl compounds with Alcohols and NH2ZAldol condensation and cannizzaro reaction5",
+      "c_ch": "Alcohols, Phenols",
+      "b": "[Botany] Principle of Inheritance and VariationPolygenic Inheritance and Pleiotropy6",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-01-27": {
+      "p": "Magnetism and MatterBar Magnet and its PropertiesCircular coil as magnetic dipoleTangent GalvanometerOscillation Magnetometer1",
+      "p_ch": "Kinematics 2D",
+      "c": "[Organic Chemistry] Aldehydes, Ketones and Carboxylic Acids Haloform reaction & Chemical tests to distinguish between aldehydes and Ketones.Method of Preparation of Carboxylic AcidChemical properties of Carboxylic Acid part 1Chemical properties of Carboxylic Acid part 2, Physical Properties of Carbonyl Compounds and Carboxylic Acid (L6)",
+      "c_ch": "Aldehydes & Ketones",
+      "b": "[Zoology] Human Health and DiseasesImmunodeficiency disordersCancerDrug abuseAlcohol abuse5",
+      "b_ch": "Human Health & Disease"
+    },
+    "2027-01-28": {
+      "p": "Magnetism and MatterQuestion Practice2",
+      "p_ch": "Magnetism & Matter",
+      "c": "[Organic Chemistry] Aldehydes, Ketones and Carboxylic AcidsQuestion Practice7",
+      "c_ch": "Aldehydes & Ketones",
+      "b": "[Zoology] Human Health and DiseasesAlcohol abuseTobacco abuseAdolescenceAddiction and dependence6",
+      "b_ch": "Human Health & Disease"
+    },
+    "2027-01-29": {
+      "p": "Electromagnetic InductionMagnetic Flux and Lenz's Law1",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Amines Introduction,Structure of AminesClassification Of Amines ,Nomenclature, identification of primary, secondary, and tertiary amines and their basic character. (L1)",
+      "c_ch": "Organic Basics",
+      "b": "[Zoology] Human Health and DiseasesQuestion Practice7",
+      "b_ch": "Human Health & Disease"
+    },
+    "2027-01-30": {
+      "p": "Electromagnetic InductionFaraday's LawCalculation of Induced EMF2",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Amines Preparation of AminesChemical Reactions Of Amines & AnilinesDiazonium Salts,Physical Properties Importance in synthetic organic chemistry.2",
+      "c_ch": "Amines",
+      "b": "[Botany] Principle of Inheritance and Variation Post-Mendelism7",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-02-01": {
+      "p": "Electromagnetic InductionInduced Electric FieldSelf Inductance3",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Amines Question Practice3",
+      "c_ch": "Amines",
+      "b": "[Botany] Principle of Inheritance and Variation Sex Determination8",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-02-02": {
+      "p": "Electromagnetic InductionMutual InductanceInductor in Electrical Circuits4",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] BiomoleculesCarbohydrates CARBOHYDRATES - Classification; aldoses and ketoses: monosaccharides (glucose and fructose) constituent monosaccharides of oligosaccharides (sucrose, lactose, and maltose).1",
+      "c_ch": "Biomolecules (12)",
+      "b": "[Botany] Principle of Inheritance and Variation Mutation (L9)",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-02-03": {
+      "p": "Electromagnetic InductionQuestion Practice5",
+      "p_ch": "Magnetic Effects",
+      "c": "[Organic Chemistry] Biomolecules Amino Acids: Elementary Idea of a-amino acids, peptide bond, polypeptides. Proteins: primary, secondary, tertiary, and quaternary structure (qualitative idea only), denaturation of proteins, enzymesNucleic acid : Chemical constitution of DNA and RNA. Biological functions of nucleic acids.,Vitamins:Classification and functions. and Hormones (General introduction)Question Practice (L2)",
+      "c_ch": "Practical Chemistry",
+      "b": "[Zoology] Biotechnology: Principles & ProcessesIntroductionPrinciples of biotechnologyGenetic engineering/Recombinant DNA technology1",
+      "b_ch": "Molecular Basis"
+    },
+    "2027-02-04": {
+      "p": "Alternating CurrentIntroduction to Alternating Current, Average and RMS Values (L1)",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Organic Chemistry] Purification and Qualitative and quantitative analysis Purification of Qualitative and quantitative analysisCrystallization, sublimation, distillation, differential extraction, and chromatography - principles and their applications.Detection of nitrogen, sulphur, phosphorus, and halogens.(basic principles only) - Estimation of carbon, hydrogen, nitrogen, halogens. sulphur, phosphorus.Calculations of empirical formulae and molecular formulae: umerical problems in organic quantitative analysis.Question Practice (L1)",
+      "c_ch": "Practical Chemistry",
+      "b": "[Zoology] Biotechnology: Principles & ProcessesTools of rDNA technologyProcess of rDNAIsolation of DNA2",
+      "b_ch": "Molecular Basis"
+    },
+    "2027-02-05": {
+      "p": "Alternating CurrentTypes of AC Circuits, Power & Power Factor2",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Inorganic Chemistry] Coordination Compound Definitions of Some Important Terms Pertaining to Coordination Compounds1",
+      "c_ch": "Coordination Compounds",
+      "b": "[Zoology] Biotechnology: Principles & ProcessesSeparation and isolation of DNA fragmentsVector (L3)",
+      "b_ch": "Molecular Basis"
+    },
+    "2027-02-06": {
+      "p": "Alternating CurrentQuestion Practice3",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Inorganic Chemistry] Coordination Compound Classification of Ligands2",
+      "c_ch": "Coordination Compounds",
+      "b": "[Botany] Principle of Inheritance and Variation Genetic DisordersGenetic Disorders: Mendelian Disorders10",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-02-08": {
+      "p": "Electromagnetic WavesCharacteristics of Electromagnetic Waves1",
+      "p_ch": "EM Waves",
+      "c": "[Inorganic Chemistry] Coordination Compound Nomenclature of Coordination Compounds3",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Principle of Inheritance and VariationGenetic Disorders: Chromosomal Disorders (L11)",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-02-09": {
+      "p": "Electromagnetic WavesQuestion Practice2",
+      "p_ch": "EM Waves",
+      "c": "[Inorganic Chemistry] Coordination Compound Nomenclature of Coordination Compounds4",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Principle of Inheritance and Variation Cytoplasmic InheritanceDosage Compensation12",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-02-10": {
+      "p": "Ray Optics and Optical InstrumentsIntroduction of opticsReflection of light1",
+      "p_ch": "Ray Optics",
+      "c": "[Inorganic Chemistry] Coordination Compound Werner Theory & EAN Rule5",
+      "c_ch": "Coordination Compounds",
+      "b": "[Zoology] Biotechnology: Principles & ProcessesAmplification of gene of interestInsertion of rDNA into host cellObtaining the foreign gene product4",
+      "b_ch": "Molecular Basis"
+    },
+    "2027-02-11": {
+      "p": "Ray Optics and Optical InstrumentsReflection from a plane mirror2",
+      "p_ch": "Kinematics 2D",
+      "c": "[Inorganic Chemistry] Coordination Compound VBT (L6)",
+      "c_ch": "Coordination Compounds",
+      "b": "[Zoology] Biotechnology: Principles & ProcessesQuestion Practice5",
+      "b_ch": "Biotech: Principles"
+    },
+    "2027-02-12": {
+      "p": "Ray Optics and Optical InstrumentsReflection from spherical mirror3",
+      "p_ch": "Ray Optics",
+      "c": "[Inorganic Chemistry] Coordination Compound VBT (L7)",
+      "c_ch": "Coordination Compounds",
+      "b": "[Zoology] Biotechnology and its ApplicationsIntroductionBiotechnological applications in agriculture1",
+      "b_ch": "Biotech: Applications"
+    },
+    "2027-02-13": {
+      "p": "Ray Optics and Optical InstrumentsRefraction of lightrefraction from a plane surface4",
+      "p_ch": "Kinematics 2D",
+      "c": "[Inorganic Chemistry] Coordination Compound CFT (L8)",
+      "c_ch": "Coordination Compounds",
+      "b": "[Botany] Principle of Inheritance and Variation Question Practice13",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-02-15": {
+      "p": "Ray Optics and Optical InstrumentsTotal internal refractionrefraction from curved surfacecombination of lens and power5",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Inorganic Chemistry] Coordination Compound CFT (L9)",
+      "c_ch": "Coordination Compounds",
+      "b": "[Botany] Microbes in Human Welfare IntroductionMicrobes in Household ProductsMicrobes in Sewage TreatmentMicrobes in Production of BiogasMicrobes in Organic FarmingMicrobes as BiofertilizersBiocontrol Agents (L1)",
+      "b_ch": "Microbes in Welfare"
+    },
+    "2027-02-16": {
+      "p": "Ray Optics and Optical InstrumentsNewton's FormulaCombination of lens and mirror6",
+      "p_ch": "Laws of Motion",
+      "c": "[Inorganic Chemistry] Coordination Compound Isomerism in Coordination Compounds10",
+      "c_ch": "Organic Basics",
+      "b": "[Botany] Microbes in Human WelfareQuestion Practice2",
+      "b_ch": "Microbes in Welfare"
+    },
+    "2027-02-17": {
+      "p": "Ray Optics and Optical InstrumentsDisplacement method to find the focal length7",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Inorganic Chemistry] Coordination Compound Bonding in Metal Carbonyls11",
+      "c_ch": "Chemical Bonding",
+      "b": "[Zoology] Biotechnology and its ApplicationsBiotechnological applications in medicineMolecular Diagnostics (L2)",
+      "b_ch": "Biotech: Applications"
+    },
+    "2027-02-18": {
+      "p": "Ray Optics and Optical Instrumentsrefraction from prism8",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Inorganic Chemistry] Coordination Compound Applications of complexes12",
+      "c_ch": "Coordination Compounds",
+      "b": "[Zoology] Biotechnology and its ApplicationsTransgenic animalsEthical issues3",
+      "b_ch": "Biotech: Applications"
+    },
+    "2027-02-19": {
+      "p": "Ray Optics and Optical InstrumentsQuestion Practice9",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Inorganic Chemistry] Coordination Compound Question Practice13",
+      "c_ch": "Coordination Compounds",
+      "b": "[Zoology] Biotechnology and its ApplicationsQuestion Practice4",
+      "b_ch": "Biotech: Applications"
+    },
+    "2027-02-20": {
+      "p": "Wave Opticswave nature of light1",
+      "p_ch": "Waves",
+      "c": "[Inorganic Chemistry] The d and f-Block ElementsGeneral Properties of the Transition Elements (d-Block)1",
+      "c_ch": "d & f Block",
+      "b": "[Botany] Organisms and PopulationIntroductionLevels of OrganisationOrganism and its Environment1",
+      "b_ch": "Organisms & Populations"
+    },
+    "2027-02-22": {
+      "p": "Wave Opticsnature of light2",
+      "p_ch": "Waves",
+      "c": "[Inorganic Chemistry] The d and f-Block ElementsGeneral Properties of the Transition Elements (d-Block)2",
+      "c_ch": "d & f Block",
+      "b": "[Botany] Organisms and PopulationResponses to Abiotic FactorsAdaptationsAdaptations to Environment in PlantsPopulations (L2)",
+      "b_ch": "Organisms & Populations"
+    },
+    "2027-02-23": {
+      "p": "Wave Opticsinterference of light3",
+      "p_ch": "Waves",
+      "c": "[Inorganic Chemistry] The d and f-Block ElementsPreparation and properties of KMnO4 &K2Cr2O73",
+      "c_ch": "d & f Block",
+      "b": "[Botany] Organisms and Population Populations Growth Models Carrying CapacityEnvironmental ResistanceLife History VariationsPopulation Interactions (L3)",
+      "b_ch": "Principles of Inheritance"
+    },
+    "2027-02-24": {
+      "p": "Wave OpticsQuestion Practice4",
+      "p_ch": "Waves",
+      "c": "[Inorganic Chemistry] The d and f-Block ElementsThe Lanthanoids and The Actinoids4",
+      "c_ch": "d & f Block",
+      "b": "[Zoology] Evolution Origin of lifeTheory of origin of life1",
+      "b_ch": "Evolution"
+    },
+    "2027-02-25": {
+      "p": "Dual Nature of Radiation and MatterQuantum theory of light1",
+      "p_ch": "Dual Nature",
+      "c": "[Inorganic Chemistry] The d and f-Block ElementsQuestion Practice5",
+      "c_ch": "d & f Block",
+      "b": "[Zoology] Evolution EvolutionEvidences of evolutionAdaptive radiation2",
+      "b_ch": "Evolution"
+    },
+    "2027-02-26": {
+      "p": "Dual Nature of Radiation and MatterPhotoelectric effect2",
+      "p_ch": "Dual Nature",
+      "c": "[Inorganic Chemistry] The p-Block Elements Introduction1",
+      "c_ch": "p-Block (Gr 15-18)",
+      "b": "[Zoology] Evolution Theory of organic evolutionHardy-weinberg principle3",
+      "b_ch": "Evolution"
+    },
+    "2027-02-27": {
+      "p": "Dual Nature of Radiation and MatterQuestion Practice3",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Inorganic Chemistry] The p-Block Elements Group-13Group-14 (L2)",
+      "c_ch": "p-Block (Gr 15-18)",
+      "b": "[Botany] Organisms and PopulationQuestion Practice4",
+      "b_ch": "Organisms & Populations"
+    },
+    "2027-03-01": {
+      "p": "Atoms Atomic modelRutherford model1",
+      "p_ch": "Atoms & Nuclei",
+      "c": "[Inorganic Chemistry] The p-Block Elements Group-15Group-16 (L3)",
+      "c_ch": "p-Block (Gr 15-18)",
+      "b": "[Botany] Ecosystem IntroductionMajor EcosystemsEcosystem - Structure and FunctionStructure of Pond EcosystemEcosystem - FunctionFood ChainFood WebEcological Pyramids (L1)",
+      "b_ch": "Ecosystem"
+    },
+    "2027-03-02": {
+      "p": "Atoms Question Practice2",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Inorganic Chemistry] The p-Block Elements Group-17Group-18 (L4)",
+      "c_ch": "p-Block (Gr 15-18)",
+      "b": "[Botany] Ecosystem Question Practice2",
+      "b_ch": "Ecosystem"
+    },
+    "2027-03-03": {
+      "p": "Nuclei NucleiMass energy1",
+      "p_ch": "Work, Energy & Power",
+      "c": "[Inorganic Chemistry] The p-Block Elements Question Practice5",
+      "c_ch": "p-Block (Gr 15-18)",
+      "b": "[Zoology] Evolution Natural selection and artificial selection4",
+      "b_ch": "Evolution"
+    },
+    "2027-03-04": {
+      "p": "Nuclei Question Practice2",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Inorganic Chemistry] Salt Analysis Introduction of salt and solubility1",
+      "c_ch": "Practical Chemistry",
+      "b": "[Zoology] Evolution Lederberg's replica plate experimentSpeciationA brief account on evolutionOrigin and evolution of man5",
+      "b_ch": "Evolution"
+    },
+    "2027-03-05": {
+      "p": "Semiconductor Electronics: Materials, Devices and Simple CircuitsIntroduction to SemiconductorsIntrinsic and Extrinsic Semiconductor1",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Inorganic Chemistry] Salt Analysis Test of AnionsDry Test of cationsWet Test of cations2",
+      "c_ch": "Practical Chemistry",
+      "b": "[Zoology] Evolution Question Practice6",
+      "b_ch": "Evolution"
+    },
+    "2027-03-08": {
+      "p": "Semiconductor Electronics: Materials, Devices and Simple CircuitsPN Junction DiodeApplication of P-N Junction Diode2",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Inorganic Chemistry] Salt Analysis Question Practice3",
+      "c_ch": "Practical Chemistry",
+      "b": "[Botany] Biodiversity and ConservationBiodiversityLoss of Biodiversity1",
+      "b_ch": "Biodiversity"
+    },
+    "2027-03-09": {
+      "p": "Semiconductor Electronics: Materials, Devices and Simple CircuitsQuestion Practice3",
+      "p_ch": "EMI & AC Circuits",
+      "c": "[Physical Chemistry] Practical Physical ChemistryPractical Physical ChemistryQuestion Practice1",
+      "c_ch": "Basic Concepts",
+      "b": "[Botany] Biodiversity and ConservationQuestion Practice2",
+      "b_ch": "Biodiversity"
+    }
+  },
+  "tests": {
+    "2026-07-19": {
+      "name": "NEET-1 (Part Test)",
+      "syllabus": "Basic Maths & Calculus(Mathematical Tools)(Complete Chapter) Some Basic Concept of Chemistry: Dalton's Atomic Theory Types of partical and its calculationMolar Mass, AMU, MoleMole concept, Average molar MassVD, Mass % Age, Average Molar MassStoichiometry, Limiting reagent% age yield, Impure sample, Laws of chemical combinationEF & EF Concentration TermsConcentration Term ContinuousEquivalents Mass, Normality Cell - The Unit of Life What is a Cell ? Discovery of the CellMicroscopyCell Theory Overview of CellTypes of cellStructure Prokaryotic cellProkaryotic cells Structural Organization in Animals TissuesAnimal TissuesEpithelium Tissue"
+    },
+    "2026-08-02": {
+      "name": "NEET-2 (Part Test)",
+      "syllabus": "Vectors(Complete Chapter)Units and MeasurementsPhysical Quantities and UnitsDimensions and Dimensions formulaDimensional AnalysisSome Basic Concept of Chemistry(Complete Chapter)Cell - The Unit of Life (Complete Chapter)Structural Organization in Animals Cell JunctionsConnective TissueMuscular TissueNervous TissueFROG"
+    },
+    "2026-08-16": {
+      "name": "Rank Booster Test-1 (Part Test)",
+      "syllabus": "Basic Maths & Calculus(Mathematical Tools)(Complete Chapter)Vectors(Complete Chapter)Some Basic Concept of Chemistry(Complete Chapter)Cell - The Unit of Life (Complete Chapter)Structural Organization in Animals (Complete Chapter)"
+    },
+    "2026-08-30": {
+      "name": "NEET-3 (Part Test)",
+      "syllabus": "Units and Measurements(Complete Chapter)Motion in a straight line(Complete Chapter)Motion in a planeProjectile motion Redox Reaction(Complete Chapter)Solutions(Complete Chapter)Thermodynamics&Thermochemistry(Complete Chapter) Cell Cycle and Cell Division(Complete Chapter)The Living World(Complete Chapter)Breathing and Exchange of Gases(Complete Chapter)"
+    },
+    "2026-09-13": {
+      "name": "NEET-4 (Part Test)",
+      "syllabus": "Motion in a plane(Complete Chapter)Laws of motionForceNewton's first law of motionLinear momentumNewton's second law of motionNewton's third law of motionFree body diagramWorking with newton's first lawWorking with newton's second lawCalculation of accelerationSpring forceFrame of referenceRocket propulsionFrictionTypes of friction Chemical Equilibrium(Complete Chapter)Ionic Equilibrium(Complete Chapter)Biological Classification (Complete Chapter)Body Fluids and Circulation(Complete Chapter)"
+    },
+    "2026-09-27": {
+      "name": "Rank Booster Test-2 (Part Test)",
+      "syllabus": "Rank Booster Test Basic Maths & Calculus(Mathematical Tools)(Complete Chapter)Vectors(Complete Chapter)Units and Measurements(Complete Chapter)Motion in a straight line(Complete Chapter)Motion in a plane(Complete Chapter) Redox Reaction(Complete Chapter)Solutions(Complete Chapter)Thermodynamics&Thermochemistry(Complete Chapter)Chemical Equilibrium(Complete Chapter)Ionic Equilibrium(Complete Chapter) Cell Cycle and Cell Division(Complete Chapter)The Living World(Complete Chapter)Biological Classification (Complete Chapter) Breathing and Exchange of Gases(Complete Chapter)Body Fluids and Circulation(Complete Chapter)"
+    },
+    "2026-10-04": {
+      "name": "AITS-1 (Part Test)",
+      "syllabus": "Units and MeasurementsMathematical ToolsMotion in a Straight LineMotion in a PlaneSome Basic Concepts of ChemistryRedox ReactionCell : the unit of lifeStructural Organization in Animals (including Frog & cockroach)"
+    },
+    "2026-10-18": {
+      "name": "NEET-5 (Part Test)",
+      "syllabus": "Laws of motion(Complete Chapter)Work, energy and power(Complete Chapter)Centre of mass and System of Particles(Complete Chapter)Rotational MotionIntroductionrigid bodymoment of inertiamoment of inertiatheorems of moment of inertiaradius of gyrationtorquenewtons laws for rotationangular momentum Electrochemistry(Complete Chapter)Chemical Kinetics(Complete Chapter)Structure of Atom(Complete Chapter) Plant Kingdom(Complete Chapter)Morphology of Flowering Plants(Complete Chapter) Excretory Products & their Elimination(Complete Chapter)Locomotion & Movement(Complete Chapter)"
+    },
+    "2026-11-01": {
+      "name": "AITS-2 (Part Test)",
+      "syllabus": "Newton's Laws of MotionWork, Energy & PowerCentre of Mass & System of ParticlesAtomic StructureSolutionsCell Cycle & Cell DivisionBreathing and Exchange of GasesBody Fluids and Circulation"
+    },
+    "2026-11-22": {
+      "name": "NEET-6 (Part Test)",
+      "syllabus": "Rotational Motion(Complete Chapter)Gravitation (Complete Chapter) Mechanical Properties of Solids(Complete Chapter)Mechanical Properties of Fluids(Complete Chapter) Classification of Elements and Periodicity in Properties(Complete Chapter)Chemical Bonding and Molecular Structure(Complete Chapter) Anatomy of Flowering Plants(Complete Chapter)Respiration in Plants(Complete Chapter) Neural Control & Coordination(Complete Chapter)Chemical Coordination & Integration(Complete Chapter)"
+    },
+    "2026-12-06": {
+      "name": "Rank Booster Test-3 (Part Test)",
+      "syllabus": "Rank Booster Test Basic Maths & Calculus(Mathematical Tools)(Complete Chapter)Vectors(Complete Chapter)Units and Measurements(Complete Chapter)Motion in a straight line(Complete Chapter)Motion in a plane(Complete Chapter)Laws of motion(Complete Chapter)Work, energy and power(Complete Chapter)Centre of mass and System of Particles(Complete Chapter)Rotational Motion(Complete Chapter)Gravitation (Complete Chapter) Mechanical Properties of Solids(Complete Chapter)Mechanical Properties of Fluids(Complete Chapter) Electrochemistry(Complete Chapter)Chemical Kinetics(Complete Chapter)Structure of Atom(Complete Chapter)Classification of Elements and Periodicity in Properties(Complete Chapter)Chemical Bonding and Molecular Structure(Complete Chapter) Plant Kingdom(Complete Chapter)Morphology of Flowering Plants(Complete Chapter)Anatomy of Flowering Plants(Complete Chapter)Respiration in Plants(Complete Chapter) Excretory Products & their Elimination(Complete Chapter)Locomotion & Movement(Complete Chapter)Neural Control & Coordination(Complete Chapter)Chemical Coordination & Integration(Complete Chapter)"
+    },
+    "2026-12-13": {
+      "name": "AITS-3 (Part Test)",
+      "syllabus": "Rotational motionGravitationMechanical Properties of SolidsThermodynamics & ThermochemistryOrganic Chemistry: IUPAC NomenclatureThe Living worldBiological ClassificationExcretory Products & their EliminationLocomotion & Movement"
+    },
+    "2026-12-27": {
+      "name": "NEET-7 (Part Test)",
+      "syllabus": "Thermal Properties of matter(Complete Chapter)Kinetic Theory(Complete Chapter)Thermodynamics(Complete Chapter)Oscillations(Complete Chapter)Waves(Complete Chapter)Electric Charges and FieldsIntroductionChargeCoulomb's LawCoulomb's LawElectric FieldConductors and InsulatorsElectric Field of a Continuous Charge DistributionElectric Field of a Continuous Charge DistributionMotion of a Charged Particle in Uniform Electric Field Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming)(Complete Chapter)Organic Chemistry: Some Basic principles and Techniques(Isomerism)(Complete Chapter) Photosynthesis in Higher Plants(Complete Chapter)Plant Growth and Development(Complete Chapter)Sexual Reproduction in Flowering Plant(Complete Chapter) Animal Kingdom(Complete Chapter)Biomolecules(Complete Chapter)"
+    },
+    "2027-01-10": {
+      "name": "NEET-8 (Part Test)",
+      "syllabus": "Electric Charges and Fields(Complete Chapter)Electrostatic Potential and CapacitanceRelation between Electric field (E) & Electric potential (V)Equipotential SurfaceElectrostatic potential energyElectric potential due to dipoleElectrostatics of ConductorCapacitor & its capacitance Organic Chemistry: Some Basic principles and Techniques(GOC)(Complete Chapter)Hydrocarbon(Complete Chapter) Molecular Basis of InheritanceIntroductionThe DNACentral DogmaPackaging of DNA HelixThe Search For Genetic MaterialRNA worldDNA ReplicationDNA RepairTranscriptionPost Transcriptional Process Human Reproduction(Complete Chapter)"
+    },
+    "2027-01-17": {
+      "name": "AITS-4 (Part Test)",
+      "syllabus": "Mechanical Properties of FluidsThermal Properties of MatterKinetic Theory of GasesThermodynamicsEquilibriumElectrochemistryPlant KingdomMorphology of Flowering PlantsNeural Control & CoordinationChemical Coordination & Integration"
+    },
+    "2027-01-31": {
+      "name": "Rank Booster Test-4 (Part Test)",
+      "syllabus": "Rank Booster Test Basic Maths & Calculus(Mathematical Tools)(Complete Chapter)Vectors(Complete Chapter)Units and Measurements(Complete Chapter)Motion in a straight line(Complete Chapter)Motion in a plane(Complete Chapter)Laws of motion(Complete Chapter)Work, energy and power(Complete Chapter)Centre of mass and System of Particles(Complete Chapter)Rotational Motion(Complete Chapter)Gravitation (Complete Chapter) Mechanical Properties of Solids(Complete Chapter)Mechanical Properties of Fluids(Complete Chapter)Thermal Properties of matter(Complete Chapter)Kinetic Theory(Complete Chapter)Thermodynamics(Complete Chapter)Oscillations(Complete Chapter)Waves(Complete Chapter)Electric Charges and Fields(Complete Chapter) Organic Chemistry: Some Basic principles and Techniques(IUPAC Naming)(Complete Chapter)Organic Chemistry: Some Basic principles and Techniques(Isomerism)(Complete Chapter)Organic Chemistry: Some Basic principles and Techniques(GOC)(Complete Chapter)Hydrocarbon(Complete Chapter) Photosynthesis in Higher Plants(Complete Chapter)Plant Growth and Development(Complete Chapter)Sexual Reproduction in Flowering Plant(Complete Chapter) Animal Kingdom(Complete Chapter)Biomolecules(Complete Chapter)Human Reproduction(Complete Chapter)"
+    },
+    "2027-02-14": {
+      "name": "NEET-9 (Part Test)",
+      "syllabus": "Electrostatic Potential and Capacitance(Complete Chapter)Current Electricity(Complete Chapter)Moving Charges and Magnetism(Complete Chapter)Magnetism and Matter(Complete Chapter)Electromagnetic Induction(Complete Chapter)Alternating Current(Complete Chapter) Haloalkanes and Haloarenes(Complete Chapter)Alcohols, Ethers and Phenols(Complete Chapter)Aldehydes, Ketones and Carboxylic Acids(Complete Chapter) Molecular Basis of Inheritance(Complete Chapter)Principle of Inheritance and VariationIntroductionGenetic TerminologyMendel's Experiments on Pea PlantInheritance of One GeneMendel's' Laws of InheritanceExceptions to Mendelian PrinciplesInheritance of Two GenePolygenic Inheritance and PleiotropyPost-Mendelism Reproductive Health(Complete Chapter)Human Health and Diseases(Complete Chapter)"
+    },
+    "2027-02-21": {
+      "name": "AITS-5 (Part Test)",
+      "syllabus": "OscillationsWavesElectric Charges and FieldsElectrostatic Potential and CapacitanceOrganic Chemistry: IsomerismOrganic Chemistry: General Organic ChemistryHydrocarbonChemical KineticsAnatomy of Flowering PlantsSexual Reproduction in Flowering PlantAnimal KingdomHuman ReproductionReproductive Health"
+    },
+    "2027-02-28": {
+      "name": "NEET-10 (Part Test)",
+      "syllabus": "Electromagnetic Waves(Complete Chapter)Ray Optics and Optical Instruments(Complete Chapter) Amines(Complete Chapter)Biomolecules(Complete Chapter)Purification and Qualitative and quantitative analysis(Complete Chapter)Coordination Compound(Complete Chapter) Principle of Inheritance and Variation(Complete Chapter)Biotechnology: Principles & Processes(Complete Chapter)Biotechnology and its Applications(Complete Chapter)"
+    },
+    "2027-03-07": {
+      "name": "Rank Booster Test-5 (Part Test)",
+      "syllabus": "Rank Booster Test Basic Maths & Calculus(Mathematical Tools)(Complete Chapter)Vectors(Complete Chapter)Units and Measurements(Complete Chapter)Motion in a straight line(Complete Chapter)Motion in a plane(Complete Chapter)Laws of motion(Complete Chapter)Work, energy and power(Complete Chapter)Centre of mass and System of Particles(Complete Chapter)Rotational Motion(Complete Chapter)Gravitation (Complete Chapter) Mechanical Properties of Solids(Complete Chapter)Mechanical Properties of Fluids(Complete Chapter)Thermal Properties of matter(Complete Chapter)Kinetic Theory(Complete Chapter)Thermodynamics(Complete Chapter)Oscillations(Complete Chapter)Waves(Complete Chapter)Electric Charges and Fields(Complete Chapter)Electrostatic Potential and Capacitance(Complete Chapter)Current Electricity(Complete Chapter)Moving Charges and Magnetism(Complete Chapter)Magnetism and Matter(Complete Chapter)Electromagnetic Induction(Complete Chapter)Alternating Current(Complete Chapter)Electromagnetic Waves(Complete Chapter)Ray Optics and Optical Instruments(Complete Chapter) Haloalkanes and Haloarenes(Complete Chapter)Alcohols, Ethers and Phenols(Complete Chapter)Aldehydes, Ketones and Carboxylic Acids(Complete Chapter)Amines(Complete Chapter)Biomolecules(Complete Chapter)Purification and Qualitative and quantitative analysis(Complete Chapter)Coordination Compound(Complete Chapter) Molecular Basis of Inheritance(Complete Chapter)Principle of Inheritance and Variation(Complete Chapter) Reproductive Health(Complete Chapter)Human Health and Diseases(Complete Chapter)Biotechnology: Principles & Processes(Complete Chapter)Biotechnology and its Applications(Complete Chapter)"
+    },
+    "2027-03-14": {
+      "name": "AITS-6 (Part Test)",
+      "syllabus": "Current ElectricityHaloalkanes and HaloarenesAlcohols, Ethers and PhenolsMolecular Basis of InheritanceBiomoleculesHuman Health and Disease"
+    },
+    "2027-03-21": {
+      "name": "AITS-7 (Part Test)",
+      "syllabus": "Moving Charges and MagnetismMagnetism and MatterElectromagnetic InductionAldehydes, Ketones and Carboxylic AcidsAminesBio-moleculesRespiration in PlantsPhotosynthesis in Higher PlantsEvolution"
+    },
+    "2027-03-28": {
+      "name": "AITS-8 (Part Test)",
+      "syllabus": "Alternating CurrentElectromagnetic WavesRay Optics and Optical InstrumentsWave OpticsDual Nature of Radiation and MatterAtomsNuclei Purification and Analysis of Organic CompoundCoordination CompoundsThe p-Block ElementsThe d- and f- block ElementsPlant Growth and DevelopmentOrganisms and PopulationEcosystemBiotechnology - Principles and Processes"
+    },
+    "2027-04-04": {
+      "name": "AITS-9 (Full Syllabus)",
+      "syllabus": "Full Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTA"
+    },
+    "2027-04-11": {
+      "name": "AITS-10 (Full Syllabus)",
+      "syllabus": "Full Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTA"
+    },
+    "2027-04-14": {
+      "name": "AITS-11 (Full Syllabus)",
+      "syllabus": "Full Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTA"
+    },
+    "2027-04-18": {
+      "name": "AITS-12 (Full Syllabus)",
+      "syllabus": "Full Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTA"
+    },
+    "2027-04-21": {
+      "name": "AITS-13 (Full Syllabus)",
+      "syllabus": "Full Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTA"
+    },
+    "2027-04-25": {
+      "name": "AITS-14 (Full Syllabus)",
+      "syllabus": "Full Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTA"
+    },
+    "2027-04-28": {
+      "name": "AITS-15 (Full Syllabus)",
+      "syllabus": "Full Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTAFull Syllabus * As per NTA"
+    }
+  }
+}
