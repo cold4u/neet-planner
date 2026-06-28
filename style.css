@@ -2876,3 +2876,744 @@ tag in <head>
     opacity: 0;
   }
 }
+
+/* ============================================================
+   📱 COMPREHENSIVE MOBILE RESPONSIVE OVERHAUL
+   Professional mobile-first design for phones (≤480px)
+   ============================================================ */
+
+/* --- TABLET (≤768px) ENHANCEMENTS --- */
+@media (max-width: 768px) {
+  .main-wrapper {
+    padding: 16px 14px;
+  }
+  .page-title {
+    font-size: 18px;
+  }
+  .page-desc {
+    font-size: 12.5px;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .phase-cols {
+    grid-template-columns: 1fr;
+  }
+  .three-step-grid {
+    grid-template-columns: 1fr;
+  }
+  .details-col {
+    min-width: 140px;
+  }
+  .heatmap-grid {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .cal-controls {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .cal-controls .form-control {
+    width: 100%;
+  }
+  .subj-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .subj-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .sched-switch {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .sched-switch::-webkit-scrollbar {
+    display: none;
+  }
+  .sched-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  /* Welcome modal tablet fix */
+  #welcome-summary-modal .modal-content {
+    max-width: 92vw !important;
+    padding: 24px 18px !important;
+    margin: 8px;
+  }
+  /* AI config card */
+  .ai-config-card {
+    padding: 20px;
+    margin: 20px auto;
+  }
+  .ai-config-card h2 {
+    font-size: 18px;
+  }
+  /* CBT question images */
+  .cbt-main img {
+    max-width: 100%;
+    height: auto;
+  }
+  /* Support section */
+  .support-wrapper {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .support-qr-card {
+    width: 100%;
+  }
+  /* Error book cards */
+  .error-book-item {
+    padding: 14px;
+  }
+  /* Flashcard */
+  .flashcard-card-outer {
+    height: 260px;
+  }
+  .flashcard-front, .flashcard-back {
+    padding: 20px;
+  }
+}
+
+/* --- PHONE (≤480px) FULL OVERHAUL --- */
+@media (max-width: 480px) {
+  /* === BASE === */
+  body {
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* === TOPBAR === */
+  .topbar {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .topbar h1 {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+  .hamburger-btn {
+    width: 22px;
+    height: 16px;
+  }
+
+  /* === MAIN CONTENT AREA === */
+  .main-wrapper {
+    padding: 12px 10px;
+  }
+
+  /* === PAGE HEADERS === */
+  .page-header {
+    margin-bottom: 16px;
+  }
+  .page-title {
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+  .page-desc {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* === SECTION TITLES === */
+  .section-title {
+    font-size: 11px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+
+  /* === STAT CARDS GRID === */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .glass-card.stat-card {
+    padding: 12px 10px;
+  }
+  .stat-val {
+    font-size: 20px;
+  }
+  .stat-title {
+    font-size: 9.5px;
+    letter-spacing: 0.5px;
+  }
+
+  /* === GLASS CARDS === */
+  .glass-card {
+    padding: 14px 12px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .glass-card:hover {
+    transform: none; /* Disable lift on touch devices */
+  }
+
+  /* === PHASE STRIPS === */
+  .phase-strip {
+    padding: 14px 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .phase-strip h3 {
+    font-size: 13.5px;
+  }
+  .phase-strip .meta {
+    font-size: 11px;
+  }
+  .phase-cols {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .subj-col {
+    padding: 10px;
+  }
+  .subj-col h4 {
+    font-size: 10px;
+  }
+  .ch-li {
+    font-size: 11.5px;
+    padding: 5px 0;
+  }
+
+  /* === PHASE BADGES === */
+  .phase-badge-strip {
+    padding-left: 10px;
+    margin-bottom: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  /* === TABLES === */
+  .table-container {
+    border-radius: 8px;
+    max-height: 50vh;
+  }
+  table th, table td {
+    padding: 8px 6px !important;
+    font-size: 11px !important;
+  }
+  .ch-detail-table th {
+    font-size: 9.5px !important;
+    padding: 7px 6px !important;
+  }
+  .ch-detail-table td {
+    padding: 8px 6px !important;
+    font-size: 11px !important;
+  }
+  .ch-main {
+    font-size: 11.5px;
+  }
+  .ch-sub {
+    font-size: 10px;
+  }
+  .ch-link, .ch-miss {
+    font-size: 8.5px;
+    padding: 1px 4px;
+  }
+  .conn-badge {
+    font-size: 9px;
+    padding: 1.5px 5px;
+  }
+  .wt-h, .wt-m, .wt-l, .cls11, .cls12 {
+    font-size: 9px !important;
+    padding: 1.5px 5px !important;
+  }
+
+  /* === SCHEDULE === */
+  .sched-switch {
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .sched-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+  .sched-table td {
+    padding: 8px 6px;
+  }
+  .sched-time {
+    font-size: 10.5px;
+    min-width: 60px;
+  }
+  .sched-act {
+    font-size: 11.5px;
+  }
+  .sched-dur {
+    font-size: 10px;
+    min-width: 45px;
+  }
+
+  /* === SUBJECT TABS (horizontal scroll) === */
+  .subj-tabs {
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .subj-tab {
+    padding: 5px 12px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  /* === CALENDAR CONTROLS === */
+  .cal-controls {
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .form-control {
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+
+  /* === DETAILS BOX === */
+  .ch-details-box {
+    padding: 12px;
+    gap: 10px;
+  }
+  .details-row {
+    gap: 10px;
+  }
+  .details-col {
+    min-width: 100%;
+  }
+  .details-label {
+    font-size: 9px;
+  }
+  .details-val {
+    font-size: 12px;
+  }
+
+  /* === THREE STEP GRID === */
+  .three-step-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .step-box {
+    padding: 7px 10px;
+    font-size: 10.5px;
+  }
+
+  /* === PYQ CARDS === */
+  .pyq-card {
+    padding: 14px 12px;
+    border-radius: 10px;
+  }
+
+  /* === BUTTONS === */
+  .btn {
+    font-size: 12px;
+    padding: 7px 14px;
+    border-radius: 7px;
+  }
+  .pyq-btn {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  /* === PAGINATION === */
+  .pag-btn-container {
+    gap: 4px;
+    margin-top: 12px;
+  }
+  .pag-btn-container button {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  /* === PROGRESS BARS === */
+  .progress-bar-glow {
+    height: 6px;
+    margin-top: 8px;
+  }
+
+  /* === CUSTOM CHECKBOXES === */
+  .custom-checkbox {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* === NAV DRAWER (wider on phone for better touch targets) === */
+  .nav-drawer {
+    width: 85vw;
+    max-width: 320px;
+    right: -85vw;
+    padding: 20px 16px;
+  }
+  .nav-drawer.open {
+    right: 0;
+  }
+  .drawer-header h2 {
+    font-size: 17px;
+  }
+  .drawer-item {
+    padding: 14px 16px;
+    font-size: 13.5px;
+    border-radius: 10px;
+    min-height: 44px; /* iOS minimum touch target */
+  }
+  .drawer-menu {
+    gap: 8px;
+  }
+
+  /* === MODALS (phone-optimized) === */
+  .modal {
+    padding: 8px;
+  }
+  .modal-content {
+    border-radius: 14px;
+    padding: 18px 14px;
+    max-height: 92vh;
+  }
+  .close-btn {
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  /* === WELCOME MODAL (phone-perfect) === */
+  #welcome-summary-modal .modal-content {
+    max-width: 100% !important;
+    padding: 20px 16px !important;
+    border-radius: 14px !important;
+    max-height: 88vh !important;
+  }
+  #welcome-summary-modal h2 {
+    font-size: 15px !important;
+    padding-bottom: 10px !important;
+    padding-right: 38px !important;
+    gap: 4px !important;
+  }
+  #welcome-summary-modal h2 > span:first-child {
+    font-size: 14px;
+  }
+  #welcome-summary-modal h2 > span:last-child {
+    font-size: 10.5px !important;
+  }
+  #welcome-summary-modal .modal-content > div {
+    max-height: 55vh !important;
+    margin-top: 10px !important;
+  }
+  #welcome-summary-modal h3 {
+    font-size: 13px !important;
+  }
+  #welcome-summary-modal p {
+    font-size: 12px !important;
+  }
+  #welcome-summary-modal .btn-primary {
+    padding: 10px !important;
+    font-size: 13px !important;
+    margin-top: 16px !important;
+  }
+
+  /* === HEATMAP CALENDAR === */
+  .heatmap-grid {
+    grid-template-rows: repeat(7, 10px);
+    gap: 2px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .heatmap-cell {
+    width: 10px;
+    height: 10px;
+  }
+
+  /* === AI CBT EXAM === */
+  #ai-test {
+    padding: 12px 10px;
+  }
+  .ai-config-card {
+    padding: 16px;
+    margin: 12px auto;
+    border-radius: 12px;
+  }
+  .ai-config-card h2 {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    font-size: 12px;
+  }
+  .form-input {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .drag-zone {
+    padding: 24px 14px;
+  }
+  .drag-zone i {
+    font-size: 28px;
+  }
+  .drag-zone p {
+    font-size: 12px;
+  }
+
+  /* CBT question panel */
+  .cbt-main {
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+  .cbt-main img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+
+  /* CBT sidebar (question palette) */
+  .cbt-sidebar {
+    padding: 14px 10px;
+    border-radius: 12px;
+  }
+
+  /* Score display */
+  .score-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .score-box .val {
+    font-size: 22px;
+  }
+  .score-box .lbl {
+    font-size: 9.5px;
+  }
+
+  /* Review items */
+  .review-title {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+  .review-item {
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .review-q {
+    font-size: 12.5px;
+  }
+  .review-explanation {
+    font-size: 11.5px;
+    padding: 10px;
+  }
+
+  /* === FLASHCARDS === */
+  .flashcards-container {
+    padding: 12px 0;
+    gap: 16px;
+  }
+  .flashcard-card-outer {
+    height: 220px;
+  }
+  .flashcard-front, .flashcard-back {
+    padding: 16px;
+    border-radius: 14px;
+  }
+  .flashcard-front h3, .flashcard-back h3 {
+    font-size: 14px;
+  }
+  .flashcard-deck-select {
+    padding: 8px 12px;
+    font-size: 12px;
+    width: 100%;
+  }
+  .flashcard-controls {
+    gap: 8px;
+  }
+  .flashcard-controls .btn {
+    flex: 1;
+    font-size: 11px;
+    padding: 8px 6px;
+  }
+
+  /* === SUPPORT SECTION === */
+  .support-heading {
+    font-size: 1.1rem !important;
+  }
+  .support-stat-num {
+    font-size: 1.1rem !important;
+  }
+  .support-qr-card {
+    padding: 16px !important;
+  }
+
+  /* === SUBJECT BADGES === */
+  .subject-badge {
+    font-size: 9.5px;
+    padding: 3px 7px;
+    gap: 4px;
+  }
+
+  /* === TYPE BADGES === */
+  .tb-study, .tb-rev, .tb-test, .tb-mock, .tb-rest, .tb-buf {
+    font-size: 9px;
+    padding: 2px 5px;
+  }
+
+  /* === STETHOSCOPE ANIMATION === */
+  .stethoscope-icon {
+    font-size: 16px;
+  }
+
+  /* === CONFETTI === */
+  .confetti-particle {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* === QUICK LOG MODAL === */
+  #quick-log-modal .modal-content {
+    max-width: 100% !important;
+    padding: 18px 14px !important;
+  }
+
+  /* === ERROR BOOK MODAL === */
+  #error-book-modal .modal-content {
+    max-width: 100% !important;
+    padding: 18px 14px !important;
+    max-height: 90vh !important;
+  }
+
+  /* === SMOOTH SCROLLING === */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Better touch targets everywhere */
+  button, a, input, select, .drawer-item, .nav-item {
+    min-height: 38px;
+  }
+}
+
+/* --- VERY SMALL PHONES (≤360px, e.g. iPhone SE, Galaxy A series) --- */
+@media (max-width: 360px) {
+  .topbar {
+    padding: 8px 10px;
+  }
+  .topbar h1 {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  .main-wrapper {
+    padding: 10px 8px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .glass-card.stat-card {
+    padding: 10px 8px;
+  }
+  .stat-val {
+    font-size: 18px;
+  }
+  .stat-title {
+    font-size: 9px;
+  }
+  .glass-card {
+    padding: 12px 10px;
+  }
+  .page-title {
+    font-size: 14.5px;
+  }
+  #welcome-summary-modal h2 {
+    font-size: 13.5px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  #welcome-summary-modal h2 > span:last-child {
+    font-size: 9.5px !important;
+  }
+  #welcome-summary-modal h3 {
+    font-size: 12px !important;
+  }
+  .nav-drawer {
+    width: 90vw;
+    right: -90vw;
+  }
+  .drawer-item {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+  .flashcard-card-outer {
+    height: 200px;
+  }
+  .flashcard-front, .flashcard-back {
+    padding: 14px;
+  }
+  table th, table td {
+    padding: 6px 4px !important;
+    font-size: 10px !important;
+  }
+  .sched-time {
+    font-size: 9.5px;
+    min-width: 50px;
+  }
+  .sched-act {
+    font-size: 10.5px;
+  }
+  .sched-dur {
+    font-size: 9px;
+    min-width: 40px;
+  }
+  .modal-content {
+    padding: 14px 10px;
+  }
+  .close-btn {
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+  .score-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .score-box .val {
+    font-size: 18px;
+  }
+}
+
+/* --- LANDSCAPE PHONE (short height) --- */
+@media (max-height: 500px) and (max-width: 900px) {
+  #welcome-summary-modal .modal-content {
+    max-height: 95vh !important;
+    padding: 14px 12px !important;
+  }
+  #welcome-summary-modal .modal-content > div {
+    max-height: 45vh !important;
+  }
+  .flashcard-card-outer {
+    height: 180px;
+  }
+  .modal-content {
+    max-height: 95vh;
+  }
+}
+
+/* --- SAFE AREA INSETS (iPhone notch, etc.) --- */
+@supports (padding: max(0px)) {
+  @media (max-width: 480px) {
+    .topbar {
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+    }
+    .main-wrapper {
+      padding-left: max(10px, env(safe-area-inset-left));
+      padding-right: max(10px, env(safe-area-inset-right));
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+    .nav-drawer {
+      padding-right: max(16px, env(safe-area-inset-right));
+    }
+  }
+}
