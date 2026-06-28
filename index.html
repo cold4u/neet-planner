@@ -10,41 +10,7 @@
 </head>
 <body>
 
-<div id="login-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1f6e, #2d1b8c); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; overflow: hidden;">
-  <!-- Stats Background Layer -->
-  <div class="login-bg-stats" style="position: absolute; width: 100%; height: 100%; display: flex; justify-content: space-around; align-items: center; opacity: 0.08; pointer-events: none; z-index: 1; padding: 0 40px; flex-wrap: wrap;">
-    <div style="text-align: center; min-width: 200px; margin: 10px;">
-      <div id="login-stat-days" style="font-size: 100px; font-weight: 900; font-family: 'Share Tech', sans-serif; color: #fff;">309</div>
-      <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #fff;">Days Left</div>
-    </div>
-    <div style="text-align: center; min-width: 200px; margin: 10px;">
-      <div id="login-stat-progress" style="font-size: 100px; font-weight: 900; font-family: 'Share Tech', sans-serif; color: #fff;">0%</div>
-      <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #fff;">Syllabus Complete</div>
-    </div>
-    <div style="text-align: center; min-width: 200px; margin: 10px;">
-      <div id="login-stat-streak" style="font-size: 100px; font-weight: 900; font-family: 'Share Tech', sans-serif; color: #fff;">0</div>
-      <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #fff;">Streak Days</div>
-    </div>
-  </div>
 
-  <!-- Centered Login Card -->
-  <div class="login-card" style="position: relative; z-index: 10; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 20px; padding: 40px; width: 90%; max-width: 420px; box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4); text-align: center;">
-    <div style="margin-bottom: 28px;">
-      <h1 style="font-family: 'Share Tech', sans-serif; font-size: 36px; font-weight: bold; color: #FFD700; letter-spacing: 2px; margin: 0 0 6px 0; text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);">SHUBxCOLD</h1>
-      <p style="font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin: 0;">309-Day NEET 2027 Planner</p>
-    </div>
-    <div style="margin-bottom: 18px; text-align: left;">
-      <label style="display: block; color: rgba(255, 255, 255, 0.6); font-size: 11px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Username</label>
-      <input type="text" id="login-username" placeholder="Username" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#FFD700'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
-    </div>
-    <div style="margin-bottom: 24px; text-align: left;">
-      <label style="display: block; color: rgba(255, 255, 255, 0.6); font-size: 11px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Password</label>
-      <input type="password" id="login-password" placeholder="Password" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#FFD700'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
-    </div>
-    <button onclick="handleLogin()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #FFD700, #FFA500); border: none; border-radius: 8px; color: #000; font-size: 15px; font-weight: bold; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-transform: uppercase; letter-spacing: 1px;" onmouseover="this.style.transform='scale(1.02)';" onmouseout="this.style.transform='scale(1)';" onmousedown="this.style.transform='scale(0.98)';">LOGIN</button>
-    <p id="login-error" style="color: #ff6b6b; font-size: 13px; margin-top: 16px; display: none; font-weight: 500;"></p>
-  </div>
-</div>
 
 <div class="app-layout">
   <!-- Persistent Left Sidebar -->

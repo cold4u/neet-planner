@@ -43,48 +43,7 @@ function safeSetSessionStorage(key, value) {
   }
 }
 
-  function handleLogin() {
-    const user = document.getElementById('login-username').value.trim();
-    const pass = document.getElementById('login-password').value.trim();
-    const errorEl = document.getElementById('login-error');
-    
-    if (!user) {
-      errorEl.textContent = 'Please enter a username!';
-      errorEl.style.display = 'block';
-      return;
-    }
-    
-    if (user !== 'Meowww') {
-      errorEl.textContent = 'Incorrect username!';
-      errorEl.style.display = 'block';
-      return;
-    }
-    if (pass === 'SHUBxCOLD') {
-      safeSetSessionStorage('neet_logged_in', 'true');
-      if (safeGetLocalStorage("planStart") !== "2026-06-29T00:00:00") {
-        safeSetLocalStorage("planStart", "2026-06-29T00:00:00");
-      }
-      const loginOverlay = document.getElementById('login-overlay');
-      if (loginOverlay) loginOverlay.style.display = 'none';
-    } else {
-      errorEl.textContent = 'Incorrect password!';
-      errorEl.style.display = 'block';
-    }
-  }
 
-  // Check login state on load (temporarily bypassed for 24 hours)
-  document.addEventListener('DOMContentLoaded', function() {
-    const bypassUntil = new Date(2026, 5, 29, 0, 0, 0); // June 29, 2026 local time
-    const isBypassActive = new Date() < bypassUntil;
-    
-    if (isBypassActive || safeGetSessionStorage('neet_logged_in') === 'true') {
-      if (safeGetLocalStorage("planStart") !== "2026-06-29T00:00:00") {
-        safeSetLocalStorage("planStart", "2026-06-29T00:00:00");
-      }
-      const loginOverlay = document.getElementById('login-overlay');
-      if (loginOverlay) loginOverlay.style.display = 'none';
-    }
-  });
 
 
 
