@@ -3762,6 +3762,8 @@ function initOnLoad() {
     if (hideWelcome === 'true') {
       const modal = document.getElementById('welcome-summary-modal');
       if (modal) modal.classList.remove('active');
+    } else {
+      document.body.classList.add('modal-open');
     }
   } catch(e) { console.error("Error hiding welcome modal:", e); }
 }
@@ -3769,6 +3771,7 @@ function initOnLoad() {
 function closeWelcomeSummary() {
   const modal = document.getElementById('welcome-summary-modal');
   if (modal) modal.classList.remove('active');
+  document.body.classList.remove('modal-open');
 
   try {
     const cb = document.getElementById('hide-welcome-cb');

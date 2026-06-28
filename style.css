@@ -152,6 +152,12 @@ body {
   overflow-x: hidden;
 }
 
+body.modal-open {
+  overflow: hidden !important;
+  height: 100vh;
+}
+
+
 a {
   color: var(--primary);
   text-decoration: none;
