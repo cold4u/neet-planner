@@ -2232,7 +2232,6 @@ window.renderTrackerTable = renderTrackerTable;
 window.toggleMenu = toggleMenu;
 window.getSubjectForChapter = getSubjectForChapter;
 window.calculateStreak = calculateStreak;
-window.handleLogin = handleLogin;
 window.renderPaperQuestions = renderPaperQuestions;
 window.saveDone = saveDone;
 window.renderPapersPicker = renderPapersPicker;
