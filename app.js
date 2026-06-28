@@ -3763,7 +3763,23 @@ function initOnLoad() {
       const modal = document.getElementById('welcome-summary-modal');
       if (modal) modal.classList.remove('active');
     } else {
+      // Save scroll position before locking
+      window._scrollLockY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.top = `-${window._scrollLockY}px`;
       document.body.classList.add('modal-open');
+      document.documentElement.classList.add('modal-open');
+
+      // Block touch scroll on the modal overlay
+      const modal = document.getElementById('welcome-summary-modal');
+      if (modal) {
+        modal.addEventListener('touchmove', function(e) {
+          // Allow scrolling inside modal-content, block everything else
+          if (!e.target.closest('.modal-content') || 
+              e.target.closest('.modal-content').scrollHeight <= e.target.closest('.modal-content').clientHeight) {
+            e.preventDefault();
+          }
+        }, { passive: false });
+      }
     }
   } catch(e) { console.error("Error hiding welcome modal:", e); }
 }
@@ -3771,7 +3787,17 @@ function initOnLoad() {
 function closeWelcomeSummary() {
   const modal = document.getElementById('welcome-summary-modal');
   if (modal) modal.classList.remove('active');
+  
+  // Unlock scroll
   document.body.classList.remove('modal-open');
+  document.documentElement.classList.remove('modal-open');
+  document.body.style.top = '';
+  
+  // Restore scroll position
+  if (typeof window._scrollLockY === 'number') {
+    window.scrollTo(0, window._scrollLockY);
+    window._scrollLockY = 0;
+  }
 
   try {
     const cb = document.getElementById('hide-welcome-cb');
