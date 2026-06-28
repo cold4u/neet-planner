@@ -296,13 +296,18 @@
         <p class="page-desc">Structured timetables optimized for focus rotations across preparation phases.</p>
       </div>
 
-      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;">
-        <button class="btn btn-secondary sched-btn active" onclick="showSched('p1', this)">Phase 1 & 2: Focus Days</button>
-        <button class="btn btn-secondary sched-btn" onclick="showSched('sunday', this)">Sundays: Test & Analysis</button>
-        <button class="btn btn-secondary sched-btn" onclick="showSched('p3', this)">Phase 3: Revision Focus</button>
-        <button class="btn btn-secondary sched-btn" onclick="showSched('p3test', this)">Phase 3: Mock Days</button>
-        <button class="btn btn-secondary sched-btn" onclick="showSched('p4', this)">Phase 4: Mock Mastery</button>
-        <button class="btn btn-secondary sched-btn" onclick="showSched('lastweek', this)">Last Week (Relaxation)</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:24px;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn btn-secondary sched-btn active" onclick="showSched('p1', this)">Phase 1 & 2: Focus Days</button>
+          <button class="btn btn-secondary sched-btn" onclick="showSched('sunday', this)">Sundays: Test & Analysis</button>
+          <button class="btn btn-secondary sched-btn" onclick="showSched('p3', this)">Phase 3: Revision Focus</button>
+          <button class="btn btn-secondary sched-btn" onclick="showSched('p3test', this)">Phase 3: Mock Days</button>
+          <button class="btn btn-secondary sched-btn" onclick="showSched('p4', this)">Phase 4: Mock Mastery</button>
+          <button class="btn btn-secondary sched-btn" onclick="showSched('lastweek', this)">Last Week (Relaxation)</button>
+        </div>
+        <div id="timing-controls" style="display:flex; gap:8px;">
+          <!-- JS will render controls dynamically here -->
+        </div>
       </div>
 
       <div class="glass-card" id="sched-out" style="padding:0; overflow:hidden;"></div>
@@ -382,8 +387,9 @@
         </p>
       </div>
 
-      <div class="glass-card" style="margin-top: 16px; margin-bottom: 16px;">
-        <input type="text" id="test-srch" class="form-control" placeholder="Search test day, date, or syllabus..." oninput="renderTestList()">
+      <div class="glass-card" style="margin-top: 16px; margin-bottom: 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <input type="text" id="test-srch" class="form-control" style="flex:1; min-width:200px;" placeholder="Search test day, date, or syllabus..." oninput="renderTestList()">
+        <button class="btn btn-secondary" onclick="openWeakTopicsModal()"><span style="margin-right:4px;">📋</span> Compiled Weak Topics</button>
       </div>
 
       <div class="glass-card" style="padding:0; overflow:hidden;">
@@ -1121,6 +1127,61 @@
       <button class="close-btn" onclick="closePyqModal()">✕</button>
       <h2 style="margin-top:0; padding-right:32px;" id="pyq-modal-title">PYQ Practice</h2>
       <div id="pyq-modal-body" style="margin-top:20px; max-height:70vh; overflow-y:auto; padding-right:8px;"></div>
+    </div>
+  </div>
+
+  <!-- TEST ANALYSIS MODAL -->
+  <div class="modal" id="test-analysis-modal">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="close-btn" onclick="closeTestAnalysisModal()">✕</button>
+      <h2 style="margin-top:0;" id="test-analysis-title">Log Test Results</h2>
+      <form id="test-analysis-form" onsubmit="saveTestAnalysis(event)" style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
+        <input type="hidden" id="analysis-day">
+        
+        <div>
+          <label style="display:block; font-size:12px; margin-bottom:6px; font-weight:600; color:var(--text-secondary);">Marks Obtained (out of 720)</label>
+          <input type="number" id="analysis-marks" class="form-control" min="0" max="720" placeholder="e.g. 580" required>
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+          <div>
+            <label style="display:block; font-size:11px; margin-bottom:6px; font-weight:600; color:var(--text-secondary);">Right Qs</label>
+            <input type="number" id="analysis-right" class="form-control" min="0" max="180" placeholder="Correct" required>
+          </div>
+          <div>
+            <label style="display:block; font-size:11px; margin-bottom:6px; font-weight:600; color:var(--text-secondary);">Wrong Qs</label>
+            <input type="number" id="analysis-wrong" class="form-control" min="0" max="180" placeholder="Incorrect" required>
+          </div>
+          <div>
+            <label style="display:block; font-size:11px; margin-bottom:6px; font-weight:600; color:var(--text-secondary);">Unattempted</label>
+            <input type="number" id="analysis-unattempted" class="form-control" min="0" max="180" placeholder="Skipped">
+          </div>
+        </div>
+        
+        <div>
+          <label style="display:block; font-size:12px; margin-bottom:6px; font-weight:600; color:var(--text-secondary);">Weak Topics / Wrong Answers to Revise</label>
+          <textarea id="analysis-weak" class="form-control" style="width:100%; height:100px; padding:10px; font-size:13px; line-height:1.5;" placeholder="List formulas, specific topics, or questions you got wrong..." required></textarea>
+        </div>
+        
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeTestAnalysisModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Analysis</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- WEAK TOPICS CHECKLIST MODAL -->
+  <div class="modal" id="weak-topics-modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <button class="close-btn" onclick="closeWeakTopicsModal()">✕</button>
+      <h2 style="margin-top:0;">Compiled Weak Topics</h2>
+      <p style="color:var(--text-muted); font-size:13px; line-height:1.5; margin-bottom:20px;">
+        Here is a consolidated checklist of weak areas you identified from all your completed tests. Focus on these topics during your revision cycles.
+      </p>
+      <div id="weak-topics-list" style="max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:16px;">
+        <!-- JS will dynamically list weak topics here -->
+      </div>
     </div>
   </div>
 

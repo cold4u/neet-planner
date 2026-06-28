@@ -264,7 +264,7 @@ function safeSetSessionStorage(key, value) {
     ['Semiconductors','12','Day 146–152','m','—','Diode, transistor, logic gates, rectifier',],
   ],
 };;
-    const SCHEDS = {
+    const DEFAULT_SCHEDS = {
   p1:[
     {t:'5:00 AM',a:'Wake up · freshen up · light stretch / breathing',d:'20 min',cat:'break'},
     {t:'5:20 AM',a:'Revise yesterday\'s Biology notes (NCERT scan)',d:'20 min',cat:'bio'},
@@ -399,7 +399,15 @@ function safeSetSessionStorage(key, value) {
     {t:'7:30 PM',a:'Sleep early (9 hrs sleep the night before exam)',d:'9 hr',cat:'break'},
   ],
 };
-    
+
+    let SCHEDS = null;
+    try {
+      SCHEDS = JSON.parse(safeGetLocalStorage('neet_v3_custom_scheds') || 'null');
+    } catch(e){}
+    if (!SCHEDS) {
+      SCHEDS = JSON.parse(JSON.stringify(DEFAULT_SCHEDS));
+    }
+
     // PYQ Bank
     let PYQ_BANK = {};
     
@@ -651,6 +659,11 @@ function safeSetSessionStorage(key, value) {
     let chapterProgress = {};
     try {
       chapterProgress = JSON.parse(safeGetLocalStorage('neet_v3_chapter_progress') || '{}');
+    } catch(e){}
+    
+    let testAnalysisLogs = {};
+    try {
+      testAnalysisLogs = JSON.parse(safeGetLocalStorage('neet_v3_test_analysis') || '{}');
     } catch(e){}
     // --- NEET 2027 Syllabus Audit: Progress Data Migration ---
     (function() {
@@ -947,11 +960,23 @@ function safeSetSessionStorage(key, value) {
     }
     
     // Hourly Schedule
+    window.isEditingSched = false;
+    window.activeSchedKey = 'p1';
+
     function showSched(key, btn) {
-      document.querySelectorAll('.sched-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+      if (key) {
+        window.activeSchedKey = key;
+      }
+      const activeKey = window.activeSchedKey;
       
-      const data = SCHEDS[key];
+      document.querySelectorAll('.sched-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${activeKey}'`)) {
+          b.classList.add('active');
+        }
+      });
+      
+      const data = SCHEDS[activeKey];
       if (!data) return;
       
       const colors = { 'bio': '#a78bfa', 'che': '#34d399', 'phy': '#60a5fa', 'test': '#ff6b6b', 'rev': '#00d4aa', 'break': '#64748b' };
@@ -960,43 +985,281 @@ function safeSetSessionStorage(key, value) {
       const dayNum = getTodayDayNum();
       const todayPlan = PLAN.find(item => item.day === dayNum) || PLAN[0];
       
-      let html = '<table class="sched-table"><thead><tr><th style="width:4px; padding:0;"></th><th>Time</th><th>Activity</th><th>Duration</th></tr></thead><tbody>';
-      data.forEach(r => {
-        const clr = colors[r.cat] || '#e2e8f0';
-        
-        let activityText = r.a;
-        if (todayPlan) {
-          if (r.cat === 'bio' && todayPlan.bio) {
-            activityText = activityText.replace("Biology — New chapter:", `Biology — <strong>${todayPlan.bio}</strong>:`);
-            activityText = activityText.replace("Biology MCQs for today's chapter", `Biology MCQs for <strong>${todayPlan.bio}</strong>`);
-            activityText = activityText.replace("Bio revision: 3 chapters rapid scan", `Bio revision: <strong>${todayPlan.bio}</strong>`);
-          } else if (r.cat === 'che' && todayPlan.che) {
-            activityText = activityText.replace("CHEMISTRY — New chapter:", `CHEMISTRY — <strong>${todayPlan.che}</strong>:`);
-            activityText = activityText.replace("Chemistry MCQs for today's chapter", `Chemistry MCQs for <strong>${todayPlan.che}</strong>`);
-            activityText = activityText.replace("Che revision: 2 chapters rapid scan", `Che revision: <strong>${todayPlan.che}</strong>`);
-          } else if (r.cat === 'phy' && todayPlan.phy) {
-            activityText = activityText.replace("PHYSICS — New chapter:", `PHYSICS — <strong>${todayPlan.phy}</strong>:`);
-            activityText = activityText.replace("Physics MCQs for today's chapter", `Physics MCQs for <strong>${todayPlan.phy}</strong>`);
-            activityText = activityText.replace("Phy revision: 2 chapters + formula", `Phy revision: <strong>${todayPlan.phy}</strong>`);
-          } else if (r.cat === 'test') {
-            if (todayPlan.type === 'test' || todayPlan.type === 'mock') {
-              activityText = activityText.replace("WEEKLY TEST", `<strong>TEST: ${todayPlan.phy}</strong>`);
-              activityText = activityText.replace("this week's chapters", "test syllabus");
-              activityText = activityText.replace("MIXED 200Q FULL MOCK", `<strong>MOCK TEST: ${todayPlan.phy}</strong>`);
-              activityText = activityText.replace("FULL NEET MOCK TEST", `<strong>MOCK TEST: ${todayPlan.phy}</strong>`);
+      // Control buttons container in timing tab
+      const timingControls = document.getElementById('timing-controls');
+      if (timingControls) {
+        if (window.isEditingSched) {
+          timingControls.innerHTML = `
+            <button class="btn btn-primary" onclick="saveEditSched()"><span style="margin-right:4px;">💾</span> Save Changes</button>
+            <button class="btn btn-secondary" onclick="cancelEditSched()"><span style="margin-right:4px;">❌</span> Cancel</button>
+            <button class="btn btn-secondary" onclick="addNewSchedRow()"><span style="margin-right:4px;">➕</span> Add Row</button>
+          `;
+        } else {
+          timingControls.innerHTML = `
+            <button class="btn btn-secondary" onclick="startEditSched()"><span style="margin-right:4px;">✏️</span> Customize Timetable</button>
+            <button class="btn btn-secondary" style="border-color:rgba(255,107,107,0.4); color:var(--tertiary);" onclick="resetSchedToDefault()"><span style="margin-right:4px;">🔄</span> Reset Default</button>
+          `;
+        }
+      }
+
+      let html = '';
+      if (window.isEditingSched) {
+        // Render editor table
+        html = '<table class="sched-table edit-mode"><thead><tr><th style="width:4px; padding:0;"></th><th>Time</th><th>Activity / Subject</th><th>Duration</th><th style="width:120px;">Category</th><th style="width:50px; text-align:center;">Actions</th></tr></thead><tbody>';
+        data.forEach((r, idx) => {
+          const clr = colors[r.cat] || '#e2e8f0';
+          html += `<tr>
+            <td style="background:${clr}; padding:0;"></td>
+            <td><input type="text" class="form-control text-input-sched" style="font-weight:600; font-size:12px; padding:4px 8px;" value="${r.t}" id="sched-time-${idx}"></td>
+            <td><input type="text" class="form-control text-input-sched" style="font-size:12px; padding:4px 8px; width:100%;" value="${r.a.replace(/"/g, '&quot;')}" id="sched-act-${idx}"></td>
+            <td><input type="text" class="form-control text-input-sched" style="font-size:12px; padding:4px 8px;" value="${r.d}" id="sched-dur-${idx}"></td>
+            <td>
+              <select class="form-control select-input-sched" style="font-size:11px; padding:4px;" id="sched-cat-${idx}">
+                <option value="bio" ${r.cat === 'bio' ? 'selected' : ''}>🌿 Biology</option>
+                <option value="che" ${r.cat === 'che' ? 'selected' : ''}>🧪 Chemistry</option>
+                <option value="phy" ${r.cat === 'phy' ? 'selected' : ''}>⚡ Physics</option>
+                <option value="test" ${r.cat === 'test' ? 'selected' : ''}>📝 Test</option>
+                <option value="rev" ${r.cat === 'rev' ? 'selected' : ''}>🔄 Revision</option>
+                <option value="break" ${r.cat === 'break' ? 'selected' : ''}>☕ Break / Rest</option>
+              </select>
+            </td>
+            <td style="text-align:center;">
+              <button class="btn btn-secondary" style="padding:4px 8px; color:var(--tertiary); border-color:rgba(255,107,107,0.3);" onclick="deleteSchedRow(${idx})">🗑️</button>
+            </td>
+          </tr>`;
+        });
+        html += '</tbody></table>';
+      } else {
+        // Render normal view table
+        html = '<table class="sched-table"><thead><tr><th style="width:4px; padding:0;"></th><th>Time</th><th>Activity</th><th>Duration</th></tr></thead><tbody>';
+        data.forEach(r => {
+          const clr = colors[r.cat] || '#e2e8f0';
+          
+          let activityText = r.a;
+          if (todayPlan) {
+            if (r.cat === 'bio' && todayPlan.bio) {
+              activityText = activityText.replace("Biology — New chapter:", `Biology — <strong>${todayPlan.bio}</strong>:`);
+              activityText = activityText.replace("Biology MCQs for today's chapter", `Biology MCQs for <strong>${todayPlan.bio}</strong>`);
+              activityText = activityText.replace("Bio revision: 3 chapters rapid scan", `Bio revision: <strong>${todayPlan.bio}</strong>`);
+            } else if (r.cat === 'che' && todayPlan.che) {
+              activityText = activityText.replace("CHEMISTRY — New chapter:", `CHEMISTRY — <strong>${todayPlan.che}</strong>:`);
+              activityText = activityText.replace("Chemistry MCQs for today's chapter", `Chemistry MCQs for <strong>${todayPlan.che}</strong>`);
+              activityText = activityText.replace("Che revision: 2 chapters rapid scan", `Che revision: <strong>${todayPlan.che}</strong>`);
+            } else if (r.cat === 'phy' && todayPlan.phy) {
+              activityText = activityText.replace("PHYSICS — New chapter:", `PHYSICS — <strong>${todayPlan.phy}</strong>:`);
+              activityText = activityText.replace("Physics MCQs for today's chapter", `Physics MCQs for <strong>${todayPlan.phy}</strong>`);
+              activityText = activityText.replace("Phy revision: 2 chapters + formula", `Phy revision: <strong>${todayPlan.phy}</strong>`);
+            } else if (r.cat === 'test') {
+              if (todayPlan.type === 'test' || todayPlan.type === 'mock') {
+                activityText = activityText.replace("WEEKLY TEST", `<strong>TEST: ${todayPlan.phy}</strong>`);
+                activityText = activityText.replace("this week's chapters", "test syllabus");
+                activityText = activityText.replace("MIXED 200Q FULL MOCK", `<strong>MOCK TEST: ${todayPlan.phy}</strong>`);
+                activityText = activityText.replace("FULL NEET MOCK TEST", `<strong>MOCK TEST: ${todayPlan.phy}</strong>`);
+              }
             }
           }
+          
+          html += `<tr>
+            <td style="background:${clr}; padding:0;"></td>
+            <td style="font-weight:600; width:100px;">${r.t}</td>
+            <td>${activityText}</td>
+            <td style="color:var(--text-muted); width:90px;">${r.d}</td>
+          </tr>`;
+        });
+        html += '</tbody></table>';
+      }
+      
+      const so = document.getElementById('sched-out');
+      if (so) so.innerHTML = html;
+    }
+
+    function startEditSched() {
+      window.isEditingSched = true;
+      showSched();
+    }
+    
+    function cancelEditSched() {
+      window.isEditingSched = false;
+      try {
+        let loaded = JSON.parse(safeGetLocalStorage('neet_v3_custom_scheds') || 'null');
+        if (loaded) {
+          SCHEDS = loaded;
+        } else {
+          SCHEDS = JSON.parse(JSON.stringify(DEFAULT_SCHEDS));
         }
+      } catch(e){}
+      showSched();
+    }
+    
+    function saveEditSched() {
+      const activeKey = window.activeSchedKey;
+      const data = SCHEDS[activeKey];
+      if (!data) return;
+      
+      const updatedData = [];
+      for (let i = 0; i < data.length; i++) {
+        const timeEl = document.getElementById(`sched-time-${i}`);
+        const actEl = document.getElementById(`sched-act-${i}`);
+        const durEl = document.getElementById(`sched-dur-${i}`);
+        const catEl = document.getElementById(`sched-cat-${i}`);
         
-        html += `<tr>
-          <td style="background:${clr}; padding:0;"></td>
-          <td style="font-weight:600; width:100px;">${r.t}</td>
-          <td>${activityText}</td>
-          <td style="color:var(--text-muted); width:90px;">${r.d}</td>
-        </tr>`;
+        if (timeEl && actEl && durEl && catEl) {
+          updatedData.push({
+            t: timeEl.value,
+            a: actEl.value,
+            d: durEl.value,
+            cat: catEl.value
+          });
+        }
+      }
+      
+      SCHEDS[activeKey] = updatedData;
+      safeSetLocalStorage('neet_v3_custom_scheds', JSON.stringify(SCHEDS));
+      window.isEditingSched = false;
+      showSched();
+      alert("Timetable saved successfully!");
+    }
+    
+    function addNewSchedRow() {
+      const activeKey = window.activeSchedKey;
+      if (!SCHEDS[activeKey]) SCHEDS[activeKey] = [];
+      SCHEDS[activeKey].push({
+        t: "12:00 PM",
+        a: "New activity details",
+        d: "30 min",
+        cat: "break"
       });
-      html += '</tbody></table>';
-      document.getElementById('sched-out').innerHTML = html;
+      showSched();
+    }
+    
+    function deleteSchedRow(idx) {
+      const activeKey = window.activeSchedKey;
+      if (!SCHEDS[activeKey]) return;
+      SCHEDS[activeKey].splice(idx, 1);
+      showSched();
+    }
+    
+    function resetSchedToDefault() {
+      if (confirm("Are you sure you want to reset this timetable to default PW settings?")) {
+        const activeKey = window.activeSchedKey;
+        SCHEDS[activeKey] = JSON.parse(JSON.stringify(DEFAULT_SCHEDS[activeKey]));
+        safeSetLocalStorage('neet_v3_custom_scheds', JSON.stringify(SCHEDS));
+        window.isEditingSched = false;
+        showSched();
+        alert("Timetable reset to default!");
+      }
+    }
+
+    function toggleSyllabus(day) {
+      const box = document.getElementById(`syllabus-box-${day}`);
+      if (box) {
+        if (box.style.display === 'none') {
+          box.style.display = 'block';
+        } else {
+          box.style.display = 'none';
+        }
+      }
+    }
+    
+    function openTestAnalysisModal(day) {
+      const r = PLAN.find(item => item.day === day);
+      if (!r) return;
+      
+      document.getElementById('analysis-day').value = day;
+      document.getElementById('test-analysis-title').textContent = `Analysis: ${r.phy.replace('📝 Test: ', '').replace('📝 ', '')}`;
+      
+      const log = testAnalysisLogs[day] || { marks: '', right: '', wrong: '', unattempted: '', weak: '' };
+      document.getElementById('analysis-marks').value = log.marks;
+      document.getElementById('analysis-right').value = log.right;
+      document.getElementById('analysis-wrong').value = log.wrong;
+      document.getElementById('analysis-unattempted').value = log.unattempted || '';
+      document.getElementById('analysis-weak').value = log.weak;
+      
+      document.getElementById('test-analysis-modal').classList.add('active');
+    }
+    
+    function closeTestAnalysisModal() {
+      document.getElementById('test-analysis-modal').classList.remove('active');
+    }
+    
+    function saveTestAnalysis(e) {
+      e.preventDefault();
+      const day = parseInt(document.getElementById('analysis-day').value);
+      if (!day) return;
+      
+      const marks = parseInt(document.getElementById('analysis-marks').value);
+      const right = parseInt(document.getElementById('analysis-right').value);
+      const wrong = parseInt(document.getElementById('analysis-wrong').value);
+      const unattempted = parseInt(document.getElementById('analysis-unattempted').value) || 0;
+      const weak = document.getElementById('analysis-weak').value;
+      
+      testAnalysisLogs[day] = {
+        marks,
+        right,
+        wrong,
+        unattempted,
+        weak
+      };
+      
+      if (!done[day]) {
+        done[day] = true;
+        safeSetLocalStorage('neet_v3_done', JSON.stringify(done));
+      }
+      
+      safeSetLocalStorage('neet_v3_test_analysis', JSON.stringify(testAnalysisLogs));
+      closeTestAnalysisModal();
+      renderTestList();
+      renderCal();
+      alert("Test performance logged successfully!");
+    }
+    
+    function openWeakTopicsModal() {
+      const container = document.getElementById('weak-topics-list');
+      if (!container) return;
+      
+      const logs = Object.entries(testAnalysisLogs).filter(([day, log]) => log.weak && log.weak.trim());
+      
+      if (logs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px 10px; font-size:13.5px;">
+          No weak topics logged yet! Log test analyses to compile your revision checklist.
+        </div>`;
+      } else {
+        let html = '';
+        logs.forEach(([day, log]) => {
+          const r = PLAN.find(item => item.day === parseInt(day));
+          const testName = r ? r.phy.replace('📝 Test: ', '').replace('📝 ', '') : `Day ${day} Test`;
+          const topics = log.weak.split(/[\n,;\r]+/).map(t => t.trim()).filter(Boolean);
+          
+          let topicsList = '';
+          topics.forEach((topic, idx) => {
+            topicsList += `
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <input type="checkbox" style="width:16px; height:16px; accent-color:var(--primary); cursor:pointer;" id="weak-item-${day}-${idx}">
+                <label for="weak-item-${day}-${idx}" style="font-size:13px; color:var(--text-primary); cursor:pointer; user-select:none;">${topic}</label>
+              </div>
+            `;
+          });
+          
+          html += `
+            <div class="glass-card" style="padding:14px; border-left:3px solid var(--tertiary); background:rgba(255,255,255,0.02); margin-bottom:10px;">
+              <div style="font-weight:800; font-size:12px; color:var(--tertiary); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                <span>${testName}</span>
+                <span style="opacity:0.6; font-size:10px; font-weight:normal;">Score: ${log.marks}/720</span>
+              </div>
+              <div style="display:flex; flex-direction:column; padding-left:4px;">
+                ${topicsList}
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      }
+      
+      document.getElementById('weak-topics-modal').classList.add('active');
+    }
+    
+    function closeWeakTopicsModal() {
+      document.getElementById('weak-topics-modal').classList.remove('active');
     }
     
     // Chapter List Progress Table
@@ -1485,6 +1748,8 @@ function safeSetSessionStorage(key, value) {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closePyqModal();
+        if (typeof closeTestAnalysisModal === 'function') closeTestAnalysisModal();
+        if (typeof closeWeakTopicsModal === 'function') closeWeakTopicsModal();
       }
     });
     
@@ -1493,7 +1758,7 @@ function safeSetSessionStorage(key, value) {
       const q = (document.getElementById('test-srch') || {value:''}).value.toLowerCase();
       
       const tests = PLAN.filter(r => (r.type === 'test' || r.type === 'mock') && 
-        (!q || r.phy.toLowerCase().includes(q) || r.che.toLowerCase().includes(q) || r.bio.toLowerCase().includes(q) || `day ${r.day}`.includes(q) || r.date.toLowerCase().includes(q))
+        (!q || r.phy.toLowerCase().includes(q) || r.che.toLowerCase().includes(q) || r.bio.toLowerCase().includes(q) || `day ${r.day}`.includes(q) || r.date.toLowerCase().includes(q) || (r.phyNote && r.phyNote.toLowerCase().includes(q)))
       );
       
       let html = '';
@@ -1502,16 +1767,46 @@ function safeSetSessionStorage(key, value) {
       } else {
         tests.forEach(r => {
           const isDone = !!done[r.day];
+          const analysis = testAnalysisLogs[r.day];
+          
+          let analysisSummary = '';
+          if (analysis) {
+            analysisSummary = `
+              <div class="analysis-summary-badge" style="display:inline-flex; flex-wrap:wrap; gap:8px; margin-top:8px; font-size:11px; background:rgba(0,212,170,0.08); border:1px solid rgba(0,212,170,0.15); border-radius:4px; padding:4px 8px; color:var(--primary); font-weight:600;">
+                <span>Score: ${analysis.marks}/720</span>
+                <span style="opacity:0.4;">|</span>
+                <span>Correct: ${analysis.right}</span>
+                <span style="opacity:0.4;">|</span>
+                <span>Incorrect: ${analysis.wrong}</span>
+                ${analysis.unattempted ? `<span style="opacity:0.4;">|</span><span>Skipped: ${analysis.unattempted}</span>` : ''}
+              </div>
+              ${analysis.weak ? `<div style="font-size:11px; margin-top:4px; color:var(--text-muted); font-style:italic;">🔴 Focus Areas: ${analysis.weak.replace(/'/g, "\'")}</div>` : ''}
+            `;
+          }
+
           const testDesc = `
             <div style="font-weight:600; font-size:13.5px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:4px;">
               <span class="subject-badge badge-phy" style="padding:1.5px 5px; font-size:9px;">⚡ Physics</span>
               <span style="color:var(--text-primary);">${r.phy}</span>
             </div>
-            <div style="font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <div style="font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
               <span style="display:inline-flex; align-items:center; gap:4px;"><span class="subject-badge badge-che" style="padding:1px 4px; font-size:8px;">🧪 Chem</span> ${r.che}</span>
               <span>&middot;</span>
               <span style="display:inline-flex; align-items:center; gap:4px;"><span class="subject-badge badge-bio" style="padding:1px 4px; font-size:8px;">🧬 Bio</span> ${r.bio}</span>
             </div>
+            
+            <!-- Syllabus and Analysis Actions -->
+            <div style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+              <button class="btn btn-secondary" style="font-size:10.5px; padding:3px 8px;" onclick="toggleSyllabus(${r.day})">📋 Syllabus</button>
+              <button class="btn btn-secondary" style="font-size:10.5px; padding:3px 8px; border-color:rgba(96,165,250,0.4); color:#60a5fa;" onclick="openTestAnalysisModal(${r.day})">📊 Log Analysis</button>
+            </div>
+            
+            <!-- Hidden Syllabus Box -->
+            <div id="syllabus-box-${r.day}" style="display:none; margin-top:8px; padding:10px; background:rgba(255,255,255,0.03); border-radius:4px; border-left:3px solid var(--primary); font-size:12px; line-height:1.5; color:#cbd5e1;">
+              ${r.phyNote || "Syllabus details not available."}
+            </div>
+            
+            ${analysisSummary}
           `;
           html += `<tr class="${isDone ? 'done-row' : ''}">
             <td style="font-weight:600;">Day ${r.day}</td>
@@ -2268,6 +2563,18 @@ window.logStudy = logStudy;
 window.deleteTrackerEntry = deleteTrackerEntry;
 window.executeGoogleSearch = executeGoogleSearch;
 window.navigateTab = navigateTab;
+window.startEditSched = startEditSched;
+window.cancelEditSched = cancelEditSched;
+window.saveEditSched = saveEditSched;
+window.addNewSchedRow = addNewSchedRow;
+window.deleteSchedRow = deleteSchedRow;
+window.resetSchedToDefault = resetSchedToDefault;
+window.toggleSyllabus = toggleSyllabus;
+window.openTestAnalysisModal = openTestAnalysisModal;
+window.closeTestAnalysisModal = closeTestAnalysisModal;
+window.saveTestAnalysis = saveTestAnalysis;
+window.openWeakTopicsModal = openWeakTopicsModal;
+window.closeWeakTopicsModal = closeWeakTopicsModal;
 window.calGo = calGo;
 window.closePyqModal = closePyqModal;
 window.updateCountdown = updateCountdown;
