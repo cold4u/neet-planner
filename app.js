@@ -956,13 +956,42 @@ function safeSetSessionStorage(key, value) {
       
       const colors = { 'bio': '#a78bfa', 'che': '#34d399', 'phy': '#60a5fa', 'test': '#ff6b6b', 'rev': '#00d4aa', 'break': '#64748b' };
       
+      // Fetch today's plan dynamically
+      const dayNum = getTodayDayNum();
+      const todayPlan = PLAN.find(item => item.day === dayNum) || PLAN[0];
+      
       let html = '<table class="sched-table"><thead><tr><th style="width:4px; padding:0;"></th><th>Time</th><th>Activity</th><th>Duration</th></tr></thead><tbody>';
       data.forEach(r => {
         const clr = colors[r.cat] || '#e2e8f0';
+        
+        let activityText = r.a;
+        if (todayPlan) {
+          if (r.cat === 'bio' && todayPlan.bio) {
+            activityText = activityText.replace("Biology — New chapter:", `Biology — <strong>${todayPlan.bio}</strong>:`);
+            activityText = activityText.replace("Biology MCQs for today's chapter", `Biology MCQs for <strong>${todayPlan.bio}</strong>`);
+            activityText = activityText.replace("Bio revision: 3 chapters rapid scan", `Bio revision: <strong>${todayPlan.bio}</strong>`);
+          } else if (r.cat === 'che' && todayPlan.che) {
+            activityText = activityText.replace("CHEMISTRY — New chapter:", `CHEMISTRY — <strong>${todayPlan.che}</strong>:`);
+            activityText = activityText.replace("Chemistry MCQs for today's chapter", `Chemistry MCQs for <strong>${todayPlan.che}</strong>`);
+            activityText = activityText.replace("Che revision: 2 chapters rapid scan", `Che revision: <strong>${todayPlan.che}</strong>`);
+          } else if (r.cat === 'phy' && todayPlan.phy) {
+            activityText = activityText.replace("PHYSICS — New chapter:", `PHYSICS — <strong>${todayPlan.phy}</strong>:`);
+            activityText = activityText.replace("Physics MCQs for today's chapter", `Physics MCQs for <strong>${todayPlan.phy}</strong>`);
+            activityText = activityText.replace("Phy revision: 2 chapters + formula", `Phy revision: <strong>${todayPlan.phy}</strong>`);
+          } else if (r.cat === 'test') {
+            if (todayPlan.type === 'test' || todayPlan.type === 'mock') {
+              activityText = activityText.replace("WEEKLY TEST", `<strong>TEST: ${todayPlan.phy}</strong>`);
+              activityText = activityText.replace("this week's chapters", "test syllabus");
+              activityText = activityText.replace("MIXED 200Q FULL MOCK", `<strong>MOCK TEST: ${todayPlan.phy}</strong>`);
+              activityText = activityText.replace("FULL NEET MOCK TEST", `<strong>MOCK TEST: ${todayPlan.phy}</strong>`);
+            }
+          }
+        }
+        
         html += `<tr>
           <td style="background:${clr}; padding:0;"></td>
           <td style="font-weight:600; width:100px;">${r.t}</td>
-          <td>${r.a}</td>
+          <td>${activityText}</td>
           <td style="color:var(--text-muted); width:90px;">${r.d}</td>
         </tr>`;
       });
