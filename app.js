@@ -92,7 +92,7 @@ function safeSetSessionStorage(key, value) {
     const P1_PHY = [
   {ch:'Units & Measurement',task:'Dimensions,SI units,errors. 30 MCQs.',wt:'m'},
   {ch:'Kinematics 1D',task:'Graphs, equations of motion. 40 MCQs.',wt:'h'},
-  {ch:'Kinematics 2D',task:'Projectile, relative motion. 40 MCQs.',wt:'h'},
+  {ch:'Kinematics 2D / Projectile',task:'Projectile, relative motion. 40 MCQs.',wt:'h'},
   {ch:'Laws of Motion',task:'FBD, friction, Atwood. 50 MCQs.',wt:'h'},
   {ch:'Work, Energy & Power',task:'Conservation, elastic/inelastic. 40 MCQs.',wt:'m'},
   {ch:'Rotational Motion',task:'MOI, torque, rolling. 50 MCQs.',wt:'h'},
@@ -103,41 +103,48 @@ function safeSetSessionStorage(key, value) {
   {ch:'Kinetic Theory',task:'KE, RMS speed, degrees. 30 MCQs.',wt:'m'},
   {ch:'Oscillations',task:'SHM, spring-mass, pendulum. 40 MCQs.',wt:'h'},
   {ch:'Waves',task:'Standing waves, Doppler. 40 MCQs.',wt:'h'},
-  {ch:'Experimental Skills',task:'Vernier, screw gauge, experiments. 20 MCQs.',wt:'l'},
+  {ch:'Experimental Skills',task:'Vernier, screw gauge, experiments. 20 MCQs.',wt:'l',miss:true},
 ];
     const P1_CHE = [
   {ch:'Basic Concepts',task:'Mole concept, stoichiometry. 30 MCQs.',wt:'h'},
   {ch:'Atomic Structure',task:'Bohr model, quantum numbers, orbitals. 50 MCQs.',wt:'h'},
   {ch:'Periodic Table',task:'IE, EA, electronegativity trends. 40 MCQs.',wt:'h'},
   {ch:'Chemical Bonding',task:'VSEPR, hybridisation, MO theory. 50 MCQs.',wt:'h'},
+  {ch:'States of Matter',task:'Gas laws, van der Waals. 30 MCQs.',wt:'m'},
   {ch:'Thermodynamics (Chem)',task:'Hess law, entropy, Gibbs. 40 MCQs.',wt:'h'},
   {ch:'Equilibrium',task:'Kp, Kc, Le Chatelier, buffer. 50 MCQs.',wt:'h'},
   {ch:'Redox Reactions',task:'Oxidation numbers, balancing. 30 MCQs.',wt:'m'},
+  {ch:'Hydrogen',task:'Properties, compounds, isotopes. 20 MCQs.',wt:'l',miss:true},
+  {ch:'s-Block Elements',task:'Alkali & alkaline earth, anomalies. 30 MCQs.',wt:'m',miss:true},
   {ch:'p-Block (Gr 13-14)',task:'B, Al, C, Si chemistry. 30 MCQs.',wt:'m'},
   {ch:'Organic Basics',task:'IUPAC, isomerism, intermediates. 50 MCQs.',wt:'h'},
   {ch:'Hydrocarbons',task:'Alkane/alkene/alkyne reactions. 50 MCQs.',wt:'h'},
-  {ch:'Practical Chemistry',task:'Lab techniques, titrations. 20 MCQs.',wt:'l'},
+  {ch:'Environmental Chemistry',task:'Pollution, ozone, green chem. 20 MCQs.',wt:'l',miss:true},
+  {ch:'Practical Chemistry',task:'Lab techniques, titrations. 20 MCQs.',wt:'l',miss:true},
 ];
     const P1_BIO = [
-  {ch:'Living World',task:'Taxonomy, NCERT line-by-line. 30 MCQs.',wt:'m'},
+  {ch:'The Living World',task:'Taxonomy, NCERT line-by-line. 30 MCQs.',wt:'m'},
   {ch:'Biological Classification',task:'5 kingdoms, examples. 40 MCQs.',wt:'h'},
   {ch:'Plant Kingdom',task:'Alternation of generations. 40 MCQs.',wt:'h'},
   {ch:'Animal Kingdom',task:'All phyla, examples. 50 MCQs.',wt:'h'},
   {ch:'Morphology of Plants',task:'Root, stem, leaf, flower types. 40 MCQs.',wt:'h'},
   {ch:'Anatomy of Plants',task:'Tissues, meristems. 30 MCQs.',wt:'m'},
-  {ch:'Structural Org Animals',task:'Tissues, earthworm, cockroach. 40 MCQs.',wt:'h'},
+  {ch:'Structural Org Animals',task:'Tissues, earthworm, cockroach. 40 MCQs.',wt:'h',miss:true},
   {ch:'Cell: Unit of Life',task:'Cell organelles, diagrams. 50 MCQs.',wt:'h'},
   {ch:'Biomolecules',task:'Enzyme names, carbohydrates, vitamins. 50 MCQs.',wt:'h'},
   {ch:'Cell Cycle & Division',task:'Mitosis/meiosis stages diagrams. 50 MCQs.',wt:'h'},
+  {ch:'Transport in Plants',task:'Osmosis, translocation, transpiration. 30 MCQs.',wt:'m'},
+  {ch:'Mineral Nutrition',task:'Essential elements, deficiencies. 30 MCQs.',wt:'m'},
   {ch:'Photosynthesis',task:'Z-scheme, Calvin cycle — must diagram. 50 MCQs.',wt:'h'},
   {ch:'Respiration in Plants',task:'Glycolysis, Krebs, ETC. 40 MCQs.',wt:'h'},
-  {ch:'Plant Growth & Dev',task:'Phytohormones, photoperiodism. 30 MCQs.',wt:'m'},
+  {ch:'Plant Growth & Dev',task:'Phytohormones, photoperiodism. 30 MCQs.',wt:'m',miss:true},
+  {ch:'Digestion & Absorption',task:'Enzymes, GI tract. 40 MCQs.',wt:'h'},
   {ch:'Breathing & Gas Exchange',task:'Lung volumes, breathing mechanics. 40 MCQs.',wt:'h'},
   {ch:'Body Fluids & Circulation',task:'Heart anatomy, ECG, blood groups. 50 MCQs.',wt:'h'},
   {ch:'Excretion',task:'Nephron, osmoregulation, dialysis. 40 MCQs.',wt:'h'},
   {ch:'Locomotion & Movement',task:'Joint types, muscles, disorders. 30 MCQs.',wt:'m'},
   {ch:'Neural Control',task:'Neuron, AP, brain parts, reflexes. 50 MCQs.',wt:'h'},
-  {ch:'Chemical Coordination',task:'All hormones, glands, disorders. 50 MCQs.',wt:'h'},
+  {ch:'Chemical Coordination',task:'All hormones, glands, disorders. 50 MCQs.',wt:'h',miss:true},
 ];
     const P2_PHY = [
   {ch:'Electrostatics',task:'Coulomb, Gauss, potential, capacitors. 50 MCQs.',wt:'h',conn:true},
@@ -151,11 +158,15 @@ function safeSetSessionStorage(key, value) {
   {ch:'Dual Nature',task:'Photoelectric, de Broglie, Davisson. 40 MCQs.',wt:'h',conn:true},
   {ch:'Atoms & Nuclei',task:'Bohr model, radioactivity, Q value. 40 MCQs.',wt:'h'},
   {ch:'Semiconductors',task:'Diode, transistor, logic gates. 40 MCQs.',wt:'m'},
+  {ch:'Communication Systems',task:'Modulation, bandwidth, satellites. 20 MCQs.',wt:'l'},
 ];
     const P2_CHE = [
+  {ch:'Solid State',task:'Crystal systems, defects, packing. 30 MCQs.',wt:'m'},
   {ch:'Solutions',task:'Colligative properties, osmosis. 40 MCQs.',wt:'h',conn:true},
   {ch:'Electrochemistry',task:'Nernst, EMF, corrosion, electrolysis. 50 MCQs.',wt:'h',conn:true},
   {ch:'Chemical Kinetics',task:'Rate law, order, Arrhenius, mechanisms. 50 MCQs.',wt:'h',conn:true},
+  {ch:'Surface Chemistry',task:'Adsorption, colloids, emulsions. 30 MCQs.',wt:'m'},
+  {ch:'Metallurgy',task:'Ore extraction, refining, alloys. 20 MCQs.',wt:'l',miss:true},
   {ch:'p-Block (Gr 15-18)',task:'Group 15/16/17/18 reactions. 50 MCQs.',wt:'h',conn:true},
   {ch:'d & f Block',task:'Transition metals, lanthanoids, oxidation states. 40 MCQs.',wt:'m'},
   {ch:'Coordination Compounds',task:'Werner, isomerism, CFSE, naming. 50 MCQs.',wt:'h',conn:true},
@@ -165,8 +176,11 @@ function safeSetSessionStorage(key, value) {
   {ch:'Carboxylic Acids',task:'Acidity, reactions, derivatives. 30 MCQs.',wt:'m',conn:true},
   {ch:'Amines',task:'Basicity order, diazonium reactions. 40 MCQs.',wt:'h',conn:true},
   {ch:'Biomolecules (12)',task:'Carbohydrates, amino acids, nucleic acids. 30 MCQs.',wt:'m',conn:true},
+  {ch:'Polymers',task:'Natural vs synthetic, addition vs condensation. 20 MCQs.',wt:'l'},
+  {ch:'Chemistry in Daily Life',task:'Drugs, food additives, detergents. 20 MCQs.',wt:'l'},
 ];
     const P2_BIO = [
+  {ch:'Reproduction: Organisms',task:'Asexual methods, vegetative propagation. 30 MCQs.',wt:'m',conn:true},
   {ch:'Sexual Repro in Plants',task:'Double fertilisation, embryo, endosperm. 50 MCQs.',wt:'h',conn:true},
   {ch:'Human Reproduction',task:'Spermatogenesis, oogenesis, diagrams. 50 MCQs.',wt:'h',conn:true},
   {ch:'Reproductive Health',task:'Contraceptives, STDs, MTP. 30 MCQs.',wt:'m'},
@@ -174,12 +188,14 @@ function safeSetSessionStorage(key, value) {
   {ch:'Molecular Basis',task:'DNA replication, transcription, translation — 8-10 Qs. 50 MCQs.',wt:'h',conn:true},
   {ch:'Evolution',task:'Hardy-Weinberg, Darwin, human evolution. 40 MCQs.',wt:'m',conn:true},
   {ch:'Human Health & Disease',task:'Pathogens, immunity, cancer, drugs. 50 MCQs.',wt:'h',conn:true},
+  {ch:'Food Production',task:'Animal husbandry, plant breeding, biofortification. 30 MCQs.',wt:'m'},
   {ch:'Microbes in Welfare',task:'Biogas, sewage, antibiotics. 30 MCQs.',wt:'m'},
   {ch:'Biotech: Principles',task:'rDNA, restriction enzymes, PCR, vectors. 50 MCQs.',wt:'h',conn:true},
   {ch:'Biotech: Applications',task:'Bt cotton, gene therapy, GMO, ELISA. 40 MCQs.',wt:'h'},
   {ch:'Organisms & Populations',task:'Interspecific, intraspecific, logistic, age pyramid. 40 MCQs.',wt:'m',conn:true},
   {ch:'Ecosystem',task:'Productivity, energy flow, succession, nutrient cycles. 40 MCQs.',wt:'m'},
   {ch:'Biodiversity',task:'Types of diversity, hotspots, conservation. 30 MCQs.',wt:'m'},
+  {ch:'Environmental Issues',task:'Pollution types, ozone, global warming, BOD. 30 MCQs.',wt:'m'},
 ];
     
     // Connections, Chapter metadata, Hourly schedules
@@ -195,7 +211,7 @@ function safeSetSessionStorage(key, value) {
   'Atoms & Nuclei':'← Atomic Structure Chem (Ch11)',
   'Semiconductors':'← Modern Physics (Ch12 self)',
   // Chemistry
-  'Solutions':'← Basic Concepts (Ch11)',
+  'Solutions':'← States of Matter (Ch11)',
   'Electrochemistry':'← Redox Reactions (Ch11)',
   'Chemical Kinetics':'← Equilibrium (Ch11)',
   'p-Block (Gr 15-18)':'← p-Block Gr13-14 (Ch11)',
@@ -207,16 +223,17 @@ function safeSetSessionStorage(key, value) {
   'Amines':'← Organic Basics (Ch11)',
   'Biomolecules (12)':'← Biomolecules Intro (Ch11)',
   // Biology
+  'Reproduction: Organisms':'← Cell Division (Ch11)',
   'Sexual Repro in Plants':'← Plant Morphology (Ch11)',
   'Human Reproduction':'← Struct Org Animals (Ch11)',
   'Principles of Inheritance':'← Cell Cycle (Ch11)',
   'Molecular Basis':'← Biomolecules (Ch11)',
   'Evolution':'← Living World / Classification (Ch11)',
-  'Human Health & Disease':'← Body Fluids & Circulation (Ch11)',
+  'Human Health & Disease':'← Digestion/Circulation (Ch11)',
   'Biotech: Principles':'← Molecular Basis (Ch11)',
   'Organisms & Populations':'← Animal Kingdom (Ch11)',
 };
-    const CHAPS = const CHAPS = {
+    const CHAPS = {
   bio:[
     ['Cell: Unit of Life','11','Day 15–18','h','—','Organelles,membrane,comparison diagram',],
     ['Biomolecules','11','Day 19–22','h','—','Enzyme kinetics,Vitamins,carb structures',],
@@ -227,55 +244,70 @@ function safeSetSessionStorage(key, value) {
     ['Plant Kingdom','11','Day 41–45','m','—','Alternation of generations diagram',],
     ['Morphology of Plants','11','Day 46–49','h','→ Sexual Repro Plants Ch12','Floral formula, placentation, venation',],
     ['Anatomy of Plants','11','Day 50–52','m','—','Tissue types, meristems',],
-    ['Structural Org Animals','11','Day 53–56','h','→ Human Reproduction Ch12','Tissues, cockroach, frog anatomy',],
-    ['Plant Growth & Dev','11','Day 57–59','m','→ Reproduction Ch12','Phytohormones, photoperiodism',],
-    ['Breathing & Gas Exchange','11','Day 60–62','h','→ Human Health Ch12','Lung volumes, breathing mechanics',],
-    ['Body Fluids & Circulation','11','Day 63–66','h','→ Human Repro Ch12','ECG, heart anatomy, blood groups',],
-    ['Excretion','11','Day 67–69','h','—','Nephron diagram, osmoregulation',],
-    ['Locomotion & Movement','11','Day 70–72','m','—','Joint types, muscle anatomy, disorders',],
-    ['Neural Control','11','Day 73–76','h','→ Chemical Coord Ch11','Neuron diagram, AP, brain parts',],
-    ['Chemical Coordination','11','Day 77–80','h','→ Human Health Ch12','All hormones + glands + disorders',],
+    ['Structural Org Animals','11','Day 53–56','h','→ Human Reproduction Ch12','Earthworm,cockroach,frog anatomy ✦Added',],
+    ['Transport in Plants','11','Day 57–59','m','—','Osmosis, ascent of sap, translocation',],
+    ['Mineral Nutrition','11','Day 60–62','m','—','Essential elements, deficiency symptoms',],
+    ['Plant Growth & Dev','11','Day 63–65','m','→ Reproduction Ch12','Phytohormones, photoperiodism ✦Added',],
+    ['Digestion & Absorption','11','Day 66–69','h','→ Human Health Ch12','Enzymes, accessory glands, absorption',],
+    ['Breathing & Gas Exchange','11','Day 70–72','h','→ Human Health Ch12','Lung volumes, breathing mechanics',],
+    ['Body Fluids & Circulation','11','Day 73–76','h','→ Human Repro Ch12','ECG, heart anatomy, blood groups',],
+    ['Excretion','11','Day 77–79','h','—','Nephron diagram, osmoregulation',],
+    ['Locomotion & Movement','11','Day 80–82','m','—','Joint types, muscle anatomy, disorders',],
+    ['Neural Control','11','Day 83–86','h','→ Chemical Coord Ch11','Neuron diagram, AP, brain parts',],
+    ['Chemical Coordination','11','Day 87–90','h','→ Human Health Ch12','All hormones + glands + disorders ✦Added',],
     ['Living World','11','Day 1–3','m','→ Evolution Ch12','Taxonomy, ICZN, ICBN rules',],
     ['Biological Classification','11','Day 4–6','h','→ Evolution Ch12','5 kingdoms + examples',],
     ['Plant Kingdom','11','Day 7–9','m','—','Alt. of generations, rep methods',],
-    ['Sexual Repro in Plants','12','Day 96–100','h','← Plant Morphology Ch11','Double fert, embryo, endosperm',],
-    ['Human Reproduction','12','Day 101–106','h','← Struct Org Animals Ch11','Spermatogenesis, oogenesis, placenta',],
-    ['Reproductive Health','12','Day 107–109','m','—','Contraceptives, STDs, MTP',],
-    ['Principles of Inheritance','12','Day 110–118','h','← Cell Cycle Ch11','Mendel laws, blood groups, linkage, exceptions',],
-    ['Molecular Basis','12','Day 119–128','h','← Biomolecules Ch11','DNA replication, transcription, translation',],
-    ['Evolution','12','Day 129–134','m','← Living World/Class Ch11','Hardy-Weinberg, Darwin, human evolution',],
-    ['Human Health & Disease','12','Day 135–141','h','← Digestion/Circ Ch11','Pathogens, immunity, cancer, drugs',],
-    ['Microbes in Welfare','12','Day 142–145','m','—','Biogas, sewage treatment, antibiotics',],
-    ['Biotech: Principles','12','Day 146–151','h','← Molecular Basis Ch11','rDNA, restriction enzymes, PCR, vectors',],
-    ['Biotech: Applications','12','Day 152–156','h','—','Bt cotton, gene therapy, GMO, ELISA',],
-    ['Organisms & Populations','12','Day 157–161','m','← Animal Kingdom Ch11','Population interactions, logistic growth',],
-    ['Ecosystem','12','Day 162–166','m','—','Energy flow, succession, nutrient cycles',],
-    ['Biodiversity','12','Day 167–170','m','—','Types, hotspots, conservation strategies',],
+    ['Reproduction: Organisms','12','Day 95–97','m','← Cell Division Ch11','Asexual methods, vegetative propagation',],
+    ['Sexual Repro in Plants','12','Day 98–102','h','← Plant Morphology Ch11','Double fert, embryo, endosperm — 6–8Qs',],
+    ['Human Reproduction','12','Day 103–108','h','← Struct Org Animals Ch11','Spermatogenesis, oogenesis, placenta',],
+    ['Reproductive Health','12','Day 109–111','m','—','Contraceptives, STDs, MTP',],
+    ['Principles of Inheritance','12','Day 112–120','h','← Cell Cycle Ch11','Mendel laws, blood groups, linkage, exceptions',],
+    ['Molecular Basis','12','Day 121–130','h','← Biomolecules Ch11','DNA replication, transcription, translation — 8–10Qs',],
+    ['Evolution','12','Day 131–136','m','← Living World/Class Ch11','Hardy-Weinberg, Darwin, human evolution',],
+    ['Human Health & Disease','12','Day 137–143','h','← Digestion/Circ Ch11','Pathogens, immunity, cancer, drugs — 8Qs',],
+    ['Food Production','12','Day 144–147','m','—','Animal husbandry, plant breeding, biofortification',],
+    ['Microbes in Welfare','12','Day 148–151','m','—','Biogas, sewage treatment, antibiotics',],
+    ['Biotech: Principles','12','Day 152–157','h','← Molecular Basis Ch11','rDNA, restriction enzymes, PCR, vectors',],
+    ['Biotech: Applications','12','Day 158–162','h','—','Bt cotton, gene therapy, GMO, ELISA',],
+    ['Organisms & Populations','12','Day 163–167','m','← Animal Kingdom Ch11','Population interactions, logistic growth',],
+    ['Ecosystem','12','Day 168–172','m','—','Energy flow, succession, nutrient cycles',],
+    ['Biodiversity','12','Day 173–176','m','—','Types, hotspots, conservation strategies',],
+    ['Environmental Issues','12','Day 177–180','m','—','Pollution types, ozone, BOD, global warming',],
   ],
   chem:[
     ['Basic Concepts','11','Day 1–2','h','—','Mole, stoichiometry, limiting reagent',],
     ['Atomic Structure','11','Day 5–9','h','→ Dual Nature Ch12','Bohr model, quantum numbers, orbitals',],
     ['Periodic Table','11','Day 10–14','h','—','IE, EA, electronegativity trends',],
     ['Chemical Bonding','11','Day 15–20','h','→ Coordination Cpds Ch12','VSEPR, hybridisation, MO theory',],
-    ['Thermodynamics (Chem)','11','Day 21–25','h','→ Chemical Kinetics Ch12','Hess law, entropy, Gibbs energy',],
-    ['Equilibrium','11','Day 26–31','h','→ Electrochemistry Ch12','Kp, Kc, Le Chatelier, buffer solutions',],
-    ['Redox Reactions','11','Day 32–34','m','→ Electrochemistry Ch12','Oxidation numbers, balancing methods',],
-    ['p-Block (Gr 13-14)','11','Day 35–37','m','→ p-Block Gr15-18 Ch12','B, Al, C, Si chemistry',],
-    ['Organic Basics','11','Day 38–43','h','→ All Organic Ch12','IUPAC, isomerism, intermediates, inductive/resonance',],
-    ['Hydrocarbons','11','Day 44–49','h','→ Haloalkanes Ch12','Alkane, alkene, alkyne reactions + arenes',],
-    ['Practical Chemistry','11','Day 50–51','l','—','Lab techniques, titrations, qualitative analysis',],
-    ['Solutions','12','Day 91–95','h','← Basic Concepts Ch11','Colligative properties, osmosis, vant Hoff',],
-    ['Electrochemistry','12','Day 96–101','h','← Redox Ch11','Nernst, EMF, SHE, corrosion, electrolysis',],
-    ['Chemical Kinetics','12','Day 102–106','h','← Equilibrium Ch11','Rate law, order, Arrhenius, integrated rate',],
-    ['p-Block (Gr 15-18)','12','Day 107–113','h','← p-Block Gr13-14 Ch11','Groups 15/16/17/18 reactions',],
-    ['d & f Block','12','Day 114–118','m','—','Transition metals, lanthanoids, oxidation states',],
-    ['Coordination Compounds','12','Day 119–124','h','← Chemical Bonding Ch11','Werner theory, isomerism, CFSE, naming',],
-    ['Haloalkanes','12','Day 125–130','h','← Hydrocarbons Ch11','SN1, SN2, E1, E2 mechanisms',],
-    ['Alcohols, Phenols','12','Day 131–135','h','← Organic Basics Ch11','Acidity order, Lucas test, oxidation reactions',],
-    ['Aldehydes & Ketones','12','Day 136–141','h','← Organic Basics Ch11','Nucleophilic addition, Aldol, Cannizzaro',],
-    ['Carboxylic Acids','12','Day 142–145','m','← Organic Basics Ch11','Acidity, Fischer esterification, amide',],
-    ['Amines','12','Day 146–149','h','← Organic Basics Ch11','Basicity order, diazonium coupling',],
-    ['Biomolecules (12)','12','Day 150–153','m','← Biomolecules Bio Ch11','Carbohydrates, amino acids, nucleic acids, enzymes',],
+    ['States of Matter','11','Day 21–24','m','→ Solutions Ch12','Gas laws, van der Waals equation',],
+    ['Thermodynamics (Chem)','11','Day 25–29','h','→ Chemical Kinetics Ch12','Hess law, entropy, Gibbs energy',],
+    ['Equilibrium','11','Day 30–35','h','→ Electrochemistry Ch12','Kp, Kc, Le Chatelier, buffer solutions',],
+    ['Redox Reactions','11','Day 36–38','m','→ Electrochemistry Ch12','Oxidation numbers, balancing methods',],
+    ['Hydrogen','11','Day 39–40','l','—','Isotopes, H₂O₂, hydrides ✦Added',],
+    ['s-Block Elements','11','Day 41–43','m','—','Alkali & alkaline earth metals, anomalies ✦Added',],
+    ['p-Block (Gr 13–14)','11','Day 44–46','m','→ p-Block Gr15-18 Ch12','B, Al, C, Si chemistry',],
+    ['Organic Basics','11','Day 47–52','h','→ All Organic Ch12','IUPAC, isomerism, intermediates, inductive/resonance',],
+    ['Hydrocarbons','11','Day 53–58','h','→ Haloalkanes Ch12','Alkane, alkene, alkyne reactions + arenes',],
+    ['Environmental Chemistry','11','Day 59–60','l','—','Pollution types, green chemistry ✦Added',],
+    ['Practical Chemistry','11','Day 61–62','l','—','Lab techniques, titrations, qualitative analysis ✦Added',],
+    ['Solid State','12','Day 91–94','m','—','Crystal systems, defects, packing efficiency',],
+    ['Solutions','12','Day 95–99','h','← States of Matter Ch11','Colligative properties, osmosis, vant Hoff',],
+    ['Electrochemistry','12','Day 100–105','h','← Redox Ch11','Nernst, EMF, SHE, corrosion, electrolysis',],
+    ['Chemical Kinetics','12','Day 106–110','h','← Equilibrium Ch11','Rate law, order, Arrhenius, integrated rate',],
+    ['Surface Chemistry','12','Day 111–113','m','—','Adsorption, colloids, emulsions, catalysis',],
+    ['Metallurgy','12','Day 114–115','l','—','Ore extraction, refining, alloys ✦Added',],
+    ['p-Block (Gr 15–18)','12','Day 116–122','h','← p-Block Gr13-14 Ch11','Groups 15/16/17/18 reactions — 5–6Qs',],
+    ['d & f Block','12','Day 123–127','m','—','Transition metals, lanthanoids, oxidation states',],
+    ['Coordination Compounds','12','Day 128–133','h','← Chemical Bonding Ch11','Werner theory, isomerism, CFSE, naming — 4–5Qs',],
+    ['Haloalkanes','12','Day 134–139','h','← Hydrocarbons Ch11','SN1, SN2, E1, E2 mechanisms',],
+    ['Alcohols, Phenols','12','Day 140–144','h','← Organic Basics Ch11','Acidity order, Lucas test, oxidation reactions',],
+    ['Aldehydes & Ketones','12','Day 145–150','h','← Organic Basics Ch11','Nucleophilic addition, Aldol, Cannizzaro',],
+    ['Carboxylic Acids','12','Day 151–154','m','← Organic Basics Ch11','Acidity, Fischer esterification, amide',],
+    ['Amines','12','Day 155–158','h','← Organic Basics Ch11','Basicity order, diazonium coupling — 3–4Qs',],
+    ['Biomolecules (12)','12','Day 159–162','m','← Biomolecules Bio Ch11','Carbohydrates, amino acids, nucleic acids, enzymes',],
+    ['Polymers','12','Day 163–165','l','—','Natural vs synthetic, addition vs condensation',],
+    ['Chemistry in Daily Life','12','Day 166–168','l','—','Drugs, food additives, detergents, soaps',],
   ],
   phy:[
     ['Units & Measurement','11','Day 1–3','m','—','Dimensional analysis, errors, sig figs',],
@@ -291,20 +323,21 @@ function safeSetSessionStorage(key, value) {
     ['Kinetic Theory','11','Day 42–44','m','—','KE, RMS speed, degrees of freedom',],
     ['Oscillations','11','Day 45–49','h','→ Wave Optics Ch12','SHM, spring-mass, pendulum, resonance',],
     ['Waves','11','Day 50–55','h','→ Ray Optics Ch12','Standing waves, Doppler, organ pipes',],
-    ['Experimental Skills','11','Day 56–57','l','—','Vernier, screw gauge, experiments',],
-    ['Electrostatics','12','Day 91–97','h','← Laws of Motion Ch11','Coulomb, Gauss law, potential, capacitors',],
-    ['Current Electricity','12','Day 98–104','h','← Units/Meas Ch11','Ohm, Kirchhoff, Wheatstone, potentiometer',],
-    ['Magnetic Effects','12','Day 105–109','h','← Laws of Motion Ch11','Biot-Savart, Ampere, force on charge/wire',],
-    ['Magnetism & Matter','12','Day 110–112','m','—','Magnetic moment, dia/para/ferro',],
-    ['EMI & AC Circuits','12','Day 113–119','h','← Oscillations Ch11','Faraday, Lenz, LC circuit, resonance, transformer',],
-    ['EM Waves','12','Day 120–121','l','—','Types, spectrum, properties',],
-    ['Ray Optics','12','Day 122–128','h','← Waves Ch11','Mirrors, lenses, prism, TIR, optical instruments',],
-    ['Wave Optics','12','Day 129–133','m','← Oscillations Ch11','YDSE, diffraction, polarisation',],
-    ['Dual Nature','12','Day 134–138','h','← Kinetic Theory Ch11','Photoelectric, de Broglie, Davisson-Germer',],
-    ['Atoms & Nuclei','12','Day 139–145','h','← Atomic Struct Chem Ch11','Bohr model, radioactivity, half life, Q value',],
-    ['Semiconductors','12','Day 146–152','m','—','Diode, transistor, logic gates, rectifier',],
+    ['Experimental Skills','11','Day 56–57','l','—','Vernier, screw gauge, experiments ✦Added',],
+    ['Electrostatics','12','Day 92–98','h','← Laws of Motion Ch11','Coulomb, Gauss law, potential, capacitors — 5–7Qs',],
+    ['Current Electricity','12','Day 99–105','h','← Units/Meas Ch11','Ohm, Kirchhoff, Wheatstone, potentiometer',],
+    ['Magnetic Effects','12','Day 106–110','h','← Laws of Motion Ch11','Biot-Savart, Ampere, force on charge/wire',],
+    ['Magnetism & Matter','12','Day 111–113','m','—','Magnetic moment, dia/para/ferro',],
+    ['EMI & AC Circuits','12','Day 114–120','h','← Oscillations Ch11','Faraday, Lenz, LC circuit, resonance, transformer',],
+    ['EM Waves','12','Day 121–122','l','—','Types, spectrum, properties',],
+    ['Ray Optics','12','Day 123–129','h','← Waves Ch11','Mirrors, lenses, prism, TIR, optical instruments',],
+    ['Wave Optics','12','Day 130–134','m','← Oscillations Ch11','YDSE, diffraction, polarisation',],
+    ['Dual Nature','12','Day 135–139','h','← Kinetic Theory Ch11','Photoelectric, de Broglie, Davisson-Germer',],
+    ['Atoms & Nuclei','12','Day 140–146','h','← Atomic Struct Chem Ch11','Bohr model, radioactivity, half life, Q value',],
+    ['Semiconductors','12','Day 147–153','m','—','Diode, transistor, logic gates, rectifier',],
+    ['Communication Systems','12','Day 154–156','l','—','Modulation, bandwidth, propagation, satellites',],
   ],
-};;
+};
     const SCHEDS = {
   p1:[
     {t:'5:00 AM',a:'Wake up · freshen up · light stretch / breathing',d:'20 min',cat:'break'},
@@ -542,7 +575,7 @@ function safeSetSessionStorage(key, value) {
             cheNote = 'Practice mole conversions';
             bioNote = 'Learn the art of highlighting NCERT';
           }
-        } else if (dayNum <= 105) {
+        } else if (dayNum <= 115) {
           phase = 1;
           if (isSunday) {
             type = 'test';
@@ -585,7 +618,7 @@ function safeSetSessionStorage(key, value) {
               bioNote = "Active recall of yesterday's Bio topic";
             }
           }
-        } else if (dayNum <= 195) {
+        } else if (dayNum <= 215) {
           phase = 2;
           if (isSunday) {
             type = 'test';
@@ -712,43 +745,6 @@ function safeSetSessionStorage(key, value) {
     try {
       chapterProgress = JSON.parse(safeGetLocalStorage('neet_v3_chapter_progress') || '{}');
     } catch(e){}
-    // --- NEET 2027 Syllabus Audit: Progress Data Migration ---
-    (function() {
-      try {
-        const oldProg = JSON.parse(localStorage.getItem('neet_v3_chapter_progress') || '{}');
-        const renames = {
-          'Kinematics 2D / Projectile': 'Kinematics 2D',
-          'The Living World': 'Living World'
-        };
-        let changed = false;
-        for (const [oldName, newName] of Object.entries(renames)) {
-          if (oldProg[oldName] && !oldProg[newName]) {
-            oldProg[newName] = oldProg[oldName];
-            delete oldProg[oldName];
-            changed = true;
-          }
-        }
-        const deleted = [
-          'Communication Systems', 'States of Matter', 'Hydrogen', 's-Block Elements',
-          'Environmental Chemistry', 'Solid State', 'Surface Chemistry', 'Metallurgy',
-          'Polymers', 'Chemistry in Daily Life', 'Transport in Plants', 'Mineral Nutrition',
-          'Digestion & Absorption', 'Reproduction: Organisms', 'Food Production', 'Environmental Issues'
-        ];
-        deleted.forEach(ch => {
-          if (oldProg[ch]) {
-            delete oldProg[ch];
-            changed = true;
-          }
-        });
-        if (changed) {
-          localStorage.setItem('neet_v3_chapter_progress', JSON.stringify(oldProg));
-          console.log("NEET Planner: Migrated chapter progress data for renamed/deleted chapters.");
-        }
-      } catch(e) {
-        console.error("Migration failed:", e);
-      }
-    })();
-
     
     // Pagination & Filters
     const PER_PAGE = 35;
@@ -3088,7 +3084,7 @@ function getTodayTargetHours(dayNum, type) {
   }
   if (dayNum <= 15) {
     return { phy: 1.5, che: 1.5, bio: 1.5 };
-  } else if (dayNum <= 105) {
+  } else if (dayNum <= 115) {
     return { phy: 2, che: 2, bio: 3.5 };
   } else if (dayNum <= 275) {
     return { phy: 3, che: 2.5, bio: 3.5 };
