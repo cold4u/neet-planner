@@ -463,7 +463,11 @@ table tr.test-day td { background: rgba(248, 113, 113, 0.03); }
 table tr.mock-day td { background: rgba(245, 158, 11, 0.03); }
 table tr.revision-day td { background: rgba(139, 92, 246, 0.03); }
 table tr.done-row td {
-  opacity: 0.35;
+  opacity: 0.85;
+}
+table tr.done-row td div, table tr.done-row td span {
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 255, 255, 0.3);
 }
 
 .day-num {

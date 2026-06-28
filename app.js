@@ -760,6 +760,7 @@ function safeSetSessionStorage(key, value) {
       saveDone();
       renderPlan();
       updateOverviewStats();
+      if (typeof renderTestList === 'function') renderTestList();
     }
 
     
@@ -981,15 +982,6 @@ function safeSetSessionStorage(key, value) {
         }
       });
       
-      const data = SCHEDS[activeKey];
-      if (!data) return;
-      
-      const colors = { 'bio': '#a78bfa', 'che': '#34d399', 'phy': '#60a5fa', 'test': '#ff6b6b', 'rev': '#00d4aa', 'break': '#64748b' };
-      
-      // Fetch today's plan dynamically
-      const dayNum = typeof getTodayDayNum === 'function' ? getTodayDayNum() : 1;
-      const todayPlan = (typeof PLAN !== 'undefined' && Array.isArray(PLAN)) ? (PLAN.find(item => item.day === dayNum) || PLAN[0]) : null;
-      
       // Control buttons container in timing tab
       const timingControls = document.getElementById('timing-controls');
       if (timingControls) {
@@ -1006,6 +998,13 @@ function safeSetSessionStorage(key, value) {
           `;
         }
       }
+
+      const data = SCHEDS[activeKey];
+      if (!data) return;
+
+      const colors = { 'bio': '#a78bfa', 'che': '#34d399', 'phy': '#60a5fa', 'test': '#ff6b6b', 'rev': '#00d4aa', 'break': '#64748b' };
+      const dayNum = typeof getTodayDayNum === 'function' ? getTodayDayNum() : 1;
+      const todayPlan = (typeof PLAN !== 'undefined' && Array.isArray(PLAN)) ? (PLAN.find(item => item.day === dayNum) || PLAN[0]) : null;
 
       let html = '';
       if (window.isEditingSched) {
