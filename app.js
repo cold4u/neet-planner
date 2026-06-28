@@ -400,12 +400,17 @@ function safeSetSessionStorage(key, value) {
   ],
 };
 
-    let SCHEDS = null;
+    let SCHEDS = {};
     try {
-      SCHEDS = JSON.parse(safeGetLocalStorage('neet_v3_custom_scheds') || 'null');
+      SCHEDS = JSON.parse(safeGetLocalStorage('neet_v3_custom_scheds') || '{}');
     } catch(e){}
-    if (!SCHEDS) {
-      SCHEDS = JSON.parse(JSON.stringify(DEFAULT_SCHEDS));
+    if (!SCHEDS || typeof SCHEDS !== 'object') {
+      SCHEDS = {};
+    }
+    for (const key in DEFAULT_SCHEDS) {
+      if (!SCHEDS[key] || !Array.isArray(SCHEDS[key])) {
+        SCHEDS[key] = JSON.parse(JSON.stringify(DEFAULT_SCHEDS[key]));
+      }
     }
 
     // PYQ Bank
@@ -982,8 +987,8 @@ function safeSetSessionStorage(key, value) {
       const colors = { 'bio': '#a78bfa', 'che': '#34d399', 'phy': '#60a5fa', 'test': '#ff6b6b', 'rev': '#00d4aa', 'break': '#64748b' };
       
       // Fetch today's plan dynamically
-      const dayNum = getTodayDayNum();
-      const todayPlan = PLAN.find(item => item.day === dayNum) || PLAN[0];
+      const dayNum = typeof getTodayDayNum === 'function' ? getTodayDayNum() : 1;
+      const todayPlan = (typeof PLAN !== 'undefined' && Array.isArray(PLAN)) ? (PLAN.find(item => item.day === dayNum) || PLAN[0]) : null;
       
       // Control buttons container in timing tab
       const timingControls = document.getElementById('timing-controls');
@@ -1008,11 +1013,15 @@ function safeSetSessionStorage(key, value) {
         html = '<table class="sched-table edit-mode"><thead><tr><th style="width:4px; padding:0;"></th><th>Time</th><th>Activity / Subject</th><th>Duration</th><th style="width:120px;">Category</th><th style="width:50px; text-align:center;">Actions</th></tr></thead><tbody>';
         data.forEach((r, idx) => {
           const clr = colors[r.cat] || '#e2e8f0';
+          const tVal = String(r.t || '').replace(/"/g, '&quot;');
+          const aVal = String(r.a || '').replace(/"/g, '&quot;');
+          const dVal = String(r.d || '').replace(/"/g, '&quot;');
+          
           html += `<tr>
             <td style="background:${clr}; padding:0;"></td>
-            <td><input type="text" class="form-control text-input-sched" style="font-weight:600; font-size:12px; padding:4px 8px;" value="${r.t}" id="sched-time-${idx}"></td>
-            <td><input type="text" class="form-control text-input-sched" style="font-size:12px; padding:4px 8px; width:100%;" value="${r.a.replace(/"/g, '&quot;')}" id="sched-act-${idx}"></td>
-            <td><input type="text" class="form-control text-input-sched" style="font-size:12px; padding:4px 8px;" value="${r.d}" id="sched-dur-${idx}"></td>
+            <td><input type="text" class="form-control text-input-sched" style="font-weight:600; font-size:12px; padding:4px 8px;" value="${tVal}" id="sched-time-${idx}"></td>
+            <td><input type="text" class="form-control text-input-sched" style="font-size:12px; padding:4px 8px; width:100%;" value="${aVal}" id="sched-act-${idx}"></td>
+            <td><input type="text" class="form-control text-input-sched" style="font-size:12px; padding:4px 8px;" value="${dVal}" id="sched-dur-${idx}"></td>
             <td>
               <select class="form-control select-input-sched" style="font-size:11px; padding:4px;" id="sched-cat-${idx}">
                 <option value="bio" ${r.cat === 'bio' ? 'selected' : ''}>🌿 Biology</option>
@@ -1035,7 +1044,7 @@ function safeSetSessionStorage(key, value) {
         data.forEach(r => {
           const clr = colors[r.cat] || '#e2e8f0';
           
-          let activityText = r.a;
+          let activityText = r.a || '';
           if (todayPlan) {
             if (r.cat === 'bio' && todayPlan.bio) {
               activityText = activityText.replace("Biology — New chapter:", `Biology — <strong>${todayPlan.bio}</strong>:`);
@@ -1061,9 +1070,9 @@ function safeSetSessionStorage(key, value) {
           
           html += `<tr>
             <td style="background:${clr}; padding:0;"></td>
-            <td style="font-weight:600; width:100px;">${r.t}</td>
+            <td style="font-weight:600; width:100px;">${r.t || ''}</td>
             <td>${activityText}</td>
-            <td style="color:var(--text-muted); width:90px;">${r.d}</td>
+            <td style="color:var(--text-muted); width:90px;">${r.d || ''}</td>
           </tr>`;
         });
         html += '</tbody></table>';
@@ -1082,7 +1091,7 @@ function safeSetSessionStorage(key, value) {
       window.isEditingSched = false;
       try {
         let loaded = JSON.parse(safeGetLocalStorage('neet_v3_custom_scheds') || 'null');
-        if (loaded) {
+        if (loaded && typeof loaded === 'object') {
           SCHEDS = loaded;
         } else {
           SCHEDS = JSON.parse(JSON.stringify(DEFAULT_SCHEDS));
@@ -1117,7 +1126,11 @@ function safeSetSessionStorage(key, value) {
       safeSetLocalStorage('neet_v3_custom_scheds', JSON.stringify(SCHEDS));
       window.isEditingSched = false;
       showSched();
-      alert("Timetable saved successfully!");
+      if (typeof showToast === 'function') {
+        showToast("Timetable saved successfully!");
+      } else {
+        alert("Timetable saved successfully!");
+      }
     }
     
     function addNewSchedRow() {
@@ -1146,7 +1159,11 @@ function safeSetSessionStorage(key, value) {
         safeSetLocalStorage('neet_v3_custom_scheds', JSON.stringify(SCHEDS));
         window.isEditingSched = false;
         showSched();
-        alert("Timetable reset to default!");
+        if (typeof showToast === 'function') {
+          showToast("Timetable reset to default!");
+        } else {
+          alert("Timetable reset to default!");
+        }
       }
     }
 
@@ -1165,34 +1182,59 @@ function safeSetSessionStorage(key, value) {
       const r = PLAN.find(item => item.day === day);
       if (!r) return;
       
-      document.getElementById('analysis-day').value = day;
-      document.getElementById('test-analysis-title').textContent = `Analysis: ${r.phy.replace('📝 Test: ', '').replace('📝 ', '')}`;
+      const dayEl = document.getElementById('analysis-day');
+      const titleEl = document.getElementById('test-analysis-title');
+      const marksEl = document.getElementById('analysis-marks');
+      const rightEl = document.getElementById('analysis-right');
+      const wrongEl = document.getElementById('analysis-wrong');
+      const unattemptedEl = document.getElementById('analysis-unattempted');
+      const weakEl = document.getElementById('analysis-weak');
+      const modal = document.getElementById('test-analysis-modal');
       
-      const log = testAnalysisLogs[day] || { marks: '', right: '', wrong: '', unattempted: '', weak: '' };
-      document.getElementById('analysis-marks').value = log.marks;
-      document.getElementById('analysis-right').value = log.right;
-      document.getElementById('analysis-wrong').value = log.wrong;
-      document.getElementById('analysis-unattempted').value = log.unattempted || '';
-      document.getElementById('analysis-weak').value = log.weak;
+      if (!modal) return;
       
-      document.getElementById('test-analysis-modal').classList.add('active');
+      if (dayEl) dayEl.value = day;
+      if (titleEl) titleEl.textContent = `Analysis: ${r.phy.replace('📝 Test: ', '').replace('📝 ', '')}`;
+      
+      const log = (testAnalysisLogs && testAnalysisLogs[day]) ? testAnalysisLogs[day] : { marks: '', right: '', wrong: '', unattempted: '', weak: '' };
+      
+      if (marksEl) marksEl.value = log.marks || '';
+      if (rightEl) rightEl.value = log.right || '';
+      if (wrongEl) wrongEl.value = log.wrong || '';
+      if (unattemptedEl) unattemptedEl.value = log.unattempted || '';
+      if (weakEl) weakEl.value = log.weak || '';
+      
+      modal.classList.add('active');
     }
     
     function closeTestAnalysisModal() {
-      document.getElementById('test-analysis-modal').classList.remove('active');
+      const modal = document.getElementById('test-analysis-modal');
+      if (modal) modal.classList.remove('active');
     }
     
     function saveTestAnalysis(e) {
-      e.preventDefault();
-      const day = parseInt(document.getElementById('analysis-day').value);
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      
+      const dayEl = document.getElementById('analysis-day');
+      if (!dayEl) return;
+      const day = parseInt(dayEl.value);
       if (!day) return;
       
-      const marks = parseInt(document.getElementById('analysis-marks').value);
-      const right = parseInt(document.getElementById('analysis-right').value);
-      const wrong = parseInt(document.getElementById('analysis-wrong').value);
-      const unattempted = parseInt(document.getElementById('analysis-unattempted').value) || 0;
-      const weak = document.getElementById('analysis-weak').value;
+      const marksEl = document.getElementById('analysis-marks');
+      const rightEl = document.getElementById('analysis-right');
+      const wrongEl = document.getElementById('analysis-wrong');
+      const unattemptedEl = document.getElementById('analysis-unattempted');
+      const weakEl = document.getElementById('analysis-weak');
       
+      if (!marksEl || !rightEl || !wrongEl || !weakEl) return;
+      
+      const marks = parseInt(marksEl.value) || 0;
+      const right = parseInt(rightEl.value) || 0;
+      const wrong = parseInt(wrongEl.value) || 0;
+      const unattempted = parseInt(unattemptedEl.value) || 0;
+      const weak = weakEl.value;
+      
+      if (!testAnalysisLogs) testAnalysisLogs = {};
       testAnalysisLogs[day] = {
         marks,
         right,
@@ -1201,23 +1243,32 @@ function safeSetSessionStorage(key, value) {
         weak
       };
       
-      if (!done[day]) {
-        done[day] = true;
-        safeSetLocalStorage('neet_v3_done', JSON.stringify(done));
+      if (typeof done !== 'undefined') {
+        if (!done[day]) {
+          done[day] = true;
+          safeSetLocalStorage('neet_v3_done', JSON.stringify(done));
+        }
       }
       
       safeSetLocalStorage('neet_v3_test_analysis', JSON.stringify(testAnalysisLogs));
       closeTestAnalysisModal();
-      renderTestList();
-      renderCal();
-      alert("Test performance logged successfully!");
+      
+      if (typeof renderTestList === 'function') renderTestList();
+      if (typeof renderCal === 'function') renderCal();
+      
+      if (typeof showToast === 'function') {
+        showToast("Test performance logged!");
+      } else {
+        alert("Test performance logged!");
+      }
     }
     
     function openWeakTopicsModal() {
       const container = document.getElementById('weak-topics-list');
-      if (!container) return;
+      const modal = document.getElementById('weak-topics-modal');
+      if (!container || !modal) return;
       
-      const logs = Object.entries(testAnalysisLogs).filter(([day, log]) => log.weak && log.weak.trim());
+      const logs = Object.entries(testAnalysisLogs || {}).filter(([day, log]) => log && typeof log === 'object' && log.weak && String(log.weak).trim());
       
       if (logs.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px 10px; font-size:13.5px;">
@@ -1226,9 +1277,9 @@ function safeSetSessionStorage(key, value) {
       } else {
         let html = '';
         logs.forEach(([day, log]) => {
-          const r = PLAN.find(item => item.day === parseInt(day));
+          const r = (typeof PLAN !== 'undefined') ? PLAN.find(item => item.day === parseInt(day)) : null;
           const testName = r ? r.phy.replace('📝 Test: ', '').replace('📝 ', '') : `Day ${day} Test`;
-          const topics = log.weak.split(/[\n,;\r]+/).map(t => t.trim()).filter(Boolean);
+          const topics = String(log.weak || '').split(/[\n,;\r]+/).map(t => t.trim()).filter(Boolean);
           
           let topicsList = '';
           topics.forEach((topic, idx) => {
@@ -1244,7 +1295,7 @@ function safeSetSessionStorage(key, value) {
             <div class="glass-card" style="padding:14px; border-left:3px solid var(--tertiary); background:rgba(255,255,255,0.02); margin-bottom:10px;">
               <div style="font-weight:800; font-size:12px; color:var(--tertiary); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
                 <span>${testName}</span>
-                <span style="opacity:0.6; font-size:10px; font-weight:normal;">Score: ${log.marks}/720</span>
+                <span style="opacity:0.6; font-size:10px; font-weight:normal;">Score: ${log.marks || 0}/720</span>
               </div>
               <div style="display:flex; flex-direction:column; padding-left:4px;">
                 ${topicsList}
@@ -1255,11 +1306,12 @@ function safeSetSessionStorage(key, value) {
         container.innerHTML = html;
       }
       
-      document.getElementById('weak-topics-modal').classList.add('active');
+      modal.classList.add('active');
     }
     
     function closeWeakTopicsModal() {
-      document.getElementById('weak-topics-modal').classList.remove('active');
+      const modal = document.getElementById('weak-topics-modal');
+      if (modal) modal.classList.remove('active');
     }
     
     // Chapter List Progress Table
