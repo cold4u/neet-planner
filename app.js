@@ -3756,11 +3756,26 @@ function initOnLoad() {
 
   try { renderErrorBookList(); } catch(e) { console.error("Error in renderErrorBookList:", e); }
   try { loadSelectedFlashcardDeck(); } catch(e) { console.error("Error in loadSelectedFlashcardDeck:", e); }
+
+  try {
+    const hideWelcome = safeGetLocalStorage('neet_hide_welcome_modal');
+    if (hideWelcome === 'true') {
+      const modal = document.getElementById('welcome-summary-modal');
+      if (modal) modal.classList.remove('active');
+    }
+  } catch(e) { console.error("Error hiding welcome modal:", e); }
 }
 
 function closeWelcomeSummary() {
   const modal = document.getElementById('welcome-summary-modal');
   if (modal) modal.classList.remove('active');
+
+  try {
+    const cb = document.getElementById('hide-welcome-cb');
+    if (cb && cb.checked) {
+      safeSetLocalStorage('neet_hide_welcome_modal', 'true');
+    }
+  } catch(e) {}
 }
 
 if (document.readyState === 'loading') {
