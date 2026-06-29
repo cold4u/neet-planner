@@ -4708,10 +4708,10 @@ tag in <head>
         <!-- Left Column: Add Error Form -->
         <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:16px;">
           <h2 style="margin:0; font-size:16px;">Log New Error</h2>
-          <form id="errorbook-form" onsubmit="saveErrorBookItem(event)" style="display:flex; flex-direction:column; gap:12px;">
+          <form id="errorbook-form" style="display:flex; flex-direction:column; gap:12px;">
             <div>
               <label style="display:block; font-size:11px; margin-bottom:4px; font-weight:600; color:var(--text-secondary);">Subject</label>
-              <select id="err-subject" class="form-control" style="width:100%;" onchange="populateErrorChapters()" required>
+              <select id="err-subject" class="form-control" style="width:100%;" required>
                 <option value="">Select Subject</option>
                 <option value="Physics">⚡ Physics</option>
                 <option value="Chemistry">🧪 Chemistry</option>

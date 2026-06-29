@@ -3781,8 +3781,21 @@ function initOnLoad() {
           }
         }, { passive: false });
       }
+  // Dynamic bindings for Error Book
+  try {
+    const errSub = document.getElementById('err-subject');
+    if (errSub) {
+      errSub.addEventListener('change', populateErrorChapters);
+      // Run once initially to populate chapters if a subject is already selected
+      populateErrorChapters();
     }
-  } catch(e) { console.error("Error hiding welcome modal:", e); }
+    const errForm = document.getElementById('errorbook-form');
+    if (errForm) {
+      errForm.addEventListener('submit', saveErrorBookItem);
+    }
+  } catch(e) {
+    console.error("Error binding Error Book event listeners:", e);
+  }
 }
 
 function closeWelcomeSummary() {
