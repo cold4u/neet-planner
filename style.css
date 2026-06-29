@@ -206,7 +206,14 @@ a:hover {
   text-shadow: 0 0 12px var(--primary-glow-thick);
 }
 
-.topbar .sub {
+.topbar-right-wrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar .sub-date {
   font-family: var(--font-sans);
   font-size: 11px;
   color: var(--text-secondary);
@@ -1396,7 +1403,7 @@ table tr.done-row td div, table tr.done-row td span {
   .topbar h1 {
     font-size: 20px;
   }
-  .topbar .sub {
+  .topbar .sub-date {
     display: none;
   }
   .tabs {
@@ -3092,11 +3099,21 @@ tag in <head>
   /* === TOPBAR === */
   .topbar {
     padding: 10px 14px;
-    gap: 10px;
+    gap: 8px;
   }
   .topbar h1 {
-    font-size: 16px;
-    letter-spacing: 1px;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+  }
+  .topbar-right-wrapper {
+    gap: 8px;
+  }
+  .topbar .sub-date {
+    display: none !important;
+  }
+  #user-rank {
+    padding: 2.5px 5px !important;
+    font-size: 8.5px !important;
   }
   .hamburger-btn {
     width: 22px;

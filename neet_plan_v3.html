@@ -218,7 +218,14 @@ a:hover {
   text-shadow: 0 0 12px var(--primary-glow-thick);
 }
 
-.topbar .sub {
+.topbar-right-wrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar .sub-date {
   font-family: var(--font-sans);
   font-size: 11px;
   color: var(--text-secondary);
@@ -1408,7 +1415,7 @@ table tr.done-row td div, table tr.done-row td span {
   .topbar h1 {
     font-size: 20px;
   }
-  .topbar .sub {
+  .topbar .sub-date {
     display: none;
   }
   .tabs {
@@ -3104,11 +3111,21 @@ tag in <head>
   /* === TOPBAR === */
   .topbar {
     padding: 10px 14px;
-    gap: 10px;
+    gap: 8px;
   }
   .topbar h1 {
-    font-size: 16px;
-    letter-spacing: 1px;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+  }
+  .topbar-right-wrapper {
+    gap: 8px;
+  }
+  .topbar .sub-date {
+    display: none !important;
+  }
+  #user-rank {
+    padding: 2.5px 5px !important;
+    font-size: 8.5px !important;
   }
   .hamburger-btn {
     width: 22px;
@@ -3824,7 +3841,7 @@ tag in <head>
     <!-- Restructured Topbar -->
     <header class="topbar">
       <h1 id="topbar-page-title" style="margin:0; font-family:var(--font-mono); font-size:22px; color:var(--primary);">Overview</h1>
-      <div style="margin-left: auto; display: flex; align-items: center; gap: 16px;">
+      <div class="topbar-right-wrapper">
         <div style="display:flex; align-items:center; gap:6px; background:rgba(255,107,107,0.1); border:1px solid rgba(255,107,107,0.2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; color:var(--tertiary);">
           <span>🔥</span> <span id="user-streak">0</span> Days
         </div>
