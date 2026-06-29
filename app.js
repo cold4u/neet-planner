@@ -3781,6 +3781,11 @@ function initOnLoad() {
           }
         }, { passive: false });
       }
+    }
+  } catch(e) { 
+    console.error("Error hiding welcome modal:", e); 
+  }
+
   // Dynamic bindings for Error Book
   try {
     const errSub = document.getElementById('err-subject');
