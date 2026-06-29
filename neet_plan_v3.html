@@ -2122,6 +2122,97 @@ body.exam-mode-active .main-wrapper {
   border-left: 2px solid #FFD700;
 }
 
+.hero-progress-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-left: 1px dashed var(--border-color);
+  padding-left: 16px;
+}
+
+/* DAILY STUDY HOURS CHART */
+.bar-chart-vertical {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 180px;
+  padding: 16px 0 8px 0;
+  border-bottom: 1.5px solid var(--border-color);
+  margin-bottom: 8px;
+}
+.chart-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 36px;
+  position: relative;
+  justify-content: flex-end;
+}
+.chart-bar-fill {
+  width: 14px;
+  background: linear-gradient(180deg, var(--primary), var(--primary-hover));
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px var(--primary-glow);
+  cursor: pointer;
+}
+.chart-bar-fill:hover {
+  background: linear-gradient(180deg, var(--primary-hover), var(--primary));
+  box-shadow: 0 0 15px var(--primary-glow-thick);
+}
+.chart-bar-tooltip {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  opacity: 0;
+  background: var(--bg-surface-hover);
+  border: 1.5px solid var(--primary);
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+.chart-bar-fill:hover .chart-bar-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+.chart-label {
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* SUBJECT STUDY BALANCE STACKED BAR */
+.stacked-bar-container {
+  display: flex;
+  height: 12px;
+  width: 100%;
+  background: var(--bg-surface-hover);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  margin-top: 10px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.stacked-segment {
+  height: 100%;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* Layout Wrapper for Left Sidebar */
 .app-layout {
   display: flex;
@@ -2896,6 +2987,13 @@ tag in <head>
 
 /* --- TABLET (≤768px) ENHANCEMENTS --- */
 @media (max-width: 768px) {
+  .hero-progress-block {
+    border-left: none;
+    padding-left: 0;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+    margin-top: 8px;
+  }
   .main-wrapper {
     padding: 16px 14px;
   }
@@ -3040,6 +3138,15 @@ tag in <head>
     font-size: 11px;
     margin-bottom: 10px;
     margin-top: 20px;
+  }
+
+  /* === HERO PROGRESS BLOCK === */
+  .hero-progress-block {
+    border-left: none;
+    padding-left: 0;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+    margin-top: 8px;
   }
 
   /* === STAT CARDS GRID === */
@@ -3774,7 +3881,7 @@ tag in <head>
           </div>
           
           <!-- Daily Progress Circular Indicator -->
-          <div class="hero-subject-block" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; border-left:1px dashed var(--border-color); padding-left:16px;">
+          <div class="hero-progress-block">
             <div style="position:relative; width:80px; height:80px;">
               <svg width="80" height="80" viewBox="0 0 80 80" style="transform: rotate(-90deg);">
                 <circle cx="40" cy="40" r="34" stroke="var(--border-color)" stroke-width="6" fill="transparent" />
@@ -4691,17 +4798,26 @@ tag in <head>
       <h1>❤️ Emotional Support</h1>
       <div class="support-wrapper">
         <div class="support-card support-emotional-card" style="flex: 1 1 100%;">
-          <div class="support-emotional-badge">❤️ EMOTIONAL SUPPORT</div>
-          <h2 class="support-heading">when you feel low and there is no one... I'm here 🤝</h2>
+          <div class="support-emotional-badge">❤️ YOUR SAFE SPACE</div>
+          <h2 class="support-heading">You are not alone in this — and it's okay to not be okay. 🤝</h2>
           <p class="support-para">
-            Hey, I know how brutal this journey can get. Mock tests, syllabus backlogs, and endless study hours can build up so much pressure. But honestly, study stress is just one part of it. I know that life doesn't pause just because you are preparing for NEET. Family conflicts, relationship issues, personal doubts, or just feeling like you have nobody to talk to can make things feel completely impossible.
+            Preparing for NEET is one of the most mentally demanding experiences a young person can go through. The pressure of syllabus completion, the anxiety before mock tests, the guilt of an unproductive day, and the constant comparison with peers — these are not signs of weakness. They are completely <strong>normal psychological responses</strong> to an extraordinarily high-pressure environment. Research consistently shows that academic stress, when left unaddressed, can affect sleep, appetite, concentration, and emotional regulation. Recognizing what you're feeling is the first and most courageous step.
           </p>
           <p class="support-para">
-            I want you to know that <strong>you don't have to carry this alone</strong>. I don't only help with study-related stress—I am here for any kind of problem you might be facing, whether it's relationship issues, family problems, or anything else. <em>If you're going through a tough time and feel like there is absolutely no one to listen to you, I will be there for you.</em> I promise to listen without judgment and help in any way possible. You can talk to me freely about anything.
+            But here's what most people won't tell you: <strong>NEET stress is rarely just about studies.</strong> Underneath the surface, many aspirants carry the weight of family expectations, strained relationships, financial worries, loneliness, self-doubt, or even past experiences they've never spoken about. These emotions don't pause because you have a chapter to finish. They accumulate silently, and when they overflow, it can feel like <em>everything is falling apart at once</em>. That feeling is valid. You are not broken — you are human, carrying more than most people your age ever do.
+          </p>
+          <p class="support-para">
+            <strong>This is a judgment-free, confidential space.</strong> Whether you're dealing with burnout, anxiety, relationship conflicts, family pressure, identity struggles, or just need someone to listen — I am here. You don't need to explain yourself, justify your feelings, or have a "good enough reason" to reach out. Sometimes all it takes is one conversation with someone who genuinely cares to feel a little lighter. I won't diagnose you, judge you, or tell you to "just focus on studies." I will listen, understand, and support you — <em>as a person first, not just as an aspirant.</em>
+          </p>
+          <p class="support-para" style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-top: 16px; padding: 14px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 3px solid #fca5a5;">
+            <strong>🧠 Remember:</strong> Seeking support is not a distraction from your goal — it is a part of achieving it. The strongest minds are not those that never struggle, but those that ask for help when they need it. Your mental health is not separate from your preparation — it <em>is</em> the foundation of it. Take care of the person preparing, and the preparation will take care of itself.
           </p>
           <a href="https://instagram.com/shubh.m_01" target="_blank" class="support-emotional-insta-btn">
-            💬 DM me on Instagram (@shubh.m_01)
+            💬 Talk to me — DM on Instagram (@shubh.m_01)
           </a>
+          <p style="text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 12px; opacity: 0.7;">
+            Available for voice notes, text, or call. No question is too small. No feeling is too silly. 🫶
+          </p>
         </div>
       </div>
     </section>

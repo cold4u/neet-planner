@@ -2110,6 +2110,97 @@ body.exam-mode-active .main-wrapper {
   border-left: 2px solid #FFD700;
 }
 
+.hero-progress-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-left: 1px dashed var(--border-color);
+  padding-left: 16px;
+}
+
+/* DAILY STUDY HOURS CHART */
+.bar-chart-vertical {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 180px;
+  padding: 16px 0 8px 0;
+  border-bottom: 1.5px solid var(--border-color);
+  margin-bottom: 8px;
+}
+.chart-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 36px;
+  position: relative;
+  justify-content: flex-end;
+}
+.chart-bar-fill {
+  width: 14px;
+  background: linear-gradient(180deg, var(--primary), var(--primary-hover));
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px var(--primary-glow);
+  cursor: pointer;
+}
+.chart-bar-fill:hover {
+  background: linear-gradient(180deg, var(--primary-hover), var(--primary));
+  box-shadow: 0 0 15px var(--primary-glow-thick);
+}
+.chart-bar-tooltip {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  opacity: 0;
+  background: var(--bg-surface-hover);
+  border: 1.5px solid var(--primary);
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+.chart-bar-fill:hover .chart-bar-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+.chart-label {
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* SUBJECT STUDY BALANCE STACKED BAR */
+.stacked-bar-container {
+  display: flex;
+  height: 12px;
+  width: 100%;
+  background: var(--bg-surface-hover);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  margin-top: 10px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.stacked-segment {
+  height: 100%;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* Layout Wrapper for Left Sidebar */
 .app-layout {
   display: flex;
@@ -2884,6 +2975,13 @@ tag in <head>
 
 /* --- TABLET (≤768px) ENHANCEMENTS --- */
 @media (max-width: 768px) {
+  .hero-progress-block {
+    border-left: none;
+    padding-left: 0;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+    margin-top: 8px;
+  }
   .main-wrapper {
     padding: 16px 14px;
   }
@@ -3028,6 +3126,15 @@ tag in <head>
     font-size: 11px;
     margin-bottom: 10px;
     margin-top: 20px;
+  }
+
+  /* === HERO PROGRESS BLOCK === */
+  .hero-progress-block {
+    border-left: none;
+    padding-left: 0;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+    margin-top: 8px;
   }
 
   /* === STAT CARDS GRID === */

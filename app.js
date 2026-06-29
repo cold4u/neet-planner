@@ -2657,8 +2657,9 @@ function safeSetSessionStorage(key, value) {
     
     // Google Search Tab Logic
     function executeGoogleSearch(e) {
-      e.preventDefault();
-      const val = document.getElementById('google-search-input').value.trim();
+      if (e && e.preventDefault) e.preventDefault();
+      const el = document.getElementById('google-search-input');
+      const val = el ? el.value.trim() : '';
       if (val) {
         window.open('https://www.google.com/search?q=' + encodeURIComponent(val), '_blank');
       }
@@ -3335,13 +3336,13 @@ function openQuickLog() {
       const localDate = new Date(Date.now() - offset * 60 * 1000).toISOString().split('T')[0];
       dateInput.value = localDate;
     }
-    modal.classList.add('open');
+    modal.classList.add('active');
   }
 }
 
 function closeQuickLog() {
   const modal = document.getElementById('quick-log-modal');
-  if (modal) modal.classList.remove('open');
+  if (modal) modal.classList.remove('active');
 }
 
 function logQuickStudy(e) {
