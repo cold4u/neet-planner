@@ -4933,7 +4933,7 @@ tag in <head>
         <span>✨ NEET Elite Workspace v3.0</span>
         <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Owner: <a href="https://instagram.com/shubh.m_01" target="_blank" style="color:var(--primary); font-weight:700; text-decoration:none; border-bottom:1px dashed var(--primary);">@shubh.m_01</a></span>
       </h2>
-      <div style="overflow-y: auto; max-height: 420px; padding-right: 8px; margin-top: 15px; text-align: left;">
+      <div class="welcome-modal-scrollable" style="overflow-y: auto; max-height: 420px; padding-right: 8px; margin-top: 15px; text-align: left;">
         <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">
           Welcome to the ultimate preparation dashboard designed for serious NEET aspirants. Here is a quick preview of your integrated tools:
         </p>
@@ -8931,13 +8931,12 @@ function initOnLoad() {
       document.body.classList.add('modal-open');
       document.documentElement.classList.add('modal-open');
 
-      // Block touch scroll on the modal overlay
+      // Block touch scroll on the modal overlay, allowing the inner container to scroll
       const modal = document.getElementById('welcome-summary-modal');
       if (modal) {
         modal.addEventListener('touchmove', function(e) {
-          // Allow scrolling inside modal-content, block everything else
-          if (!e.target.closest('.modal-content') || 
-              e.target.closest('.modal-content').scrollHeight <= e.target.closest('.modal-content').clientHeight) {
+          const scrollable = e.target.closest('.welcome-modal-scrollable');
+          if (!scrollable) {
             e.preventDefault();
           }
         }, { passive: false });

@@ -3770,13 +3770,12 @@ function initOnLoad() {
       document.body.classList.add('modal-open');
       document.documentElement.classList.add('modal-open');
 
-      // Block touch scroll on the modal overlay
+      // Block touch scroll on the modal overlay, allowing the inner container to scroll
       const modal = document.getElementById('welcome-summary-modal');
       if (modal) {
         modal.addEventListener('touchmove', function(e) {
-          // Allow scrolling inside modal-content, block everything else
-          if (!e.target.closest('.modal-content') || 
-              e.target.closest('.modal-content').scrollHeight <= e.target.closest('.modal-content').clientHeight) {
+          const scrollable = e.target.closest('.welcome-modal-scrollable');
+          if (!scrollable) {
             e.preventDefault();
           }
         }, { passive: false });
