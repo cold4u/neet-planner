@@ -22293,81 +22293,6 @@
     },
     {
       "year": "NEET 2021",
-      "q": "Concerning 'Laws of Motion', a physical quantity related to 'Friction Force' depends on limiting friction force on rough surface. If we scale the parameters by a factor of 30, what is the new relation?",
-      "opts": [
-        "The value scales proportionally to the modified factor of limiting friction force on rough surface.",
-        "The value remains completely invariant under parameter shifts.",
-        "The value increases exponentially by a factor of 100.",
-        "The value drops to zero immediately."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Laws of Motion: The parameters of Friction Force show direct dependency on limiting friction force on rough surface. F = \u03bc_s \u00d7 R (static friction matches applied force until limiting friction is reached).",
-      "subject": "physics",
-      "chapter": "Laws of Motion",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Rotational Motion', given below are two statements: \nAssertion (A): 'Rolling Motion' plays a critical role in total kinetic energy of a rolling body.\nReason (R): The physical equations of the system are governed by the conservation laws.\nIn light of the above statements, choose the most appropriate answer:",
-      "opts": [
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect",
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)"
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Rotational Motion: Assertion (A) describes a valid aspect of Rolling Motion which is physically explained by the conservation laws relating to total kinetic energy of a rolling body. A rolling body has both translational and rotational kinetic energy: K = \u00bdmv\u00b2 + \u00bdI\u03c9\u00b2. Substituting I = Mk\u00b2 and \u03c9 = v/R gives K = \u00bdmv\u00b2(1 + k\u00b2/R\u00b2), where k is the radius of gyration.",
-      "subject": "physics",
-      "chapter": "Rotational Motion",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Semiconductors', identify the correct option regarding Statement I and Statement II:\nStatement I: The magnitude of 'Zener Diode' is dependent on the properties of Zener diode is used as and is operated in.\nStatement II: The thermodynamic behavior of the system is independent of the medium.",
-      "opts": [
-        "Both Statement I and Statement II are correct",
-        "Statement I is correct but Statement II is incorrect",
-        "Statement I is incorrect but Statement II is correct",
-        "Both Statement I and Statement II are incorrect"
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Semiconductors: Statement I correctly relates Zener Diode to the characteristics of Zener diode is used as and is operated in, whereas Statement II is invalid because the medium affects thermodynamic states. A Zener diode is a heavily doped p-n junction diode designed to operate safely in the reverse breakdown (Zener) region. It is used as a voltage regulator because voltage remains constant across it over a wide range of currents.",
-      "subject": "physics",
-      "chapter": "Semiconductors",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Atoms & Nuclei', under what specific boundary conditions or exceptions does the concept of 'Radioactive Decay Law' (relating to fraction of radioactive nuclei remaining after n half-lives) fail to hold true?",
-      "opts": [
-        "When the mechanical energy of the system is conserved.",
-        "Under standard temperature and pressure conditions.",
-        "In normal macroscopic systems working under conservative fields.",
-        "In highly relativistic limits or under absolute zero conditions."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Atoms & Nuclei: Boundary conditions like relativistic limits modify the classical relationships of Radioactive Decay Law and fraction of radioactive nuclei remaining after n half-lives. According to the law of radioactive decay, N = N\u2080 e^(-\u03bbt). The number of half-lives is n = t/T_half. The fraction of active nuclei remaining is N/N\u2080 = (\u00bd)^n.",
-      "subject": "physics",
-      "chapter": "Atoms & Nuclei",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'EM Waves', in a laboratory experiment to measure the parameters of 'Beats Frequencies', which of the following precautions is necessary?",
-      "opts": [
-        "Ensure the mass of the hanging load is kept infinite.",
-        "Minimize friction and ensure standard calibration using the properties of beat frequency produced by two sounding sources of slightly different frequencies.",
-        "Disregard the zero error of the measuring apparatus.",
-        "Keep the system open to external high-temperature reservoirs at all times."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to EM Waves: Practical measurement of Beats Frequencies requires minimizing external errors while mapping the properties of beat frequency produced by two sounding sources of slightly different frequencies. Beats are produced by the superposition of two sound waves of slightly different frequencies. The beat frequency (number of intensity maxima per second) is f_beat = |f\u2081 - f\u2082|.",
-      "subject": "physics",
-      "chapter": "EM Waves",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
       "q": "Which of the following noble gases is used in magnetic resonance imaging (MRI) systems as a cryogenic agent?",
       "opts": [
         "Helium",
@@ -23039,81 +22964,6 @@
       "exp": "Concept mapping to Periodic Table: Chemical parameters of Electronegativity show direct dependency on most electronegative element in the periodic table. Fluorine is the most electronegative element in the periodic table with a value of 4.0 on the Pauling scale. Electronegativity increases across a period and decreases down a group.",
       "subject": "chemistry",
       "chapter": "Periodic Table",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Haloalkanes', given below are two statements: \nAssertion (A): 'Swarts Reaction' is highly stable due to synthesis of alkyl fluorides.\nReason (R): High stability is a consequence of steric hindrance and electronic configuration.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect",
-        "(A) is incorrect but (R) is correct"
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Haloalkanes: The stability of Swarts Reaction is due to the electronic characteristics of synthesis of alkyl fluorides. Alkyl chloride/bromide heated with metal fluorides (AgF, Hg\u2082F\u2082) to yield alkyl fluorides.",
-      "subject": "chemistry",
-      "chapter": "Haloalkanes",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Coordination Compounds', identify the correct option:\nStatement I: The acidity/basicity of 'Crystal Field Split' is determined by octahedral d-orbital splitting.\nStatement II: Electronegativity increases down the group in the periodic table.",
-      "opts": [
-        "Statement I is incorrect but Statement II is correct",
-        "Both Statement I and Statement II are correct",
-        "Both Statement I and Statement II are incorrect",
-        "Statement I is correct but Statement II is incorrect"
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Coordination Compounds: Statement I is correct regarding Crystal Field Split and octahedral d-orbital splitting, but Statement II is false as electronegativity decreases down the group. d-orbitals split into lower t2g and higher eg energy levels in octahedral field.",
-      "subject": "chemistry",
-      "chapter": "Coordination Compounds",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Chemical Bonding', which of the following is a classic exception to the general periodic trend of 'Experimental Observation' (concept: methods and tests related to Chemical Bonding)?",
-      "opts": [
-        "The absence of coordinate covalent bonding in all complex molecules.",
-        "The anomalous behavior shown by the first element of the group due to high charge density.",
-        "The regular monotonic increase in electronegativity down the group.",
-        "The complete inertness of all transition metal complexes."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Chemical Bonding: Anomalies in Experimental Observation occur due to the small size and high electronegativity of methods and tests related to Chemical Bonding. Practical laboratory and analytical techniques of Chemical Bonding.",
-      "subject": "chemistry",
-      "chapter": "Chemical Bonding",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Hydrocarbons', in the laboratory identification of 'Ozonolysis', which reagent is used for confirmation?",
-      "opts": [
-        "Deionized water without any indicators.",
-        "A specific reagent that forms a colored precipitate with ozonolysis products of propene followed by Zn/H\u2082O reduction.",
-        "Liquid nitrogen at absolute zero.",
-        "Concentrated sulfuric acid at room temperature in open air."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Hydrocarbons: Confirmatory tests of Ozonolysis rely on coordination chemistry or precipitation of ozonolysis products of propene followed by Zn/H\u2082O reduction. Ozonolysis of propene (CH\u2083-CH=CH\u2082) cleaves the double bond and replaces it with C=O groups, yielding ethanal (acetaldehyde, CH\u2083CHO) and methanal (formaldehyde, HCHO) in the presence of Zn and H\u2082O (reductive workup).",
-      "subject": "chemistry",
-      "chapter": "Hydrocarbons",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Carboxylic Acids', according to the NCERT textbook, what is the major organic product formed when 'HVZ Reaction' reacts under the influence of alpha halogenation of carboxylic acids?",
-      "opts": [
-        "The product formed in accordance with thermodynamic stability.",
-        "A mixture of non-functional alkanes only.",
-        "No product is formed since the reaction is endergonic.",
-        "An unstable radical that decomposes immediately to carbon."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Carboxylic Acids: The NCERT reaction pathway outlines the formation of major stable products from HVZ Reaction and alpha halogenation of carboxylic acids. Acids with \u03b1-hydrogens react with Cl\u2082/Br\u2082 in presence of red phosphorus to form \u03b1-halo acids.",
-      "subject": "chemistry",
-      "chapter": "Carboxylic Acids",
       "diagram": ""
     },
     {
@@ -24465,156 +24315,6 @@
       "subject": "biology",
       "chapter": "Biotech: Principles",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Biodiversity', which of the following represents an exception to the general biological rules of 'In-situ Conservation' (concept: national parks and biosphere reserves)?",
-      "opts": [
-        "The universal presence of genetic replication in all cell cycles.",
-        "The occurrence of aerobic respiration in all living tissues.",
-        "The presence of cell walls in all animal cell groups.",
-        "A atypical organism or specialized cell line that bypasses the standard pathway."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Biodiversity: Exceptions in In-situ Conservation occur in organisms displaying specialized evolutionary adaptations of national parks and biosphere reserves. In-situ: protecting whole ecosystem (National Parks, Sanctuaries, Biosphere Reserves, Hotspots).",
-      "subject": "biology",
-      "chapter": "Biodiversity",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Locomotion & Movement', to identify 'Muscle Proteins' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "A specific stain that binds selectively to actin filament is composed of which proteins.",
-        "Absolute ethanol at boiling point.",
-        "Concentrated hydrochloric acid.",
-        "Distilled water with no dye compounds."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Locomotion & Movement: Staining setup of Muscle Proteins uses specific basic or acidic dyes that bind to actin filament is composed of which proteins. Thin (actin) filaments are composed of: two helical strands of F-actin (made of G-actin monomers), two strands of tropomyosin lying in the grooves of F-actin, and a complex protein troponin distributed at regular intervals, which masks active binding sites in resting state.",
-      "subject": "biology",
-      "chapter": "Locomotion & Movement",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Biological Classification', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Core Principle' contain?",
-      "opts": [
-        "An empty vacuole with no cellular proteins.",
-        "A collection of non-functional mineral crystals.",
-        "An array of flagellated prokaryotic cells.",
-        "The organelle or cellular structures associated with fundamental laws of Biological Classification."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Biological Classification: NCERT diagrammatic representations show the cellular localization of Core Principle and its structural components linked to fundamental laws of Biological Classification. The primary governing rules of Biological Classification in NEET syllabus.",
-      "subject": "biology",
-      "chapter": "Biological Classification",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Human Health & Disease', which of the following statements is correct regarding 'Real-world Application' (concept: industrial and clinical uses of Human Health & Disease)?",
-      "opts": [
-        "It functions strictly under non-enzymatic pathways in the extracellular matrix.",
-        "It is an obsolete metabolic pathway not observed in living organisms.",
-        "It is a key biological process responsible for cellular homeostasis and survival.",
-        "It prevents the cellular replication of genetic material completely."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Human Health & Disease: In Biology, Real-world Application is directly related to industrial and clinical uses of Human Health & Disease. How the concepts of Human Health & Disease are utilized in technology and medicine.",
-      "subject": "biology",
-      "chapter": "Human Health & Disease",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Reproductive Health', if the active enzymes or factors governing 'Amniocentesis' (concept: chromosomal check and misuse) are inhibited, it results in:",
-      "opts": [
-        "Immediate transformation of the cell into a prokaryote.",
-        "Metabolic disruption and inability to synthesize key cellular products.",
-        "A massive increase in the mitotic index of the tissue.",
-        "No physiological effect on the organism."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Reproductive Health: Physiological parameters of Amniocentesis show direct dependency on chromosomal check and misuse. Fetal cells in amniotic fluid checked for genetic disorders; banned for sex determination.",
-      "subject": "biology",
-      "chapter": "Reproductive Health",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Neural Control', given below are two statements: \nAssertion (A): 'Reflex Arc' is essential for the cycle of sequence of components in a reflex arc.\nReason (R): It ensures genetic continuity and regulation of cell processes.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "(A) is incorrect but (R) is correct",
-        "(A) is correct but (R) is incorrect"
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Neural Control: The process of Reflex Arc is biologically necessary for the maintenance of sequence of components in a reflex arc. A reflex arc is the pathway of a reflex action: Receptor receives stimulus \u2192 Afferent/sensory neuron carries to CNS (spinal cord) \u2192 Interneuron processes \u2192 Efferent/motor neuron carries to Effector (muscle/gland).",
-      "subject": "biology",
-      "chapter": "Neural Control",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Microbes in Welfare', identify the correct option:\nStatement I: The structural organization of 'Antibiotics' is composed of penicillin discovery.\nStatement II: All bacteria are eukaryotic organisms containing membrane-bound nuclei.",
-      "opts": [
-        "Statement I is incorrect but Statement II is correct",
-        "Both Statement I and Statement II are correct",
-        "Both Statement I and Statement II are incorrect",
-        "Statement I is correct but Statement II is incorrect"
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Microbes in Welfare: Statement I is correct since Antibiotics contains penicillin discovery. Statement II is incorrect because bacteria are prokaryotic. Alexander Fleming discovered Penicillin from Penicillium notatum inhibiting Staphylococcus.",
-      "subject": "biology",
-      "chapter": "Microbes in Welfare",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Structural Org Animals', which of the following represents an exception to the general biological rules of 'Cockroach Mouthparts' (concept: labrum and labium in cockroach represent)?",
-      "opts": [
-        "The presence of cell walls in all animal cell groups.",
-        "The universal presence of genetic replication in all cell cycles.",
-        "The occurrence of aerobic respiration in all living tissues.",
-        "A atypical organism or specialized cell line that bypasses the standard pathway."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Structural Org Animals: Exceptions in Cockroach Mouthparts occur in organisms displaying specialized evolutionary adaptations of labrum and labium in cockroach represent. In the biting and chewing mouthparts of a cockroach: Labrum is the upper lip, Labium is the lower lip, Mandibles are jaws, Maxillae are accessory jaws, and Hypopharynx is the tongue.",
-      "subject": "biology",
-      "chapter": "Structural Org Animals",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Plant Growth & Dev', to identify 'Cytokinins' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "Distilled water with no dye compounds.",
-        "Absolute ethanol at boiling point.",
-        "Concentrated hydrochloric acid.",
-        "A specific stain that binds selectively to primary function of cytokinins."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Plant Growth & Dev: Staining setup of Cytokinins uses specific basic or acidic dyes that bind to primary function of cytokinins. Cytokinins (like zeatin, kinetin) promote active cell division (cytokinesis) and help delay leaf senescence (Richmond-Lang effect) by promoting nutrient mobilization.",
-      "subject": "biology",
-      "chapter": "Plant Growth & Dev",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Concerning 'Cell Cycle & Division', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Metaphase M-phase' contain?",
-      "opts": [
-        "An array of flagellated prokaryotic cells.",
-        "A collection of non-functional mineral crystals.",
-        "The organelle or cellular structures associated with key event of metaphase in mitosis.",
-        "An empty vacuole with no cellular proteins."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Cell Cycle & Division: NCERT diagrammatic representations show the cellular localization of Metaphase M-phase and its structural components linked to key event of metaphase in mitosis. Metaphase is characterized by all chromosomes aligning at the equator (metaphase plate) with spindle fibres from opposite poles attaching to the kinetochores of sister chromatids.",
-      "subject": "biology",
-      "chapter": "Cell Cycle & Division",
-      "diagram": ""
     }
   ],
   "2022": [
@@ -25295,81 +24995,6 @@
     },
     {
       "year": "NEET 2022",
-      "q": "Concerning 'Experimental Skills', a physical quantity related to 'Screw Gauge Zero Error' depends on correcting zero error in screw gauge readings. If we scale the parameters by a factor of 20, what is the new relation?",
-      "opts": [
-        "The value drops to zero immediately.",
-        "The value scales proportionally to the modified factor of correcting zero error in screw gauge readings.",
-        "The value increases exponentially by a factor of 100.",
-        "The value remains completely invariant under parameter shifts."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Experimental Skills: The parameters of Screw Gauge Zero Error show direct dependency on correcting zero error in screw gauge readings. Zero error is always subtracted algebraically from the observed reading: Corrected Reading = Observed Reading - Zero Error (with its sign).",
-      "subject": "physics",
-      "chapter": "Experimental Skills",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Current Electricity', given below are two statements: \nAssertion (A): 'Ohm's Law & Drift Velocity' plays a critical role in relationship between drift velocity (vd) and electric field (E).\nReason (R): The physical equations of the system are governed by the conservation laws.\nIn light of the above statements, choose the most appropriate answer:",
-      "opts": [
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect",
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)"
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Current Electricity: Assertion (A) describes a valid aspect of Ohm's Law & Drift Velocity which is physically explained by the conservation laws relating to relationship between drift velocity (vd) and electric field (E). Drift velocity is the average velocity acquired by free electrons in a conductor under an electric field, given by vd = eE\u03c4/m where \u03c4 is relaxation time. Thus, vd is directly proportional to E.",
-      "subject": "physics",
-      "chapter": "Current Electricity",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Ray Optics', identify the correct option regarding Statement I and Statement II:\nStatement I: The magnitude of 'Astronomical Telescope' is dependent on the properties of magnifying power (m) and length (L) of an astronomical telescope in normal adjustment.\nStatement II: The thermodynamic behavior of the system is independent of the medium.",
-      "opts": [
-        "Both Statement I and Statement II are incorrect",
-        "Statement I is incorrect but Statement II is correct",
-        "Statement I is correct but Statement II is incorrect",
-        "Both Statement I and Statement II are correct"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Ray Optics: Statement I correctly relates Astronomical Telescope to the characteristics of magnifying power (m) and length (L) of an astronomical telescope in normal adjustment, whereas Statement II is invalid because the medium affects thermodynamic states. For normal adjustment (final image at infinity): Magnification m = -f_o/f_e (where f_o is objective and f_e is eyepiece focal length). The length of the telescope tube is L = f_o + f_e.",
-      "subject": "physics",
-      "chapter": "Ray Optics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'EM Waves', under what specific boundary conditions or exceptions does the concept of 'Wave Equation' (relating to speed of transverse wave on a stretched string) fail to hold true?",
-      "opts": [
-        "In highly relativistic limits or under absolute zero conditions.",
-        "When the mechanical energy of the system is conserved.",
-        "Under standard temperature and pressure conditions.",
-        "In normal macroscopic systems working under conservative fields."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to EM Waves: Boundary conditions like relativistic limits modify the classical relationships of Wave Equation and speed of transverse wave on a stretched string. The speed of a transverse wave traveling along a stretched string of tension T and linear mass density (mass per unit length) \u03bc is given by v = \u221a(T/\u03bc).",
-      "subject": "physics",
-      "chapter": "EM Waves",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Dual Nature', in a laboratory experiment to measure the parameters of 'Davisson-Germer Experiment', which of the following precautions is necessary?",
-      "opts": [
-        "Minimize friction and ensure standard calibration using the properties of Davisson-Germer experiment proved the.",
-        "Ensure the mass of the hanging load is kept infinite.",
-        "Disregard the zero error of the measuring apparatus.",
-        "Keep the system open to external high-temperature reservoirs at all times."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Dual Nature: Practical measurement of Davisson-Germer Experiment requires minimizing external errors while mapping the properties of Davisson-Germer experiment proved the. The Davisson-Germer experiment (1927) observed diffraction of electrons scattered by nickel crystals, directly confirming the wave nature of moving electrons (matter waves proposed by de Broglie).",
-      "subject": "physics",
-      "chapter": "Dual Nature",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
       "q": "What is the hybridisation of the central carbon atom in Ethyne (C2H2)?",
       "opts": [
         "sp",
@@ -26041,81 +25666,6 @@
       "exp": "Concept mapping to Periodic Table: Chemical parameters of Electron Gain Enthalpy show direct dependency on halogen with the most negative electron gain enthalpy. Chlorine has the most negative electron gain enthalpy. Although Fluorine is more electronegative, its small size leads to strong inter-electronic repulsions in the small 2p subshell, making addition of an electron less exothermic than in Chlorine (3p).",
       "subject": "chemistry",
       "chapter": "Periodic Table",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Basic Concepts', given below are two statements: \nAssertion (A): 'Stoichiometry' is highly stable due to calculations of reactants and products in chemical reactions.\nReason (R): High stability is a consequence of steric hindrance and electronic configuration.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Basic Concepts: The stability of Stoichiometry is due to the electronic characteristics of calculations of reactants and products in chemical reactions. Stoichiometry is the calculation of quantitative relationships of reactants and products based on the balanced chemical equation, which obeys the Law of Conservation of Mass.",
-      "subject": "chemistry",
-      "chapter": "Basic Concepts",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Aldehydes & Ketones', identify the correct option:\nStatement I: The acidity/basicity of 'Tollens Fehling' is determined by oxidation of aldehydes.\nStatement II: Electronegativity increases down the group in the periodic table.",
-      "opts": [
-        "Both Statement I and Statement II are correct",
-        "Both Statement I and Statement II are incorrect",
-        "Statement I is correct but Statement II is incorrect",
-        "Statement I is incorrect but Statement II is correct"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Aldehydes & Ketones: Statement I is correct regarding Tollens Fehling and oxidation of aldehydes, but Statement II is false as electronegativity decreases down the group. Aldehydes reduce Tollens' to silver mirror and Fehling's to red Cu\u2082O precipitate; ketones do not.",
-      "subject": "chemistry",
-      "chapter": "Aldehydes & Ketones",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'p-Block (Gr 15-18)', which of the following is a classic exception to the general periodic trend of 'Haber's Process' (concept: ammonia industrial synthesis)?",
-      "opts": [
-        "The absence of coordinate covalent bonding in all complex molecules.",
-        "The anomalous behavior shown by the first element of the group due to high charge density.",
-        "The complete inertness of all transition metal complexes.",
-        "The regular monotonic increase in electronegativity down the group."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to p-Block (Gr 15-18): Anomalies in Haber's Process occur due to the small size and high electronegativity of ammonia industrial synthesis. N\u2082(g) + 3H\u2082(g) \u21cc 2NH\u2083(g) under high pressure, low temp w/ iron catalyst.",
-      "subject": "chemistry",
-      "chapter": "p-Block (Gr 15-18)",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'p-Block (Gr 13-14)', in the laboratory identification of 'Inert Pair Effect', which reagent is used for confirmation?",
-      "opts": [
-        "Liquid nitrogen at absolute zero.",
-        "Concentrated sulfuric acid at room temperature in open air.",
-        "Deionized water without any indicators.",
-        "A specific reagent that forms a colored precipitate with stability of oxidation states in Group 13 elements."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to p-Block (Gr 13-14): Confirmatory tests of Inert Pair Effect rely on coordination chemistry or precipitation of stability of oxidation states in Group 13 elements. Due to the inert pair effect (reluctance of s-electrons to participate in bonding), the stability of the +1 oxidation state increases and +3 decreases down Group 13. Thus, B\u00b3\u207a is highly stable but Tl\u207a is more stable than Tl\u00b3\u207a.",
-      "subject": "chemistry",
-      "chapter": "p-Block (Gr 13-14)",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Thermodynamics (Chem)', according to the NCERT textbook, what is the major organic product formed when 'Gibbs Free Energy and Spontaneity' reacts under the influence of criterion for spontaneity of a process at constant T and P?",
-      "opts": [
-        "The product formed in accordance with thermodynamic stability.",
-        "No product is formed since the reaction is endergonic.",
-        "An unstable radical that decomposes immediately to carbon.",
-        "A mixture of non-functional alkanes only."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Thermodynamics (Chem): The NCERT reaction pathway outlines the formation of major stable products from Gibbs Free Energy and Spontaneity and criterion for spontaneity of a process at constant T and P. For a process to be spontaneous at constant temperature and pressure, the change in Gibbs free energy must be negative: \u0394G = \u0394H - T\u0394S < 0.",
-      "subject": "chemistry",
-      "chapter": "Thermodynamics (Chem)",
       "diagram": ""
     },
     {
@@ -27467,156 +27017,6 @@
       "subject": "biology",
       "chapter": "Body Fluids & Circulation",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Excretion', which of the following represents an exception to the general biological rules of 'Glomerular Filtration Rate' (concept: normal GFR in a healthy human)?",
-      "opts": [
-        "A atypical organism or specialized cell line that bypasses the standard pathway.",
-        "The presence of cell walls in all animal cell groups.",
-        "The universal presence of genetic replication in all cell cycles.",
-        "The occurrence of aerobic respiration in all living tissues."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Excretion: Exceptions in Glomerular Filtration Rate occur in organisms displaying specialized evolutionary adaptations of normal GFR in a healthy human. Glomerular Filtration Rate (GFR) is the amount of filtrate formed by both kidneys per minute, which is about 125 mL/min (180 liters per day) in a healthy individual. Over 99% of this filtrate is reabsorbed, resulting in only 1-1.5 L of urine excreted daily.",
-      "subject": "biology",
-      "chapter": "Excretion",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Biomolecules', to identify 'Nucleic Acids' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "A specific stain that binds selectively to bond linking adjacent nucleotides in a DNA strand.",
-        "Distilled water with no dye compounds.",
-        "Concentrated hydrochloric acid.",
-        "Absolute ethanol at boiling point."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Biomolecules: Staining setup of Nucleic Acids uses specific basic or acidic dyes that bind to bond linking adjacent nucleotides in a DNA strand. Adjacent nucleotides in a single strand of DNA/RNA are linked by 3'-5' phosphodiester bonds. Hydrogen bonds connect complementary bases between two opposite strands. Glycosidic bonds link nitrogenous bases to sugars.",
-      "subject": "biology",
-      "chapter": "Biomolecules",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Neural Control', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Eye Photoreceptors' contain?",
-      "opts": [
-        "An array of flagellated prokaryotic cells.",
-        "An empty vacuole with no cellular proteins.",
-        "A collection of non-functional mineral crystals.",
-        "The organelle or cellular structures associated with cells responsible for photopic (daylight/color) and scotopic (twilight) vision."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Neural Control: NCERT diagrammatic representations show the cellular localization of Eye Photoreceptors and its structural components linked to cells responsible for photopic (daylight/color) and scotopic (twilight) vision. Rods contain rhodopsin (visual purple) and are responsible for twilight/scotopic vision. Cones contain iodopsin and are responsible for daylight/photopic and color vision. There are three types of cones: red, green, and blue.",
-      "subject": "biology",
-      "chapter": "Neural Control",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Cell: Unit of Life', which of the following statements is correct regarding 'Mathematical Model' (concept: formulas and relations of Cell: Unit of Life)?",
-      "opts": [
-        "It is a key biological process responsible for cellular homeostasis and survival.",
-        "It functions strictly under non-enzymatic pathways in the extracellular matrix.",
-        "It is an obsolete metabolic pathway not observed in living organisms.",
-        "It prevents the cellular replication of genetic material completely."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Cell: Unit of Life: In Biology, Mathematical Model is directly related to formulas and relations of Cell: Unit of Life. Quantitative calculations and equations for Cell: Unit of Life.",
-      "subject": "biology",
-      "chapter": "Cell: Unit of Life",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Molecular Basis', if the active enzymes or factors governing 'Key Anomalies' (concept: exceptions and trends of Molecular Basis) are inhibited, it results in:",
-      "opts": [
-        "No physiological effect on the organism.",
-        "Immediate transformation of the cell into a prokaryote.",
-        "A massive increase in the mitotic index of the tissue.",
-        "Metabolic disruption and inability to synthesize key cellular products."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Molecular Basis: Physiological parameters of Key Anomalies show direct dependency on exceptions and trends of Molecular Basis. Important non-standard behaviors and deviations of Molecular Basis.",
-      "subject": "biology",
-      "chapter": "Molecular Basis",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Locomotion & Movement', given below are two statements: \nAssertion (A): 'Muscle Contraction Mechanism' is essential for the cycle of calcium ions bind to which subunit to initiate muscle contraction.\nReason (R): It ensures genetic continuity and regulation of cell processes.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "(A) is incorrect but (R) is correct",
-        "(A) is correct but (R) is incorrect",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)"
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Locomotion & Movement: The process of Muscle Contraction Mechanism is biologically necessary for the maintenance of calcium ions bind to which subunit to initiate muscle contraction. During contraction, nerve impulse triggers release of Ca\u00b2\u207a from sarcoplasmic reticulum. Ca\u00b2\u207a binds to troponin C, causing a conformational change that unmasks active sites on actin for myosin heads to bind and form cross-bridges.",
-      "subject": "biology",
-      "chapter": "Locomotion & Movement",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Principles of Inheritance', identify the correct option:\nStatement I: The structural organization of 'Core Principle' is composed of fundamental laws of Principles of Inheritance.\nStatement II: All bacteria are eukaryotic organisms containing membrane-bound nuclei.",
-      "opts": [
-        "Both Statement I and Statement II are correct",
-        "Both Statement I and Statement II are incorrect",
-        "Statement I is incorrect but Statement II is correct",
-        "Statement I is correct but Statement II is incorrect"
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Principles of Inheritance: Statement I is correct since Core Principle contains fundamental laws of Principles of Inheritance. Statement II is incorrect because bacteria are prokaryotic. The primary governing rules of Principles of Inheritance in NEET syllabus.",
-      "subject": "biology",
-      "chapter": "Principles of Inheritance",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Animal Kingdom', which of the following represents an exception to the general biological rules of 'Water Vascular System' (concept: phylum characterized by presence of water vascular system)?",
-      "opts": [
-        "The universal presence of genetic replication in all cell cycles.",
-        "The presence of cell walls in all animal cell groups.",
-        "A atypical organism or specialized cell line that bypasses the standard pathway.",
-        "The occurrence of aerobic respiration in all living tissues."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Animal Kingdom: Exceptions in Water Vascular System occur in organisms displaying specialized evolutionary adaptations of phylum characterized by presence of water vascular system. Phylum Echinodermata is characterized by a water vascular (ambulacral) system of mesodermal origin, which helps in locomotion, capture and transport of food, and respiration. Sponges have a water transport/canal system.",
-      "subject": "biology",
-      "chapter": "Animal Kingdom",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Biological Classification', to identify 'Real-world Application' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "Concentrated hydrochloric acid.",
-        "Distilled water with no dye compounds.",
-        "Absolute ethanol at boiling point.",
-        "A specific stain that binds selectively to industrial and clinical uses of Biological Classification."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Biological Classification: Staining setup of Real-world Application uses specific basic or acidic dyes that bind to industrial and clinical uses of Biological Classification. How the concepts of Biological Classification are utilized in technology and medicine.",
-      "subject": "biology",
-      "chapter": "Biological Classification",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Concerning 'Morphology of Plants', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Venation' contain?",
-      "opts": [
-        "An array of flagellated prokaryotic cells.",
-        "The organelle or cellular structures associated with parallel vs reticulate venation in leaves.",
-        "A collection of non-functional mineral crystals.",
-        "An empty vacuole with no cellular proteins."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Morphology of Plants: NCERT diagrammatic representations show the cellular localization of Venation and its structural components linked to parallel vs reticulate venation in leaves. Leaves of dicotyledonous plants generally possess reticulate venation (network of veinlets), while parallel venation is characteristic of most monocotyledonous plants.",
-      "subject": "biology",
-      "chapter": "Morphology of Plants",
-      "diagram": ""
     }
   ],
   "2023": [
@@ -28297,81 +27697,6 @@
     },
     {
       "year": "NEET 2023",
-      "q": "Concerning 'EMI & AC Circuits', a physical quantity related to 'Self Induction' depends on inductance of a long solenoid. If we scale the parameters by a factor of 90, what is the new relation?",
-      "opts": [
-        "The value increases exponentially by a factor of 100.",
-        "The value drops to zero immediately.",
-        "The value scales proportionally to the modified factor of inductance of a long solenoid.",
-        "The value remains completely invariant under parameter shifts."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to EMI & AC Circuits: The parameters of Self Induction show direct dependency on inductance of a long solenoid. Self-inductance L of a solenoid of length l, area A, and turns per unit length n is L = \u03bc\u2080 n\u00b2 A l = \u03bc\u2080 N\u00b2 A / l. It depends only on geometry and core material.",
-      "subject": "physics",
-      "chapter": "EMI & AC Circuits",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Current Electricity', given below are two statements: \nAssertion (A): 'Temperature Dependence of Resistance' plays a critical role in temperature coefficient of resistance (\u03b1) is positive for metals and negative for.\nReason (R): The physical equations of the system are governed by the conservation laws.\nIn light of the above statements, choose the most appropriate answer:",
-      "opts": [
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is incorrect but (R) is correct",
-        "(A) is correct but (R) is incorrect"
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Current Electricity: Assertion (A) describes a valid aspect of Temperature Dependence of Resistance which is physically explained by the conservation laws relating to temperature coefficient of resistance (\u03b1) is positive for metals and negative for. For metals, resistance increases with temperature (positive \u03b1). For semiconductors and insulators, resistance decreases with temperature (negative \u03b1) because covalent bonds break, releasing more charge carriers, overcoming the decrease in relaxation time.",
-      "subject": "physics",
-      "chapter": "Current Electricity",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Atoms & Nuclei', identify the correct option regarding Statement I and Statement II:\nStatement I: The magnitude of 'Mass Defect & Binding Energy' is dependent on the properties of energy equivalent of 1 atomic mass unit (amu).\nStatement II: The thermodynamic behavior of the system is independent of the medium.",
-      "opts": [
-        "Both Statement I and Statement II are incorrect",
-        "Both Statement I and Statement II are correct",
-        "Statement I is incorrect but Statement II is correct",
-        "Statement I is correct but Statement II is incorrect"
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Atoms & Nuclei: Statement I correctly relates Mass Defect & Binding Energy to the characteristics of energy equivalent of 1 atomic mass unit (amu), whereas Statement II is invalid because the medium affects thermodynamic states. By Einstein's mass-energy equivalence E = \u0394m c\u00b2, the energy equivalent of 1 amu (1.6605 \u00d7 10\u207b\u00b2\u2077 kg) is E = 1 amu \u00d7 c\u00b2 \u2248 931.5 MeV. Binding Energy = Mass Defect (\u0394m) \u00d7 931.5 MeV.",
-      "subject": "physics",
-      "chapter": "Atoms & Nuclei",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Thermal Properties', under what specific boundary conditions or exceptions does the concept of 'Thermal Expansion' (relating to relationship between coefficients of linear, superficial, and volume expansion) fail to hold true?",
-      "opts": [
-        "In highly relativistic limits or under absolute zero conditions.",
-        "Under standard temperature and pressure conditions.",
-        "When the mechanical energy of the system is conserved.",
-        "In normal macroscopic systems working under conservative fields."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Thermal Properties: Boundary conditions like relativistic limits modify the classical relationships of Thermal Expansion and relationship between coefficients of linear, superficial, and volume expansion. For isotropic solids, superficial expansion \u03b2 \u2248 2\u03b1 and volume expansion \u03b3 \u2248 3\u03b1. Therefore, the ratio of coefficients of expansion is \u03b1 : \u03b2 : \u03b3 = 1 : 2 : 3.",
-      "subject": "physics",
-      "chapter": "Thermal Properties",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Experimental Skills', in a laboratory experiment to measure the parameters of 'Vernier Caliper Measurement', which of the following precautions is necessary?",
-      "opts": [
-        "Minimize friction and ensure standard calibration using the properties of calculating total reading in Vernier Caliper.",
-        "Ensure the mass of the hanging load is kept infinite.",
-        "Keep the system open to external high-temperature reservoirs at all times.",
-        "Disregard the zero error of the measuring apparatus."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Experimental Skills: Practical measurement of Vernier Caliper Measurement requires minimizing external errors while mapping the properties of calculating total reading in Vernier Caliper. Total Reading (TR) = Main Scale Reading (MSR) + (Vernier Scale Division matching MSR * Least Count). Zero error correction is subtracted if present.",
-      "subject": "physics",
-      "chapter": "Experimental Skills",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
       "q": "In the electrochemical cell representation (Galvanic cell) shown below, which of the following is correct?",
       "opts": [
         "Oxidation occurs at the Zinc anode; electrons flow Zn \u2192 Cu",
@@ -29043,81 +28368,6 @@
       "exp": "Concept mapping to Chemical Kinetics: Chemical parameters of Rate Law show direct dependency on integrated rate equation for 1st order. k = (2.303/t) log([A]\u2080 / [A]) where k is rate constant.",
       "subject": "chemistry",
       "chapter": "Chemical Kinetics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Basic Concepts', given below are two statements: \nAssertion (A): 'Molarity and Molality' is highly stable due to effect of temperature on concentration terms.\nReason (R): High stability is a consequence of steric hindrance and electronic configuration.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect"
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Basic Concepts: The stability of Molarity and Molality is due to the electronic characteristics of effect of temperature on concentration terms. Molarity (M = moles solute / volume solution in L) depends on volume, which expands/contracts with temperature. Molality (m = moles solute / mass solvent in kg) depends only on mass, which is temperature-independent.",
-      "subject": "chemistry",
-      "chapter": "Basic Concepts",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Biomolecules (12)', identify the correct option:\nStatement I: The acidity/basicity of 'Enzymes' is determined by competitive inhibition of succinic dehydrogenase.\nStatement II: Electronegativity increases down the group in the periodic table.",
-      "opts": [
-        "Both Statement I and Statement II are correct",
-        "Both Statement I and Statement II are incorrect",
-        "Statement I is incorrect but Statement II is correct",
-        "Statement I is correct but Statement II is incorrect"
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Biomolecules (12): Statement I is correct regarding Enzymes and competitive inhibition of succinic dehydrogenase, but Statement II is false as electronegativity decreases down the group. Malonate structurally resembles succinate (the substrate) and competes for the active site of succinic dehydrogenase. This is a classic example of competitive inhibition, which increases Km but does not change Vmax.",
-      "subject": "chemistry",
-      "chapter": "Biomolecules (12)",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Redox Reactions', which of the following is a classic exception to the general periodic trend of 'Oxidation Number of Cr' (concept: oxidation number of chromium in K\u2082Cr\u2082O\u2087 and CrO\u2085)?",
-      "opts": [
-        "The complete inertness of all transition metal complexes.",
-        "The regular monotonic increase in electronegativity down the group.",
-        "The anomalous behavior shown by the first element of the group due to high charge density.",
-        "The absence of coordinate covalent bonding in all complex molecules."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Redox Reactions: Anomalies in Oxidation Number of Cr occur due to the small size and high electronegativity of oxidation number of chromium in K\u2082Cr\u2082O\u2087 and CrO\u2085. In K\u2082Cr\u2082O\u2087: 2(+1) + 2(x) + 7(-2) = 0 => 2x = 12 => x = +6. In CrO\u2085 (butterfly structure), four oxygens form peroxide linkages (-1 charge each) and one oxygen is oxide (-2 charge). So x + 4(-1) + 1(-2) = 0 => x = +6.",
-      "subject": "chemistry",
-      "chapter": "Redox Reactions",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'p-Block (Gr 15-18)', in the laboratory identification of 'Interhalogen', which reagent is used for confirmation?",
-      "opts": [
-        "A specific reagent that forms a colored precipitate with properties of interhalogens.",
-        "Concentrated sulfuric acid at room temperature in open air.",
-        "Deionized water without any indicators.",
-        "Liquid nitrogen at absolute zero."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to p-Block (Gr 15-18): Confirmatory tests of Interhalogen rely on coordination chemistry or precipitation of properties of interhalogens. Interhalogen compounds (XX') are more reactive than halogens because X-X' bond is weaker than X-X.",
-      "subject": "chemistry",
-      "chapter": "p-Block (Gr 15-18)",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Periodic Table', according to the NCERT textbook, what is the major organic product formed when 'Electronegativity' reacts under the influence of most electronegative element in the periodic table?",
-      "opts": [
-        "A mixture of non-functional alkanes only.",
-        "The product formed in accordance with thermodynamic stability.",
-        "An unstable radical that decomposes immediately to carbon.",
-        "No product is formed since the reaction is endergonic."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Periodic Table: The NCERT reaction pathway outlines the formation of major stable products from Electronegativity and most electronegative element in the periodic table. Fluorine is the most electronegative element in the periodic table with a value of 4.0 on the Pauling scale. Electronegativity increases across a period and decreases down a group.",
-      "subject": "chemistry",
-      "chapter": "Periodic Table",
       "diagram": ""
     },
     {
@@ -30469,156 +29719,6 @@
       "subject": "biology",
       "chapter": "Photosynthesis",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Morphology of Plants', which of the following represents an exception to the general biological rules of 'Venation' (concept: parallel vs reticulate venation in leaves)?",
-      "opts": [
-        "The presence of cell walls in all animal cell groups.",
-        "The universal presence of genetic replication in all cell cycles.",
-        "A atypical organism or specialized cell line that bypasses the standard pathway.",
-        "The occurrence of aerobic respiration in all living tissues."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Morphology of Plants: Exceptions in Venation occur in organisms displaying specialized evolutionary adaptations of parallel vs reticulate venation in leaves. Leaves of dicotyledonous plants generally possess reticulate venation (network of veinlets), while parallel venation is characteristic of most monocotyledonous plants.",
-      "subject": "biology",
-      "chapter": "Morphology of Plants",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Evolution', to identify 'Natural Selection' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "Absolute ethanol at boiling point.",
-        "A specific stain that binds selectively to industrial melanism in Biston betularia.",
-        "Distilled water with no dye compounds.",
-        "Concentrated hydrochloric acid."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Evolution: Staining setup of Natural Selection uses specific basic or acidic dyes that bind to industrial melanism in Biston betularia. Lichens die due to SO\u2082 pollution; dark moths survive on dark tree bark (natural selection).",
-      "subject": "biology",
-      "chapter": "Evolution",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Cell: Unit of Life', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Key Anomalies' contain?",
-      "opts": [
-        "A collection of non-functional mineral crystals.",
-        "The organelle or cellular structures associated with exceptions and trends of Cell: Unit of Life.",
-        "An array of flagellated prokaryotic cells.",
-        "An empty vacuole with no cellular proteins."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Cell: Unit of Life: NCERT diagrammatic representations show the cellular localization of Key Anomalies and its structural components linked to exceptions and trends of Cell: Unit of Life. Important non-standard behaviors and deviations of Cell: Unit of Life.",
-      "subject": "biology",
-      "chapter": "Cell: Unit of Life",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Structural Org Animals', which of the following statements is correct regarding 'Cockroach Excretion' (concept: primary excretory organs of cockroach)?",
-      "opts": [
-        "It is an obsolete metabolic pathway not observed in living organisms.",
-        "It prevents the cellular replication of genetic material completely.",
-        "It functions strictly under non-enzymatic pathways in the extracellular matrix.",
-        "It is a key biological process responsible for cellular homeostasis and survival."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Structural Org Animals: In Biology, Cockroach Excretion is directly related to primary excretory organs of cockroach. Cockroaches excrete nitrogenous waste as uric acid (uricotelic) primarily through 100-150 yellow, thin filamentous Malpighian tubules situated at the junction of midgut and hindgut.",
-      "subject": "biology",
-      "chapter": "Structural Org Animals",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Excretion', if the active enzymes or factors governing 'Glomerular Filtration Rate' (concept: normal GFR in a healthy human) are inhibited, it results in:",
-      "opts": [
-        "Metabolic disruption and inability to synthesize key cellular products.",
-        "A massive increase in the mitotic index of the tissue.",
-        "No physiological effect on the organism.",
-        "Immediate transformation of the cell into a prokaryote."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Excretion: Physiological parameters of Glomerular Filtration Rate show direct dependency on normal GFR in a healthy human. Glomerular Filtration Rate (GFR) is the amount of filtrate formed by both kidneys per minute, which is about 125 mL/min (180 liters per day) in a healthy individual. Over 99% of this filtrate is reabsorbed, resulting in only 1-1.5 L of urine excreted daily.",
-      "subject": "biology",
-      "chapter": "Excretion",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Chemical Coordination', given below are two statements: \nAssertion (A): 'Thyroid Disorders' is essential for the cycle of goitre is caused by deficiency of which element in diet.\nReason (R): It ensures genetic continuity and regulation of cell processes.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Chemical Coordination: The process of Thyroid Disorders is biologically necessary for the maintenance of goitre is caused by deficiency of which element in diet. Iodine is essential for the synthesis of thyroid hormones (T3 and T4). Dietary deficiency of iodine causes hypothyroidism and enlargement of the thyroid gland, commonly called simple goitre.",
-      "subject": "biology",
-      "chapter": "Chemical Coordination",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Principles of Inheritance', identify the correct option:\nStatement I: The structural organization of 'Experimental Observation' is composed of methods and tests related to Principles of Inheritance.\nStatement II: All bacteria are eukaryotic organisms containing membrane-bound nuclei.",
-      "opts": [
-        "Both Statement I and Statement II are correct",
-        "Statement I is incorrect but Statement II is correct",
-        "Statement I is correct but Statement II is incorrect",
-        "Both Statement I and Statement II are incorrect"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Principles of Inheritance: Statement I is correct since Experimental Observation contains methods and tests related to Principles of Inheritance. Statement II is incorrect because bacteria are prokaryotic. Practical laboratory and analytical techniques of Principles of Inheritance.",
-      "subject": "biology",
-      "chapter": "Principles of Inheritance",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Plant Kingdom', which of the following represents an exception to the general biological rules of 'Bryophytes' (concept: why bryophytes are called amphibians of the plant kingdom)?",
-      "opts": [
-        "The presence of cell walls in all animal cell groups.",
-        "The universal presence of genetic replication in all cell cycles.",
-        "The occurrence of aerobic respiration in all living tissues.",
-        "A atypical organism or specialized cell line that bypasses the standard pathway."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Plant Kingdom: Exceptions in Bryophytes occur in organisms displaying specialized evolutionary adaptations of why bryophytes are called amphibians of the plant kingdom. Bryophytes are called amphibians of the plant kingdom because they live on land but are dependent on water for sexual reproduction (flagellated antherozoids require water to swim to the archegonium).",
-      "subject": "biology",
-      "chapter": "Plant Kingdom",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Animal Kingdom', to identify 'Water Vascular System' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "Concentrated hydrochloric acid.",
-        "Distilled water with no dye compounds.",
-        "A specific stain that binds selectively to phylum characterized by presence of water vascular system.",
-        "Absolute ethanol at boiling point."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Animal Kingdom: Staining setup of Water Vascular System uses specific basic or acidic dyes that bind to phylum characterized by presence of water vascular system. Phylum Echinodermata is characterized by a water vascular (ambulacral) system of mesodermal origin, which helps in locomotion, capture and transport of food, and respiration. Sponges have a water transport/canal system.",
-      "subject": "biology",
-      "chapter": "Animal Kingdom",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2023",
-      "q": "Concerning 'Human Reproduction', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Core Principle' contain?",
-      "opts": [
-        "An array of flagellated prokaryotic cells.",
-        "The organelle or cellular structures associated with fundamental laws of Human Reproduction.",
-        "An empty vacuole with no cellular proteins.",
-        "A collection of non-functional mineral crystals."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Human Reproduction: NCERT diagrammatic representations show the cellular localization of Core Principle and its structural components linked to fundamental laws of Human Reproduction. The primary governing rules of Human Reproduction in NEET syllabus.",
-      "subject": "biology",
-      "chapter": "Human Reproduction",
-      "diagram": ""
     }
   ],
   "2024": [
@@ -31299,81 +30399,6 @@
     },
     {
       "year": "NEET 2024",
-      "q": "Concerning 'Thermodynamics', a physical quantity related to 'Enthalpy of Formation' depends on standard enthalpy of formation of elements in their reference state. If we scale the parameters by a factor of 40, what is the new relation?",
-      "opts": [
-        "The value scales proportionally to the modified factor of standard enthalpy of formation of elements in their reference state.",
-        "The value remains completely invariant under parameter shifts.",
-        "The value increases exponentially by a factor of 100.",
-        "The value drops to zero immediately."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Thermodynamics: The parameters of Enthalpy of Formation show direct dependency on standard enthalpy of formation of elements in their reference state. By convention, the standard enthalpy of formation (\u0394Hf\u00b0) of an element in its most stable reference state (like O\u2082(g), C(graphite), N\u2082(g)) at 298K and 1 bar is defined as zero.",
-      "subject": "physics",
-      "chapter": "Thermodynamics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Waves', given below are two statements: \nAssertion (A): 'Wave Equation' plays a critical role in speed of transverse wave on a stretched string.\nReason (R): The physical equations of the system are governed by the conservation laws.\nIn light of the above statements, choose the most appropriate answer:",
-      "opts": [
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is incorrect but (R) is correct",
-        "(A) is correct but (R) is incorrect",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)"
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Waves: Assertion (A) describes a valid aspect of Wave Equation which is physically explained by the conservation laws relating to speed of transverse wave on a stretched string. The speed of a transverse wave traveling along a stretched string of tension T and linear mass density (mass per unit length) \u03bc is given by v = \u221a(T/\u03bc).",
-      "subject": "physics",
-      "chapter": "Waves",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Kinematics 1D', identify the correct option regarding Statement I and Statement II:\nStatement I: The magnitude of 'Core Principle' is dependent on the properties of fundamental laws of Kinematics 1D.\nStatement II: The thermodynamic behavior of the system is independent of the medium.",
-      "opts": [
-        "Both Statement I and Statement II are correct",
-        "Statement I is correct but Statement II is incorrect",
-        "Statement I is incorrect but Statement II is correct",
-        "Both Statement I and Statement II are incorrect"
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Kinematics 1D: Statement I correctly relates Core Principle to the characteristics of fundamental laws of Kinematics 1D, whereas Statement II is invalid because the medium affects thermodynamic states. The primary governing rules of Kinematics 1D in NEET syllabus.",
-      "subject": "physics",
-      "chapter": "Kinematics 1D",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Magnetic Effects', under what specific boundary conditions or exceptions does the concept of 'Force between parallel currents' (relating to nature of force between two parallel currents in the same direction) fail to hold true?",
-      "opts": [
-        "In highly relativistic limits or under absolute zero conditions.",
-        "When the mechanical energy of the system is conserved.",
-        "In normal macroscopic systems working under conservative fields.",
-        "Under standard temperature and pressure conditions."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Magnetic Effects: Boundary conditions like relativistic limits modify the classical relationships of Force between parallel currents and nature of force between two parallel currents in the same direction. Two parallel conductors carrying currents in the same direction attract each other. If the currents are in opposite directions (anti-parallel), they repel each other. Force per unit length F/L = \u03bc\u2080I\u2081I\u2082/(2\u03c0d).",
-      "subject": "physics",
-      "chapter": "Magnetic Effects",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Kinematics 2D', in a laboratory experiment to measure the parameters of 'Horizontal Range', which of the following precautions is necessary?",
-      "opts": [
-        "Disregard the zero error of the measuring apparatus.",
-        "Ensure the mass of the hanging load is kept infinite.",
-        "Minimize friction and ensure standard calibration using the properties of angle for maximum horizontal range of a projectile.",
-        "Keep the system open to external high-temperature reservoirs at all times."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Kinematics 2D: Practical measurement of Horizontal Range requires minimizing external errors while mapping the properties of angle for maximum horizontal range of a projectile. Range R = (u\u00b2 sin 2\u03b8) / g. R is maximum when sin 2\u03b8 = 1 => 2\u03b8 = 90\u00b0 => \u03b8 = 45\u00b0.",
-      "subject": "physics",
-      "chapter": "Kinematics 2D",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
       "q": "Among the following, which is a cationic detergent?",
       "opts": [
         "Cetyltrimethylammonium bromide",
@@ -32045,81 +31070,6 @@
       "exp": "Concept mapping to Equilibrium: Chemical parameters of Conjugate Acid-Base Pairs show direct dependency on conjugate base of H\u2082SO\u2084 and conjugate acid of NH\u2083. Conjugate base is formed by removing a proton (H\u207a) from an acid: H\u2082SO\u2084 - H\u207a = HSO\u2084\u207b. Conjugate acid is formed by adding a proton to a base: NH\u2083 + H\u207a = NH\u2084\u207a.",
       "subject": "chemistry",
       "chapter": "Equilibrium",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Aldehydes & Ketones', given below are two statements: \nAssertion (A): 'Nucleophilic Addition' is highly stable due to reactivity of aldehydes vs ketones.\nReason (R): High stability is a consequence of steric hindrance and electronic configuration.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect",
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)"
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Aldehydes & Ketones: The stability of Nucleophilic Addition is due to the electronic characteristics of reactivity of aldehydes vs ketones. Aldehydes are more reactive than ketones due to steric and inductive effects of alkyl groups.",
-      "subject": "chemistry",
-      "chapter": "Aldehydes & Ketones",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Solutions', identify the correct option:\nStatement I: The acidity/basicity of 'Osmotic Pressure' is determined by osmosis equation.\nStatement II: Electronegativity increases down the group in the periodic table.",
-      "opts": [
-        "Statement I is correct but Statement II is incorrect",
-        "Statement I is incorrect but Statement II is correct",
-        "Both Statement I and Statement II are incorrect",
-        "Both Statement I and Statement II are correct"
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Solutions: Statement I is correct regarding Osmotic Pressure and osmosis equation, but Statement II is false as electronegativity decreases down the group. \u03c0 = i C R T where C is molar concentration.",
-      "subject": "chemistry",
-      "chapter": "Solutions",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Alcohols, Phenols', which of the following is a classic exception to the general periodic trend of 'Acidity of Phenol' (concept: stabilization of phenoxide ion)?",
-      "opts": [
-        "The absence of coordinate covalent bonding in all complex molecules.",
-        "The complete inertness of all transition metal complexes.",
-        "The anomalous behavior shown by the first element of the group due to high charge density.",
-        "The regular monotonic increase in electronegativity down the group."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Alcohols, Phenols: Anomalies in Acidity of Phenol occur due to the small size and high electronegativity of stabilization of phenoxide ion. Phenol is more acidic than alcohols because phenoxide ion is resonance-stabilized.",
-      "subject": "chemistry",
-      "chapter": "Alcohols, Phenols",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Electrochemistry', in the laboratory identification of 'Core Principle', which reagent is used for confirmation?",
-      "opts": [
-        "Deionized water without any indicators.",
-        "Liquid nitrogen at absolute zero.",
-        "A specific reagent that forms a colored precipitate with fundamental laws of Electrochemistry.",
-        "Concentrated sulfuric acid at room temperature in open air."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Electrochemistry: Confirmatory tests of Core Principle rely on coordination chemistry or precipitation of fundamental laws of Electrochemistry. The primary governing rules of Electrochemistry in NEET syllabus.",
-      "subject": "chemistry",
-      "chapter": "Electrochemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'p-Block (Gr 15-18)', according to the NCERT textbook, what is the major organic product formed when 'Haber's Process' reacts under the influence of ammonia industrial synthesis?",
-      "opts": [
-        "An unstable radical that decomposes immediately to carbon.",
-        "The product formed in accordance with thermodynamic stability.",
-        "A mixture of non-functional alkanes only.",
-        "No product is formed since the reaction is endergonic."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to p-Block (Gr 15-18): The NCERT reaction pathway outlines the formation of major stable products from Haber's Process and ammonia industrial synthesis. N\u2082(g) + 3H\u2082(g) \u21cc 2NH\u2083(g) under high pressure, low temp w/ iron catalyst.",
-      "subject": "chemistry",
-      "chapter": "p-Block (Gr 15-18)",
       "diagram": ""
     },
     {
@@ -33471,156 +32421,6 @@
       "subject": "biology",
       "chapter": "Living World",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Excretion', which of the following represents an exception to the general biological rules of 'Glomerular Filtration Rate' (concept: normal GFR in a healthy human)?",
-      "opts": [
-        "The universal presence of genetic replication in all cell cycles.",
-        "The occurrence of aerobic respiration in all living tissues.",
-        "The presence of cell walls in all animal cell groups.",
-        "A atypical organism or specialized cell line that bypasses the standard pathway."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Excretion: Exceptions in Glomerular Filtration Rate occur in organisms displaying specialized evolutionary adaptations of normal GFR in a healthy human. Glomerular Filtration Rate (GFR) is the amount of filtrate formed by both kidneys per minute, which is about 125 mL/min (180 liters per day) in a healthy individual. Over 99% of this filtrate is reabsorbed, resulting in only 1-1.5 L of urine excreted daily.",
-      "subject": "biology",
-      "chapter": "Excretion",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Biomolecules', to identify 'Nucleic Acids' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "Distilled water with no dye compounds.",
-        "A specific stain that binds selectively to bond linking adjacent nucleotides in a DNA strand.",
-        "Absolute ethanol at boiling point.",
-        "Concentrated hydrochloric acid."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Biomolecules: Staining setup of Nucleic Acids uses specific basic or acidic dyes that bind to bond linking adjacent nucleotides in a DNA strand. Adjacent nucleotides in a single strand of DNA/RNA are linked by 3'-5' phosphodiester bonds. Hydrogen bonds connect complementary bases between two opposite strands. Glycosidic bonds link nitrogenous bases to sugars.",
-      "subject": "biology",
-      "chapter": "Biomolecules",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Cell: Unit of Life', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Experimental Observation' contain?",
-      "opts": [
-        "An empty vacuole with no cellular proteins.",
-        "An array of flagellated prokaryotic cells.",
-        "The organelle or cellular structures associated with methods and tests related to Cell: Unit of Life.",
-        "A collection of non-functional mineral crystals."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Cell: Unit of Life: NCERT diagrammatic representations show the cellular localization of Experimental Observation and its structural components linked to methods and tests related to Cell: Unit of Life. Practical laboratory and analytical techniques of Cell: Unit of Life.",
-      "subject": "biology",
-      "chapter": "Cell: Unit of Life",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Plant Kingdom', which of the following statements is correct regarding 'Gymnosperms' (concept: nature of ovules and seeds in gymnosperms)?",
-      "opts": [
-        "It functions strictly under non-enzymatic pathways in the extracellular matrix.",
-        "It is a key biological process responsible for cellular homeostasis and survival.",
-        "It prevents the cellular replication of genetic material completely.",
-        "It is an obsolete metabolic pathway not observed in living organisms."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Plant Kingdom: In Biology, Gymnosperms is directly related to nature of ovules and seeds in gymnosperms. In gymnosperms, the ovules are not enclosed by any ovary wall and remain exposed both before and after fertilization. The seeds that develop are naked (no fruits). Endosperm is haploid (n) and forms before fertilization.",
-      "subject": "biology",
-      "chapter": "Plant Kingdom",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Morphology of Plants', if the active enzymes or factors governing 'Venation' (concept: parallel vs reticulate venation in leaves) are inhibited, it results in:",
-      "opts": [
-        "No physiological effect on the organism.",
-        "Metabolic disruption and inability to synthesize key cellular products.",
-        "Immediate transformation of the cell into a prokaryote.",
-        "A massive increase in the mitotic index of the tissue."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Morphology of Plants: Physiological parameters of Venation show direct dependency on parallel vs reticulate venation in leaves. Leaves of dicotyledonous plants generally possess reticulate venation (network of veinlets), while parallel venation is characteristic of most monocotyledonous plants.",
-      "subject": "biology",
-      "chapter": "Morphology of Plants",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Structural Org Animals', given below are two statements: \nAssertion (A): 'Animal Tissues' is essential for the cycle of tissue lining the PCT of nephron in kidney.\nReason (R): It ensures genetic continuity and regulation of cell processes.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect",
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)"
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Structural Org Animals: The process of Animal Tissues is biologically necessary for the maintenance of tissue lining the PCT of nephron in kidney. The simple cuboidal epithelium with microvilli (brush border) lines the proximal convoluted tubule (PCT) of nephrons, increasing surface area for reabsorption. Squamous lines alveoli; columnar lines stomach/intestines.",
-      "subject": "biology",
-      "chapter": "Structural Org Animals",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Human Health & Disease', identify the correct option:\nStatement I: The structural organization of 'Real-world Application' is composed of industrial and clinical uses of Human Health & Disease.\nStatement II: All bacteria are eukaryotic organisms containing membrane-bound nuclei.",
-      "opts": [
-        "Both Statement I and Statement II are correct",
-        "Statement I is incorrect but Statement II is correct",
-        "Statement I is correct but Statement II is incorrect",
-        "Both Statement I and Statement II are incorrect"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Human Health & Disease: Statement I is correct since Real-world Application contains industrial and clinical uses of Human Health & Disease. Statement II is incorrect because bacteria are prokaryotic. How the concepts of Human Health & Disease are utilized in technology and medicine.",
-      "subject": "biology",
-      "chapter": "Human Health & Disease",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Molecular Basis', which of the following represents an exception to the general biological rules of 'Real-world Application' (concept: industrial and clinical uses of Molecular Basis)?",
-      "opts": [
-        "The presence of cell walls in all animal cell groups.",
-        "The universal presence of genetic replication in all cell cycles.",
-        "The occurrence of aerobic respiration in all living tissues.",
-        "A atypical organism or specialized cell line that bypasses the standard pathway."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Molecular Basis: Exceptions in Real-world Application occur in organisms displaying specialized evolutionary adaptations of industrial and clinical uses of Molecular Basis. How the concepts of Molecular Basis are utilized in technology and medicine.",
-      "subject": "biology",
-      "chapter": "Molecular Basis",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Organisms & Populations', to identify 'Age Pyramids' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "Absolute ethanol at boiling point.",
-        "Distilled water with no dye compounds.",
-        "Concentrated hydrochloric acid.",
-        "A specific stain that binds selectively to expanding stable declining shapes."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Organisms & Populations: Staining setup of Age Pyramids uses specific basic or acidic dyes that bind to expanding stable declining shapes. Triangular represents expanding population; bell-shaped is stable; urn-shaped is declining.",
-      "subject": "biology",
-      "chapter": "Organisms & Populations",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2024",
-      "q": "Concerning 'Respiration in Plants', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Krebs Cycle' contain?",
-      "opts": [
-        "An array of flagellated prokaryotic cells.",
-        "The organelle or cellular structures associated with first stable product of TCA cycle and its site.",
-        "A collection of non-functional mineral crystals.",
-        "An empty vacuole with no cellular proteins."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Respiration in Plants: NCERT diagrammatic representations show the cellular localization of Krebs Cycle and its structural components linked to first stable product of TCA cycle and its site. Krebs cycle (TCA cycle) occurs in the mitochondrial matrix. The first reaction is the condensation of acetyl CoA (2C) with oxaloacetic acid (4C) to form citric acid (6C), catalyzed by citrate synthase.",
-      "subject": "biology",
-      "chapter": "Respiration in Plants",
-      "diagram": ""
     }
   ],
   "2025": [
@@ -34301,81 +33101,6 @@
     },
     {
       "year": "NEET 2025",
-      "q": "Concerning 'Magnetism & Matter', a physical quantity related to 'Curie's Law' depends on susceptibility of paramagnetic materials varies with absolute temperature as. If we scale the parameters by a factor of 80, what is the new relation?",
-      "opts": [
-        "The value drops to zero immediately.",
-        "The value remains completely invariant under parameter shifts.",
-        "The value scales proportionally to the modified factor of susceptibility of paramagnetic materials varies with absolute temperature as.",
-        "The value increases exponentially by a factor of 100."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Magnetism & Matter: The parameters of Curie's Law show direct dependency on susceptibility of paramagnetic materials varies with absolute temperature as. Curie's Law states that the magnetic susceptibility of a paramagnetic material is inversely proportional to its absolute temperature: \u03c7 = C/T, where C is Curie's constant.",
-      "subject": "physics",
-      "chapter": "Magnetism & Matter",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Units & Measurement', given below are two statements: \nAssertion (A): 'Vernier Caliper' plays a critical role in least count and zero error corrections in Vernier calipers.\nReason (R): The physical equations of the system are governed by the conservation laws.\nIn light of the above statements, choose the most appropriate answer:",
-      "opts": [
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "(A) is incorrect but (R) is correct"
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Units & Measurement: Assertion (A) describes a valid aspect of Vernier Caliper which is physically explained by the conservation laws relating to least count and zero error corrections in Vernier calipers. Least count (LC) of Vernier Calipers is defined as 1 MSD - 1 VSD, which is the smallest distance it can measure accurately.",
-      "subject": "physics",
-      "chapter": "Units & Measurement",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Rotational Motion', identify the correct option regarding Statement I and Statement II:\nStatement I: The magnitude of 'Torque' is dependent on the properties of torque as rate of change of angular momentum.\nStatement II: The thermodynamic behavior of the system is independent of the medium.",
-      "opts": [
-        "Both Statement I and Statement II are correct",
-        "Statement I is correct but Statement II is incorrect",
-        "Statement I is incorrect but Statement II is correct",
-        "Both Statement I and Statement II are incorrect"
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Rotational Motion: Statement I correctly relates Torque to the characteristics of torque as rate of change of angular momentum, whereas Statement II is invalid because the medium affects thermodynamic states. Torque is the rotational analogue of force, given by \u03c4 = dL/dt (rate of change of angular momentum). Also \u03c4 = I\u03b1.",
-      "subject": "physics",
-      "chapter": "Rotational Motion",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Oscillations', under what specific boundary conditions or exceptions does the concept of 'Time Period of Pendulum' (relating to time period of a simple pendulum) fail to hold true?",
-      "opts": [
-        "In normal macroscopic systems working under conservative fields.",
-        "Under standard temperature and pressure conditions.",
-        "In highly relativistic limits or under absolute zero conditions.",
-        "When the mechanical energy of the system is conserved."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Oscillations: Boundary conditions like relativistic limits modify the classical relationships of Time Period of Pendulum and time period of a simple pendulum. The time period of a simple pendulum of length L in a gravitational field g is given by T = 2\u03c0\u221a(L/g), assuming small angles of oscillation.",
-      "subject": "physics",
-      "chapter": "Oscillations",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Semiconductors', in a laboratory experiment to measure the parameters of 'Zener Diode', which of the following precautions is necessary?",
-      "opts": [
-        "Disregard the zero error of the measuring apparatus.",
-        "Keep the system open to external high-temperature reservoirs at all times.",
-        "Ensure the mass of the hanging load is kept infinite.",
-        "Minimize friction and ensure standard calibration using the properties of Zener diode is used as and is operated in."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Semiconductors: Practical measurement of Zener Diode requires minimizing external errors while mapping the properties of Zener diode is used as and is operated in. A Zener diode is a heavily doped p-n junction diode designed to operate safely in the reverse breakdown (Zener) region. It is used as a voltage regulator because voltage remains constant across it over a wide range of currents.",
-      "subject": "physics",
-      "chapter": "Semiconductors",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
       "q": "Which of the following organic compounds will give a positive Iodoform test?",
       "opts": [
         "Ethanol",
@@ -35047,81 +33772,6 @@
       "exp": "Concept mapping to Chemical Kinetics: Chemical parameters of Rate Law show direct dependency on integrated rate equation for 1st order. k = (2.303/t) log([A]\u2080 / [A]) where k is rate constant.",
       "subject": "chemistry",
       "chapter": "Chemical Kinetics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Hydrocarbons', given below are two statements: \nAssertion (A): 'Conformations of Ethane' is highly stable due to relative stability of eclipsed and staggered conformations of ethane.\nReason (R): High stability is a consequence of steric hindrance and electronic configuration.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect",
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)"
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Hydrocarbons: The stability of Conformations of Ethane is due to the electronic characteristics of relative stability of eclipsed and staggered conformations of ethane. Staggered conformation is more stable than the eclipsed conformation by about 12.5 kJ/mol. In the staggered form, the C-H bonds are as far apart as possible, minimizing torsional strain and electrostatic repulsions.",
-      "subject": "chemistry",
-      "chapter": "Hydrocarbons",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'd & f Block', identify the correct option:\nStatement I: The acidity/basicity of 'Lanthanoid Contraction' is determined by consequence of poor f-orbital shielding.\nStatement II: Electronegativity increases down the group in the periodic table.",
-      "opts": [
-        "Statement I is incorrect but Statement II is correct",
-        "Both Statement I and Statement II are incorrect",
-        "Statement I is correct but Statement II is incorrect",
-        "Both Statement I and Statement II are correct"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to d & f Block: Statement I is correct regarding Lanthanoid Contraction and consequence of poor f-orbital shielding, but Statement II is false as electronegativity decreases down the group. Steady decrease in atomic/ionic size from La to Lu, causing 4d and 5d metals to have similar sizes.",
-      "subject": "chemistry",
-      "chapter": "d & f Block",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Aldehydes & Ketones', which of the following is a classic exception to the general periodic trend of 'Clemmensen' (concept: reduction to hydrocarbons)?",
-      "opts": [
-        "The anomalous behavior shown by the first element of the group due to high charge density.",
-        "The complete inertness of all transition metal complexes.",
-        "The absence of coordinate covalent bonding in all complex molecules.",
-        "The regular monotonic increase in electronegativity down the group."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Aldehydes & Ketones: Anomalies in Clemmensen occur due to the small size and high electronegativity of reduction to hydrocarbons. Carbonyl group C=O reduced to CH\u2082 using Zinc amalgam (Zn/Hg) and concentrated HCl.",
-      "subject": "chemistry",
-      "chapter": "Aldehydes & Ketones",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Biomolecules (12)', in the laboratory identification of 'Secondary Metabolites', which reagent is used for confirmation?",
-      "opts": [
-        "A specific reagent that forms a colored precipitate with alkaloids derived from plants.",
-        "Liquid nitrogen at absolute zero.",
-        "Deionized water without any indicators.",
-        "Concentrated sulfuric acid at room temperature in open air."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Biomolecules (12): Confirmatory tests of Secondary Metabolites rely on coordination chemistry or precipitation of alkaloids derived from plants. Morphine and Codeine are alkaloids. Carotenoids are pigments; Vinblastine/Curcumin are drugs; Abrin/Ricin are toxins. All are secondary metabolites (no direct role in primary growth).",
-      "subject": "chemistry",
-      "chapter": "Biomolecules (12)",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Periodic Table', according to the NCERT textbook, what is the major organic product formed when 'Atomic Radii' reacts under the influence of ionic radius trend in isoelectronic species?",
-      "opts": [
-        "The product formed in accordance with thermodynamic stability.",
-        "No product is formed since the reaction is endergonic.",
-        "An unstable radical that decomposes immediately to carbon.",
-        "A mixture of non-functional alkanes only."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Periodic Table: The NCERT reaction pathway outlines the formation of major stable products from Atomic Radii and ionic radius trend in isoelectronic species. For isoelectronic species (same number of electrons, e.g., O\u00b2\u207b, F\u207b, Na\u207a, Mg\u00b2\u207a), the ionic radius decreases as the nuclear charge (atomic number) increases, because the nucleus pulls the same number of electrons more strongly.",
-      "subject": "chemistry",
-      "chapter": "Periodic Table",
       "diagram": ""
     },
     {
@@ -36473,174 +35123,9 @@
       "subject": "biology",
       "chapter": "Chemical Coordination",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Biotech: Applications', which of the following represents an exception to the general biological rules of 'Humulin' (concept: recombinant insulin chains)?",
-      "opts": [
-        "A atypical organism or specialized cell line that bypasses the standard pathway.",
-        "The presence of cell walls in all animal cell groups.",
-        "The universal presence of genetic replication in all cell cycles.",
-        "The occurrence of aerobic respiration in all living tissues."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Biotech: Applications: Exceptions in Humulin occur in organisms displaying specialized evolutionary adaptations of recombinant insulin chains. Humulin produced by Eli Lilly by synthesizing and joining chains A and B w/ disulfide bonds.",
-      "subject": "biology",
-      "chapter": "Biotech: Applications",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Principles of Inheritance', to identify 'Key Anomalies' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "Absolute ethanol at boiling point.",
-        "Distilled water with no dye compounds.",
-        "Concentrated hydrochloric acid.",
-        "A specific stain that binds selectively to exceptions and trends of Principles of Inheritance."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Principles of Inheritance: Staining setup of Key Anomalies uses specific basic or acidic dyes that bind to exceptions and trends of Principles of Inheritance. Important non-standard behaviors and deviations of Principles of Inheritance.",
-      "subject": "biology",
-      "chapter": "Principles of Inheritance",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Cell: Unit of Life', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Mathematical Model' contain?",
-      "opts": [
-        "An empty vacuole with no cellular proteins.",
-        "The organelle or cellular structures associated with formulas and relations of Cell: Unit of Life.",
-        "A collection of non-functional mineral crystals.",
-        "An array of flagellated prokaryotic cells."
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Cell: Unit of Life: NCERT diagrammatic representations show the cellular localization of Mathematical Model and its structural components linked to formulas and relations of Cell: Unit of Life. Quantitative calculations and equations for Cell: Unit of Life.",
-      "subject": "biology",
-      "chapter": "Cell: Unit of Life",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Reproductive Health', which of the following statements is correct regarding 'STDs' (concept: viral and bacterial STDs)?",
-      "opts": [
-        "It prevents the cellular replication of genetic material completely.",
-        "It functions strictly under non-enzymatic pathways in the extracellular matrix.",
-        "It is an obsolete metabolic pathway not observed in living organisms.",
-        "It is a key biological process responsible for cellular homeostasis and survival."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Reproductive Health: In Biology, STDs is directly related to viral and bacterial STDs. AIDS and Hepatitis B are viral, incurable; Syphilis and Gonorrhea are bacterial.",
-      "subject": "biology",
-      "chapter": "Reproductive Health",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Cell Cycle & Division', if the active enzymes or factors governing 'Mitosis vs Meiosis' (concept: significance of meiosis in sexually reproducing organisms) are inhibited, it results in:",
-      "opts": [
-        "Immediate transformation of the cell into a prokaryote.",
-        "No physiological effect on the organism.",
-        "Metabolic disruption and inability to synthesize key cellular products.",
-        "A massive increase in the mitotic index of the tissue."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Cell Cycle & Division: Physiological parameters of Mitosis vs Meiosis show direct dependency on significance of meiosis in sexually reproducing organisms. Meiosis halves chromosome number in gametes (2n \u2192 n) so that fertilization can restore the diploid number (2n) in zygotes. It also generates genetic diversity through crossing over (prophase I) and independent assortment (metaphase I).",
-      "subject": "biology",
-      "chapter": "Cell Cycle & Division",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Excretion', given below are two statements: \nAssertion (A): 'Counter Current Mechanism' is essential for the cycle of counter current mechanism operates between.\nReason (R): It ensures genetic continuity and regulation of cell processes.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)"
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to Excretion: The process of Counter Current Mechanism is biologically necessary for the maintenance of counter current mechanism operates between. The counter-current mechanism operates between the two limbs of Henle's loop and the two limbs of vasa recta in the medulla. Flow of filtrate and blood in opposite directions creates a hyperosmotic medullary gradient (300 to 1200 mOsm/L), helping concentrate urine.",
-      "subject": "biology",
-      "chapter": "Excretion",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Structural Org Animals', identify the correct option:\nStatement I: The structural organization of 'Cockroach Excretion' is composed of primary excretory organs of cockroach.\nStatement II: All bacteria are eukaryotic organisms containing membrane-bound nuclei.",
-      "opts": [
-        "Both Statement I and Statement II are incorrect",
-        "Both Statement I and Statement II are correct",
-        "Statement I is correct but Statement II is incorrect",
-        "Statement I is incorrect but Statement II is correct"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Structural Org Animals: Statement I is correct since Cockroach Excretion contains primary excretory organs of cockroach. Statement II is incorrect because bacteria are prokaryotic. Cockroaches excrete nitrogenous waste as uric acid (uricotelic) primarily through 100-150 yellow, thin filamentous Malpighian tubules situated at the junction of midgut and hindgut.",
-      "subject": "biology",
-      "chapter": "Structural Org Animals",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Plant Kingdom', which of the following represents an exception to the general biological rules of 'Pteridophytes' (concept: first terrestrial plants to possess vascular tissues (xylem and phloem))?",
-      "opts": [
-        "A atypical organism or specialized cell line that bypasses the standard pathway.",
-        "The universal presence of genetic replication in all cell cycles.",
-        "The occurrence of aerobic respiration in all living tissues.",
-        "The presence of cell walls in all animal cell groups."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Plant Kingdom: Exceptions in Pteridophytes occur in organisms displaying specialized evolutionary adaptations of first terrestrial plants to possess vascular tissues (xylem and phloem). Pteridophytes (ferns and horsetails) are the first terrestrial plants to possess vascular tissues: xylem and phloem. They are seedless vascular cryptogams.",
-      "subject": "biology",
-      "chapter": "Plant Kingdom",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Photosynthesis', to identify 'Experimental Observation' under a compound microscope, which staining reagent is commonly used?",
-      "opts": [
-        "A specific stain that binds selectively to methods and tests related to Photosynthesis.",
-        "Absolute ethanol at boiling point.",
-        "Distilled water with no dye compounds.",
-        "Concentrated hydrochloric acid."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Photosynthesis: Staining setup of Experimental Observation uses specific basic or acidic dyes that bind to methods and tests related to Photosynthesis. Practical laboratory and analytical techniques of Photosynthesis.",
-      "subject": "biology",
-      "chapter": "Photosynthesis",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2025",
-      "q": "Concerning 'Living World', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Core Principle' contain?",
-      "opts": [
-        "A collection of non-functional mineral crystals.",
-        "An array of flagellated prokaryotic cells.",
-        "The organelle or cellular structures associated with fundamental laws of The Living World.",
-        "An empty vacuole with no cellular proteins."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Living World: NCERT diagrammatic representations show the cellular localization of Core Principle and its structural components linked to fundamental laws of The Living World. The primary governing rules of The Living World in NEET syllabus.",
-      "subject": "biology",
-      "chapter": "Living World",
-      "diagram": ""
     }
   ],
   "2026": [
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'EMI & AC Circuits', identify the correct option regarding Statement I and Statement II:\nStatement I: The magnitude of 'Self Induction' is dependent on the properties of inductance of a long solenoid.\nStatement II: The thermodynamic behavior of the system is independent of the medium.",
-      "opts": [
-        "Both Statement I and Statement II are correct",
-        "Statement I is correct but Statement II is incorrect",
-        "Statement I is incorrect but Statement II is correct",
-        "Both Statement I and Statement II are incorrect"
-      ],
-      "ans": 1,
-      "exp": "Concept mapping to EMI & AC Circuits: Statement I correctly relates Self Induction to the characteristics of inductance of a long solenoid, whereas Statement II is invalid because the medium affects thermodynamic states. Self-inductance L of a solenoid of length l, area A, and turns per unit length n is L = \u03bc\u2080 n\u00b2 A l = \u03bc\u2080 N\u00b2 A / l. It depends only on geometry and core material.",
-      "subject": "physics",
-      "chapter": "EMI & AC Circuits",
-      "diagram": ""
-    },
     {
       "year": "NEET 2026",
       "q": "In the balanced Wheatstone bridge circuit shown below, the value of the unknown resistance X is:",
@@ -36655,6 +35140,126 @@
       "subject": "physics",
       "chapter": "Current Electricity",
       "diagram": "images/q18.png"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "A mass m is held on a smooth inclined plane of angle 30\u00b0 and connected to a hanging mass M as shown. For the system to remain in equilibrium, the ratio m/M must be:",
+      "opts": [
+        "2",
+        "1/2",
+        "\u221a3/2",
+        "2/\u221a3"
+      ],
+      "ans": 0,
+      "exp": "For equilibrium, the forces parallel to the incline must balance. Tension T = Mg. Along the incline: T = mg sin 30\u00b0 => Mg = mg * 0.5 => m/M = 2.",
+      "subject": "physics",
+      "chapter": "Kinematics 2D",
+      "diagram": "images/q10.png"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "In the series LCR circuit shown, the inductance is L = 1 H, and capacitance is C = 25 \u03bcF. The resonant frequency of the circuit in Hz is approximately:",
+      "opts": [
+        "32 Hz",
+        "100 Hz",
+        "50 Hz",
+        "150 Hz"
+      ],
+      "ans": 0,
+      "exp": "The resonant angular frequency is \u03c90 = 1 / \u221a(L*C). Substituting L = 1 H and C = 25 * 10\u207b\u2076 F gives \u03c90 = 1 / \u221a(25 * 10\u207b\u2076) = 1 / (5 * 10\u207b\u00b3) = 200 rad/s. Frequency f0 = \u03c90 / 2\u03c0 = 200 / (2 * 3.14159) \u2248 31.8 Hz \u2248 32 Hz.",
+      "subject": "physics",
+      "chapter": "EMI & AC Circuits",
+      "diagram": "images/q4.png"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "A light ray is incident at an angle of 45\u00b0 on one face of an equilateral prism of refractive index \u221a2. The angle of deviation of the ray is:",
+      "opts": [
+        "30\u00b0",
+        "45\u00b0",
+        "60\u00b0",
+        "15\u00b0"
+      ],
+      "ans": 0,
+      "exp": "For an equilateral prism, A = 60\u00b0. Refractive index \u03bc = sin((A + \u03b4)/2) / sin(A/2). Given \u03bc = \u221a2 and A = 60\u00b0, we get \u221a2 = sin((60 + \u03b4)/2) / sin(30\u00b0) => sin((60 + \u03b4)/2) = \u221a2 * 0.5 = 1/\u221a2 => (60 + \u03b4)/2 = 45\u00b0 => 60 + \u03b4 = 90\u00b0 => \u03b4 = 30\u00b0.",
+      "subject": "physics",
+      "chapter": "Ray Optics",
+      "diagram": "images/q24.png"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "Two masses 10 kg and 6 kg are connected by a massless string over a frictionless pulley as shown. The acceleration of the system is: (Take g = 10 m/s\u00b2)",
+      "opts": [
+        "2.5 m/s\u00b2",
+        "4 m/s\u00b2",
+        "5 m/s\u00b2",
+        "1.25 m/s\u00b2"
+      ],
+      "ans": 0,
+      "exp": "Using Newton's Second Law for Atwood machine: a = (m1 - m2)g / (m1 + m2). Substituting m1 = 10 kg, m2 = 6 kg, and g = 10 m/s\u00b2 gives a = (10 - 6)*10 / (10 + 6) = 40 / 16 = 2.5 m/s\u00b2.",
+      "subject": "physics",
+      "chapter": "Work, Energy & Power",
+      "diagram": "images/q20.png"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "A parallel plate capacitor is filled with two dielectrics of constants K1 and K2 split vertically as shown. If the plates have area A and separation d, the equivalent capacitance is:",
+      "opts": [
+        "C_eq = (\u03b5\u2080 A / d) * (K_1 + K_2) / 2",
+        "C_eq = (\u03b5\u2080 A / d) * (K_1 * K_2) / (K_1 + K_2)",
+        "C_eq = (\u03b5\u2080 A / d) * (K_1 + K_2)",
+        "C_eq = (\u03b5\u2080 A / d) * K_1 K_2"
+      ],
+      "ans": 0,
+      "exp": "Since the capacitor is split vertically down the middle, it acts as two capacitors connected in parallel. Each has plate area A/2 and separation d. C1 = K1 \u03b5\u2080 (A/2) / d; C2 = K2 \u03b5\u2080 (A/2) / d. C_eq = C1 + C2 = (\u03b5\u2080 A / 2d) * (K1 + K2).",
+      "subject": "physics",
+      "chapter": "Electrostatics",
+      "diagram": "images/q8.png"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "For the logic gate circuit shown below, identify the output Y when A = 1 and B = 0:",
+      "opts": [
+        "1",
+        "0",
+        "Undetermined",
+        "Matches inputs sum"
+      ],
+      "ans": 1,
+      "exp": "A NAND gate followed by a NOT gate behaves as an AND gate. For inputs A=1 and B=0, output Y = A \u2022 B = 1 \u2022 0 = 0.",
+      "subject": "physics",
+      "chapter": "Semiconductors",
+      "diagram": "images/q16.png"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "The output Y of the logic circuit shown in the figure is:",
+      "opts": [
+        "A \u2022 B",
+        "A + B",
+        "A' \u2022 B'",
+        "A' + B'"
+      ],
+      "ans": 0,
+      "exp": "The circuit contains two NOT gates leading to a NOR gate. The inputs to the NOR gate are A' and B'. The output is Y = (A' + B')' = A'' \u2022 B'' = A \u2022 B. This represents an AND gate.",
+      "subject": "physics",
+      "chapter": "Semiconductors",
+      "diagram": "images/q22.png"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "Concerning 'EMI & AC Circuits', identify the correct option regarding Statement I and Statement II:\nStatement I: The magnitude of 'Self Induction' is dependent on the properties of inductance of a long solenoid.\nStatement II: The thermodynamic behavior of the system is independent of the medium.",
+      "opts": [
+        "Both Statement I and Statement II are correct",
+        "Statement I is correct but Statement II is incorrect",
+        "Statement I is incorrect but Statement II is correct",
+        "Both Statement I and Statement II are incorrect"
+      ],
+      "ans": 1,
+      "exp": "Concept mapping to EMI & AC Circuits: Statement I correctly relates Self Induction to the characteristics of inductance of a long solenoid, whereas Statement II is invalid because the medium affects thermodynamic states. Self-inductance L of a solenoid of length l, area A, and turns per unit length n is L = \u03bc\u2080 n\u00b2 A l = \u03bc\u2080 N\u00b2 A / l. It depends only on geometry and core material.",
+      "subject": "physics",
+      "chapter": "EMI & AC Circuits",
+      "diagram": ""
     },
     {
       "year": "NEET 2026",
@@ -36973,21 +35578,6 @@
     },
     {
       "year": "NEET 2026",
-      "q": "A mass m is held on a smooth inclined plane of angle 30\u00b0 and connected to a hanging mass M as shown. For the system to remain in equilibrium, the ratio m/M must be:",
-      "opts": [
-        "2",
-        "1/2",
-        "\u221a3/2",
-        "2/\u221a3"
-      ],
-      "ans": 0,
-      "exp": "For equilibrium, the forces parallel to the incline must balance. Tension T = Mg. Along the incline: T = mg sin 30\u00b0 => Mg = mg * 0.5 => m/M = 2.",
-      "subject": "physics",
-      "chapter": "Kinematics 2D",
-      "diagram": "images/q10.png"
-    },
-    {
-      "year": "NEET 2026",
       "q": "Concerning 'Gravitation', given below are two statements: \nAssertion (A): 'Acceleration due to gravity' plays a critical role in variation of g with altitude (height h above Earth's surface).\nReason (R): The physical equations of the system are governed by the conservation laws.\nIn light of the above statements, choose the most appropriate answer:",
       "opts": [
         "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
@@ -37078,36 +35668,6 @@
     },
     {
       "year": "NEET 2026",
-      "q": "In the series LCR circuit shown, the inductance is L = 1 H, and capacitance is C = 25 \u03bcF. The resonant frequency of the circuit in Hz is approximately:",
-      "opts": [
-        "32 Hz",
-        "100 Hz",
-        "50 Hz",
-        "150 Hz"
-      ],
-      "ans": 0,
-      "exp": "The resonant angular frequency is \u03c90 = 1 / \u221a(L*C). Substituting L = 1 H and C = 25 * 10\u207b\u2076 F gives \u03c90 = 1 / \u221a(25 * 10\u207b\u2076) = 1 / (5 * 10\u207b\u00b3) = 200 rad/s. Frequency f0 = \u03c90 / 2\u03c0 = 200 / (2 * 3.14159) \u2248 31.8 Hz \u2248 32 Hz.",
-      "subject": "physics",
-      "chapter": "EMI & AC Circuits",
-      "diagram": "images/q4.png"
-    },
-    {
-      "year": "NEET 2026",
-      "q": "A light ray is incident at an angle of 45\u00b0 on one face of an equilateral prism of refractive index \u221a2. The angle of deviation of the ray is:",
-      "opts": [
-        "30\u00b0",
-        "45\u00b0",
-        "60\u00b0",
-        "15\u00b0"
-      ],
-      "ans": 0,
-      "exp": "For an equilateral prism, A = 60\u00b0. Refractive index \u03bc = sin((A + \u03b4)/2) / sin(A/2). Given \u03bc = \u221a2 and A = 60\u00b0, we get \u221a2 = sin((60 + \u03b4)/2) / sin(30\u00b0) => sin((60 + \u03b4)/2) = \u221a2 * 0.5 = 1/\u221a2 => (60 + \u03b4)/2 = 45\u00b0 => 60 + \u03b4 = 90\u00b0 => \u03b4 = 30\u00b0.",
-      "subject": "physics",
-      "chapter": "Ray Optics",
-      "diagram": "images/q24.png"
-    },
-    {
-      "year": "NEET 2026",
       "q": "Concerning 'Kinematics 1D', identify the correct option regarding Statement I and Statement II:\nStatement I: The magnitude of 'Core Principle' is dependent on the properties of fundamental laws of Kinematics 1D.\nStatement II: The thermodynamic behavior of the system is independent of the medium.",
       "opts": [
         "Both Statement I and Statement II are correct",
@@ -37183,21 +35743,6 @@
     },
     {
       "year": "NEET 2026",
-      "q": "Two masses 10 kg and 6 kg are connected by a massless string over a frictionless pulley as shown. The acceleration of the system is: (Take g = 10 m/s\u00b2)",
-      "opts": [
-        "2.5 m/s\u00b2",
-        "4 m/s\u00b2",
-        "5 m/s\u00b2",
-        "1.25 m/s\u00b2"
-      ],
-      "ans": 0,
-      "exp": "Using Newton's Second Law for Atwood machine: a = (m1 - m2)g / (m1 + m2). Substituting m1 = 10 kg, m2 = 6 kg, and g = 10 m/s\u00b2 gives a = (10 - 6)*10 / (10 + 6) = 40 / 16 = 2.5 m/s\u00b2.",
-      "subject": "physics",
-      "chapter": "Work, Energy & Power",
-      "diagram": "images/q20.png"
-    },
-    {
-      "year": "NEET 2026",
       "q": "Concerning 'Waves', according to the NCERT guidelines, which of the following is true regarding the physical nature of 'Organ Pipes'?",
       "opts": [
         "It operates as a state function or conserved quantity depending on frequencies of harmonics in open and closed organ pipes.",
@@ -37225,21 +35770,6 @@
       "subject": "physics",
       "chapter": "Ray Optics",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "A parallel plate capacitor is filled with two dielectrics of constants K1 and K2 split vertically as shown. If the plates have area A and separation d, the equivalent capacitance is:",
-      "opts": [
-        "C_eq = (\u03b5\u2080 A / d) * (K_1 + K_2) / 2",
-        "C_eq = (\u03b5\u2080 A / d) * (K_1 * K_2) / (K_1 + K_2)",
-        "C_eq = (\u03b5\u2080 A / d) * (K_1 + K_2)",
-        "C_eq = (\u03b5\u2080 A / d) * K_1 K_2"
-      ],
-      "ans": 0,
-      "exp": "Since the capacitor is split vertically down the middle, it acts as two capacitors connected in parallel. Each has plate area A/2 and separation d. C1 = K1 \u03b5\u2080 (A/2) / d; C2 = K2 \u03b5\u2080 (A/2) / d. C_eq = C1 + C2 = (\u03b5\u2080 A / 2d) * (K1 + K2).",
-      "subject": "physics",
-      "chapter": "Electrostatics",
-      "diagram": "images/q8.png"
     },
     {
       "year": "NEET 2026",
@@ -37273,111 +35803,6 @@
     },
     {
       "year": "NEET 2026",
-      "q": "Concerning 'Electrostatics', in a laboratory experiment to measure the parameters of 'Real-world Application', which of the following precautions is necessary?",
-      "opts": [
-        "Ensure the mass of the hanging load is kept infinite.",
-        "Disregard the zero error of the measuring apparatus.",
-        "Keep the system open to external high-temperature reservoirs at all times.",
-        "Minimize friction and ensure standard calibration using the properties of industrial and clinical uses of Electrostatics."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Electrostatics: Practical measurement of Real-world Application requires minimizing external errors while mapping the properties of industrial and clinical uses of Electrostatics. How the concepts of Electrostatics are utilized in technology and medicine.",
-      "subject": "physics",
-      "chapter": "Electrostatics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Thermal Properties', given below are two statements: \nAssertion (A): 'Latent Heat' plays a critical role in heat required to change phase at constant temperature.\nReason (R): The physical equations of the system are governed by the conservation laws.\nIn light of the above statements, choose the most appropriate answer:",
-      "opts": [
-        "(A) is correct but (R) is incorrect",
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)",
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Thermal Properties: Assertion (A) describes a valid aspect of Latent Heat which is physically explained by the conservation laws relating to heat required to change phase at constant temperature. During a phase change (like melting or boiling), heat is absorbed/released at constant temperature. This heat is given by Q = mL, where L is the latent heat (latent heat of fusion or vaporization).",
-      "subject": "physics",
-      "chapter": "Thermal Properties",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "The escape velocity of a body from the surface of the Earth depends on the mass of the body (m) as:",
-      "opts": [
-        "m\u2070",
-        "m\u00b9",
-        "m\u207b\u00b9",
-        "m\u00b9/\u00b2"
-      ],
-      "ans": 0,
-      "exp": "The escape velocity is given by ve = \u221a(2GM/R) where M and R are mass and radius of the Earth. It is completely independent of the mass of the escaping body, hence depending on m\u2070.",
-      "subject": "physics",
-      "chapter": "Gravitation",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Current Electricity', according to the NCERT guidelines, which of the following is true regarding the physical nature of 'Temperature Dependence of Resistance'?",
-      "opts": [
-        "It has no dimensional value and cannot be verified experimentally.",
-        "It only applies to single-dimensional particle motion.",
-        "It operates as a state function or conserved quantity depending on temperature coefficient of resistance (\u03b1) is positive for metals and negative for.",
-        "It is an obsolete concept replaced by quantum mechanics."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Current Electricity: The NCERT textbook outlines Temperature Dependence of Resistance as a fundamental property linked to the physical quantities of temperature coefficient of resistance (\u03b1) is positive for metals and negative for. For metals, resistance increases with temperature (positive \u03b1). For semiconductors and insulators, resistance decreases with temperature (negative \u03b1) because covalent bonds break, releasing more charge carriers, overcoming the decrease in relaxation time.",
-      "subject": "physics",
-      "chapter": "Current Electricity",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "For the logic gate circuit shown below, identify the output Y when A = 1 and B = 0:",
-      "opts": [
-        "1",
-        "0",
-        "Undetermined",
-        "Matches inputs sum"
-      ],
-      "ans": 1,
-      "exp": "A NAND gate followed by a NOT gate behaves as an AND gate. For inputs A=1 and B=0, output Y = A \u2022 B = 1 \u2022 0 = 0.",
-      "subject": "physics",
-      "chapter": "Semiconductors",
-      "diagram": "images/q16.png"
-    },
-    {
-      "year": "NEET 2026",
-      "q": "The output Y of the logic circuit shown in the figure is:",
-      "opts": [
-        "A \u2022 B",
-        "A + B",
-        "A' \u2022 B'",
-        "A' + B'"
-      ],
-      "ans": 0,
-      "exp": "The circuit contains two NOT gates leading to a NOR gate. The inputs to the NOR gate are A' and B'. The output is Y = (A' + B')' = A'' \u2022 B'' = A \u2022 B. This represents an AND gate.",
-      "subject": "physics",
-      "chapter": "Semiconductors",
-      "diagram": "images/q22.png"
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Dual Nature', in a laboratory experiment to measure the parameters of 'Stopping Potential', which of the following precautions is necessary?",
-      "opts": [
-        "Ensure the mass of the hanging load is kept infinite.",
-        "Disregard the zero error of the measuring apparatus.",
-        "Minimize friction and ensure standard calibration using the properties of stopping potential depends on which parameters of incident light.",
-        "Keep the system open to external high-temperature reservoirs at all times."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Dual Nature: Practical measurement of Stopping Potential requires minimizing external errors while mapping the properties of stopping potential depends on which parameters of incident light. Stopping potential V\u2080 (associated with max KE) depends on the frequency of incident light and the nature of the metal surface (work function). It is completely independent of the intensity of light (which determines number of photoelectrons but not their energy).",
-      "subject": "physics",
-      "chapter": "Dual Nature",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
       "q": "In the electrochemical cell representation (Galvanic cell) shown below, which of the following is correct?",
       "opts": [
         "Oxidation occurs at the Zinc anode; electrons flow Zn \u2192 Cu",
@@ -37390,6 +35815,21 @@
       "subject": "chemistry",
       "chapter": "Redox Reactions",
       "diagram": "images/q21.png"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "According to the potential energy diagram of a reaction A \u2192 B, the activation energy for the forward reaction is defined as:",
+      "opts": [
+        "E_activation = E_transition_state - E_reactants",
+        "E_activation = E_reactants - E_products",
+        "E_activation = E_transition_state - E_products",
+        "E_activation = E_reactants"
+      ],
+      "ans": 0,
+      "exp": "Activation energy (Ea) is the minimum extra energy required by reactant molecules to form the transition state complex. Hence, Ea = E_transition_state - E_reactants.",
+      "subject": "chemistry",
+      "chapter": "Chemical Kinetics",
+      "diagram": "images/q15.png"
     },
     {
       "year": "NEET 2026",
@@ -37978,21 +36418,6 @@
     },
     {
       "year": "NEET 2026",
-      "q": "According to the potential energy diagram of a reaction A \u2192 B, the activation energy for the forward reaction is defined as:",
-      "opts": [
-        "E_activation = E_transition_state - E_reactants",
-        "E_activation = E_reactants - E_products",
-        "E_activation = E_transition_state - E_products",
-        "E_activation = E_reactants"
-      ],
-      "ans": 0,
-      "exp": "Activation energy (Ea) is the minimum extra energy required by reactant molecules to form the transition state complex. Hence, Ea = E_transition_state - E_reactants.",
-      "subject": "chemistry",
-      "chapter": "Chemical Kinetics",
-      "diagram": "images/q15.png"
-    },
-    {
-      "year": "NEET 2026",
       "q": "Concerning 'Equilibrium', according to the NCERT textbook, what is the major organic product formed when 'Common Ion Effect' reacts under the influence of suppression of dissociation of a weak electrolyte by adding a strong electrolyte containing a common ion?",
       "opts": [
         "An unstable radical that decomposes immediately to carbon.",
@@ -38053,78 +36478,123 @@
     },
     {
       "year": "NEET 2026",
-      "q": "Concerning 'Haloalkanes', which of the following is a classic exception to the general periodic trend of 'SN2 Mechanism' (concept: bimolecular substitution kinetics)?",
+      "q": "Identify the correct sequence of phases in the cell cycle shown in the diagram:",
       "opts": [
-        "The complete inertness of all transition metal complexes.",
-        "The anomalous behavior shown by the first element of the group due to high charge density.",
-        "The regular monotonic increase in electronegativity down the group.",
-        "The absence of coordinate covalent bonding in all complex molecules."
+        "G1 \u2192 S \u2192 G2 \u2192 M",
+        "M \u2192 G1 \u2192 S \u2192 G2",
+        "S \u2192 G2 \u2192 M \u2192 G1",
+        "G2 \u2192 M \u2192 G1 \u2192 S"
       ],
-      "ans": 1,
-      "exp": "Concept mapping to Haloalkanes: Anomalies in SN2 Mechanism occur due to the small size and high electronegativity of bimolecular substitution kinetics. One-step reaction via pentacoordinate transition; order 1\u00b0 > 2\u00b0 > 3\u00b0; inversion of configuration.",
-      "subject": "chemistry",
-      "chapter": "Haloalkanes",
-      "diagram": ""
+      "ans": 0,
+      "exp": "The cell cycle is divided into Interphase (comprising G1, S, and G2 phases) and M-phase (mitosis/meiosis). The sequential order of phases is G1 (first growth gap) \u2192 S (DNA replication) \u2192 G2 (second growth gap) \u2192 M (division phase).",
+      "subject": "biology",
+      "chapter": "Cell Cycle & Division",
+      "diagram": "images/q6.png"
     },
     {
       "year": "NEET 2026",
-      "q": "Concerning 'Basic Concepts', which of the following describes the chemical property of 'Empirical Formula' (concept: relationship between empirical and molecular formula)?",
+      "q": "In the given diagram of an antibody molecule, identify the antigen-binding sites:",
       "opts": [
-        "It acts strictly as an inert gaseous phase with zero reactivity.",
-        "It is governed by the structural configuration and molecular stability.",
-        "It does not participate in chemical bonding or electronic interactions.",
-        "It has no structural significance in molecular orbital theory."
+        "The variable regions of both heavy and light chains",
+        "The constant regions of heavy chains",
+        "The constant regions of light chains",
+        "The disulfide bonds linking the chains"
       ],
-      "ans": 1,
-      "exp": "Concept mapping to Basic Concepts: In Chemistry, Empirical Formula is directly related to relationship between empirical and molecular formula. Molecular formula is a whole-number multiple of the empirical formula: Molecular Formula = n \u00d7 Empirical Formula, where n = Molecular Mass / Empirical Formula Mass.",
-      "subject": "chemistry",
-      "chapter": "Basic Concepts",
-      "diagram": ""
+      "ans": 0,
+      "exp": "Antigen-binding sites are located at the variable (V) regions of both the heavy (H) and light (L) chains at the N-terminal ends of the antibody arm, providing specificity for binding.",
+      "subject": "biology",
+      "chapter": "Human Health & Disease",
+      "diagram": "images/q17.png"
     },
     {
       "year": "NEET 2026",
-      "q": "Concerning 'Chemical Bonding', according to the NCERT textbook, what is the major organic product formed when 'Experimental Observation' reacts under the influence of methods and tests related to Chemical Bonding?",
+      "q": "The structure shown in the diagram represents a nucleosome. Identify the protein labeled as H1 and the wrapping thread:",
       "opts": [
-        "An unstable radical that decomposes immediately to carbon.",
-        "The product formed in accordance with thermodynamic stability.",
-        "A mixture of non-functional alkanes only.",
-        "No product is formed since the reaction is endergonic."
+        "The label H1 represents linker histone; wrapping thread is double-stranded DNA",
+        "The label H1 represents core histone octamer; wrapping thread is RNA",
+        "The label H1 represents DNA polymerase; wrapping thread is chromatin",
+        "The label H1 is non-histone chromosomal protein; wrapping thread is DNA"
       ],
-      "ans": 1,
-      "exp": "Concept mapping to Chemical Bonding: The NCERT reaction pathway outlines the formation of major stable products from Experimental Observation and methods and tests related to Chemical Bonding. Practical laboratory and analytical techniques of Chemical Bonding.",
-      "subject": "chemistry",
-      "chapter": "Chemical Bonding",
-      "diagram": ""
+      "ans": 0,
+      "exp": "A nucleosome is composed of negatively charged DNA wrapped around a positively charged histone octamer. Histone H1 (labeled H1) acts as a linker histone keeping the DNA thread securely locked in place.",
+      "subject": "biology",
+      "chapter": "Molecular Basis",
+      "diagram": "images/q11.png"
     },
     {
       "year": "NEET 2026",
-      "q": "Concerning 'p-Block (Gr 15-18)', which of the following describes the chemical property of 'Allotropes of P' (concept: white vs red phosphorus)?",
+      "q": "Which stage of meiosis is represented by the given diagram showing homologous chromosomes separating while sister chromatids remain associated at their centromeres?",
       "opts": [
-        "It does not participate in chemical bonding or electronic interactions.",
-        "It has no structural significance in molecular orbital theory.",
-        "It acts strictly as an inert gaseous phase with zero reactivity.",
-        "It is governed by the structural configuration and molecular stability."
+        "Anaphase I",
+        "Anaphase II",
+        "Metaphase I",
+        "Metaphase II"
       ],
-      "ans": 3,
-      "exp": "Concept mapping to p-Block (Gr 15-18): In Chemistry, Allotropes of P is directly related to white vs red phosphorus. White P is highly reactive (tetrahedral monomer, angle strain); red P is polymeric and stable.",
-      "subject": "chemistry",
-      "chapter": "p-Block (Gr 15-18)",
-      "diagram": ""
+      "ans": 0,
+      "exp": "In Anaphase I, homologous chromosomes separate, while sister chromatids remain associated at their centromeres. In Anaphase II, sister chromatids separate.",
+      "subject": "biology",
+      "chapter": "Cell Cycle & Division",
+      "diagram": "images/q25.png"
     },
     {
       "year": "NEET 2026",
-      "q": "Concerning 'Basic Concepts', identify the correct option:\nStatement I: The acidity/basicity of 'Stoichiometry' is determined by calculations of reactants and products in chemical reactions.\nStatement II: Electronegativity increases down the group in the periodic table.",
+      "q": "Identify the bilateral coelomate organism shown in the diagram characterized by segmented body and lateral appendages (parapodia):",
       "opts": [
-        "Both Statement I and Statement II are incorrect",
-        "Statement I is correct but Statement II is incorrect",
-        "Statement I is incorrect but Statement II is correct",
-        "Both Statement I and Statement II are correct"
+        "Nereis",
+        "Ascaris",
+        "Planaria",
+        "Sycon"
       ],
-      "ans": 1,
-      "exp": "Concept mapping to Basic Concepts: Statement I is correct regarding Stoichiometry and calculations of reactants and products in chemical reactions, but Statement II is false as electronegativity decreases down the group. Stoichiometry is the calculation of quantitative relationships of reactants and products based on the balanced chemical equation, which obeys the Law of Conservation of Mass.",
-      "subject": "chemistry",
-      "chapter": "Basic Concepts",
-      "diagram": ""
+      "ans": 0,
+      "exp": "Nereis is an aquatic annelid characterized by a metamerically segmented body and lateral appendages called parapodia which help in swimming and respiration.",
+      "subject": "biology",
+      "chapter": "Animal Kingdom",
+      "diagram": "images/q7.jpg"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "In the diagram of a chloroplast shown below, identify the primary site of light reactions (A) and dark reactions (B):",
+      "opts": [
+        "A: Grana / Thylakoids, B: Stroma",
+        "A: Stroma, B: Grana / Thylakoids",
+        "A: Outer membrane, B: Inner membrane",
+        "A: Thylakoid lumen, B: Intermembrane space"
+      ],
+      "ans": 0,
+      "exp": "Label A points to grana/thylakoids where light absorption, water photolysis, and ATP/NADPH synthesis (light reactions) occur. Label B points to the stroma where carbon dioxide fixation (dark reactions) takes place.",
+      "subject": "biology",
+      "chapter": "Respiration in Plants",
+      "diagram": "images/q13.jpg"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "Identify the mitotic phase shown in the diagram where sister chromatids align along the equatorial metaphase plate:",
+      "opts": [
+        "Metaphase",
+        "Anaphase",
+        "Prophase",
+        "Telophase"
+      ],
+      "ans": 0,
+      "exp": "Metaphase is characterized by all chromosomes aligning at the equator of the cell (metaphase plate) with spindle fibers from opposite poles attached to the kinetochores of sister chromatids.",
+      "subject": "biology",
+      "chapter": "Cell Cycle & Division",
+      "diagram": "images/q2.jpg"
+    },
+    {
+      "year": "NEET 2026",
+      "q": "In the given diagram of a DNA replication fork, identify the labels A and B:",
+      "opts": [
+        "A: Leading strand (continuous synthesis), B: Lagging strand (Okazaki fragments)",
+        "A: Lagging strand, B: Leading strand",
+        "A: Template strand, B: RNA primer",
+        "A: DNA polymerase, B: DNA ligase"
+      ],
+      "ans": 0,
+      "exp": "Label A is the leading strand which is synthesized continuously in the 5' to 3' direction. Label B represents Okazaki fragments on the lagging strand synthesized discontinuously. Label C represents DNA Polymerase/Helicase.",
+      "subject": "biology",
+      "chapter": "Molecular Basis",
+      "diagram": "images/q23.png"
     },
     {
       "year": "NEET 2026",
@@ -38668,21 +37138,6 @@
     },
     {
       "year": "NEET 2026",
-      "q": "Identify the correct sequence of phases in the cell cycle shown in the diagram:",
-      "opts": [
-        "G1 \u2192 S \u2192 G2 \u2192 M",
-        "M \u2192 G1 \u2192 S \u2192 G2",
-        "S \u2192 G2 \u2192 M \u2192 G1",
-        "G2 \u2192 M \u2192 G1 \u2192 S"
-      ],
-      "ans": 0,
-      "exp": "The cell cycle is divided into Interphase (comprising G1, S, and G2 phases) and M-phase (mitosis/meiosis). The sequential order of phases is G1 (first growth gap) \u2192 S (DNA replication) \u2192 G2 (second growth gap) \u2192 M (division phase).",
-      "subject": "biology",
-      "chapter": "Cell Cycle & Division",
-      "diagram": "images/q6.png"
-    },
-    {
-      "year": "NEET 2026",
       "q": "Which of the following is an example of an autosomal dominant genetic disorder?",
       "opts": [
         "Myotonic dystrophy",
@@ -38803,21 +37258,6 @@
     },
     {
       "year": "NEET 2026",
-      "q": "In the given diagram of an antibody molecule, identify the antigen-binding sites:",
-      "opts": [
-        "The variable regions of both heavy and light chains",
-        "The constant regions of heavy chains",
-        "The constant regions of light chains",
-        "The disulfide bonds linking the chains"
-      ],
-      "ans": 0,
-      "exp": "Antigen-binding sites are located at the variable (V) regions of both the heavy (H) and light (L) chains at the N-terminal ends of the antibody arm, providing specificity for binding.",
-      "subject": "biology",
-      "chapter": "Human Health & Disease",
-      "diagram": "images/q17.png"
-    },
-    {
-      "year": "NEET 2026",
       "q": "Concerning 'Sexual Repro in Plants', which of the following represents an exception to the general biological rules of 'Outbreeding Devices' (concept: preventing self pollination)?",
       "opts": [
         "The occurrence of aerobic respiration in all living tissues.",
@@ -38830,21 +37270,6 @@
       "subject": "biology",
       "chapter": "Sexual Repro in Plants",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "The structure shown in the diagram represents a nucleosome. Identify the protein labeled as H1 and the wrapping thread:",
-      "opts": [
-        "The label H1 represents linker histone; wrapping thread is double-stranded DNA",
-        "The label H1 represents core histone octamer; wrapping thread is RNA",
-        "The label H1 represents DNA polymerase; wrapping thread is chromatin",
-        "The label H1 is non-histone chromosomal protein; wrapping thread is DNA"
-      ],
-      "ans": 0,
-      "exp": "A nucleosome is composed of negatively charged DNA wrapped around a positively charged histone octamer. Histone H1 (labeled H1) acts as a linker histone keeping the DNA thread securely locked in place.",
-      "subject": "biology",
-      "chapter": "Molecular Basis",
-      "diagram": "images/q11.png"
     },
     {
       "year": "NEET 2026",
@@ -39010,21 +37435,6 @@
       "subject": "biology",
       "chapter": "Living World",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Which stage of meiosis is represented by the given diagram showing homologous chromosomes separating while sister chromatids remain associated at their centromeres?",
-      "opts": [
-        "Anaphase I",
-        "Anaphase II",
-        "Metaphase I",
-        "Metaphase II"
-      ],
-      "ans": 0,
-      "exp": "In Anaphase I, homologous chromosomes separate, while sister chromatids remain associated at their centromeres. In Anaphase II, sister chromatids separate.",
-      "subject": "biology",
-      "chapter": "Cell Cycle & Division",
-      "diagram": "images/q25.png"
     },
     {
       "year": "NEET 2026",
@@ -39238,21 +37648,6 @@
     },
     {
       "year": "NEET 2026",
-      "q": "Identify the bilateral coelomate organism shown in the diagram characterized by segmented body and lateral appendages (parapodia):",
-      "opts": [
-        "Nereis",
-        "Ascaris",
-        "Planaria",
-        "Sycon"
-      ],
-      "ans": 0,
-      "exp": "Nereis is an aquatic annelid characterized by a metamerically segmented body and lateral appendages called parapodia which help in swimming and respiration.",
-      "subject": "biology",
-      "chapter": "Animal Kingdom",
-      "diagram": "images/q7.jpg"
-    },
-    {
-      "year": "NEET 2026",
       "q": "Concerning 'Anatomy of Plants', if the active enzymes or factors governing 'Simple Tissues' (concept: living mechanical tissue in plants) are inhibited, it results in:",
       "opts": [
         "No physiological effect on the organism.",
@@ -39280,21 +37675,6 @@
       "subject": "biology",
       "chapter": "Plant Kingdom",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "In the diagram of a chloroplast shown below, identify the primary site of light reactions (A) and dark reactions (B):",
-      "opts": [
-        "A: Grana / Thylakoids, B: Stroma",
-        "A: Stroma, B: Grana / Thylakoids",
-        "A: Outer membrane, B: Inner membrane",
-        "A: Thylakoid lumen, B: Intermembrane space"
-      ],
-      "ans": 0,
-      "exp": "Label A points to grana/thylakoids where light absorption, water photolysis, and ATP/NADPH synthesis (light reactions) occur. Label B points to the stroma where carbon dioxide fixation (dark reactions) takes place.",
-      "subject": "biology",
-      "chapter": "Respiration in Plants",
-      "diagram": "images/q13.jpg"
     },
     {
       "year": "NEET 2026",
@@ -39418,21 +37798,6 @@
     },
     {
       "year": "NEET 2026",
-      "q": "Identify the mitotic phase shown in the diagram where sister chromatids align along the equatorial metaphase plate:",
-      "opts": [
-        "Metaphase",
-        "Anaphase",
-        "Prophase",
-        "Telophase"
-      ],
-      "ans": 0,
-      "exp": "Metaphase is characterized by all chromosomes aligning at the equator of the cell (metaphase plate) with spindle fibers from opposite poles attached to the kinetochores of sister chromatids.",
-      "subject": "biology",
-      "chapter": "Cell Cycle & Division",
-      "diagram": "images/q2.jpg"
-    },
-    {
-      "year": "NEET 2026",
       "q": "Concerning 'Biotech: Applications', which of the following statements is correct regarding 'Bt Cotton' (concept: cry toxin mechanism in bollworms)?",
       "opts": [
         "It functions strictly under non-enzymatic pathways in the extracellular matrix.",
@@ -39459,171 +37824,6 @@
       "exp": "Concept mapping to The Living World: Physiological parameters of Experimental Observation show direct dependency on methods and tests related to The Living World. Practical laboratory and analytical techniques of The Living World.",
       "subject": "biology",
       "chapter": "Living World",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "In the given diagram of a DNA replication fork, identify the labels A and B:",
-      "opts": [
-        "A: Leading strand (continuous synthesis), B: Lagging strand (Okazaki fragments)",
-        "A: Lagging strand, B: Leading strand",
-        "A: Template strand, B: RNA primer",
-        "A: DNA polymerase, B: DNA ligase"
-      ],
-      "ans": 0,
-      "exp": "Label A is the leading strand which is synthesized continuously in the 5' to 3' direction. Label B represents Okazaki fragments on the lagging strand synthesized discontinuously. Label C represents DNA Polymerase/Helicase.",
-      "subject": "biology",
-      "chapter": "Molecular Basis",
-      "diagram": "images/q23.png"
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Sexual Repro in Plants', identify the correct option:\nStatement I: The structural organization of 'Megasporogenesis' is composed of 7-celled 8-nucleate embryo sac.\nStatement II: All bacteria are eukaryotic organisms containing membrane-bound nuclei.",
-      "opts": [
-        "Both Statement I and Statement II are incorrect",
-        "Both Statement I and Statement II are correct",
-        "Statement I is correct but Statement II is incorrect",
-        "Statement I is incorrect but Statement II is correct"
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Sexual Repro in Plants: Statement I is correct since Megasporogenesis contains 7-celled 8-nucleate embryo sac. Statement II is incorrect because bacteria are prokaryotic. Development of female gametophyte from functional megaspore via 3 mitotic divisions.",
-      "subject": "biology",
-      "chapter": "Sexual Repro in Plants",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Respiration in Plants', which of the following statements is correct regarding 'Respiratory Quotient' (concept: RQ value for fats (tripalmitin) and carbohydrates)?",
-      "opts": [
-        "It is an obsolete metabolic pathway not observed in living organisms.",
-        "It functions strictly under non-enzymatic pathways in the extracellular matrix.",
-        "It is a key biological process responsible for cellular homeostasis and survival.",
-        "It prevents the cellular replication of genetic material completely."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Respiration in Plants: In Biology, Respiratory Quotient is directly related to RQ value for fats (tripalmitin) and carbohydrates. Respiratory Quotient (RQ) = Volume of CO\u2082 evolved / Volume of O\u2082 consumed. For carbohydrates, RQ = 1.0. For fats (lipids), RQ = 0.7. For proteins, RQ \u2248 0.9. For organic acids, RQ > 1.0.",
-      "subject": "biology",
-      "chapter": "Respiration in Plants",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Respiration in Plants', which of the following statements is correct regarding 'Respiratory Quotient' (concept: RQ value for fats (tripalmitin) and carbohydrates)?",
-      "opts": [
-        "It is a key biological process responsible for cellular homeostasis and survival.",
-        "It is an obsolete metabolic pathway not observed in living organisms.",
-        "It functions strictly under non-enzymatic pathways in the extracellular matrix.",
-        "It prevents the cellular replication of genetic material completely."
-      ],
-      "ans": 0,
-      "exp": "Concept mapping to Respiration in Plants: In Biology, Respiratory Quotient is directly related to RQ value for fats (tripalmitin) and carbohydrates. Respiratory Quotient (RQ) = Volume of CO\u2082 evolved / Volume of O\u2082 consumed. For carbohydrates, RQ = 1.0. For fats (lipids), RQ = 0.7. For proteins, RQ \u2248 0.9. For organic acids, RQ > 1.0.",
-      "subject": "biology",
-      "chapter": "Respiration in Plants",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Organisms & Populations', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Population Growth' contain?",
-      "opts": [
-        "An array of flagellated prokaryotic cells.",
-        "A collection of non-functional mineral crystals.",
-        "An empty vacuole with no cellular proteins.",
-        "The organelle or cellular structures associated with logistic growth curve."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Organisms & Populations: NCERT diagrammatic representations show the cellular localization of Population Growth and its structural components linked to logistic growth curve. dN/dt = rN(1 - N/K) representing growth in limited resources (sigmoid curve).",
-      "subject": "biology",
-      "chapter": "Organisms & Populations",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Sexual Repro in Plants', if the active enzymes or factors governing 'Outbreeding Devices' (concept: preventing self pollination) are inhibited, it results in:",
-      "opts": [
-        "Immediate transformation of the cell into a prokaryote.",
-        "No physiological effect on the organism.",
-        "A massive increase in the mitotic index of the tissue.",
-        "Metabolic disruption and inability to synthesize key cellular products."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Sexual Repro in Plants: Physiological parameters of Outbreeding Devices show direct dependency on preventing self pollination. Dichogamy, self-incompatibility, and unisexual flowers prevent autogamy/geitonogamy.",
-      "subject": "biology",
-      "chapter": "Sexual Repro in Plants",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Cell Cycle & Division', if the active enzymes or factors governing 'Interphase Stages' (concept: stage where DNA replication and centriole duplication occur) are inhibited, it results in:",
-      "opts": [
-        "A massive increase in the mitotic index of the tissue.",
-        "Immediate transformation of the cell into a prokaryote.",
-        "Metabolic disruption and inability to synthesize key cellular products.",
-        "No physiological effect on the organism."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Cell Cycle & Division: Physiological parameters of Interphase Stages show direct dependency on stage where DNA replication and centriole duplication occur. DNA replication occurs only in the S (Synthesis) phase of interphase. The amount of DNA per cell doubles (2C \u2192 4C), but chromosome number remains same (2n). In animal cells, centriole duplication also occurs in cytoplasm during S phase.",
-      "subject": "biology",
-      "chapter": "Cell Cycle & Division",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Ecosystem', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Decomposition' contain?",
-      "opts": [
-        "A collection of non-functional mineral crystals.",
-        "An array of flagellated prokaryotic cells.",
-        "An empty vacuole with no cellular proteins.",
-        "The organelle or cellular structures associated with fragmentation, leaching, catabolism, humification."
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Ecosystem: NCERT diagrammatic representations show the cellular localization of Decomposition and its structural components linked to fragmentation, leaching, catabolism, humification. Detritivores fragment detritus; leaching removes water-soluble nutrients; microbes catabolize.",
-      "subject": "biology",
-      "chapter": "Ecosystem",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Biotech: Principles', according to the labeled diagrams in the NCERT textbook, what does the specific region of 'Real-world Application' contain?",
-      "opts": [
-        "An array of flagellated prokaryotic cells.",
-        "An empty vacuole with no cellular proteins.",
-        "The organelle or cellular structures associated with industrial and clinical uses of Biotech: Principles.",
-        "A collection of non-functional mineral crystals."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Biotech: Principles: NCERT diagrammatic representations show the cellular localization of Real-world Application and its structural components linked to industrial and clinical uses of Biotech: Principles. How the concepts of Biotech: Principles are utilized in technology and medicine.",
-      "subject": "biology",
-      "chapter": "Biotech: Principles",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Anatomy of Plants', given below are two statements: \nAssertion (A): 'Vascular Bundles' is essential for the cycle of radial vascular bundles are found in.\nReason (R): It ensures genetic continuity and regulation of cell processes.\nIn light of the above statements, choose the correct answer:",
-      "opts": [
-        "Both (A) and (R) are correct but (R) is not the correct explanation of (A)",
-        "(A) is correct but (R) is incorrect",
-        "(A) is incorrect but (R) is correct",
-        "Both (A) and (R) are correct and (R) is the correct explanation of (A)"
-      ],
-      "ans": 3,
-      "exp": "Concept mapping to Anatomy of Plants: The process of Vascular Bundles is biologically necessary for the maintenance of radial vascular bundles are found in. In radial vascular bundles, xylem and phloem are arranged alternately along different radii. This is a characteristic feature of all roots (monocot and dicot). Stems have conjoint bundles (xylem and phloem along same radius).",
-      "subject": "biology",
-      "chapter": "Anatomy of Plants",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2026",
-      "q": "Concerning 'Structural Org Animals', which of the following represents an exception to the general biological rules of 'Frog Respiration' (concept: modes of respiration in adult frog)?",
-      "opts": [
-        "The occurrence of aerobic respiration in all living tissues.",
-        "The presence of cell walls in all animal cell groups.",
-        "A atypical organism or specialized cell line that bypasses the standard pathway.",
-        "The universal presence of genetic replication in all cell cycles."
-      ],
-      "ans": 2,
-      "exp": "Concept mapping to Structural Org Animals: Exceptions in Frog Respiration occur in organisms displaying specialized evolutionary adaptations of modes of respiration in adult frog. Adult frogs respire on land via skin (cutaneous), buccal cavity (buccopharyngeal), and lungs (pulmonary). In water, they respire exclusively through their skin.",
-      "subject": "biology",
-      "chapter": "Structural Org Animals",
       "diagram": ""
     }
   ]
