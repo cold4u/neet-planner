@@ -366,7 +366,7 @@ function safeSetSessionStorage(key, value) {
     {t:'12:05 PM',a:'Lunch + mandatory rest',d:'45 min',cat:'break'},
     {t:'12:50 PM',a:'Re-study 2–3 weak chapters identified from today\'s mock',d:'1.5 hr',cat:'rev'},
     {t:'2:20 PM',a:'Nap',d:'30 min',cat:'break'},
-    {t:'2:50 PM',a:'PYQ Practice: 50 questions from NEET 2010–2024 (mixed)',d:'50 min',cat:'test'},
+    {t:'2:50 PM',a:'PYQ Practice: 50 questions from NEET 2013–2026 (mixed)',d:'50 min',cat:'test'},
     {t:'3:40 PM',a:'Analyse PYQ answers',d:'20 min',cat:'rev'},
     {t:'4:00 PM',a:'Walk / exercise (non-negotiable for mental health)',d:'30 min',cat:'break'},
     {t:'4:30 PM',a:'NCERT Biology: 2–3 chapters careful reading',d:'1 hr',cat:'bio'},
@@ -2343,12 +2343,12 @@ function safeSetSessionStorage(key, value) {
     let yearlyTestQuestions = [];
     let yearlyTestAnswers = [];
     let yearlyTestMode = ''; // 'mock' or 'practice'
-    let yearlyTestYear = 2024;
+    let yearlyTestYear = 2026;
     let yearlyCurrentFilter = 'all';
 
     function renderPapersPicker() {
       const years = [];
-      for (let y = 2025; y >= 2010; y--) {
+      for (let y = 2026; y >= 2013; y--) {
         years.push(y);
       }
       
