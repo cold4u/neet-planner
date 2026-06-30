@@ -1260,14 +1260,15 @@ table tr.done-row td div, table tr.done-row td span {
   display: none; /* Hidden on desktop */
   flex-direction: column;
   justify-content: space-between;
-  width: 24px;
-  height: 18px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 13px 10px;
   margin-left: auto;
   z-index: 1001;
+  box-sizing: border-box;
 }
 .hamburger-btn span {
   width: 100%;
@@ -3121,8 +3122,9 @@ tag in <head>
     font-size: 8.5px !important;
   }
   .hamburger-btn {
-    width: 22px;
-    height: 16px;
+    width: 44px;
+    height: 44px;
+    padding: 13px 10px;
   }
 
   /* === MAIN CONTENT AREA === */
