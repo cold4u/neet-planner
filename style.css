@@ -2941,11 +2941,19 @@ tag in <head>
 }
 .flashcard-front {
   color: var(--text-primary);
+  z-index: 2;
 }
 .flashcard-back {
   color: var(--text-primary);
   transform: rotateY(180deg);
   border-color: var(--primary-glow-thick);
+  z-index: 1;
+}
+.flashcard-card-inner.flipped .flashcard-front {
+  z-index: 1;
+}
+.flashcard-card-inner.flipped .flashcard-back {
+  z-index: 2;
 }
 .flashcard-deck-select {
   padding: 10px 16px;
