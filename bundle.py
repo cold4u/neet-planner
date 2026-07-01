@@ -19,8 +19,7 @@ with open(os.path.join(base_dir, "app.js"), "r", encoding="utf-8") as f:
 with open(os.path.join(base_dir, "pyq_bank.json"), "r", encoding="utf-8") as f:
     pyq_bank_data = json.load(f)
 
-with open(os.path.join(base_dir, "real_yearly_papers.json"), "r", encoding="utf-8") as f:
-    yearly_papers_data = json.load(f)
+yearly_papers_data = {}
 
 with open(os.path.join(base_dir, "index.html"), "r", encoding="utf-8") as f:
     html_content = f.read()
@@ -63,15 +62,12 @@ def inline_diagrams(data, base_dir):
 # Inline the diagrams into the database objects
 print("Inlining diagrams into PYQ Bank...")
 inline_diagrams(pyq_bank_data, base_dir)
-print("Inlining diagrams into Yearly Papers...")
-inline_diagrams(yearly_papers_data, base_dir)
 
 # 2. Inline databases in JS content
 inlined_databases_js = f"""
     PYQ_BANK = {json.dumps(pyq_bank_data, ensure_ascii=False)};
-    REAL_YEARLY_PAPERS = {json.dumps(yearly_papers_data, ensure_ascii=False)};
-    console.log('Successfully loaded inlined PYQ and Yearly Papers database.');
-    if (typeof renderPapersPicker === 'function') renderPapersPicker();
+    REAL_YEARLY_PAPERS = {{}};
+    console.log('Successfully loaded inlined PYQ database.');
 """
 
 # Replace the Promise.all fetch block in app.js
