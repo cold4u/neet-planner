@@ -64,10 +64,6 @@
         <span class="nav-icon">📈</span>
         <span class="nav-label">Analytics</span>
       </button>
-      <button class="nav-item" data-tab="papers" onclick="showTab('papers')">
-        <span class="nav-icon">📄</span>
-        <span class="nav-label">Yearly Papers</span>
-      </button>
       <button class="nav-item" data-tab="ai-test" onclick="showTab('ai-test')">
         <span class="nav-icon">🤖</span>
         <span class="nav-label">AI CBT</span>
@@ -697,92 +693,7 @@
       </div>
     </section>
 
-    <!-- 9. PREVIOUS YEAR PAPERS TAB -->
-    <section id="papers" class="tab-content">
-      <div class="page-header">
-        <h1 class="page-title">NEET Previous Year Papers</h1>
-        <p class="page-desc">Interactive past exam papers from 2013 to 2026. Practice by subject or start a full timed mock test.</p>
-      </div>
 
-      <!-- Test Active Panel -->
-      <div class="glass-card" id="active-test-container" style="display:none; background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(0, 240, 194, 0.03)); border-color: var(--primary);">
-        <div class="active-test-header">
-          <div class="active-test-meta-block">
-            <h2 id="active-test-title">NEET 2024 Exam Paper</h2>
-            <span id="active-test-mode" class="type-badge tb-mock">Mock Test Mode</span>
-          </div>
-          <div class="active-test-controls-block">
-            <div class="active-test-timer-wrapper">
-              <span class="stat-title">Time Remaining</span>
-              <span id="test-timer" class="stat-val">03:20:00</span>
-            </div>
-            <div class="active-test-buttons-wrapper">
-              <button class="btn btn-primary" onclick="submitYearlyPaper()">Submit Paper</button>
-              <button class="btn btn-secondary" onclick="exitYearlyPaper()">Cancel / Exit</button>
-            </div>
-          </div>
-        </div>
-        <!-- Progress bar -->
-        <div class="progress-bar-glow" style="margin-top:16px; height:6px;">
-          <div class="progress-fill-glow" id="test-progress-fill" style="width:0%;"></div>
-        </div>
-        <div style="font-size:11px; color:var(--text-muted); margin-top:6px; display:flex; justify-content:space-between;">
-          <span id="test-progress-text">Questions answered: 0 / 180</span>
-          <span id="test-score-est">Est. Score: 0/720</span>
-        </div>
-      </div>
-
-      <!-- Main Papers Picker Grid -->
-      <div id="papers-picker-grid" class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-        <!-- Renders dynamically -->
-      </div>
-
-      <!-- Yearly Paper Questions Container -->
-      <div id="paper-questions-view" class="glass-card" style="display:none; margin-top:24px;">
-        <div class="paper-view-filter-bar">
-          <div class="paper-view-back-title">
-            <button class="btn btn-secondary paper-back-btn" onclick="exitYearlyPaper()">← Back</button>
-            <h2 id="paper-view-title">Paper Questions</h2>
-          </div>
-          <div class="paper-view-subject-filters">
-            <button class="btn btn-secondary paper-filter-btn" id="btn-filter-all" onclick="filterPaperSubject('all')">All</button>
-            <button class="btn btn-secondary paper-filter-btn" id="btn-filter-phy" onclick="filterPaperSubject('physics')">Physics</button>
-            <button class="btn btn-secondary paper-filter-btn" id="btn-filter-chem" onclick="filterPaperSubject('chemistry')">Chemistry</button>
-            <button class="btn btn-secondary paper-filter-btn" id="btn-filter-bio" onclick="filterPaperSubject('biology')">Biology</button>
-          </div>
-        </div>
-        <div id="paper-questions-list" style="max-height: 60vh; overflow-y:auto; padding-right:8px;">
-          <!-- Questions -->
-        </div>
-      </div>
-
-      <!-- Results View -->
-      <div id="exam-results" class="glass-card" style="margin-top:24px; text-align:center; background: linear-gradient(135deg, rgba(0, 240, 194, 0.05), rgba(139, 92, 246, 0.05)); border-color:var(--primary);">
-        <h2 style="margin-top:0;">🎉 Exam Paper Submitted!</h2>
-        <div class="stats-grid" style="margin:24px 0;">
-          <div class="glass-card" style="background:rgba(255,255,255,0.02);">
-            <span class="stat-title">NEET Score</span>
-            <span class="stat-val" id="res-score" style="color:var(--primary);">0 / 720</span>
-          </div>
-          <div class="glass-card" style="background:rgba(255,255,255,0.02);">
-            <span class="stat-title">Correct Answers</span>
-            <span class="stat-val" id="res-correct" style="color:var(--che);">0</span>
-          </div>
-          <div class="glass-card" style="background:rgba(255,255,255,0.02);">
-            <span class="stat-title">Incorrect Answers</span>
-            <span class="stat-val" id="res-wrong" style="color:var(--tertiary);">0</span>
-          </div>
-          <div class="glass-card" style="background:rgba(255,255,255,0.02);">
-            <span class="stat-title">Accuracy %</span>
-            <span class="stat-val" id="res-accuracy">0%</span>
-          </div>
-        </div>
-        <div style="display:flex; justify-content:center; gap:12px;">
-          <button class="btn btn-primary" onclick="reviewPaperQuestions()">Review All Answers</button>
-          <button class="btn btn-secondary" onclick="exitPaperResults()">Close Results</button>
-        </div>
-      </div>
-    </section>
 
       <!-- 10. AI CBT GENERATOR TAB -->
     <section id="ai-test" class="tab-content">
@@ -1406,7 +1317,7 @@
       <button class="drawer-item" data-tab="strategy" onclick="navigateTab('strategy')">💡 Strategy Hub</button>
       <button class="drawer-item" data-tab="tracker" onclick="navigateTab('tracker')">🔥 Daily Tracker</button>
       <button class="drawer-item" data-tab="analytics" onclick="navigateTab('analytics')">📈 Analytics</button>
-      <button class="drawer-item" data-tab="papers" onclick="navigateTab('papers')">📄 Yearly Papers</button>
+
       <button class="drawer-item" data-tab="ai-test" onclick="navigateTab('ai-test')">🤖 AI CBT</button>
       <button class="drawer-item" data-tab="emotional-support" onclick="navigateTab('emotional-support')">❤️ Emotional Support</button>
       <button class="drawer-item" data-tab="support" onclick="navigateTab('support')">💛 Support</button>
