@@ -465,7 +465,7 @@ function safeSetSessionStorage(key, value) {
     };
 
     // Asynchronously fetch databases for faster page load
-    fetch('pyq_bank.json')
+    fetch('pyq_bank.json?v=3.1')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load pyq_bank.json');
         return res.json();
