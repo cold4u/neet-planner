@@ -465,25 +465,21 @@ function safeSetSessionStorage(key, value) {
     };
 
     // Asynchronously fetch databases for faster page load
-    Promise.all([
-      fetch('pyq_bank.json').then(res => {
+    fetch('pyq_bank.json')
+      .then(res => {
         if (!res.ok) throw new Error('Failed to load pyq_bank.json');
         return res.json();
-      }),
-      fetch('real_yearly_papers.json').then(res => {
-        if (!res.ok) throw new Error('Failed to load real_yearly_papers.json');
-        return res.json();
       })
-    ]).then(([pyqData, yearlyData]) => {
-      PYQ_BANK = pyqData;
-      REAL_YEARLY_PAPERS = yearlyData;
-      console.log('Successfully loaded PYQ and Yearly Papers database.');
-      // Re-render components once data is available
-      if (typeof renderPlan === 'function') renderPlan();
-      if (typeof renderPapersPicker === 'function') renderPapersPicker();
-    }).catch(err => {
-      console.error('Error loading database JSON files:', err);
-    });
+      .then(pyqData => {
+        PYQ_BANK = pyqData;
+        REAL_YEARLY_PAPERS = {};
+        console.log('Successfully loaded PYQ database.');
+        // Re-render components once data is available
+        if (typeof renderPlan === 'function') renderPlan();
+      })
+      .catch(err => {
+        console.error('Error loading database JSON files:', err);
+      });
     
     // Quick subject lookup sets
     window.PHYS_CHAPS_SET = new Set(P1_PHY.concat(P2_PHY).map(c => c.ch.toLowerCase().replace(/[^a-z0-9]/g, '')));

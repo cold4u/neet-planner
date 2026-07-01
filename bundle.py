@@ -72,7 +72,7 @@ inlined_databases_js = f"""
 
 # Replace the Promise.all fetch block in app.js
 fetch_block_start = "    // Asynchronously fetch databases for faster page load"
-fetch_block_end = "    });"
+fetch_block_end = "      });"
 
 start_idx = js_content.find(fetch_block_start)
 if start_idx != -1:
