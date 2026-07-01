@@ -712,6 +712,11 @@ function safeSetSessionStorage(key, value) {
     try {
       testAnalysisLogs = JSON.parse(safeGetLocalStorage('neet_v3_test_analysis') || '{}');
     } catch(e){}
+
+    let mockTests = [];
+    try {
+      mockTests = JSON.parse(safeGetLocalStorage('neet_v3_mock_tests') || '[]');
+    } catch(e){}
     // --- NEET 2027 Syllabus Audit: Progress Data Migration ---
     (function() {
       try {
@@ -993,6 +998,8 @@ function safeSetSessionStorage(key, value) {
         renderPapersPicker();
       } else if (tabId === 'tests') {
         renderTestList();
+        renderMockTestsDashboard();
+        setDefaultMockDate();
       } else if (tabId === 'tracker') {
         renderTrackerTable();
       } else if (tabId === 'analytics') {
@@ -3772,6 +3779,7 @@ function initOnLoad() {
 
   try { renderErrorBookList(); } catch(e) { console.error("Error in renderErrorBookList:", e); }
   try { loadSelectedFlashcardDeck(); } catch(e) { console.error("Error in loadSelectedFlashcardDeck:", e); }
+  try { renderMockTestsDashboard(); setDefaultMockDate(); } catch(e) { console.error("Error in renderMockTestsDashboard init:", e); }
 
   try {
     const hideWelcome = safeGetLocalStorage('neet_hide_welcome_modal');
@@ -4298,6 +4306,7 @@ function handleFlashcardAction(isEasy) {
 }
 
 // Bind all to window
+// Bind all to window
 window.triggerConfetti = triggerConfetti;
 window.toggleTodayDone = toggleTodayDone;
 window.getBacklogTasksForDay = getBacklogTasksForDay;
@@ -4313,3 +4322,258 @@ window.loadSelectedFlashcardDeck = loadSelectedFlashcardDeck;
 window.showFlashcard = showFlashcard;
 window.flipFlashcard = flipFlashcard;
 window.handleFlashcardAction = handleFlashcardAction;
+
+// 6. MOCK TESTS & SILLY MISTAKES CONTROLLERS
+
+function setDefaultMockDate() {
+  const dateInput = document.getElementById('mock-date');
+  if (dateInput) {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    let mm = today.getMonth() + 1;
+    let dd = today.getDate();
+    if (mm < 10) mm = '0' + mm;
+    if (dd < 10) dd = '0' + dd;
+    dateInput.value = `${yyyy}-${mm}-${dd}`;
+  }
+}
+
+function saveMockTest(e) {
+  if (e) e.preventDefault();
+  
+  const name = document.getElementById('mock-name').value;
+  const date = document.getElementById('mock-date').value;
+  const phy = parseInt(document.getElementById('mock-phy').value) || 0;
+  const che = parseInt(document.getElementById('mock-che').value) || 0;
+  const bio = parseInt(document.getElementById('mock-bio').value) || 0;
+  
+  const errConcept = parseInt(document.getElementById('mock-err-concept').value) || 0;
+  const errCalc = parseInt(document.getElementById('mock-err-calc').value) || 0;
+  const errRead = parseInt(document.getElementById('mock-err-read').value) || 0;
+  const errTime = parseInt(document.getElementById('mock-err-time').value) || 0;
+  const errOmr = parseInt(document.getElementById('mock-err-omr').value) || 0;
+  
+  const total = phy + che + bio;
+  
+  const testRecord = {
+    id: 'mock_test_' + Date.now(),
+    name: name,
+    date: date,
+    phy: phy,
+    che: che,
+    bio: bio,
+    total: total,
+    mistakes: {
+      concept: errConcept,
+      calc: errCalc,
+      read: errRead,
+      time: errTime,
+      omr: errOmr
+    }
+  };
+  
+  mockTests.unshift(testRecord);
+  safeSetLocalStorage('neet_v3_mock_tests', JSON.stringify(mockTests));
+  
+  // Reset form
+  document.getElementById('mocktest-form').reset();
+  setDefaultMockDate();
+  
+  renderMockTestsDashboard();
+  triggerConfetti();
+  alert(`Mock test "${name}" saved! Total Score: ${total}/720`);
+}
+
+function deleteMockTest(id) {
+  if (!confirm("Are you sure you want to delete this mock test record?")) return;
+  mockTests = mockTests.filter(t => t.id !== id);
+  safeSetLocalStorage('neet_v3_mock_tests', JSON.stringify(mockTests));
+  renderMockTestsDashboard();
+}
+
+function renderMockTestsDashboard() {
+  const statsContainer = document.getElementById('mock-standing-stats');
+  const mistakesContainer = document.getElementById('silly-mistakes-breakdown-panel');
+  const safeZoneContainer = document.getElementById('safe-zone-bar-container');
+  const logBody = document.getElementById('mock-test-log-body');
+  const logCount = document.getElementById('mock-log-count');
+  
+  if (logCount) {
+    logCount.textContent = `${mockTests.length} test${mockTests.length === 1 ? '' : 's'} logged`;
+  }
+  
+  if (logBody) {
+    if (mockTests.length === 0) {
+      logBody.innerHTML = `
+        <tr>
+          <td colspan="8" style="text-align:center; color:var(--text-muted); padding:30px;">No mock tests logged. Enter your scores above.</td>
+        </tr>
+      `;
+    } else {
+      let html = '';
+      mockTests.forEach(t => {
+        const totalMistakes = (t.mistakes.concept || 0) + (t.mistakes.calc || 0) + (t.mistakes.read || 0) + (t.mistakes.time || 0) + (t.mistakes.omr || 0);
+        html += `
+          <tr>
+            <td style="font-weight:600;">${t.date}</td>
+            <td style="color:var(--text-secondary); font-weight:600;">${t.name}</td>
+            <td style="text-align:center; font-weight:600; color:var(--text-secondary);">${t.phy}</td>
+            <td style="text-align:center; font-weight:600; color:var(--text-secondary);">${t.che}</td>
+            <td style="text-align:center; font-weight:600; color:var(--text-secondary);">${t.bio}</td>
+            <td style="text-align:center; font-weight:700; color:var(--primary);">${t.total}</td>
+            <td>
+              <div style="display:flex; flex-wrap:wrap; gap:4px; font-size:10px;">
+                ${t.mistakes.concept ? `<span style="background:rgba(255,255,255,0.05); padding:2px 4px; border-radius:3px;">🧠 Concept: ${t.mistakes.concept}</span>` : ''}
+                ${t.mistakes.calc ? `<span style="background:rgba(255,107,107,0.1); color:var(--tertiary); padding:2px 4px; border-radius:3px;">🔢 Math: ${t.mistakes.calc}</span>` : ''}
+                ${t.mistakes.read ? `<span style="background:rgba(251,191,36,0.1); color:#fbbf24; padding:2px 4px; border-radius:3px;">📖 Read: ${t.mistakes.read}</span>` : ''}
+                ${t.mistakes.time ? `<span style="background:rgba(96,165,250,0.1); color:#60a5fa; padding:2px 4px; border-radius:3px;">⏳ Time: ${t.mistakes.time}</span>` : ''}
+                ${t.mistakes.omr ? `<span style="background:rgba(167,139,250,0.1); color:#a78bfa; padding:2px 4px; border-radius:3px;">⭕ OMR: ${t.mistakes.omr}</span>` : ''}
+                ${!totalMistakes ? '<span style="color:var(--accent-success);">Perfect! No errors logged</span>' : ''}
+              </div>
+            </td>
+            <td style="text-align:center;">
+              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px; border-color:rgba(248,113,113,0.2); color:var(--tertiary);" onclick="deleteMockTest('${t.id}')">🗑️ Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+      logBody.innerHTML = html;
+    }
+  }
+  
+  if (mockTests.length === 0) {
+    if (statsContainer) {
+      statsContainer.innerHTML = `<div style="font-size:12px; color:var(--text-muted); padding:10px;">No mock tests logged yet. Enter your first test score on the left!</div>`;
+    }
+    if (mistakesContainer) {
+      mistakesContainer.innerHTML = '';
+    }
+    if (safeZoneContainer) {
+      safeZoneContainer.innerHTML = '';
+    }
+    return;
+  }
+  
+  let sumTotal = 0;
+  let sumPhy = 0;
+  let sumChe = 0;
+  let sumBio = 0;
+  
+  let errConcept = 0;
+  let errCalc = 0;
+  let errRead = 0;
+  let errTime = 0;
+  let errOmr = 0;
+  
+  mockTests.forEach(t => {
+    sumTotal += t.total;
+    sumPhy += t.phy;
+    sumChe += t.che;
+    sumBio += t.bio;
+    
+    errConcept += t.mistakes.concept || 0;
+    errCalc += t.mistakes.calc || 0;
+    errRead += t.mistakes.read || 0;
+    errTime += t.mistakes.time || 0;
+    errOmr += t.mistakes.omr || 0;
+  });
+  
+  const len = mockTests.length;
+  const avgTotal = Math.round(sumTotal / len);
+  const avgPhy = Math.round(sumPhy / len);
+  const avgChe = Math.round(sumChe / len);
+  const avgBio = Math.round(sumBio / len);
+  
+  if (statsContainer) {
+    statsContainer.innerHTML = `
+      <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Average Mock Score</div>
+      <div style="font-size:38px; font-weight:800; color:var(--primary); line-height:1.1; text-shadow:0 0 10px var(--primary-glow);">${avgTotal} <span style="font-size:16px; font-weight:500; color:var(--text-muted);">/ 720</span></div>
+      <div style="display:flex; justify-content:center; gap:16px; margin-top:10px; font-size:12px; color:var(--text-secondary); font-weight:600;">
+        <span>Phy: <strong style="color:var(--text-primary);">${avgPhy}</strong></span>
+        <span>Che: <strong style="color:var(--text-primary);">${avgChe}</strong></span>
+        <span>Bio: <strong style="color:var(--text-primary);">${avgBio}</strong></span>
+      </div>
+    `;
+  }
+  
+  if (safeZoneContainer) {
+    let zoneBadge = '';
+    let zoneColor = '';
+    let zoneDesc = '';
+    
+    if (avgTotal >= 610) {
+      zoneBadge = '🟢 Govt Seat Safe Zone';
+      zoneColor = 'var(--accent-success)';
+      zoneDesc = 'Excellent! Your average score is safe for State & All-India Govt MBBS seats. Keep drilling and focus on maintaining consistency.';
+    } else if (avgTotal >= 550) {
+      zoneBadge = '🟡 Borderline Territory';
+      zoneColor = '#fbbf24';
+      zoneDesc = 'You are very close! Government college eligibility starts around 580-600. Focus on reducing silly mistakes to gain the final 30-50 marks.';
+    } else {
+      zoneBadge = '🔴 Needs Improvement';
+      zoneColor = 'var(--tertiary)';
+      zoneDesc = 'Focus heavily on NCERT basics, error book analysis, and high-weightage chapters. Avoid guessing; focus on accuracy first.';
+    }
+    
+    const pct = Math.min(100, Math.max(0, ((avgTotal - 360) / (720 - 360)) * 100));
+    
+    safeZoneContainer.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:11px; font-weight:700; color:var(--text-secondary);">GOVT MBBS ELIGIBILITY</span>
+        <span class="type-badge" style="background:${zoneColor}15; color:${zoneColor}; border:1px solid ${zoneColor}20; padding:2px 6px; font-size:10px; font-weight:700;">${zoneBadge}</span>
+      </div>
+      <div style="width:100%; height:8px; border-radius:4px; background:rgba(255,255,255,0.05); overflow:hidden; display:flex; margin-bottom:8px; border:1px solid rgba(255,255,255,0.05);">
+        <div style="width:${pct}%; height:100%; background:${zoneColor}; box-shadow: 0 0 8px ${zoneColor}aa; transition: width 0.4s ease;"></div>
+      </div>
+      <p style="font-size:11px; color:var(--text-muted); line-height:1.5; margin:0;">${zoneDesc}</p>
+    `;
+  }
+  
+  if (mistakesContainer) {
+    const totalErrs = errConcept + errCalc + errRead + errTime + errOmr;
+    if (totalErrs === 0) {
+      mistakesContainer.innerHTML = `
+        <div style="font-size:11px; font-weight:600; color:var(--accent-success); display:flex; align-items:center; gap:4px; margin-top:8px;">
+          <span>🎉</span> No silly mistakes logged yet! Accuracy is outstanding.
+        </div>
+      `;
+    } else {
+      const conceptPct = Math.round((errConcept / totalErrs) * 100);
+      const calcPct = Math.round((errCalc / totalErrs) * 100);
+      const readPct = Math.round((errRead / totalErrs) * 100);
+      const timePct = Math.round((errTime / totalErrs) * 100);
+      const omrPct = Math.round((errOmr / totalErrs) * 100);
+      
+      mistakesContainer.innerHTML = `
+        <span style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:8px;">⚠️ Negative Marks Analysis (Mistake Share)</span>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          ${renderErrorBar('🧠 Concept Gaps', errConcept, conceptPct, 'rgba(255,255,255,0.25)')}
+          ${renderErrorBar('🔢 Calculation Slips', errCalc, calcPct, 'var(--tertiary)')}
+          ${renderErrorBar('📖 Reading Mistakes', errRead, readPct, '#fbbf24')}
+          ${renderErrorBar('⏳ Guessing/Time Press', errTime, timePct, '#60a5fa')}
+          ${renderErrorBar('⭕ Bubble Filling Slips', errOmr, omrPct, '#a78bfa')}
+        </div>
+      `;
+    }
+  }
+}
+
+function renderErrorBar(label, count, pct, color) {
+  if (count === 0) return '';
+  return `
+    <div>
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-bottom:2px;">
+        <span>${label} (${count})</span>
+        <span style="font-weight:700; color:var(--text-secondary);">${pct}%</span>
+      </div>
+      <div style="width:100%; height:5px; border-radius:2.5px; background:rgba(255,255,255,0.02); overflow:hidden;">
+        <div style="width:${pct}%; height:100%; background:${color};"></div>
+      </div>
+    </div>
+  `;
+}
+
+window.saveMockTest = saveMockTest;
+window.deleteMockTest = deleteMockTest;
+window.renderMockTestsDashboard = renderMockTestsDashboard;
+window.setDefaultMockDate = setDefaultMockDate;

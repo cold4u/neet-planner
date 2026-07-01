@@ -413,23 +413,139 @@
     <!-- 5. TESTS & MOCKS TAB -->
     <section id="tests" class="tab-content">
       <div class="page-header">
-        <h1 class="page-title">Tests & Mock Calendar</h1>
-        <p class="page-desc">Checklist of your weekly review tests, revision tests, and final full mock papers.</p>
+        <h1 class="page-title">📝 Mock Tests & Performance Tracker</h1>
+        <p class="page-desc">Track mock test scores, analyze negative markings/silly mistakes, and monitor Govt Medical College safe-zone eligibility.</p>
       </div>
 
-      <div class="glass-card">
-        <h2 style="margin-top:0;">Test Tracker</h2>
-        <p style="color:var(--text-muted); font-size:13.5px; line-height:1.5;">
-          Sundays are designed as review checkpoints. Here is a compilation of all tests built into your schedule. Check off completed tests to track your coverage!
+      <!-- Counselor Dash Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 20px;">
+        
+        <!-- Score Logger Form -->
+        <div class="glass-card">
+          <h3 style="margin-top:0; margin-bottom:12px; display:flex; align-items:center; gap:6px;">📊 Log New Mock Test</h3>
+          <form id="mocktest-form" onsubmit="saveMockTest(event)" style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; gap:8px;">
+              <div style="flex:1;">
+                <label style="font-size:11px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:4px;">Test Name</label>
+                <input type="text" id="mock-name" class="form-control" placeholder="e.g. Yakeen Full Test 1" required style="width:100%;">
+              </div>
+              <div style="width:120px;">
+                <label style="font-size:11px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:4px;">Date</label>
+                <input type="date" id="mock-date" class="form-control" required style="width:100%;">
+              </div>
+            </div>
+
+            <div style="display:flex; gap:8px;">
+              <div style="flex:1;">
+                <label style="font-size:11px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:4px;">Physics (/180)</label>
+                <input type="number" id="mock-phy" class="form-control" min="0" max="180" placeholder="0" required style="width:100%;">
+              </div>
+              <div style="flex:1;">
+                <label style="font-size:11px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:4px;">Chemistry (/180)</label>
+                <input type="number" id="mock-che" class="form-control" min="0" max="180" placeholder="0" required style="width:100%;">
+              </div>
+              <div style="flex:1;">
+                <label style="font-size:11px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:4px;">Biology (/360)</label>
+                <input type="number" id="mock-bio" class="form-control" min="0" max="360" placeholder="0" required style="width:100%;">
+              </div>
+            </div>
+
+            <div style="margin-top:6px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05);">
+              <span style="font-size:11px; font-weight:700; color:var(--tertiary); display:block; margin-bottom:8px;">⚠️ Silly Mistakes Breakdown (Negative Marks)</span>
+              
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap:6px;">
+                <div>
+                  <label style="font-size:9px; color:var(--text-muted); display:block; margin-bottom:2px;">Concept Loophole</label>
+                  <input type="number" id="mock-err-concept" class="form-control" min="0" value="0" style="padding:4px; font-size:11px; width:100%;">
+                </div>
+                <div>
+                  <label style="font-size:9px; color:var(--text-muted); display:block; margin-bottom:2px;">Calculation Error</label>
+                  <input type="number" id="mock-err-calc" class="form-control" min="0" value="0" style="padding:4px; font-size:11px; width:100%;">
+                </div>
+                <div>
+                  <label style="font-size:9px; color:var(--text-muted); display:block; margin-bottom:2px;">Misread Question</label>
+                  <input type="number" id="mock-err-read" class="form-control" min="0" value="0" style="padding:4px; font-size:11px; width:100%;">
+                </div>
+                <div>
+                  <label style="font-size:9px; color:var(--text-muted); display:block; margin-bottom:2px;">Time Guess</label>
+                  <input type="number" id="mock-err-time" class="form-control" min="0" value="0" style="padding:4px; font-size:11px; width:100%;">
+                </div>
+                <div>
+                  <label style="font-size:9px; color:var(--text-muted); display:block; margin-bottom:2px;">OMR Bubble Error</label>
+                  <input type="number" id="mock-err-omr" class="form-control" min="0" value="0" style="padding:4px; font-size:11px; width:100%;">
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-secondary" style="margin-top:8px; border-color:var(--primary); color:var(--primary); font-weight:700;">💾 Save Mock Test Results</button>
+          </form>
+        </div>
+
+        <!-- Safe Zone Meter & Mistake Analytics -->
+        <div class="glass-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <h3 style="margin-top:0; margin-bottom:12px;">📈 Current Standing & Analytics</h3>
+            
+            <div id="mock-standing-stats" style="text-align:center; padding:12px; border-radius:8px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); margin-bottom:12px;">
+              <!-- Dynamic stats render here -->
+              <div style="font-size:12px; color:var(--text-muted);">No mock tests logged yet. Log your first test score to see details!</div>
+            </div>
+
+            <div id="silly-mistakes-breakdown-panel" style="margin-top:12px;">
+              <!-- Dynamic mistake warning bars render here -->
+            </div>
+          </div>
+
+          <div id="safe-zone-bar-container" style="margin-top:10px;">
+            <!-- Dynamic Safe-zone status bar renders here -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Logged Test History Table -->
+      <div class="glass-card" style="margin-bottom: 24px; padding:0; overflow:hidden;">
+        <div style="padding:16px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="margin:0;">📝 Mock Test Performance Log</h3>
+          <span id="mock-log-count" style="font-size:12px; color:var(--text-muted); font-weight:600;">0 tests logged</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Mock Test Name</th>
+                <th style="text-align:center;">Phy</th>
+                <th style="text-align:center;">Che</th>
+                <th style="text-align:center;">Bio</th>
+                <th style="text-align:center;">Total</th>
+                <th>Silly Mistakes</th>
+                <th style="width:60px; text-align:center;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="mock-test-log-body">
+              <tr>
+                <td colspan="8" style="text-align:center; color:var(--text-muted); padding:30px;">No mock tests logged. Enter your scores above.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Separator for Weekly Batch Test Calendar Checklist -->
+      <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px;">
+        <h2 class="section-title" style="margin-top:0;">📅 Batch Test Calendar Checklist</h2>
+        <p style="color:var(--text-muted); font-size:13px; line-height:1.5; margin-bottom:16px;">
+          These are the weekly review checkpoints built into your study batch. Check off completed test days to track syllabus coverage.
         </p>
       </div>
 
-      <div class="glass-card" style="margin-top: 16px; margin-bottom: 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div class="glass-card" style="margin-bottom: 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
         <input type="text" id="test-srch" class="form-control" style="flex:1; min-width:200px;" placeholder="Search test day, date, or syllabus..." oninput="renderTestList()">
         <button class="btn btn-secondary" onclick="openWeakTopicsModal()"><span style="margin-right:4px;">📋</span> Compiled Weak Topics</button>
       </div>
 
-      <div class="glass-card" style="padding:0; overflow:hidden;">
+      <div class="glass-card" style="padding:0; overflow:hidden; margin-bottom:20px;">
         <div class="table-container">
           <table>
             <thead>
