@@ -2916,6 +2916,7 @@ tag in <head>
   text-align: center;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 .flashcard-card-inner.flipped {
   transform: rotateY(180deg);
@@ -2924,6 +2925,7 @@ tag in <head>
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -3695,7 +3697,11 @@ tag in <head>
     font-size: 13px;
   }
   .flashcard-card-outer {
-    height: 200px;
+    height: 280px;
+  }
+  .flashcard-front h2, .flashcard-back h2 {
+    max-height: 140px;
+    font-size: 13px;
   }
   .flashcard-front, .flashcard-back {
     padding: 14px;
