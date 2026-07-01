@@ -1,3 +1,17 @@
+function renderMath(element) {
+  if (typeof renderMathInElement === 'function' && element) {
+    renderMathInElement(element, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      throwOnError: false
+    });
+  }
+}
+
 function safeGetLocalStorage(key, fallback = null) {
   try {
     const val = localStorage.getItem(key);
@@ -1810,6 +1824,7 @@ function safeSetSessionStorage(key, value) {
         `;
       });
       body.innerHTML = html;
+      renderMath(body);
     }
     
     function selectOption(qIdx, oIdx) {
@@ -2583,6 +2598,7 @@ function safeSetSessionStorage(key, value) {
       });
       
       container.innerHTML = html || `<div style="text-align:center; padding:32px; color:var(--text-muted);">No questions found under this filter.</div>`;
+      renderMath(container);
     }
 
     function selectPaperOption(qIdx, optIdx) {
@@ -3110,6 +3126,8 @@ function cbtRenderQuestion() {
     div.onclick = () => cbtSelectOption(idx);
     optContainer.appendChild(div);
   });
+  renderMath(document.getElementById('cbt-question-text'));
+  renderMath(optContainer);
   
   if (flagBtn) {
     if (cbtFlagged.has(cbtCurrentIdx)) {
@@ -4195,6 +4213,7 @@ function showFlashcard() {
   }
   if (frontText) frontText.textContent = card.q;
   if (backText) backText.textContent = card.a;
+  renderMath(document.getElementById('flashcard-inner'));
 }
 
 function flipFlashcard() {
