@@ -438,7 +438,7 @@ function safeSetSessionStorage(key, value) {
     try {
       errorBookItems = JSON.parse(safeGetLocalStorage('neet_v3_errorbook_items') || '[]');
     } catch(e){}
-    let currentDeckKey = 'physics';
+    let currentDeckKey = 'linked';
     let currentCardIdx = 0;
     const FLASHCARD_DECKS = {
       physics: [
@@ -476,6 +476,7 @@ function safeSetSessionStorage(key, value) {
         console.log('Successfully loaded PYQ database.');
         // Re-render components once data is available
         if (typeof renderPlan === 'function') renderPlan();
+        if (typeof loadSelectedFlashcardDeck === 'function') loadSelectedFlashcardDeck();
       })
       .catch(err => {
         console.error('Error loading database JSON files:', err);
@@ -4174,6 +4175,58 @@ function renderErrorBookList() {
 
 // 5. FLASHCARDS CONTROLLERS
 
+function getLinkedFlashcards() {
+  const today = getTodayDayNum();
+  const activeChapters = new Set();
+  
+  if (typeof PLAN !== 'undefined') {
+    PLAN.forEach(item => {
+      if (item.day <= today) {
+        if (item.phyChap && item.phyChap !== 'Revision' && item.phyChap !== 'Test' && item.phyChap !== 'Rest') activeChapters.add(item.phyChap);
+        if (item.cheChap && item.cheChap !== 'Revision' && item.cheChap !== 'Test' && item.cheChap !== 'Rest') activeChapters.add(item.cheChap);
+        if (item.bioChap && item.bioChap !== 'Revision' && item.bioChap !== 'Test' && item.bioChap !== 'Rest') activeChapters.add(item.bioChap);
+      }
+    });
+  }
+
+  const cards = [];
+  activeChapters.forEach(ch => {
+    const questions = (typeof PYQ_BANK !== 'undefined' ? PYQ_BANK[ch] : []) || [];
+    questions.forEach(q_obj => {
+      let qText = q_obj.q;
+      if (q_obj.opts && q_obj.opts.length === 4) {
+        qText += "\n\n" +
+                 "(A) " + q_obj.opts[0] + "\n" +
+                 "(B) " + q_obj.opts[1] + "\n" +
+                 "(C) " + q_obj.opts[2] + "\n" +
+                 "(D) " + q_obj.opts[3];
+      }
+      let aText = "Correct Answer: (" + String.fromCharCode(65 + q_obj.ans) + ") " + q_obj.opts[q_obj.ans] + "\n\n" +
+                  "Explanation:\n" + q_obj.exp;
+      
+      cards.push({
+        q: qText,
+        a: aText,
+        cat: q_obj.subject ? (q_obj.subject.charAt(0).toUpperCase() + q_obj.subject.slice(1)) : 'General'
+      });
+    });
+  });
+
+  if (cards.length === 0) {
+    // Return a merge of all default decks
+    return (FLASHCARD_DECKS['physics'] || [])
+      .concat(FLASHCARD_DECKS['chemistry'] || [])
+      .concat(FLASHCARD_DECKS['biology'] || []);
+  }
+
+  // Shuffle the cards
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+
+  return cards;
+}
 
 function loadSelectedFlashcardDeck() {
   const select = document.getElementById('flashcard-deck-select');
@@ -4181,6 +4234,10 @@ function loadSelectedFlashcardDeck() {
     currentDeckKey = select.value;
   }
   currentCardIdx = 0;
+  
+  if (currentDeckKey === 'linked') {
+    FLASHCARD_DECKS['linked'] = getLinkedFlashcards();
+  }
   
   // Unflip card structure
   const inner = document.getElementById('flashcard-inner');

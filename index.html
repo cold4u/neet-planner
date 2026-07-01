@@ -951,6 +951,7 @@
       <div class="flashcards-container">
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:12px;">
           <select id="flashcard-deck-select" class="flashcard-deck-select" onchange="loadSelectedFlashcardDeck()">
+            <option value="linked">📅 Study Plan Linked Deck (Today & Earlier Chapters)</option>
             <option value="physics">⚡ Physics Formulas & Constants</option>
             <option value="chemistry">🧪 Chemistry Reagents & Named Reactions</option>
             <option value="biology">🌿 Biology NCERT Key Examples</option>
@@ -962,12 +963,12 @@
           <div class="flashcard-card-inner" id="flashcard-inner">
             <div class="flashcard-front">
               <span id="flashcard-front-cat" class="subject-badge badge-phy" style="position:absolute; top:20px; left:20px;">Category</span>
-              <h2 id="flashcard-front-text" style="font-size:22px; font-weight:700; max-width:80%;">Question front text</h2>
+              <h2 id="flashcard-front-text" style="font-size:15px; font-weight:500; max-width:90%; white-space: pre-wrap; overflow-y: auto; max-height: 220px; text-align: left; line-height: 1.6; padding-right: 8px;">Question front text</h2>
               <span style="position:absolute; bottom:20px; font-size:11px; color:var(--text-muted);">👉 Click card to flip</span>
             </div>
             <div class="flashcard-back">
               <span style="position:absolute; top:20px; font-size:12px; font-weight:800; color:var(--primary);">ANSWER</span>
-              <h2 id="flashcard-back-text" style="font-size:20px; font-weight:600; max-width:80%; line-height:1.5;">Answer back text</h2>
+              <h2 id="flashcard-back-text" style="font-size:14px; font-weight:400; max-width:90%; white-space: pre-wrap; overflow-y: auto; max-height: 220px; text-align: left; line-height: 1.6; padding-right: 8px;">Answer back text</h2>
               <span style="position:absolute; bottom:20px; font-size:11px; color:var(--text-muted);">👉 Click card to flip back</span>
             </div>
           </div>
