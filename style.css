@@ -3922,3 +3922,94 @@ tag in <head>
 .strength-weak { background: var(--tertiary); }
 .strength-medium { background: var(--primary); }
 .strength-strong { background: var(--accent-success); }
+
+/* NCERT Formula Drawer Styles */
+.formula-drawer {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100vh;
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border-color);
+  box-shadow: var(--shadow-2xl);
+  z-index: 10000;
+  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-sizing: border-box;
+}
+.formula-drawer.active {
+  right: 0;
+}
+.formula-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+.formula-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.formula-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+}
+.formula-title {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+.formula-expr {
+  background: rgba(0,0,0,0.2);
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+  font-family: monospace;
+  font-size: 14px;
+  color: var(--text-color);
+  margin: 6px 0;
+}
+
+/* Floating trigger button style */
+.floating-formula-btn {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: #060913;
+  border: none;
+  padding: 14px 10px;
+  border-radius: 8px 0 0 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  z-index: 999;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.floating-formula-btn:hover {
+  padding-right: 16px;
+}
+
+/* Mobile responsive for formula drawer */
+@media (max-width: 480px) {
+  .formula-drawer {
+    width: 100vw;
+    right: -100vw;
+  }
+}

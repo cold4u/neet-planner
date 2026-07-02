@@ -2376,6 +2376,11 @@ function safeSetSessionStorage(key, value) {
       if (typeof renderConsistencyHeatmap === 'function') {
         renderConsistencyHeatmap();
       }
+
+      // Render weekly counselor report
+      if (typeof renderWeeklyReport === 'function') {
+        renderWeeklyReport();
+      }
     }
     
     function renderOverviewStats() {
@@ -3790,6 +3795,16 @@ function initOnLoad() {
 
   // Initial stats updates & start countdown timer
   try { updateOverviewStats(); } catch(e) { console.error("Error in updateOverviewStats:", e); }
+  try {
+    if (typeof renderWeeklyReport === 'function') {
+      renderWeeklyReport();
+    }
+  } catch(e) { console.error("Error in renderWeeklyReport:", e); }
+  try {
+    if (typeof resetDailyQuiz === 'function') {
+      resetDailyQuiz();
+    }
+  } catch(e) { console.error("Error in resetDailyQuiz:", e); }
   try {
     setInterval(() => {
       try {
@@ -5258,3 +5273,475 @@ window.renderConsistencyHeatmap = renderConsistencyHeatmap;
 window.showHeatmapTooltip = showHeatmapTooltip;
 window.hideHeatmapTooltip = hideHeatmapTooltip;
 window.renderSubjectStrengthHeatmap = renderSubjectStrengthHeatmap;
+
+// 11. FORMULA DRAWER, WEEKLY CRITIQUE, AND DAILY MINI-QUIZ
+
+const FORMULAS = [
+  {
+    sub: 'Physics',
+    cat: 'Mechanics',
+    title: 'Equations of Motion (Constant Acceleration)',
+    expr: 'v = u + at, \\; s = ut + \\frac{1}{2}at^2, \\; v^2 = u^2 + 2as',
+    desc: 'Relates displacement, initial/final velocity, acceleration, and time.'
+  },
+  {
+    sub: 'Physics',
+    cat: 'Mechanics',
+    title: 'Centripetal Force',
+    expr: 'F_c = \\frac{m v^2}{r}',
+    desc: 'Force directed toward the center of curvature for circular path motion.'
+  },
+  {
+    sub: 'Physics',
+    cat: 'Electrostatics',
+    title: 'Coulomb\'s Law',
+    expr: 'F = k \\frac{|q_1 q_2|}{r^2}',
+    desc: 'Electrostatic force between point charges, k = 1/(4\\pi\\epsilon_0) \\approx 9 \\times 10^9 N m^2/C^2.'
+  },
+  {
+    sub: 'Physics',
+    cat: 'Electrostatics',
+    title: 'Capacitance of Parallel Plate',
+    expr: 'C = \\frac{\\epsilon_0 A}{d}',
+    desc: 'Capacitance of parallel plates of area A separated by distance d in vacuum.'
+  },
+  {
+    sub: 'Physics',
+    cat: 'Current Electricity',
+    title: 'Ohm\'s Law & Drift Velocity',
+    expr: 'V = I R, \\; v_d = \\frac{e E \\tau}{m}',
+    desc: 'V is voltage, I is current, R is resistance. v_d is drift velocity, \\tau is relaxation time.'
+  },
+  {
+    sub: 'Physics',
+    cat: 'Optics',
+    title: 'Mirror Formula & Lens Maker Formula',
+    expr: '\\frac{1}{f} = \\frac{1}{v} + \\frac{1}{u}, \\; \\frac{1}{f} = (\\mu - 1)\\left(\\frac{1}{R_1} - \\frac{1}{R_2}\\right)',
+    desc: 'f is focal length, u is object distance, v is image distance, \\mu is refractive index.'
+  },
+  {
+    sub: 'Physics',
+    cat: 'Modern Physics',
+    title: 'Einstein\'s Photoelectric Equation',
+    expr: 'K_{\\max} = h\\nu - \\Phi = h\\nu - h\\nu_0',
+    desc: 'K_max is maximum kinetic energy of photoelectrons, \\Phi is the metal work function.'
+  },
+  {
+    sub: 'Physics',
+    cat: 'Modern Physics',
+    title: 'De Broglie Wavelength',
+    expr: '\\lambda = \\frac{h}{p} = \\frac{h}{\\sqrt{2mK}}',
+    desc: 'Wavelength of matter waves, where p is momentum and K is kinetic energy.'
+  },
+  {
+    sub: 'Chemistry',
+    cat: 'Physical Chemistry',
+    title: 'Mole Concept & Molarity',
+    expr: 'Molarity (M) = \\frac{\\text{Moles of solute}}{\\text{Volume of solution (L)}}',
+    desc: 'Molarity measures solute concentration in solution.'
+  },
+  {
+    sub: 'Chemistry',
+    cat: 'Physical Chemistry',
+    title: 'Ideal Gas Law',
+    expr: 'P V = n R T',
+    desc: 'Pressure P, Volume V, number of moles n, gas constant R, absolute temperature T.'
+  },
+  {
+    sub: 'Chemistry',
+    cat: 'Physical Chemistry',
+    title: 'Raoult\'s Law (Vapour Pressure)',
+    expr: 'P_{\\text{total}} = P_A^0 X_A + P_B^0 X_B',
+    desc: 'Vapour pressure of solution containing volatile liquids.'
+  },
+  {
+    sub: 'Chemistry',
+    cat: 'Physical Chemistry',
+    title: 'Nernst Equation',
+    expr: 'E = E^0 - \\frac{0.0591}{n} \\log(Q) \\; \\text{ at } 298\\text{ K}',
+    desc: 'Relates cell potential E to reaction quotient Q.'
+  },
+  {
+    sub: 'Chemistry',
+    cat: 'Physical Chemistry',
+    title: 'First-Order Integrated Rate Law',
+    expr: 'k = \\frac{2.303}{t} \\log\\frac{[A]_0}{[A]_t}',
+    desc: 'k is rate constant, [A]_0 is initial concentration, [A]_t is concentration at time t.'
+  },
+  {
+    sub: 'Chemistry',
+    cat: 'Organic Chemistry',
+    title: 'Rosenmund Reduction',
+    expr: '\\text{R-COCl} + \\text{H}_2 \\xrightarrow{\\text{Pd-BaSO}_4} \\text{R-CHO} + \\text{HCl}',
+    desc: 'Catalytic hydrogenation of acyl chlorides to aldehydes.'
+  },
+  {
+    sub: 'Chemistry',
+    cat: 'Organic Chemistry',
+    title: 'Hoffmann Bromamide Degradation',
+    expr: '\\text{R-CONH}_2 + \\text{Br}_2 + 4\\text{KOH} \\rightarrow \\text{R-NH}_2 + \\text{K}_2\\text{CO}_3 + 2\\text{KBr} + 2\\text{H}_2\\text{O}',
+    desc: 'Conversion of primary amides to primary amines with loss of carbonyl carbon.'
+  }
+];
+
+function toggleFormulaDrawer() {
+  const drawer = document.getElementById('formula-drawer');
+  if (!drawer) return;
+  drawer.classList.toggle('active');
+  
+  if (drawer.classList.contains('active')) {
+    renderFormulas();
+  }
+}
+
+function renderFormulas(query = '') {
+  const container = document.getElementById('formula-drawer-body');
+  if (!container) return;
+  
+  const cleanQuery = query.trim().toLowerCase();
+  const filtered = FORMULAS.filter(f => {
+    return f.title.toLowerCase().includes(cleanQuery) || 
+           f.expr.toLowerCase().includes(cleanQuery) ||
+           f.cat.toLowerCase().includes(cleanQuery) ||
+           f.desc.toLowerCase().includes(cleanQuery);
+  });
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center; color:var(--text-muted); font-size:12px; padding:20px 0;">
+        🔍 No formulas match your query.
+      </div>
+    `;
+    return;
+  }
+  
+  const groups = {};
+  filtered.forEach(f => {
+    const key = `${f.sub} - ${f.cat}`;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(f);
+  });
+  
+  let html = '';
+  for (const grp in groups) {
+    html += `
+      <div style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-top:12px; display:block; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:4px;">
+        ${grp}
+      </div>
+    `;
+    groups[grp].forEach(f => {
+      html += `
+        <div class="formula-card" style="margin-top:8px;">
+          <div class="formula-title">${f.title}</div>
+          <div class="formula-expr" style="margin:8px 0; padding:10px; font-size:14px; overflow-x:auto;">$$${f.expr}$$</div>
+          <div style="font-size:11px; color:var(--text-muted); line-height:1.4; margin-bottom:8px;">${f.desc}</div>
+          <button class="btn btn-secondary" style="font-size:10px; padding:4px 8px;" onclick="copyFormulaToClipboard('${f.expr.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', this)">📋 Copy LaTeX</button>
+        </div>
+      `;
+    });
+  }
+  
+  container.innerHTML = html;
+  renderMath(container);
+}
+
+function copyFormulaToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const origText = btn.innerHTML;
+    btn.innerHTML = '✅ Copied!';
+    btn.style.color = 'var(--accent-success)';
+    btn.style.borderColor = 'rgba(16,185,129,0.3)';
+    setTimeout(() => {
+      btn.innerHTML = origText;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1200);
+  });
+}
+
+function filterFormulas() {
+  const query = document.getElementById('formula-search-input').value;
+  renderFormulas(query);
+}
+
+function renderWeeklyReport() {
+  const card = document.getElementById('weekly-report-card');
+  if (!card) return;
+  
+  const now = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(now.getDate() - 7);
+  
+  let phyHours = 0;
+  let cheHours = 0;
+  let bioHours = 0;
+  let mockCount = 0;
+  let mockSum = 0;
+  let totalMistakes = 0;
+  
+  trackerLogs.forEach(log => {
+    const logDate = new Date(log.date);
+    if (logDate >= sevenDaysAgo && logDate <= now) {
+      phyHours += (log.phyHours || 0);
+      cheHours += (log.cheHours || 0);
+      bioHours += (log.bioHours || 0);
+    }
+  });
+  const weeklyHours = phyHours + cheHours + bioHours;
+  
+  mockTests.forEach(test => {
+    const testDate = new Date(test.date);
+    if (testDate >= sevenDaysAgo && testDate <= now) {
+      mockCount++;
+      mockSum += test.total;
+      totalMistakes += (test.mistakes.concept || 0) + 
+                       (test.mistakes.calc || 0) + 
+                       (test.mistakes.read || 0) + 
+                       (test.mistakes.time || 0) + 
+                       (test.mistakes.omr || 0);
+    }
+  });
+  
+  const avgMock = mockCount > 0 ? Math.round(mockSum / mockCount) : 0;
+  
+  if (weeklyHours === 0 && mockCount === 0) {
+    card.style.display = 'block';
+    document.getElementById('weekly-report-metrics').innerHTML = `
+      <div style="grid-column:1/-1; text-align:center; color:var(--text-muted); font-size:12px; padding:15px 0;">
+        📅 No sessions or mock tests logged in the last 7 days.
+      </div>
+    `;
+    document.getElementById('weekly-report-critique').innerHTML = `
+      🤖 <strong>Counselor Tip:</strong> Start logging study hours or mock scores using the Daily Tracker form to activate your weekly diagnostic critiques!
+    `;
+    return;
+  }
+  
+  card.style.display = 'block';
+  
+  document.getElementById('weekly-report-metrics').innerHTML = `
+    <div class="stat-mini-card" style="background:rgba(255,255,255,0.01); padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); text-align:center;">
+      <div style="font-size:9px; color:var(--text-muted); text-transform:uppercase;">Study Hours</div>
+      <div style="font-size:16px; font-weight:800; color:var(--primary); margin-top:2px;">${weeklyHours.toFixed(1)}h</div>
+    </div>
+    <div class="stat-mini-card" style="background:rgba(255,255,255,0.01); padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); text-align:center;">
+      <div style="font-size:9px; color:var(--text-muted); text-transform:uppercase;">Mocks Logged</div>
+      <div style="font-size:16px; font-weight:800; color:#fbbf24; margin-top:2px;">${mockCount}</div>
+    </div>
+    <div class="stat-mini-card" style="background:rgba(255,255,255,0.01); padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); text-align:center;">
+      <div style="font-size:9px; color:var(--text-muted); text-transform:uppercase;">Avg Mock Score</div>
+      <div style="font-size:16px; font-weight:800; color:var(--accent-success); margin-top:2px;">${mockCount > 0 ? avgMock : '—'}</div>
+    </div>
+    <div class="stat-mini-card" style="background:rgba(255,255,255,0.01); padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); text-align:center;">
+      <div style="font-size:9px; color:var(--text-muted); text-transform:uppercase;">Negative Slips</div>
+      <div style="font-size:16px; font-weight:800; color:var(--tertiary); margin-top:2px;">${totalMistakes}</div>
+    </div>
+  `;
+  
+  let critiqueHtml = '🧬 <strong>Counselor Diagnoses:</strong> ';
+  if (weeklyHours >= 45) {
+    critiqueHtml += '🔥 <strong>Elite Volume Standing!</strong> Your logged volume is outstanding. You are performing in the top 1% preparation bracket. ';
+  } else if (weeklyHours >= 20) {
+    critiqueHtml += '⚡ <strong>Solid Consistency.</strong> Great job maintaining study momentum. Keep using the study sprint timers. ';
+  } else {
+    critiqueHtml += '⚠️ <strong>Low Workload Alert:</strong> Total study volume is under 20 hours. Try to aim for at least 3-4 hours of high-concentration reading daily. ';
+  }
+  
+  if (weeklyHours > 0) {
+    const phyPct = (phyHours / weeklyHours) * 100;
+    const chePct = (cheHours / weeklyHours) * 100;
+    const bioPct = (bioHours / weeklyHours) * 100;
+    
+    if (bioPct > 65) {
+      critiqueHtml += 'Biology represents over 65% of your weekly time. Increase Physics numerical drilling and Chemistry reactions practice to balance. ';
+    } else if (phyPct < 15 && weeklyHours > 10) {
+      critiqueHtml += 'Physics represents under 15% of your study hours. Make sure you don\'t neglect formula application sheets! ';
+    }
+  }
+  
+  if (mockCount > 0) {
+    if (avgMock >= 610) {
+      critiqueHtml += '<br>🟢 Your average mock score stands in the Govt MBBS Safe-Zone. Continue error book analysis to maintain accuracy.';
+    } else if (avgMock >= 550) {
+      critiqueHtml += '<br>🟡 You are borderline Govt eligibility. Focus heavily on identifying and fixing your top silly mistake category.';
+    } else {
+      critiqueHtml += '<br>🔴 Average is below 550. Prioritize building core clarity using NCERT exemplar questions before doing full-length mocks.';
+    }
+  }
+  
+  document.getElementById('weekly-report-critique').innerHTML = critiqueHtml;
+}
+
+let dailyQuizState = {
+  questions: [],
+  currentIndex: 0,
+  score: 0
+};
+
+function startDailyQuiz() {
+  const dayNum = getTodayDayNum();
+  const dayPlan = PLAN.find(item => item.day === dayNum);
+  const activeChaps = [dayPlan?.phyChap, dayPlan?.cheChap, dayPlan?.bioChap].filter(Boolean);
+  
+  let candidates = [];
+  activeChaps.forEach(ch => {
+    const clean = ch.trim();
+    if (PYQ_BANK[clean] && PYQ_BANK[clean].length > 0) {
+      PYQ_BANK[clean].forEach((q, idx) => {
+        candidates.push({ ...q, chapter: clean, index: idx });
+      });
+    }
+  });
+  
+  if (candidates.length === 0) {
+    for (const ch in PYQ_BANK) {
+      PYQ_BANK[ch].forEach((q, idx) => {
+        candidates.push({ ...q, chapter: ch, index: idx });
+      });
+    }
+  }
+  
+  candidates.sort(() => 0.5 - Math.random());
+  
+  dailyQuizState = {
+    questions: candidates.slice(0, 5),
+    currentIndex: 0,
+    score: 0
+  };
+  
+  document.getElementById('daily-quiz-setup-view').style.display = 'none';
+  document.getElementById('daily-quiz-results-view').style.display = 'none';
+  document.getElementById('daily-quiz-active-view').style.display = 'flex';
+  
+  renderDailyQuizQuestion();
+}
+
+function renderDailyQuizQuestion() {
+  const q = dailyQuizState.questions[dailyQuizState.currentIndex];
+  if (!q) return;
+  
+  document.getElementById('daily-quiz-progress').textContent = `Question ${dailyQuizState.currentIndex + 1} of 5`;
+  const pct = ((dailyQuizState.currentIndex + 1) / 5) * 100;
+  document.getElementById('daily-quiz-progress-bar').style.width = `${pct}%`;
+  document.getElementById('daily-quiz-timer').textContent = `🎯 Focus Chapter: ${q.chapter}`;
+  
+  const qContainer = document.getElementById('daily-quiz-question-container');
+  qContainer.innerHTML = q.q;
+  
+  const optsContainer = document.getElementById('daily-quiz-options-container');
+  let optsHtml = '';
+  q.opts.forEach((opt, idx) => {
+    optsHtml += `
+      <button class="btn btn-secondary" style="width:100%; text-align:left; padding:10px 14px; font-size:12px; margin-bottom:4px;" onclick="selectDailyQuizOption(${idx})">
+        <strong>${String.fromCharCode(65 + idx)})</strong> ${opt}
+      </button>
+    `;
+  });
+  optsContainer.innerHTML = optsHtml;
+  
+  document.getElementById('daily-quiz-explanation-container').style.display = 'none';
+  document.getElementById('daily-quiz-next-btn').style.display = 'none';
+  
+  renderMath(qContainer);
+  renderMath(optsContainer);
+}
+
+function selectDailyQuizOption(selectedIdx) {
+  const q = dailyQuizState.questions[dailyQuizState.currentIndex];
+  if (!q) return;
+  
+  const optsContainer = document.getElementById('daily-quiz-options-container');
+  const buttons = optsContainer.querySelectorAll('button');
+  
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === q.ans) {
+      btn.style.background = 'rgba(16, 185, 129, 0.12)';
+      btn.style.borderColor = '#10b981';
+      btn.style.color = '#10b981';
+      btn.style.fontWeight = '700';
+    } else if (idx === selectedIdx) {
+      btn.style.background = 'rgba(239, 68, 68, 0.12)';
+      btn.style.borderColor = '#ef4444';
+      btn.style.color = '#ef4444';
+    }
+  });
+  
+  if (selectedIdx === q.ans) {
+    dailyQuizState.score++;
+  }
+  
+  const expContainer = document.getElementById('daily-quiz-explanation-container');
+  expContainer.style.display = 'block';
+  expContainer.innerHTML = `
+    <div style="font-weight:700; color: ${selectedIdx === q.ans ? '#10b981' : '#ef4444'}; margin-bottom:6px; font-size:12px;">
+      ${selectedIdx === q.ans ? '✅ Correct Answer!' : '❌ Incorrect choice.'} Correct Option: ${String.fromCharCode(65 + q.ans)}
+    </div>
+    <p style="margin:0; font-size:11px; opacity:0.85; line-height:1.4;">${q.exp}</p>
+  `;
+  renderMath(expContainer);
+  
+  document.getElementById('daily-quiz-next-btn').style.display = 'inline-block';
+}
+
+function nextDailyQuizQuestion() {
+  dailyQuizState.currentIndex++;
+  if (dailyQuizState.currentIndex < 5) {
+    renderDailyQuizQuestion();
+  } else {
+    document.getElementById('daily-quiz-active-view').style.display = 'none';
+    document.getElementById('daily-quiz-results-view').style.display = 'flex';
+    
+    const emoji = document.getElementById('daily-quiz-result-emoji');
+    const scoreLabel = document.getElementById('daily-quiz-result-score');
+    const descLabel = document.getElementById('daily-quiz-result-text');
+    
+    scoreLabel.textContent = `Quiz Complete! Score: ${dailyQuizState.score} / 5`;
+    if (dailyQuizState.score === 5) {
+      emoji.textContent = '🏆';
+      descLabel.textContent = 'Spectacular score! Your active recall and conceptual retention are top-tier. Keep drilling revision passes!';
+    } else if (dailyQuizState.score >= 3) {
+      emoji.textContent = '🎉';
+      descLabel.textContent = 'Great job! You have solid retention. Review the solutions for any missed questions.';
+    } else {
+      emoji.textContent = '📚';
+      descLabel.textContent = 'Need more reading! Spend some time reviewing formula sheets and add any incorrect questions to your Error Book.';
+    }
+  }
+}
+
+function resetDailyQuiz() {
+  const activeView = document.getElementById('daily-quiz-active-view');
+  if (activeView) activeView.style.display = 'none';
+  const resView = document.getElementById('daily-quiz-results-view');
+  if (resView) resView.style.display = 'none';
+  const setupView = document.getElementById('daily-quiz-setup-view');
+  if (setupView) setupView.style.display = 'flex';
+  
+  const dayNum = getTodayDayNum();
+  const dayPlan = PLAN.find(item => item.day === dayNum);
+  const activeChaps = [dayPlan?.phyChap, dayPlan?.cheChap, dayPlan?.bioChap].filter(Boolean);
+  const tag = document.getElementById('daily-quiz-chapter-tag');
+  const startLbl = document.getElementById('daily-quiz-start-label');
+  
+  if (tag && startLbl) {
+    if (activeChaps.length > 0) {
+      tag.textContent = activeChaps[0];
+      startLbl.textContent = `Test your retention for: ${activeChaps.join(', ')}`;
+    } else {
+      tag.textContent = 'General Prep';
+      startLbl.textContent = 'Ready to test your memory with a random 5-MCQ mix?';
+    }
+  }
+}
+
+window.toggleFormulaDrawer = toggleFormulaDrawer;
+window.filterFormulas = filterFormulas;
+window.renderFormulas = renderFormulas;
+window.copyFormulaToClipboard = copyFormulaToClipboard;
+window.renderWeeklyReport = renderWeeklyReport;
+window.startDailyQuiz = startDailyQuiz;
+window.renderDailyQuizQuestion = renderDailyQuizQuestion;
+window.selectDailyQuizOption = selectDailyQuizOption;
+window.nextDailyQuizQuestion = nextDailyQuizQuestion;
+window.resetDailyQuiz = resetDailyQuiz;

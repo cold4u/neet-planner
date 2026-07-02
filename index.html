@@ -236,6 +236,61 @@
       <div id="overview-counselor-alert" class="glass-card" style="display:none; background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(12, 18, 34, 0.85)); border-left: 5px solid var(--tertiary); padding: 16px; margin-bottom: 24px;">
       </div>
 
+      <!-- Weekly Counselor Report Card -->
+      <div id="weekly-report-card" class="glass-card" style="margin-bottom: 24px; display: none; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(12, 18, 34, 0.85));">
+        <h2 style="margin-top:0; font-size:16px; display:flex; align-items:center; gap:8px;">📊 Weekly Performance Report & Critique</h2>
+        <div id="weekly-report-metrics" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:12px; margin-bottom:12px;">
+          <!-- Dynamic report metrics from JS -->
+        </div>
+        <div id="weekly-report-critique" style="font-size:12px; color:var(--text-muted); line-height:1.5; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.05);">
+          <!-- Dynamic critique text from JS -->
+        </div>
+      </div>
+
+      <!-- Daily 5-Question Quiz Challenge -->
+      <div id="daily-challenge-card" class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.03), rgba(12, 18, 34, 0.85));">
+        <h2 style="margin-top:0; font-size:16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+          <span style="display:flex; align-items:center; gap:8px;">🎯 Daily Mini-Quiz Challenge</span>
+          <span class="type-badge tb-study" id="daily-quiz-chapter-tag" style="font-size:10px; font-weight:700;">General Prep</span>
+        </h2>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.4;">A 5-question active recall drill based on your scheduled chapter of the day to solidify your concepts.</p>
+        
+        <div id="daily-quiz-setup-view" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:20px 0; text-align:center;">
+          <div style="font-size:32px;">🧠</div>
+          <div style="font-size:13px; font-weight:600;" id="daily-quiz-start-label">Ready to test your memory for today's chapters?</div>
+          <button class="btn btn-primary" onclick="startDailyQuiz()" style="padding:8px 24px; font-size:12px;">Start Quiz (5 MCQs)</button>
+        </div>
+        
+        <div id="daily-quiz-active-view" style="display:none; flex-direction:column; gap:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary);">
+            <span id="daily-quiz-progress">Question 1 of 5</span>
+            <span id="daily-quiz-timer" style="font-weight:700;">⏱️ Question Drill</span>
+          </div>
+          <div style="width:100%; height:4px; background:rgba(255,255,255,0.05); border-radius:2px; overflow:hidden;">
+            <div id="daily-quiz-progress-bar" style="width:20%; height:100%; background:var(--primary); transition: width 0.3s ease;"></div>
+          </div>
+          <div id="daily-quiz-question-container" style="font-size:13px; font-weight:600; line-height:1.5; margin:8px 0; padding:10px; background:rgba(255,255,255,0.01); border-radius:6px; border:1px solid rgba(255,255,255,0.02); word-break:break-word;">
+            <!-- Question will be injected here -->
+          </div>
+          <div id="daily-quiz-options-container" style="display:flex; flex-direction:column; gap:8px;">
+            <!-- Options will be injected here -->
+          </div>
+          <div id="daily-quiz-explanation-container" style="display:none; margin-top:10px; padding:12px; background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.15); border-radius:8px; font-size:12px; line-height:1.5;">
+            <!-- Explanation will be injected here -->
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+            <button class="btn btn-secondary" id="daily-quiz-next-btn" onclick="nextDailyQuizQuestion()" style="display:none; padding:6px 16px; font-size:11px;">Next Question ➡️</button>
+          </div>
+        </div>
+        
+        <div id="daily-quiz-results-view" style="display:none; flex-direction:column; align-items:center; gap:12px; padding:20px 0; text-align:center;">
+          <div style="font-size:42px;" id="daily-quiz-result-emoji">🎉</div>
+          <div style="font-size:15px; font-weight:700;" id="daily-quiz-result-score">Quiz Complete! Score: 4/5</div>
+          <div style="font-size:12px; color:var(--text-muted); max-width:280px;" id="daily-quiz-result-text">Fantastic job! Active recall is the single most efficient way to seal information into long-term storage.</div>
+          <button class="btn btn-secondary" onclick="resetDailyQuiz()" style="padding:6px 16px; font-size:11px; margin-top:8px;">Retake Quiz 🔄</button>
+        </div>
+      </div>
+
       <div class="glass-card">
         <h2 style="margin-top:0;">Welcome to NEET 309-Day Planner</h2>
         <p style="line-height:1.6; color:#94a3b8;">
@@ -1529,6 +1584,24 @@
       <button class="drawer-item" data-tab="flashcards" onclick="navigateTab('flashcards')">🎴 Flashcards</button>
       <button class="drawer-item" data-tab="settings" onclick="navigateTab('settings')">⚙️ Settings</button>
     </nav>
+  </aside>
+
+  <!-- Floating Formula Drawer Trigger Button -->
+  <button class="floating-formula-btn" onclick="toggleFormulaDrawer()">📖 Formulas</button>
+
+  <!-- Slide-out NCERT Formula Drawer -->
+  <aside id="formula-drawer" class="formula-drawer">
+    <div class="formula-drawer-header">
+      <h2 style="margin:0; font-size:16px;">📖 NCERT Formula Book</h2>
+      <button class="close-btn" onclick="toggleFormulaDrawer()" style="position:static; width:24px; height:24px; font-size:16px;">&times;</button>
+    </div>
+    <p style="font-size:11px; color:var(--text-muted); margin:0 0 12px 0;">Quick reference for high-yield Physics & Chemistry formulas.</p>
+    
+    <input type="text" id="formula-search-input" placeholder="🔍 Search formulas..." onkeyup="filterFormulas()" style="width:100%; padding:8px 12px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-body); color:var(--text-color); margin-bottom:14px; font-size:12px; box-sizing:border-box;">
+    
+    <div class="formula-drawer-body" id="formula-drawer-body">
+      <!-- Dynamic formulas loaded from JS -->
+    </div>
   </aside>
 
   <script defer src="app.js?v=3.0.8"></script>
