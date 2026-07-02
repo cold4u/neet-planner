@@ -4013,3 +4013,20 @@ tag in <head>
     right: -100vw;
   }
 }
+
+/* Syllabus Visual Coverage heatmap cell styling */
+.syllabus-cell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.syllabus-cell:hover {
+  transform: scale(1.25);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.3);
+}

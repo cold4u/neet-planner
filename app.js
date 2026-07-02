@@ -446,21 +446,40 @@ function safeSetSessionStorage(key, value) {
         { q: "Formula for drift velocity of electrons (v_d)?", a: "v_d = I / (n * e * A)", cat: "Physics" },
         { q: "What is the formula for De Broglie Wavelength?", a: "λ = h / p = h / (m * v)", cat: "Physics" },
         { q: "What is the value of permittivity of free space (ε_0)?", a: "8.854 × 10^-12 F/m (or C^2 N^-1 m^-2)", cat: "Physics" },
-        { q: "Formula for focal length of a lens in medium (Lens Maker's Formula)?", a: "1/f = (μ_rel - 1) * (1/R_1 - 1/R_2)", cat: "Physics" }
+        { q: "Formula for focal length of a lens in medium (Lens Maker's Formula)?", a: "1/f = (μ_rel - 1) * (1/R_1 - 1/R_2)", cat: "Physics" },
+        { q: "What is the value of Stefan-Boltzmann constant (σ)?", a: "5.67 × 10^-8 W m^-2 K^-4", cat: "Physics" },
+        { q: "What is Kepler's Third Law formula?", a: "T^2 ∝ r^3 (Square of orbital period is proportional to cube of semi-major axis)", cat: "Physics" },
+        { q: "Formula for escape velocity from a planet?", a: "v_e = √(2GM/R) = √(2gR)", cat: "Physics" },
+        { q: "Formula for Q-factor in resonant LCR circuit?", a: "Q = (1/R) * √(L/C)", cat: "Physics" },
+        { q: "Formula for magnetic field at the center of circular loop?", a: "B = μ_0 * I / (2R)", cat: "Physics" },
+        { q: "What is the total mechanical energy of an orbiting satellite?", a: "E = -GMm / (2r) = -K.E.", cat: "Physics" },
+        { q: "Formula for acceleration due to gravity at depth (d)?", a: "g_d = g * (1 - d/R)", cat: "Physics" }
       ],
       chemistry: [
         { q: "Reagent used in Rosenmund Reduction?", a: "H_2 / Pd-BaSO_4 (Palladium on barium sulfate poisoned with quinoline)", cat: "Chemistry" },
         { q: "What organic reaction converts phenol to salicylaldehyde?", a: "Reimer-Tiemann Reaction (using CHCl_3 + aqueous NaOH)", cat: "Chemistry" },
         { q: "Reagent used in Tollens' Test?", a: "Ammoniacal Silver Nitrate solution [Ag(NH_3)_2]+", cat: "Chemistry" },
         { q: "What reaction is used to prepare primary amines from primary amides?", a: "Hoffmann Bromamide Degradation (using Br_2 + NaOH/KOH)", cat: "Chemistry" },
-        { q: "What catalyst is used in Ziegler-Natta polymerization?", a: "TiCl_4 + Al(C_2H_5)_3 (Titanium tetrachloride + Triethylaluminium)", cat: "Chemistry" }
+        { q: "What catalyst is used in Ziegler-Natta polymerization?", a: "TiCl_4 + Al(C_2H_5)_3 (Titanium tetrachloride + Triethylaluminium)", cat: "Chemistry" },
+        { q: "What reagent is used in Stephen Reaction?", a: "SnCl_2 + HCl followed by hydrolysis (reduces nitriles to aldehydes)", cat: "Chemistry" },
+        { q: "What is the hybridisation and shape of XeF_4?", a: "sp^3d^2, Square Planar", cat: "Chemistry" },
+        { q: "What catalyst is used in the Contact Process for H_2SO_4?", a: "V_2O_5 (Vanadium pentoxide)", cat: "Chemistry" },
+        { q: "Formula for Spin-only Magnetic Moment (μ)?", a: "μ = √(n(n+2)) B.M. (where n = number of unpaired electrons)", cat: "Chemistry" },
+        { q: "What type of defect decreases the density of a ionic crystal?", a: "Schottky Defect", cat: "Chemistry" },
+        { q: "Example of a biodegradable polymer?", a: "PHBV (Poly β-hydroxybutyrate-co-β-hydroxyvalerate) or Nylon-2-Nylon-6", cat: "Chemistry" }
       ],
       biology: [
         { q: "Example of a Haplontic Life Cycle?", a: "Volvox, Spirogyra, and some species of Chlamydomonas", cat: "Biology" },
         { q: "Name the non-membranous organelle found in animal cells that helps in cell division.", a: "Centrosome (containing Centrioles)", cat: "Biology" },
         { q: "Example of a hormone-releasing IUD?", a: "Progestasert and LNG-20", cat: "Biology" },
         { q: "Which NCERT example represents an egg-laying mammal (Monotreme)?", a: "Ornithorhynchus (Platypus)", cat: "Biology" },
-        { q: "What is the key respiratory pigment in earthworms?", a: "Hemoglobin dissolved in plasma (Earthworms have closed circulatory system)", cat: "Biology" }
+        { q: "What is the key respiratory pigment in earthworms?", a: "Hemoglobin dissolved in plasma (Earthworms have closed circulatory system)", cat: "Biology" },
+        { q: "Which plant hormone promotes apical dominance?", a: "Auxin (antagonized by Cytokinins)", cat: "Biology" },
+        { q: "First clinical gene therapy (1990) was given for which deficiency?", a: "ADA (Adenosine Deaminase) deficiency", cat: "Biology" },
+        { q: "Which fungal class is known as 'Fungi Imperfecti'?", a: "Deuteromycetes (lack of sexual reproduction stage)", cat: "Biology" },
+        { q: "Name the cell junction that prevents leakage of substances across tissues.", a: "Tight Junctions", cat: "Biology" },
+        { q: "Which NCERT organism shows Metagenesis (alternation of generation)?", a: "Obelia (coelenterate)", cat: "Biology" },
+        { q: "Standard gaseous plant hormone?", a: "Ethylene (promotes fruit ripening)", cat: "Biology" }
       ]
     };
 
@@ -1000,6 +1019,9 @@ function safeSetSessionStorage(key, value) {
         showSched('p1', document.querySelector('.sched-btn'));
       } else if (tabId === 'chapters') {
         renderChapters();
+        if (typeof renderSyllabusCoverageHeatmap === 'function') {
+          renderSyllabusCoverageHeatmap();
+        }
       } else if (tabId === 'papers') {
         renderPapersPicker();
       } else if (tabId === 'tests') {
@@ -1485,6 +1507,9 @@ function safeSetSessionStorage(key, value) {
       safeSetLocalStorage('neet_v3_chapter_progress', JSON.stringify(chapterProgress));
       renderChapters();
       updateOverviewStats();
+      if (typeof renderSyllabusCoverageHeatmap === 'function') {
+        renderSyllabusCoverageHeatmap();
+      }
     }
     
     function getProceduralDiagram(chName, qText, qIdx) {
@@ -3778,6 +3803,11 @@ function initOnLoad() {
   // Render initial components and data tables safely
   try { renderPlan(); } catch(e) { console.error("Error in renderPlan:", e); }
   try { renderChapters(); } catch(e) { console.error("Error in renderChapters:", e); }
+  try {
+    if (typeof renderSyllabusCoverageHeatmap === 'function') {
+      renderSyllabusCoverageHeatmap();
+    }
+  } catch(e) { console.error("Error in renderSyllabusCoverageHeatmap:", e); }
   try { renderTestList(); } catch(e) { console.error("Error in renderTestList:", e); }
   try { renderTrackerTable(); } catch(e) { console.error("Error in renderTrackerTable:", e); }
   try { renderAnalytics(); } catch(e) { console.error("Error in renderAnalytics:", e); }
@@ -5745,3 +5775,73 @@ window.renderDailyQuizQuestion = renderDailyQuizQuestion;
 window.selectDailyQuizOption = selectDailyQuizOption;
 window.nextDailyQuizQuestion = nextDailyQuizQuestion;
 window.resetDailyQuiz = resetDailyQuiz;
+
+// 12. SYLLABUS VISUAL COVERAGE HEATMAP
+
+function renderSyllabusCoverageHeatmap() {
+  const grid = document.getElementById('syllabus-heatmap-grid');
+  if (!grid) return;
+  
+  const allChaps = [];
+  P1_PHY.forEach(c => allChaps.push({ ...c, sub: 'Physics' }));
+  P2_PHY.forEach(c => allChaps.push({ ...c, sub: 'Physics' }));
+  P1_CHE.forEach(c => allChaps.push({ ...c, sub: 'Chemistry' }));
+  P2_CHE.forEach(c => allChaps.push({ ...c, sub: 'Chemistry' }));
+  P1_BIO.forEach(c => allChaps.push({ ...c, sub: 'Biology' }));
+  P2_BIO.forEach(c => allChaps.push({ ...c, sub: 'Biology' }));
+  
+  let html = '';
+  allChaps.forEach(c => {
+    const chName = c.ch.trim();
+    const prog = chapterProgress[chName] || { understand: false, practice: false, revise: false };
+    
+    let score = 0;
+    if (prog.understand) score++;
+    if (prog.practice) score++;
+    if (prog.revise) score++;
+    
+    let color = 'rgba(255,255,255,0.04)';
+    if (c.sub === 'Physics') {
+      if (score === 1) color = 'rgba(96, 165, 250, 0.25)';
+      else if (score === 2) color = 'rgba(96, 165, 250, 0.6)';
+      else if (score === 3) color = 'var(--phy)';
+    } else if (c.sub === 'Chemistry') {
+      if (score === 1) color = 'rgba(52, 211, 153, 0.25)';
+      else if (score === 2) color = 'rgba(52, 211, 153, 0.6)';
+      else if (score === 3) color = 'var(--che)';
+    } else if (c.sub === 'Biology') {
+      if (score === 1) color = 'rgba(248, 113, 113, 0.25)';
+      else if (score === 2) color = 'rgba(248, 113, 113, 0.6)';
+      else if (score === 3) color = 'var(--bio)';
+    }
+    
+    let statusText = 'Not started';
+    if (score === 1) statusText = 'Understood';
+    else if (score === 2) statusText = 'Understood & Practiced';
+    else if (score === 3) statusText = 'Fully Revised';
+    
+    const tooltipText = `${c.sub}: ${chName} (${statusText})`;
+    
+    html += `<div class="syllabus-cell" style="background: ${color};" 
+                  onmouseenter="showHeatmapTooltip(event, '${tooltipText.replace(/'/g, "\\'")}')" 
+                  onmouseleave="hideHeatmapTooltip()"
+                  onclick="focusSyllabusChapter('${chName.replace(/'/g, "\\'")}')"></div>`;
+  });
+  
+  grid.innerHTML = html;
+}
+
+function focusSyllabusChapter(chName) {
+  const searchInput = document.getElementById('chap-srch');
+  if (searchInput) {
+    searchInput.value = chName;
+    renderChapters();
+    const filterCard = document.querySelector('.chapters-filter-container');
+    if (filterCard) {
+      filterCard.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+}
+
+window.renderSyllabusCoverageHeatmap = renderSyllabusCoverageHeatmap;
+window.focusSyllabusChapter = focusSyllabusChapter;

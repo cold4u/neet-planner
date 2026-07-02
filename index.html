@@ -435,6 +435,17 @@
         <p class="page-desc">Comprehensive list of all 96 NEET chapters, study methods, weightage, and PYQ access.</p>
       </div>
 
+      <!-- Syllabus Visual Coverage Heatmap Card -->
+      <div id="syllabus-heatmap-card" class="glass-card" style="margin-bottom: 24px;">
+        <h2 style="margin-top:0; font-size:16px; display:flex; align-items:center; gap:8px;">📊 NCERT Syllabus Visual Coverage (80 Chapters)</h2>
+        <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+          Bird's-eye view of your syllabus progress. Cells light up as you check off tasks. Hover over cells to see names. Click any cell to search and jump to details!
+        </p>
+        <div id="syllabus-heatmap-grid" class="syllabus-heatmap-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(18px, 1fr)); gap: 6px; margin-top: 14px;">
+          <!-- Rendered dynamically via JS -->
+        </div>
+      </div>
+
       <div class="glass-card chapters-filter-container">
         <div class="chap-filter-select-wrapper">
           <select id="chap-subf" class="form-control chap-filter-control" onchange="renderChapters()">
