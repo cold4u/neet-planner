@@ -3800,6 +3800,18 @@ function applyTheme(themeName) {
   if (btn) {
     btn.textContent = (themeName === 'light') ? '🌙' : '☀️';
   }
+  
+  updateThemeButtonActiveStates(themeName);
+}
+
+function updateThemeButtonActiveStates(themeName) {
+  document.querySelectorAll('.theme-select-btn').forEach(btn => {
+    if (btn.getAttribute('data-theme') === themeName) {
+      btn.classList.add('active-theme');
+    } else {
+      btn.classList.remove('active-theme');
+    }
+  });
 }
 
 function loadTheme() {
@@ -5907,6 +5919,7 @@ function applyAccentTheme(key) {
     document.body.style.removeProperty('--primary-glow-thick');
     safeSetLocalStorage('neet_v3_accent_theme', 'theme');
     showToast(`🎨 Reset to Theme Default`);
+    updateAccentButtonActiveStates('theme');
     return;
   }
   
@@ -5919,10 +5932,13 @@ function applyAccentTheme(key) {
   document.body.style.setProperty('--primary-glow-thick', preset.glowThick);
   safeSetLocalStorage('neet_v3_accent_theme', key);
   showToast(`🎨 Accent changed to: ${preset.name}`);
+  updateAccentButtonActiveStates(key);
 }
 
 function loadAccentTheme() {
   const savedKey = safeGetLocalStorage('neet_v3_accent_theme') || 'default';
+  updateAccentButtonActiveStates(savedKey);
+  
   if (savedKey === 'theme') {
     document.body.style.removeProperty('--primary');
     document.body.style.removeProperty('--primary-hover');
@@ -5938,6 +5954,16 @@ function loadAccentTheme() {
     document.body.style.setProperty('--primary-glow', preset.glow);
     document.body.style.setProperty('--primary-glow-thick', preset.glowThick);
   }
+}
+
+function updateAccentButtonActiveStates(key) {
+  document.querySelectorAll('.accent-select-btn').forEach(btn => {
+    if (btn.getAttribute('data-accent') === key) {
+      btn.classList.add('active-accent');
+    } else {
+      btn.classList.remove('active-accent');
+    }
+  });
 }
 
 window.applyAccentTheme = applyAccentTheme;

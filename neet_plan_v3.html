@@ -4077,6 +4077,14 @@ tag in <head>
   border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Custom Curated Themes & Accents Active Highlights */
+.theme-select-btn.active-theme, 
+.accent-select-btn.active-accent {
+  background: var(--bg-surface-hover) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 1.5px var(--primary) !important;
+}
+
 </style>
   <!-- KaTeX for beautiful math equation rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -5182,13 +5190,13 @@ tag in <head>
         <h2>🎨 Custom Curated Themes</h2>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Choose a color palette that suits your focus space.</p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-          <button class="btn btn-secondary" onclick="applyTheme('default-dark')" style="border-left: 4px solid #fbbf24; text-align:left; padding-left:14px;">✨ Obsidian Amber (Dark)</button>
-          <button class="btn btn-secondary" onclick="applyTheme('light')" style="border-left: 4px solid #d97706; text-align:left; padding-left:14px; background:#ffffff; color:#0f172a;">☀️ Amber Classic (Light)</button>
-          <button class="btn btn-secondary" onclick="applyTheme('midnight-cyber')" style="border-left: 4px solid #00f2fe; text-align:left; padding-left:14px;">🌌 Midnight Cyber</button>
-          <button class="btn btn-secondary" onclick="applyTheme('forest-mint')" style="border-left: 4px solid #00d4aa; text-align:left; padding-left:14px;">🌿 Forest Mint</button>
-          <button class="btn btn-secondary" onclick="applyTheme('deep-cosmos')" style="border-left: 4px solid #ff9f1c; text-align:left; padding-left:14px;">🚀 Deep Cosmos</button>
-          <button class="btn btn-secondary" onclick="applyTheme('github-dark')" style="border-left: 4px solid #58a6ff; text-align:left; padding-left:14px;">💻 GitHub Dark (Dev)</button>
-          <button class="btn btn-secondary" onclick="applyTheme('matrix-terminal')" style="border-left: 4px solid #00ff41; text-align:left; padding-left:14px;">📟 Matrix Terminal</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="default-dark" onclick="applyTheme('default-dark')" style="border-left: 4px solid #fbbf24; text-align:left; padding-left:14px;">✨ Obsidian Amber (Dark)</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="light" onclick="applyTheme('light')" style="border-left: 4px solid #d97706; text-align:left; padding-left:14px; background:#ffffff; color:#0f172a;">☀️ Amber Classic (Light)</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="midnight-cyber" onclick="applyTheme('midnight-cyber')" style="border-left: 4px solid #00f2fe; text-align:left; padding-left:14px;">🌌 Midnight Cyber</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="forest-mint" onclick="applyTheme('forest-mint')" style="border-left: 4px solid #00d4aa; text-align:left; padding-left:14px;">🌿 Forest Mint</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="deep-cosmos" onclick="applyTheme('deep-cosmos')" style="border-left: 4px solid #ff9f1c; text-align:left; padding-left:14px;">🚀 Deep Cosmos</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="github-dark" onclick="applyTheme('github-dark')" style="border-left: 4px solid #58a6ff; text-align:left; padding-left:14px;">💻 GitHub Dark (Dev)</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="matrix-terminal" onclick="applyTheme('matrix-terminal')" style="border-left: 4px solid #00ff41; text-align:left; padding-left:14px;">📟 Matrix Terminal</button>
         </div>
       </div>
 
@@ -5197,12 +5205,12 @@ tag in <head>
         <h2>🎨 Custom Accent Colors</h2>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Override the planner's primary accent color across all themes.</p>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap:10px;">
-          <button class="btn btn-secondary" onclick="applyAccentTheme('default')" style="border-left: 4px solid #00d4aa; text-align:left; padding-left:12px;">Teal Surge</button>
-          <button class="btn btn-secondary" onclick="applyAccentTheme('aiims')" style="border-left: 4px solid #378ADD; text-align:left; padding-left:12px;">Astra Blue</button>
-          <button class="btn btn-secondary" onclick="applyAccentTheme('rosegold')" style="border-left: 4px solid #f43f5e; text-align:left; padding-left:12px;">Rose Gold</button>
-          <button class="btn btn-secondary" onclick="applyAccentTheme('cyberpurple')" style="border-left: 4px solid #a855f7; text-align:left; padding-left:12px;">Cyber Purple</button>
-          <button class="btn btn-secondary" onclick="applyAccentTheme('crimson')" style="border-left: 4px solid #ef4444; text-align:left; padding-left:12px;">Crimson Focus</button>
-          <button class="btn btn-secondary" onclick="applyAccentTheme('theme')" style="border-left: 4px solid #64748b; text-align:left; padding-left:12px;">Theme Default</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="default" onclick="applyAccentTheme('default')" style="border-left: 4px solid #00d4aa; text-align:left; padding-left:12px;">Teal Surge</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="aiims" onclick="applyAccentTheme('aiims')" style="border-left: 4px solid #378ADD; text-align:left; padding-left:12px;">Astra Blue</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="rosegold" onclick="applyAccentTheme('rosegold')" style="border-left: 4px solid #f43f5e; text-align:left; padding-left:12px;">Rose Gold</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="cyberpurple" onclick="applyAccentTheme('cyberpurple')" style="border-left: 4px solid #a855f7; text-align:left; padding-left:12px;">Cyber Purple</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="crimson" onclick="applyAccentTheme('crimson')" style="border-left: 4px solid #ef4444; text-align:left; padding-left:12px;">Crimson Focus</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="theme" onclick="applyAccentTheme('theme')" style="border-left: 4px solid #64748b; text-align:left; padding-left:12px;">Theme Default</button>
         </div>
       </div>
 
@@ -9495,6 +9503,18 @@ function applyTheme(themeName) {
   if (btn) {
     btn.textContent = (themeName === 'light') ? '🌙' : '☀️';
   }
+  
+  updateThemeButtonActiveStates(themeName);
+}
+
+function updateThemeButtonActiveStates(themeName) {
+  document.querySelectorAll('.theme-select-btn').forEach(btn => {
+    if (btn.getAttribute('data-theme') === themeName) {
+      btn.classList.add('active-theme');
+    } else {
+      btn.classList.remove('active-theme');
+    }
+  });
 }
 
 function loadTheme() {
@@ -11620,6 +11640,7 @@ function applyAccentTheme(key) {
     document.body.style.removeProperty('--primary-glow-thick');
     safeSetLocalStorage('neet_v3_accent_theme', 'theme');
     showToast(`🎨 Reset to Theme Default`);
+    updateAccentButtonActiveStates('theme');
     return;
   }
   
@@ -11632,10 +11653,13 @@ function applyAccentTheme(key) {
   document.body.style.setProperty('--primary-glow-thick', preset.glowThick);
   safeSetLocalStorage('neet_v3_accent_theme', key);
   showToast(`🎨 Accent changed to: ${preset.name}`);
+  updateAccentButtonActiveStates(key);
 }
 
 function loadAccentTheme() {
   const savedKey = safeGetLocalStorage('neet_v3_accent_theme') || 'default';
+  updateAccentButtonActiveStates(savedKey);
+  
   if (savedKey === 'theme') {
     document.body.style.removeProperty('--primary');
     document.body.style.removeProperty('--primary-hover');
@@ -11651,6 +11675,16 @@ function loadAccentTheme() {
     document.body.style.setProperty('--primary-glow', preset.glow);
     document.body.style.setProperty('--primary-glow-thick', preset.glowThick);
   }
+}
+
+function updateAccentButtonActiveStates(key) {
+  document.querySelectorAll('.accent-select-btn').forEach(btn => {
+    if (btn.getAttribute('data-accent') === key) {
+      btn.classList.add('active-accent');
+    } else {
+      btn.classList.remove('active-accent');
+    }
+  });
 }
 
 window.applyAccentTheme = applyAccentTheme;

@@ -4064,3 +4064,11 @@ tag in <head>
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   border-color: rgba(255, 255, 255, 0.3);
 }
+
+/* Custom Curated Themes & Accents Active Highlights */
+.theme-select-btn.active-theme, 
+.accent-select-btn.active-accent {
+  background: var(--bg-surface-hover) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 1.5px var(--primary) !important;
+}
