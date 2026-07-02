@@ -4017,14 +4017,6 @@ function saveApiKey() {
   statusEl.style.display = 'block';
   
   if (key) {
-    if (!key.startsWith('AIzaSy')) {
-      statusEl.style.background = 'rgba(255, 107, 107, 0.1)';
-      statusEl.style.color = 'var(--tertiary)';
-      statusEl.style.border = '1px solid var(--tertiary)';
-      statusEl.textContent = '⚠️ Invalid API Key format. It should start with "AIzaSy".';
-      return;
-    }
-    
     safeSetLocalStorage('gemini_api_key', key);
     statusEl.style.background = 'rgba(0, 212, 170, 0.1)';
     statusEl.style.color = 'var(--primary)';
