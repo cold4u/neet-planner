@@ -1823,6 +1823,17 @@ function safeSetSessionStorage(key, value) {
           <div class="pyq-explanation" id="exp-${qIdx}" style="display:none;">
             <div class="exp-title">Explanation:</div>
             <div class="exp-text">${q.exp}</div>
+            
+            <div style="display:flex; gap:8px; margin-top:12px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px; flex-wrap:wrap;">
+              <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px; display:flex; align-items:center; gap:4px; border-color:var(--tertiary); color:var(--tertiary);" onclick="addPyqToErrorBook(currentChForPyq, ${qIdx})">
+                <span>📕</span> Add to Error Book
+              </button>
+              <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px; display:flex; align-items:center; gap:4px; border-color:var(--primary); color:var(--primary);" onclick="askAiAboutPyq(currentChForPyq, ${qIdx})">
+                <span>🤖</span> Explain with AI
+              </button>
+            </div>
+            <div id="ai-response-${qIdx}" style="margin-top:10px; padding:12px; border-radius:6px; background:rgba(0, 212, 170, 0.05); border:1px solid rgba(0, 212, 170, 0.1); font-size:12.5px; line-height:1.5; color:var(--text-secondary); display:none; white-space:pre-wrap; max-height:220px; overflow-y:auto; padding-right:8px;">
+            </div>
           </div>
         </div>
         `;
@@ -4577,3 +4588,107 @@ window.saveMockTest = saveMockTest;
 window.deleteMockTest = deleteMockTest;
 window.renderMockTestsDashboard = renderMockTestsDashboard;
 window.setDefaultMockDate = setDefaultMockDate;
+
+// 7. PYQ PRACTICE INTEGRATIONS (ERROR BOOK & AI MENTOR)
+
+function addPyqToErrorBook(chName, qIdx) {
+  const q = PYQ_BANK[chName][qIdx];
+  if (!q) return;
+  
+  let subject = 'Biology';
+  const chNameClean = chName.trim().toLowerCase();
+  
+  for (const sub in PLAN) {
+    if (PLAN[sub].some(c => c.ch.trim().toLowerCase() === chNameClean)) {
+      subject = sub === 'phy' ? 'Physics' : (sub === 'che' ? 'Chemistry' : 'Biology');
+      break;
+    }
+  }
+  
+  const optionsText = q.opts.map((opt, i) => `${String.fromCharCode(65 + i)}) ${opt}`).join('\n');
+  
+  const item = {
+    id: 'err_' + Date.now(),
+    subject: subject,
+    chapter: chName,
+    category: 'Conceptual Loophole',
+    description: `${q.q}\n\nOptions:\n${optionsText}\n\nExplanation:\n${q.exp}`,
+    correct: `Correct Option: ${String.fromCharCode(65 + q.ans)}`,
+    done: false,
+    date: new Date().toLocaleDateString('en-IN')
+  };
+  
+  errorBookItems.unshift(item);
+  safeSetLocalStorage('neet_v3_errorbook_items', JSON.stringify(errorBookItems));
+  
+  if (typeof populateErrorChapters === 'function') populateErrorChapters();
+  if (typeof renderErrorBookList === 'function') renderErrorBookList();
+  
+  alert(`Successfully saved to your Error Book under: ${subject} -> ${chName}!`);
+}
+
+async function askAiAboutPyq(chName, qIdx) {
+  const apiKey = safeGetLocalStorage('gemini_api_key');
+  if (!apiKey) {
+    alert("Please configure your Gemini API Key in the Settings or AI CBT tab first!");
+    return;
+  }
+  
+  const q = PYQ_BANK[chName][qIdx];
+  if (!q) return;
+  
+  const responseBox = document.getElementById(`ai-response-${qIdx}`);
+  if (!responseBox) return;
+  
+  responseBox.style.display = 'block';
+  responseBox.innerHTML = '🤖 <em>AI is thinking... explaining the concept and steps step-by-step...</em>';
+  
+  const optionsText = q.opts.map((opt, i) => `${String.fromCharCode(65+i)}) ${opt}`).join('\n');
+  
+  const prompt = `You are a world-class NEET preparation mentor and subject expert. 
+A student is solving past year questions for the chapter "${chName}". 
+They need a simple, step-by-step, intuitive explanation for this question.
+
+[Question]:
+${q.q}
+
+[Options]:
+${optionsText}
+
+[Correct Option]:
+Option ${String.fromCharCode(65 + q.ans)}: ${q.opts[q.ans]}
+
+[Standard Explanation]:
+${q.exp}
+
+Please explain the underlying concepts clearly, list any formulas used, provide the logical reasoning, and do a clear step-by-step mathematical/conceptual derivation in simple language suitable for a NEET aspirant. Use KaTeX notation (e.g. $formula$ or $$formula$$) for mathematical terms if needed.`;
+
+  const requestPayload = {
+    contents: [
+      {
+        parts: [
+          { text: prompt }
+        ]
+      }
+    ]
+  };
+  
+  try {
+    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
+    if (!response.ok) {
+      throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+    }
+    
+    const responseData = await response.json();
+    const responseText = responseData.candidates[0].content.parts[0].text;
+    
+    responseBox.textContent = responseText;
+    renderMath(responseBox);
+  } catch (error) {
+    console.error("AI Doubt Solver Error:", error);
+    responseBox.innerHTML = `❌ <span style="color:var(--tertiary);">Error explaining doubt: ${error.message}</span>`;
+  }
+}
+
+window.addPyqToErrorBook = addPyqToErrorBook;
+window.askAiAboutPyq = askAiAboutPyq;
