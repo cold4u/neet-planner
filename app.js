@@ -4462,6 +4462,11 @@ function renderMockTestsDashboard() {
     if (safeZoneContainer) {
       safeZoneContainer.innerHTML = '';
     }
+    const chartBody = document.getElementById('mock-trajectory-chart');
+    if (chartBody) {
+      chartBody.style.display = 'none';
+      chartBody.innerHTML = '';
+    }
     return;
   }
   
@@ -4505,6 +4510,41 @@ function renderMockTestsDashboard() {
         <span>Bio: <strong style="color:var(--text-primary);">${avgBio}</strong></span>
       </div>
     `;
+  }
+  
+  const chartBody = document.getElementById('mock-trajectory-chart');
+  if (chartBody) {
+    chartBody.style.display = 'flex';
+    const last5 = mockTests.slice(0, 5).reverse();
+    let chartHtml = '';
+    last5.forEach(t => {
+      const pct = Math.min(100, Math.round((t.total / 720) * 100));
+      let barColor = 'var(--tertiary)';
+      if (t.total >= 610) {
+        barColor = 'var(--accent-success)';
+      } else if (t.total >= 550) {
+        barColor = '#fbbf24';
+      }
+      
+      let dLabel = t.date;
+      if (dLabel && dLabel.includes('-')) {
+        const parts = dLabel.split('-');
+        dLabel = parts.length >= 3 ? `${parts[2]}/${parts[1]}` : dLabel;
+      } else if (dLabel && dLabel.includes('/')) {
+        const parts = dLabel.split('/');
+        dLabel = parts.length >= 2 ? `${parts[0]}/${parts[1]}` : dLabel;
+      }
+      
+      chartHtml += `
+        <div class="chart-bar-col" style="width: auto; flex: 1; max-width: 50px; height: 100%;">
+          <div class="chart-bar-fill" style="height:${pct}%; width: 16px; background:${barColor}; box-shadow: 0 0 8px ${barColor}55;">
+            <div class="chart-bar-tooltip">${t.name}<br/><strong>${t.total}/720</strong></div>
+          </div>
+          <span class="chart-label" style="font-size: 9px; white-space: nowrap; margin-top:4px;">${dLabel}</span>
+        </div>
+      `;
+    });
+    chartBody.innerHTML = chartHtml;
   }
   
   if (safeZoneContainer) {
