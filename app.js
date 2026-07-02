@@ -3822,6 +3822,11 @@ function initOnLoad() {
   
   // Load dark/light mode preference
   try { loadTheme(); } catch(e) { console.error("Error in loadTheme:", e); }
+  try {
+    if (typeof loadAccentTheme === 'function') {
+      loadAccentTheme();
+    }
+  } catch(e) { console.error("Error in loadAccentTheme:", e); }
 
   // Initial stats updates & start countdown timer
   try { updateOverviewStats(); } catch(e) { console.error("Error in updateOverviewStats:", e); }
@@ -5845,3 +5850,69 @@ function focusSyllabusChapter(chName) {
 
 window.renderSyllabusCoverageHeatmap = renderSyllabusCoverageHeatmap;
 window.focusSyllabusChapter = focusSyllabusChapter;
+
+// 13. ACCENT COLOR CUSTOMIZATION
+
+const ACCENT_PRESETS = {
+  default: {
+    name: 'Teal Surge (Default)',
+    color: '#00d4aa',
+    hover: '#05b08e',
+    glow: 'rgba(0, 212, 170, 0.12)'
+  },
+  aiims: {
+    name: 'Astra Blue (AIIMS)',
+    color: '#378ADD',
+    hover: '#296cae',
+    glow: 'rgba(55, 138, 221, 0.12)'
+  },
+  rosegold: {
+    name: 'Rose Gold',
+    color: '#f43f5e',
+    hover: '#e11d48',
+    glow: 'rgba(244, 63, 94, 0.12)'
+  },
+  cyberpurple: {
+    name: 'Cyber Purple',
+    color: '#a855f7',
+    hover: '#9333ea',
+    glow: 'rgba(168, 85, 247, 0.12)'
+  },
+  crimson: {
+    name: 'Crimson Focus',
+    color: '#ef4444',
+    hover: '#dc2626',
+    glow: 'rgba(239, 68, 68, 0.12)'
+  }
+};
+
+function applyAccentTheme(key) {
+  const preset = ACCENT_PRESETS[key];
+  if (!preset) return;
+  
+  if (key === 'default') {
+    document.body.style.removeProperty('--primary');
+    document.body.style.removeProperty('--primary-hover');
+    document.body.style.removeProperty('--primary-glow');
+    safeRemoveLocalStorage('neet_v3_accent_theme');
+  } else {
+    document.body.style.setProperty('--primary', preset.color);
+    document.body.style.setProperty('--primary-hover', preset.hover);
+    document.body.style.setProperty('--primary-glow', preset.glow);
+    safeSetLocalStorage('neet_v3_accent_theme', key);
+  }
+  showToast(`🎨 Accent changed to: ${preset.name}`);
+}
+
+function loadAccentTheme() {
+  const savedKey = safeGetLocalStorage('neet_v3_accent_theme') || 'default';
+  if (savedKey !== 'default' && ACCENT_PRESETS[savedKey]) {
+    const preset = ACCENT_PRESETS[savedKey];
+    document.body.style.setProperty('--primary', preset.color);
+    document.body.style.setProperty('--primary-hover', preset.hover);
+    document.body.style.setProperty('--primary-glow', preset.glow);
+  }
+}
+
+window.applyAccentTheme = applyAccentTheme;
+window.loadAccentTheme = loadAccentTheme;
