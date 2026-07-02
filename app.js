@@ -3792,6 +3792,7 @@ function initOnLoad() {
   try { loadSelectedFlashcardDeck(); } catch(e) { console.error("Error in loadSelectedFlashcardDeck:", e); }
   try { renderMockTestsDashboard(); setDefaultMockDate(); } catch(e) { console.error("Error in renderMockTestsDashboard init:", e); }
   try { updateErrorBookDeckLabel(); } catch(e) { console.error("Error in updateErrorBookDeckLabel init:", e); }
+  try { renderOverviewCounselorAlert(); } catch(e) { console.error("Error in renderOverviewCounselorAlert init:", e); }
 
   try {
     const hideWelcome = safeGetLocalStorage('neet_hide_welcome_modal');
@@ -4421,6 +4422,7 @@ function deleteMockTest(id) {
 }
 
 function renderMockTestsDashboard() {
+  try { renderOverviewCounselorAlert(); } catch(e) { console.error("Error in renderOverviewCounselorAlert update:", e); }
   const statsContainer = document.getElementById('mock-standing-stats');
   const mistakesContainer = document.getElementById('silly-mistakes-breakdown-panel');
   const safeZoneContainer = document.getElementById('safe-zone-bar-container');
@@ -4760,6 +4762,65 @@ function updateErrorBookDeckLabel() {
   }
 }
 
+function renderOverviewCounselorAlert() {
+  const alertContainer = document.getElementById('overview-counselor-alert');
+  if (!alertContainer) return;
+  
+  if (!mockTests || mockTests.length === 0) {
+    alertContainer.style.display = 'none';
+    return;
+  }
+  
+  let errConcept = 0;
+  let errCalc = 0;
+  let errRead = 0;
+  let errTime = 0;
+  let errOmr = 0;
+  
+  mockTests.forEach(t => {
+    errConcept += t.mistakes.concept || 0;
+    errCalc += t.mistakes.calc || 0;
+    errRead += t.mistakes.read || 0;
+    errTime += t.mistakes.time || 0;
+    errOmr += t.mistakes.omr || 0;
+  });
+  
+  const totalErrs = errConcept + errCalc + errRead + errTime + errOmr;
+  if (totalErrs === 0) {
+    alertContainer.style.display = 'none';
+    return;
+  }
+  
+  const errors = [
+    { name: 'Concept Gaps', count: errConcept, advice: '🧠 Concept Gaps are your main source of errors. Focus on reading NCERT line-by-line and completing chapter-wise notes before jumping to solving.' },
+    { name: 'Calculation Slips', count: errCalc, advice: '🔢 Calculation Slips are your main source of errors. When solving practice questions today, write down every math step explicitly. Avoid mental calculations!' },
+    { name: 'Reading Mistakes', count: errRead, advice: '📖 Reading Mistakes (missing words like "not" or "incorrect") are costing you marks. Slow down when reading questions. Highlight key instruction words.' },
+    { name: 'Guessing / Time Pressure', count: errTime, advice: '⏳ Guessing under Time Pressure is costing you marks. Skip questions you aren\'t 100% sure about; negative marking is worse than leaving a question blank!' },
+    { name: 'Bubble Filling Slips', count: errOmr, advice: '⭕ Bubble Filling Slips on the OMR sheet are costing you marks. Practice marking bubbles in groups of 10-15 questions rather than one-by-one or all at the end.' }
+  ];
+  
+  errors.sort((a, b) => b.count - a.count);
+  const primary = errors[0];
+  const share = Math.round((primary.count / totalErrs) * 100);
+  
+  alertContainer.style.display = 'block';
+  alertContainer.innerHTML = `
+    <div style="display:flex; align-items:flex-start; gap:12px;">
+      <div style="font-size:24px; line-height:1;">💡</div>
+      <div>
+        <span style="font-size:10px; font-weight:700; color:var(--tertiary); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:4px;">Counselor Warning Alert</span>
+        <strong style="font-size:13px; color:var(--text-primary); display:block; margin-bottom:4px;">
+          ${share}% of your negative marks are caused by "${primary.name}"!
+        </strong>
+        <p style="margin:0; font-size:12.5px; color:var(--text-muted); line-height:1.5;">
+          ${primary.advice}
+        </p>
+      </div>
+    </div>
+  `;
+}
+
 window.addPyqToErrorBook = addPyqToErrorBook;
 window.askAiAboutPyq = askAiAboutPyq;
 window.updateErrorBookDeckLabel = updateErrorBookDeckLabel;
+window.renderOverviewCounselorAlert = renderOverviewCounselorAlert;
