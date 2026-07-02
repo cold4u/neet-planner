@@ -4927,3 +4927,132 @@ window.setPomoDuration = setPomoDuration;
 window.startPomoTimer = startPomoTimer;
 window.pausePomoTimer = pausePomoTimer;
 window.resetPomoTimer = resetPomoTimer;
+
+// 9. BACKUP & RESTORE CENTER
+
+function exportAllPlannerData() {
+  try {
+    const backupData = {
+      version: 3,
+      timestamp: Date.now(),
+      tracker: safeGetLocalStorage('neet_v3_tracker'),
+      errorbook: safeGetLocalStorage('neet_v3_errorbook_items'),
+      mock_tests: safeGetLocalStorage('neet_v3_mock_tests'),
+      done_days: safeGetLocalStorage('neet_v3_done'),
+      custom_scheds: safeGetLocalStorage('neet_v3_custom_scheds'),
+      chapter_progress: safeGetLocalStorage('neet_v3_chapter_progress'),
+      gemini_key: safeGetLocalStorage('gemini_api_key'),
+      theme: safeGetLocalStorage('theme'),
+      plan_start: safeGetLocalStorage('planStart'),
+      test_analysis: safeGetLocalStorage('neet_v3_test_analysis'),
+      rescued_days: safeGetLocalStorage('neet_v3_rescued_backlog_days')
+    };
+    
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    
+    const dateStr = new Date().toISOString().split('T')[0];
+    dlAnchorElem.setAttribute("download", `neet_planner_backup_${dateStr}.json`);
+    dlAnchorElem.click();
+    
+    const status = document.getElementById('backup-status');
+    if (status) {
+      status.style.display = 'block';
+      status.style.color = 'var(--accent-success)';
+      status.textContent = '📤 Backup file downloaded successfully!';
+    }
+  } catch (error) {
+    console.error("Export error:", error);
+    alert(`Failed to export data: ${error.message}`);
+  }
+}
+
+function importAllPlannerData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || typeof data !== 'object') {
+        throw new Error("Invalid backup file format.");
+      }
+      
+      if (!confirm("Warning: Importing this backup will overwrite all current progress in this browser. Do you want to proceed?")) {
+        event.target.value = '';
+        return;
+      }
+      
+      if (data.tracker) safeSetLocalStorage('neet_v3_tracker', data.tracker);
+      if (data.errorbook) safeSetLocalStorage('neet_v3_errorbook_items', data.errorbook);
+      if (data.mock_tests) safeSetLocalStorage('neet_v3_mock_tests', data.mock_tests);
+      if (data.done_days) safeSetLocalStorage('neet_v3_done', data.done_days);
+      if (data.custom_scheds) safeSetLocalStorage('neet_v3_custom_scheds', data.custom_scheds);
+      if (data.chapter_progress) safeSetLocalStorage('neet_v3_chapter_progress', data.chapter_progress);
+      if (data.gemini_key) safeSetLocalStorage('gemini_api_key', data.gemini_key);
+      if (data.theme) safeSetLocalStorage('theme', data.theme);
+      if (data.plan_start) safeSetLocalStorage('planStart', data.plan_start);
+      if (data.test_analysis) safeSetLocalStorage('neet_v3_test_analysis', data.test_analysis);
+      if (data.rescued_days) safeSetLocalStorage('neet_v3_rescued_backlog_days', data.rescued_days);
+      
+      const status = document.getElementById('backup-status');
+      if (status) {
+        status.style.display = 'block';
+        status.style.color = 'var(--accent-success)';
+        status.textContent = '📥 Backup imported successfully! Reloading page...';
+      }
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error("Import error:", error);
+      alert(`Failed to import backup: ${error.message}`);
+      event.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetAllPlannerData() {
+  if (!confirm("⚠️ DANGER: This will permanently delete all your custom rescheduled dates, completion checkmarks, mock scores, study hours, and Error Book items. This action CANNOT be undone.\n\nAre you absolutely sure you want to reset the app?")) {
+    return;
+  }
+  if (!confirm("Final Confirmation: Please confirm again that you wish to wipe the application data.")) {
+    return;
+  }
+  
+  const keysToClear = [
+    'neet_v3_tracker',
+    'neet_v3_errorbook_items',
+    'neet_v3_mock_tests',
+    'neet_v3_done',
+    'neet_v3_custom_scheds',
+    'neet_v3_chapter_progress',
+    'gemini_api_key',
+    'theme',
+    'planStart',
+    'neet_v3_test_analysis',
+    'neet_v3_rescued_backlog_days',
+    'neet_hide_welcome_modal'
+  ];
+  
+  keysToClear.forEach(key => localStorage.removeItem(key));
+  
+  const status = document.getElementById('backup-status');
+  if (status) {
+    status.style.display = 'block';
+    status.style.color = 'var(--tertiary)';
+    status.textContent = '⚠️ Wiped all planner data. Resetting app...';
+  }
+  
+  setTimeout(() => {
+    window.location.reload();
+  }, 1500);
+}
+
+window.exportAllPlannerData = exportAllPlannerData;
+window.importAllPlannerData = importAllPlannerData;
+window.resetAllPlannerData = resetAllPlannerData;
