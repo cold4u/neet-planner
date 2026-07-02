@@ -707,6 +707,11 @@ function safeSetSessionStorage(key, value) {
     try {
       chapterProgress = JSON.parse(safeGetLocalStorage('neet_v3_chapter_progress') || '{}');
     } catch(e){}
+
+    let revisions = {};
+    try {
+      revisions = JSON.parse(safeGetLocalStorage('neet_v3_revisions') || '{}');
+    } catch(e){}
     
     let testAnalysisLogs = {};
     try {
@@ -886,6 +891,7 @@ function safeSetSessionStorage(key, value) {
         }
         
         const wtLabel = (!isSp && chName) ? getChapterWeight(chName) : '';
+        const revBadges = (!isSp && chName && typeof getRevisionBadgesHtml === 'function') ? getRevisionBadgesHtml(chName) : '';
         
         // Prep subject tag badge
         let subBadge = '';
@@ -906,7 +912,7 @@ function safeSetSessionStorage(key, value) {
         return `<div class="ch-cell">
           ${isRev ? '<span style="font-size:9.5px; background:var(--primary-glow); color:var(--primary); padding:1px 4px; border-radius:3px; display:inline-block; margin-bottom:2px; font-weight:700;">REV</span><br>' : ''}
           ${subBadge}
-          <span class="ch-main">${ch}</span>${wtLabel}
+          <span class="ch-main">${ch}</span>${wtLabel}${revBadges}
           ${note ? `<div class="ch-sub">${note}</div>` : ''}
           ${pyqBtn}
           ${backlogHtml}
@@ -1428,7 +1434,10 @@ function safeSetSessionStorage(key, value) {
           html += `<tr class="${rowCls}">
             <td><span class="subject-badge ${badgeCls}" style="font-size: 10px; padding: 2px 8px;">${prefix}${c.sub}</span></td>
             <td>
-              <div style="font-weight:600;">${c.ch}</div>
+              <div style="font-weight:600; display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
+                <span>${c.ch}</span>
+                ${typeof getRevisionBadgesHtml === 'function' ? getRevisionBadgesHtml(chName) : ''}
+              </div>
               ${connTip}
             </td>
             <td style="text-align:center;">${wtBadge}</td>
@@ -2362,6 +2371,11 @@ function safeSetSessionStorage(key, value) {
       if (loginProg) loginProg.textContent = `${pct}%`;
       const loginStreak = document.getElementById('login-stat-streak');
       if (loginStreak) loginStreak.textContent = streak;
+
+      // Render study consistency heatmap
+      if (typeof renderConsistencyHeatmap === 'function') {
+        renderConsistencyHeatmap();
+      }
     }
     
     function renderOverviewStats() {
@@ -4487,6 +4501,10 @@ function renderMockTestsDashboard() {
       chartBody.style.display = 'none';
       chartBody.innerHTML = '';
     }
+    const strengthCard = document.getElementById('subject-strength-profile-card');
+    if (strengthCard) {
+      strengthCard.style.display = 'none';
+    }
     return;
   }
   
@@ -4626,6 +4644,9 @@ function renderMockTestsDashboard() {
         </div>
       `;
     }
+  }
+  if (typeof renderSubjectStrengthHeatmap === 'function') {
+    renderSubjectStrengthHeatmap(avgPhy, avgChe, avgBio);
   }
 }
 
@@ -5056,3 +5077,184 @@ function resetAllPlannerData() {
 window.exportAllPlannerData = exportAllPlannerData;
 window.importAllPlannerData = importAllPlannerData;
 window.resetAllPlannerData = resetAllPlannerData;
+
+// 10. REVISION BADGES, STREAK HEATMAP, SUBJECT STRENGTH METERS
+
+function getRevisionBadgesHtml(chName) {
+  if (!chName) return '';
+  const clean = chName.trim();
+  const revs = revisions[clean] || [false, false, false];
+  return `
+    <span class="rev-badge-group">
+      <span class="rev-badge ${revs[0] ? 'r1-active' : ''}" onclick="toggleRevisionPass('${clean.replace(/'/g, "\\'")}', 0, event)">R1</span>
+      <span class="rev-badge ${revs[1] ? 'r2-active' : ''}" onclick="toggleRevisionPass('${clean.replace(/'/g, "\\'")}', 1, event)">R2</span>
+      <span class="rev-badge ${revs[2] ? 'r3-active' : ''}" onclick="toggleRevisionPass('${clean.replace(/'/g, "\\'")}', 2, event)">R3</span>
+    </span>
+  `;
+}
+
+function toggleRevisionPass(chapterName, passIdx, event) {
+  if (event) event.stopPropagation();
+  if (!revisions[chapterName]) {
+    revisions[chapterName] = [false, false, false];
+  }
+  revisions[chapterName][passIdx] = !revisions[chapterName][passIdx];
+  safeSetLocalStorage('neet_v3_revisions', JSON.stringify(revisions));
+  
+  renderPlan();
+  const chTab = document.getElementById('chapters');
+  if (chTab && chTab.classList.contains('active')) {
+    renderChapters();
+  }
+  showToast(`🔄 Updated Revision Pass ${passIdx+1} for ${chapterName}.`);
+}
+
+function renderConsistencyHeatmap() {
+  const grid = document.getElementById('heatmap-grid');
+  if (!grid) return;
+  
+  const hoursMap = {};
+  trackerLogs.forEach(log => {
+    const totalH = (log.phyHours || 0) + (log.cheHours || 0) + (log.bioHours || 0);
+    hoursMap[log.date] = (hoursMap[log.date] || 0) + totalH;
+  });
+  
+  const today = new Date();
+  const currentDayOfWeek = today.getDay();
+  const daysToMonday = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1;
+  const currentMonday = new Date(today);
+  currentMonday.setDate(today.getDate() - daysToMonday);
+  
+  const startMonday = new Date(currentMonday);
+  startMonday.setDate(currentMonday.getDate() - 11 * 7);
+  
+  let html = '';
+  const tempDate = new Date(startMonday);
+  
+  for (let i = 0; i < 84; i++) {
+    const yyyy = tempDate.getFullYear();
+    const mm = String(tempDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(tempDate.getDate()).padStart(2, '0');
+    const dateKey = `${yyyy}-${mm}-${dd}`;
+    
+    const hours = hoursMap[dateKey] || 0;
+    
+    let level = 'level-0';
+    if (hours > 0 && hours < 2) level = 'level-1';
+    else if (hours >= 2 && hours < 5) level = 'level-2';
+    else if (hours >= 5 && hours < 8) level = 'level-3';
+    else if (hours >= 8) level = 'level-4';
+    
+    const formattedDate = tempDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    const tooltipText = `${formattedDate}: ${hours.toFixed(1)} hrs studied`;
+    
+    html += `<div class="consistency-day ${level}" 
+                  onmouseenter="showHeatmapTooltip(event, '${tooltipText}')" 
+                  onmouseleave="hideHeatmapTooltip()"></div>`;
+                  
+    tempDate.setDate(tempDate.getDate() + 1);
+  }
+  
+  grid.innerHTML = html;
+}
+
+function showHeatmapTooltip(event, text) {
+  const tooltip = document.getElementById('heatmap-tooltip');
+  if (!tooltip) return;
+  tooltip.textContent = text;
+  tooltip.style.display = 'block';
+  
+  const rect = event.target.getBoundingClientRect();
+  const parentRect = document.body.getBoundingClientRect();
+  
+  tooltip.style.left = (rect.left - parentRect.left + (rect.width - tooltip.offsetWidth) / 2) + 'px';
+  tooltip.style.top = (rect.top - parentRect.top - tooltip.offsetHeight - 6) + 'px';
+}
+
+function hideHeatmapTooltip() {
+  const tooltip = document.getElementById('heatmap-tooltip');
+  if (tooltip) tooltip.style.display = 'none';
+}
+
+function renderSubjectStrengthHeatmap(avgPhy, avgChe, avgBio) {
+  const card = document.getElementById('subject-strength-profile-card');
+  if (!card) return;
+  
+  card.style.display = 'flex';
+  
+  const phyPct = Math.round((avgPhy / 180) * 100);
+  const chePct = Math.round((avgChe / 180) * 100);
+  const bioPct = Math.round((avgBio / 360) * 100);
+  
+  function getStrengthClass(pct) {
+    if (pct < 50) return 'strength-weak';
+    if (pct < 75) return 'strength-medium';
+    return 'strength-strong';
+  }
+  
+  function getStrengthLabel(pct) {
+    if (pct < 50) return 'Weak';
+    if (pct < 75) return 'Moderate';
+    return 'Strong';
+  }
+  
+  const phyCls = getStrengthClass(phyPct);
+  const cheCls = getStrengthClass(chePct);
+  const bioCls = getStrengthClass(bioPct);
+  
+  let advice = '';
+  if (phyPct < chePct && phyPct < bioPct) {
+    advice = '💡 <strong>Focus Priority: Physics.</strong> Solve standard NCERT numericals and brush up on mechanics basics.';
+  } else if (chePct < phyPct && chePct < bioPct) {
+    advice = '💡 <strong>Focus Priority: Chemistry.</strong> Write down organic named reactions and inorganic trend charts.';
+  } else if (bioPct < phyPct && bioPct < chePct) {
+    advice = '💡 <strong>Focus Priority: Biology.</strong> Reread NCERT lines daily and focus on genetics conceptual clarity.';
+  } else {
+    advice = '💡 <strong>Focus Priority: Balance.</strong> All subjects are balanced. Keep practicing formula sheets.';
+  }
+  
+  card.innerHTML = `
+    <span style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">📊 Subject Strength Profile</span>
+    
+    <div class="subject-strength-row">
+      <div class="subject-strength-meta">
+        <span>⚡ Physics</span>
+        <span>${phyPct}% (${getStrengthLabel(phyPct)})</span>
+      </div>
+      <div class="subject-strength-bar-bg">
+        <div class="subject-strength-bar-fill ${phyCls}" style="width: ${phyPct}%;"></div>
+      </div>
+    </div>
+    
+    <div class="subject-strength-row">
+      <div class="subject-strength-meta">
+        <span>🧪 Chemistry</span>
+        <span>${chePct}% (${getStrengthLabel(chePct)})</span>
+      </div>
+      <div class="subject-strength-bar-bg">
+        <div class="subject-strength-bar-fill ${cheCls}" style="width: ${chePct}%;"></div>
+      </div>
+    </div>
+    
+    <div class="subject-strength-row">
+      <div class="subject-strength-meta">
+        <span>🧬 Biology</span>
+        <span>${bioPct}% (${getStrengthLabel(bioPct)})</span>
+      </div>
+      <div class="subject-strength-bar-bg">
+        <div class="subject-strength-bar-fill ${bioCls}" style="width: ${bioPct}%;"></div>
+      </div>
+    </div>
+    
+    <div style="font-size:11px; color:var(--text-muted); line-height:1.4; border-top:1px dashed rgba(255,255,255,0.05); padding-top:8px; margin-top:4px;">
+      ${advice}
+    </div>
+  `;
+}
+
+window.getRevisionBadgesHtml = getRevisionBadgesHtml;
+window.toggleRevisionPass = toggleRevisionPass;
+window.renderConsistencyHeatmap = renderConsistencyHeatmap;
+window.showHeatmapTooltip = showHeatmapTooltip;
+window.hideHeatmapTooltip = hideHeatmapTooltip;
+window.renderSubjectStrengthHeatmap = renderSubjectStrengthHeatmap;
