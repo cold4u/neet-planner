@@ -3791,6 +3791,7 @@ function initOnLoad() {
   try { renderErrorBookList(); } catch(e) { console.error("Error in renderErrorBookList:", e); }
   try { loadSelectedFlashcardDeck(); } catch(e) { console.error("Error in loadSelectedFlashcardDeck:", e); }
   try { renderMockTestsDashboard(); setDefaultMockDate(); } catch(e) { console.error("Error in renderMockTestsDashboard init:", e); }
+  try { updateErrorBookDeckLabel(); } catch(e) { console.error("Error in updateErrorBookDeckLabel init:", e); }
 
   try {
     const hideWelcome = safeGetLocalStorage('neet_hide_welcome_modal');
@@ -4113,6 +4114,7 @@ function saveErrorBookItem(e) {
   populateErrorChapters();
   
   renderErrorBookList();
+  updateErrorBookDeckLabel();
   alert("Error saved to your notebook!");
 }
 
@@ -4121,6 +4123,7 @@ function deleteErrorBookItem(id) {
   errorBookItems = errorBookItems.filter(item => item.id !== id);
   safeSetLocalStorage('neet_v3_errorbook_items', JSON.stringify(errorBookItems));
   renderErrorBookList();
+  updateErrorBookDeckLabel();
 }
 
 function toggleErrorBookItemDone(id) {
@@ -4256,6 +4259,12 @@ function loadSelectedFlashcardDeck() {
   
   if (currentDeckKey === 'linked') {
     FLASHCARD_DECKS['linked'] = getLinkedFlashcards();
+  } else if (currentDeckKey === 'errorbook') {
+    FLASHCARD_DECKS['errorbook'] = errorBookItems.map(item => ({
+      cat: item.subject,
+      q: item.description,
+      a: item.correct
+    }));
   }
   
   // Unflip card structure
@@ -4272,7 +4281,16 @@ function showFlashcard() {
   const frontText = document.getElementById('flashcard-front-text');
   const backText = document.getElementById('flashcard-back-text');
   
-  if (deck.length === 0) return;
+  if (deck.length === 0) {
+    if (progText) progText.textContent = `Card 0 / 0`;
+    if (catBadge) {
+      catBadge.textContent = 'Empty';
+      catBadge.className = 'subject-badge';
+    }
+    if (frontText) frontText.innerHTML = `<div style="text-align:center; padding:10px;"><div style="font-size:28px; margin-bottom:8px;">📕</div><strong>Your Error Book is empty!</strong><p style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.5;">Go to the "Chapters Guide" tab, practice PYQs, and click "Add to Error Book" to build your custom active recall deck.</p></div>`;
+    if (backText) backText.textContent = 'No errors logged. Keep studying! 🌟';
+    return;
+  }
   const card = deck[currentCardIdx];
   
   if (progText) progText.textContent = `Card ${currentCardIdx + 1} / ${deck.length}`;
@@ -4663,6 +4681,7 @@ function addPyqToErrorBook(chName, qIdx) {
   
   if (typeof populateErrorChapters === 'function') populateErrorChapters();
   if (typeof renderErrorBookList === 'function') renderErrorBookList();
+  updateErrorBookDeckLabel();
   
   alert(`Successfully saved to your Error Book under: ${subject} -> ${chName}!`);
 }
@@ -4730,5 +4749,17 @@ Please explain the underlying concepts clearly, list any formulas used, provide 
   }
 }
 
+function updateErrorBookDeckLabel() {
+  const select = document.getElementById('flashcard-deck-select');
+  if (select) {
+    const opt = select.querySelector('option[value="errorbook"]');
+    if (opt) {
+      const len = errorBookItems ? errorBookItems.length : 0;
+      opt.textContent = `📕 My Error Book Deck (${len} card${len === 1 ? '' : 's'})`;
+    }
+  }
+}
+
 window.addPyqToErrorBook = addPyqToErrorBook;
 window.askAiAboutPyq = askAiAboutPyq;
+window.updateErrorBookDeckLabel = updateErrorBookDeckLabel;
