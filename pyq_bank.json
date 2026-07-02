@@ -330,20 +330,6 @@
     },
     {
       "year": "NEET 2018",
-      "q": "A body initially at rest and sliding along a frictionless track from a height \\( h \\) (as shown in the figure) just completes a vertical circle of diameter \\( \\mathrm{AB} = \\mathrm{D} \\). The height h is equal to",
-      "opts": [
-        "\\( \\frac{7}{5} \\mathrm{D} \\)",
-        "D",
-        "\\( \\frac{3}{2} \\mathrm{D} \\)",
-        "\\( \\frac{5}{4} \\mathrm{D} \\)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "physics",
-      "diagram": "images/image_471.png"
-    },
-    {
-      "year": "NEET 2018",
       "q": "A toy car with charge \\( q \\) moves on a frictionless horizontal plane surface under the influence of a uniform electric field \\( \\vec { E } \\). Due to the force \\( q \\vec { E } \\), its velocity increases from 0 to \\( 6 \\mathrm {~m} / \\mathrm { s } \\) in one second duration. At that instant the direction of the field is reversed. The car continues to move for two more seconds under the influence of this field.",
       "opts": [
         "The average velocity and the average speed of the toy car between 0 to 3 seconds are respectively \\( 1 \\mathrm {~m} / \\mathrm { s } , 3.5 \\mathrm {~m} / \\mathrm { s } \\)",
@@ -877,20 +863,6 @@
       "diagram": ""
     },
     {
-      "year": "NEET 2022",
-      "q": "Match List-I and List-II List-I a. Gravitational constant (G) b. Gravitational potential Energy c. Gravitational potential d. Gravitational Intensity List-II (i) \\( \\left[ \\mathrm { L } ^ { 2 } \\mathrm {~T} ^ { - 2 } \\right] \\) (ii) \\( \\left[ \\mathrm { M } ^ { - 1 } \\mathrm {~L} ^ { 3 } \\mathrm {~T} ^ { - 2 } \\right] \\) (iii) \\( \\left[ \\mathrm { LT } ^ { - 2 } \\right] \\) (iv) \\( \\left[ \\mathrm { ML } ^ { 2 } \\mathrm {~T} ^ { - 2 } \\right] \\)",
-      "opts": [
-        "a. (a)-(iv), (b)-(ii), (c)-(i), (d)-(iii)",
-        "b. (a)-(ii), (b)-(i), (c)-(iv), (d)-(iii)",
-        "c. (a)-(ii), (b)-(iv), (c)-(i), (d)-(iii)",
-        "d. (a)-(ii), (b)-(iv), (c)-(iii), (d)-(i)"
-      ],
-      "ans": 2,
-      "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "physics",
-      "diagram": ""
-    },
-    {
       "year": "NEET 2023",
       "q": "The potential energy of a long spring when stretched by 2 cm is U . If the spring is stretched by 8 cm , potential energy stored in it will be :",
       "opts": [
@@ -1029,20 +1001,6 @@
       ],
       "ans": 3,
       "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "physics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2017",
-      "q": "Which of the following statements are correct? (a) Centre of mass of a body always coincides with the centre of gravity of the body. (b) Centre of mass of a body is the point at which the total gravitational torque on the body is zero. (c) A couple on a body produce both translational and rotational motion in a body. (d) ..Mechanical advantage greater than one means that small effort can be used to lift a large load.",
-      "opts": [
-        "(b) and (d)",
-        "(a) and (b)",
-        "(b) and (c)",
-        "(c) and (d)"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "physics",
       "diagram": ""
     },
@@ -1359,20 +1317,6 @@
       "diagram": ""
     },
     {
-      "year": "NEET 2022",
-      "q": "A spherical ball is dropped in a long column of a highly viscous liquid. The curve in the graph shown which represents the speed of the ball \\( ( \\mathrm { v } ) \\) as a function of time \\( ( \\mathrm { t } ) \\) is:",
-      "opts": [
-        "D",
-        "A",
-        "B",
-        "C"
-      ],
-      "ans": 2,
-      "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "physics",
-      "diagram": "images/image_670.png"
-    },
-    {
       "year": "NEET 2023",
       "q": "Let a wire be suspended from the ceiling (rigid support) and stretched by a weight \\( W \\) attached at its free end. The longitudinal stress at any point of cross-sectional area \\( A \\) of the wire is :",
       "opts": [
@@ -1413,20 +1357,6 @@
       ],
       "ans": 1,
       "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "physics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Match List-I with List-II List-I (Electromagnetic waves) a. AM radio waves b. Microwaves c. Infraraed radiations d. X-rays List-II (Wavelength) (i) \\( 10 ^ { - 10 } \\mathrm {~m} \\) (ii) \\( 10 ^ { 2 } \\mathrm {~m} \\) (iii) \\( 10 ^ { - 2 } \\mathrm {~m} \\) (iv) \\( 10 ^ { - 4 } \\mathrm {~m} \\) Choose the correct answer from the options given below:",
-      "opts": [
-        "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
-        "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
-        "(a)-(iii), (b)-(ii), (c)-(i), (d)-(iv)",
-        "(a)-(iii), (b)-(iv), (c)-(ii), (d)-(i)"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "physics",
       "diagram": ""
     },
@@ -2622,20 +2552,6 @@
     },
     {
       "year": "NEET 2021",
-      "q": "Column -I gives certain physical terms associated with flow of current through a metallic conductor. Column - II gives some mathematical relations involving electrical quantities. Match Column - I and Column - II with appropriate relations. Column - I (A) Drift Velocity (B) Electrical Resistivity (C) Relaxation Period (Q) \\( n e v _ { d } \\) (R) \\( \\frac { \\mathrm { eE } } { \\mathrm { m } } \\tau \\) (D) Current Density (S) \\( \\frac { \\mathrm { E } } { \\mathrm { J } } \\)",
-      "opts": [
-        "(A)-(R), (B)-(S), (C)-(Q), (D)-(P)",
-        "(A)-(R), (B)-(P), (C)-(S), (D)-(Q)",
-        "(A)-(R), (B)-(Q), (C)-(S), (D)-(P)",
-        "(A)-(R), (B)-(S), (C)-(P), (D)-(Q)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "physics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
       "q": "Three resistors having resistances \\( r _ { 1 } , r _ { 2 } \\) and \\( r _ { 3 } \\) are connected as shown in the given circuit. The ratio \\( \\frac { i _ { 3 } } { i _ { 1 } } \\) of currents in terms of resistances used in the circuit is :",
       "opts": [
         "\\( \\frac { r _ { 2 } } { r _ { 2 } + r _ { 3 } } \\)",
@@ -3802,20 +3718,6 @@
     },
     {
       "year": "NEET 2021",
-      "q": "Consider the following statements (A) and (B) and identify the correct answer. (A) A zener diode is connected in reverse bias, when used as a voltage regulator. (B) The potential barrier of \\( \\mathrm { p } - \\mathrm { n } \\) junction lies between 0.1 V to 0.3 V .",
-      "opts": [
-        "(A) and (B) both are incorrect.",
-        "(A) is correct and (B) is incorrect.",
-        "(A) is incorrect but (B) is correct.",
-        "(A) and (B) both are correct."
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "physics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
       "q": "The electron concentration in an n-type semiconductor is the same as hole concentration in a p-type semiconductor. An external field (electric) is applied across each of them. Compare the currents in them.",
       "opts": [
         "current in p-type \\( > \\) current in n-type",
@@ -4011,20 +3913,6 @@
       ],
       "ans": 2,
       "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2022",
-      "q": "Identify the incorrect statements from the following. a. The shapes of \\( d _ { x y } , d _ { y z } \\), and \\( d _ { z x } \\) orbitals are similar to each other; and \\( \\mathrm { dx } ^ { 2 } - \\mathrm { y } ^ { 2 } \\) and \\( \\mathrm { d } _ { \\mathrm { z } ^ { 2 } } \\) are similar to each other. b. All the five 5 d orbitals are different in size when compared to the respective 4 d orbitals. c. All the five 4 d orbitals have shapes similar to the respective 3d orbitals. d. In an atom, all the five 3d orbitals are equal in energy in free state.",
-      "opts": [
-        "a",
-        "b",
-        "c",
-        "d"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "chemistry",
       "diagram": ""
     },
@@ -4640,20 +4528,6 @@
     },
     {
       "year": "NEET 2018",
-      "q": "Following solutions were prepared by mixing different volumes of NaOH and HCl of different concentrations : a. \\( \\quad 60 \\mathrm {~mL} \\frac { \\mathrm { M } } { 10 } \\mathrm { HCl } + 40 \\mathrm {~mL} \\frac { \\mathrm { M } } { 10 } \\mathrm { NaOH } \\) b. \\( \\quad 55 \\mathrm {~mL} \\frac { \\mathrm { M } } { 10 } \\mathrm { HCl } + 45 \\mathrm {~mL} \\frac { \\mathrm { M } } { 10 } \\mathrm { NaOH } \\) c. \\( \\quad 75 \\mathrm {~mL} \\frac { \\mathrm { M } } { 5 } \\mathrm { HCl } + 25 \\mathrm {~mL} \\frac { \\mathrm { M } } { 5 } \\mathrm { NaOH } \\) d. \\( \\quad 100 \\mathrm {~mL} \\frac { \\mathrm { M } } { 10 } \\mathrm { HCl } + 100 \\mathrm {~mL} \\frac { \\mathrm { M } } { 10 } \\mathrm { NaOH } \\) pH of which one of them will be equal to 1 ?",
-      "opts": [
-        "d",
-        "a",
-        "b",
-        "c"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2018",
       "q": "The solubility of \\( \\mathrm{BaSO}_{4} \\) in water is \\( 2.42 \\times 10^{-3} \\mathrm{gL}^{-1} \\) at 298 K. The value of its solubility product \\( \\left( \\mathrm{K}_{\\mathrm{sp}} \\right) \\) will be (Given molar mass of \\( \\mathrm{BaSO}_{4} = 233 \\mathrm{~g} \\mathrm{~mol}^{-1} \\) )",
       "opts": [
         "\\( 1.08 \\times 10^{-14} \\mathrm{~mol}^{2} \\mathrm{~L}^{-2} \\)",
@@ -4677,20 +4551,6 @@
       ],
       "ans": 1,
       "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2019",
-      "q": "Match the following : (a) Pure nitrogen (i) Chlorine (b) Haber process (ii) Sulphuric acid (c) Contact process (iii) Ammonia (d) Deacon's process (iv) Sodium azide or Barium azide Which of the following is the correct option?",
-      "opts": [
-        "(a) (i) (b) (ii) (c) (iii) (d) (iv)",
-        "(a) (ii) (b) (iv) (c) (i) (d) (iii)",
-        "(a) (iii) (b) (iv) (c) (ii) (d) (i)",
-        "(a) (iv) (b) (iii) (c) (ii) (d) (i)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "chemistry",
       "diagram": ""
     },
@@ -5210,20 +5070,6 @@
         "\\( \\mathrm { CH } _ { 2 } = \\mathrm { CH } _ { 2 } \\)",
         "\\( \\mathrm { CH } \\equiv \\mathrm { CH } \\)",
         "\\( \\mathrm { CH } _ { 4 } \\)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
-      "q": "Identify the correct statements from the following : (a) \\( \\mathrm { CO } _ { 2 } ( \\mathrm {~g} ) \\) is used as refrigerant for ice-cream and frozen food. (b) The structure of \\( \\mathrm { C } _ { 60 } \\) contains twelve six carbon rings and twenty five carbon rings. (c) ZSM-5, a type of zeolite, is used to convert alcohols into gasoline. (d) CO is colorless and odourless gas.",
-      "opts": [
-        "(a), (b) and (c) only",
-        "(a) and (c) only",
-        "(b) and (c) only",
-        "(c) and (d) only"
       ],
       "ans": 3,
       "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
@@ -6393,20 +6239,6 @@
       "diagram": ""
     },
     {
-      "year": "NEET 2022",
-      "q": "Match List-I with List-II. \\n\\nList-I (Ores)\\nA. Haematite\\nB. Magnetite\\nC. Calamine\\nD. Kaolinite\\n\\nList-II (Composition)\\n(i) \\( \\mathrm { Fe } _ { 3 } \\mathrm { O } _ { 4 } \\) \\n(ii) \\( \\mathrm { ZnCO } _ { 3 } \\)\\n(iii) \\( \\mathrm { Fe } _ { 2 } \\mathrm { O } _ { 3 } \\)\\n(iv) \\( \\left[ \\mathrm { Al } _ { 2 } ( \\mathrm { OH } ) _ { 4 } \\mathrm { Si } _ { 2 } \\mathrm { O } _ { 5 } \\right] \\)\\n\\nChoose the correct answer from the options given below:\\na. (A)-(i), (B)-(iii), (C)-(ii), (D)-(iv)\\nb. (A)-(i), (B)-(ii), (C)-(iii), (D)-(iv)\\nc. (A)-(iii), (B)-(i), (C)-(ii), (D)-(iv)\\nd. (A)-(iii), (B)-(i), (C)-(iv), (D)-(ii)",
-      "opts": [
-        "(A)-(i), (B)-(iii), (C)-(ii), (D)-(iv)",
-        "(A)-(i), (B)-(ii), (C)-(iii), (D)-(iv)",
-        "(A)-(iii), (B)-(i), (C)-(ii), (D)-(iv)",
-        "(A)-(iii), (B)-(i), (C)-(iv), (D)-(ii)"
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
       "year": "NEET 2024",
       "q": "Ethylene diaminetetraacetate ion is a/an:",
       "opts": [
@@ -6533,20 +6365,6 @@
       "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "chemistry",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Match List - I with List - II. List - I (a)  (b)  (c) \\[ \\begin{array} { l } \\mathrm { R } - \\mathrm { CH } _ { 2 } - \\mathrm { OH } \\\\ + \\mathrm { R } ^ { \\prime } \\mathrm { COOH } \\\\ \\xrightarrow { \\text { Conc. } \\mathrm { H } _ { 2 } \\mathrm { SO } _ { 4 } } \\end{array} \\] (d) \\( \\mathrm { R } - \\mathrm { CH } _ { 2 } \\mathrm { COOH } \\) \\[ \\xrightarrow [ \\text { (ii) } \\mathrm { H } _ { 2 } \\mathrm { O } ] { \\text { (i) } \\mathrm { X } _ { 2 } / \\operatorname { Red } \\mathrm { P } } \\]",
-      "opts": [
-        "(a)-(iii), (b)-(ii), (c)-(i), (d)-(iv)",
-        "(a)-(i), (b)-(iv), (c)-(iii), (d)-(ii)",
-        "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
-        "(a)-(iv), (b)-(i), (c)-(ii), (d)-(iii)"
-      ],
-      "ans": 2,
-      "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": "images/image_620_621.png"
     },
     {
       "year": "NEET 2023",
@@ -6959,20 +6777,6 @@
       ],
       "ans": 2,
       "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
-      "q": "Which of the following statements are true for the phylum-Chordata? (a) In Urochordata notochord extends from head to tail and it is present throughout their life. (b) In Vertebrata notochord is present during the embryonic period only. (c) Central nervous system is dorsal and hollow. (d) Chordata is divided into 3 subphyla : Hemichordata, Tunicata and Cephalochordata.",
-      "opts": [
-        "(d) and (c)",
-        "(c) and (a)",
-        "(a) and (b)",
-        "(b) and (c)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -7596,20 +7400,6 @@
     },
     {
       "year": "NEET 2021",
-      "q": "Match List - I with List - II. \\n\\n\\begin{tabular}{|l|l|l|l|}\\n\\hline\\n\\multicolumn{2}{|c|}{List - I} & \\multicolumn{2}{c|}{List - II}\\\\\\n\\hline\\n(a) & \\begin{tabular}{l}Cells with active cell \\\\ division capacity\\end{tabular} & (i) & \\begin{tabular}{l}Vascular \\\\ tissues\\end{tabular}\\\\\\n\\hline\\n(b) & \\begin{tabular}{l}Tissue having all cells \\\\ similar in structure \\\\ and function\\end{tabular} & (ii) & \\begin{tabular}{l}Meristematic \\\\ tissue\\end{tabular}\\\\\\n\\hline\\n(c) & \\begin{tabular}{l}Tissue having \\\\ different types of cells\\end{tabular} & (iii) & Sclereids\\\\\\n\\hline\\n(d) & \\begin{tabular}{l}Dead cells with highly \\\\ thickened walls and \\\\ narrow lumen\\end{tabular} & (iv) & Simple tissue\\\\\\n\\hline\\n\\end{tabular}\\n\\n\\n\\nSelect the correct answer from the options given below.\\n\\n\\begin{tabular}{lllll}\\n& (a) & (b) & (c) & (d)\\\\\\n(1) & (iv) & (iii) & (ii) & (i)\\\\\\n\\((2)\\) & (i) & (ii) & (iii) & (iv)\\\\\\n\\((3)\\) & (iii) & (ii) & (iv) & (i)\\\\\\n(4) & (ii) & (iv) & (i) & (iii)\\n\\end{tabular}\\n\\n",
-      "opts": [
-        "(a) (iv), (b) (iii), (c) (ii), (d) (i)",
-        "(a) (i), (b) (ii), (c) (iii), (d) (iv)",
-        "(a) (iii), (b) (ii), (c) (iv), (d) (i)",
-        "(a) (ii), (b) (iv), (c) (i), (d) (iii)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": "images/image_640_641.png"
-    },
-    {
-      "year": "NEET 2021",
       "q": "Match Column - I with Column - II. Column - I Column - II (a) \\( \\%\\wp_{ \\uparrow } \\mathrm{K}_{(5)} \\mathrm{C}_{1+2+(2)} \\mathrm{A}_{(9)+1} \\underline{\\mathrm{G}}_{1} \\) (i) Brassicaceae (b) \\( \\oplus\\mathcal{C}^{K} \\mathrm{~K}_{(5)} \\overparen{\\mathrm{C}_{(5)} \\mathrm{A}_{5}} \\underline{\\mathrm{G}}_{2} \\) (ii) Liliaceae (c) \\( \\oplus\\emptyset_{\\square} \\mathrm{P}_{(3+3)} \\mathrm{A}_{3+3} \\underline{\\mathrm{G}}_{(3)} \\) (iii) Fabaceae (d) \\( \\oplus\\overleftarrow{O}^{G} \\mathrm{~K}_{2+2} \\mathrm{C}_{4} \\mathrm{~A}_{2-4} \\underline{\\mathrm{G}}_{(2)} \\) (iv) Solanaceae Select the correct answer from the options given below. \\begin{tabular}{lllll} & (a) & (b) & (c) & (d) \\\\ \\((1)\\) & (i) & (ii) & (iii) & (iv) \\\\ \\((2)\\) & (ii) & (iii) & (iv) & (i) \\\\ \\((3)\\) & (iv) & (ii) & (i) & (iii) \\\\ \\((4)\\) & (iii) & (iv) & (ii) & (i) \\end{tabular}",
       "opts": [
         "(i) (ii) (iii) (iv)",
@@ -7633,20 +7423,6 @@
       ],
       "ans": 3,
       "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Read the following statements. (a) Metagenesis is observed in Helminths. (b) Echinoderms are triploblastic and coelomate animals. (c) Round worms have organ-system level of body organization. (d) Comb plates present in ctenophores help in digestion. (e) Water vascular system is characteristic of Echinoderms. Choose the correct answer from the options given below.",
-      "opts": [
-        "(a), (b) and (c) are correct",
-        "(a), (d) and (e) are correct",
-        "(b), (c) and (e) are correct",
-        "(c), (d) and (e) are correct"
-      ],
-      "ans": 2,
-      "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -8073,20 +7849,6 @@
       "diagram": ""
     },
     {
-      "year": "NEET 2021",
-      "q": "Match List - I with List - II. \\begin{tabular} { | l | l | l | l | } \\hline \\multicolumn{2}{|c|} { List - I } & \\multicolumn{2}{c|} { List - II } \\\\ \\hline (a) & Lenticels & (i) & Phellogen \\\\ \\hline (b) & Cork cambium & (ii) & Suberin deposition \\\\ \\hline (c) & Secondary cortex & (iii) & Exchange of gases \\\\ \\hline (d) & Cork & (iv) & Phelloderm \\\\ \\hline \\end{tabular}",
-      "opts": [
-        "(a) (iii) (b) (i) (c) (iv) (d) (ii)",
-        "(a) (ii) (b) (iii) (c) (iv) (d) (i)",
-        "(a) (iv) (b) (ii) (c) (i) (d) (iii)",
-        "(a) (iv) (b) (i) (c) (iii) (d) (ii)"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": "images/image_636.png"
-    },
-    {
       "year": "NEET 2023",
       "q": "Identify the correct statements : A. Lenticels are the lens-shaped openings permitting the exchange of gases. B. Bark formed early in the season is called hard bark. C. Bark is a technical term that refers to all tissues exterior to vascular cambium. D. Bark refers to periderm and secondary phloem. E. Phellogen is single-layered in thickness.",
       "opts": [
@@ -8110,20 +7872,6 @@
         "Testes \\( \\rightarrow \\) Vasa efferentia \\( \\rightarrow \\) Kidney \\( \\rightarrow \\) Seminal Vesicle \\( \\rightarrow \\) Urinogenital duct \\( \\rightarrow \\) Cloaca",
         "Testes \\( \\rightarrow \\) Vasa efferentia \\( \\rightarrow \\) Bidder's canal \\( \\rightarrow \\) Ureter \\( \\rightarrow \\) Cloaca",
         "Testes \\( \\rightarrow \\) Vasa efferentia \\( \\rightarrow \\) Kidney \\( \\rightarrow \\) Bidder's canal \\( \\rightarrow \\) Urinogenital duct \\( \\rightarrow \\) Cloaca"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2017",
-      "q": "Frog's heart when taken out of the body continues to beat for sometime. Select the best option from the following statements. (a) Frog is a poikilotherm. (b) Frog does not have any coronary circulation. (c) Heart is \"myogenic\" in nature. (d) Heart is autoexcitable.",
-      "opts": [
-        "Only (c)",
-        "Only (d)",
-        "(a) and (b)",
-        "(c) and (d)"
       ],
       "ans": 3,
       "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
@@ -8225,34 +7973,6 @@
       ],
       "ans": 1,
       "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "During muscular contraction which of the following events occur? (a) 'H' zone disappears (b) 'A' band widens (c) 'I' band reduces in width (d) Myosine hydrolyzes ATP, releasing the ADP and Pi (e) Z-lines attached to actins are pulled inwards Choose the correct answer from the options given below.",
-      "opts": [
-        "(a), (b), (c), (d) only",
-        "(b), (c), (d), (e) only",
-        "(b), (d), (e), (a) only",
-        "(a), (c), (d), (e) only"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Following are the statements about prostomium of earthworm. (a) It serves as a covering for mouth. (b) It helps to open cracks in the soil into which it can crawl. (c) It is one of the sensory structures. (d) It is the first body segment. Choose the correct answer from the options given below.",
-      "opts": [
-        "(a), (b) and (d) are correct",
-        "(a), (b), (c) and (d) are correct",
-        "(b) and (c) are correct",
-        "(a), (b) and (c) are correct"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -8962,20 +8682,6 @@
     },
     {
       "year": "NEET 2019",
-      "q": "Consider the following statements : (A) Coenzyme or metal ion that is tightly bound to enzyme protein is called prosthetic group. (B) A complete catalytic active enzyme with its bound prosthetic group is called apoenzyme. Select the correct option.",
-      "opts": [
-        "Both (A) and (B) are true.",
-        "(A) is true but (B) is false.",
-        "Both (A) and (B) are false.",
-        "(A) is false but (B) is true."
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2019",
       "q": "Following statements describe the characteristics of the enzyme Restriction Endonuclease. Identify the incorrect statement.",
       "opts": [
         "The enzyme cuts DNA molecule at identified position within the DNA.",
@@ -9130,34 +8836,6 @@
     },
     {
       "year": "NEET 2021",
-      "q": "Match List - I with List - II. \\n\\n\\begin{tabular}{|l|l|l|l|}\\n\\hline\\n\\multicolumn{2}{|c|}{List - I} & \\multicolumn{2}{c|}{List - II}\\\\\\n\\hline\\n(a) & S phase & (i) & \\begin{tabular}{l}Proteins are \\\\ synthesized\\end{tabular}\\\\\\n\\hline\\n(b) & G2 phase & (ii) & Inactive phase\\\\\\n\\hline\\n(c) & Quiescent stage & (iii) & \\begin{tabular}{l}Interval between \\\\ mitosis and initiation \\\\ of DNA replication\\end{tabular}\\\\\\n\\hline\\n(d) & G1 phase & (iv) & DNA replication\\\\\\n\\hline\\n\\end{tabular}\\n\\n",
-      "opts": [
-        "(a) (iv) (b) (ii) (c) (iii) (d) (i)",
-        "(a) (iv) (b) (i) (c) (ii) (d) (iii)",
-        "(a) (ii) (b) (iv) (c) (iii) (d) (i)",
-        "(a) (iii) (b) (ii) (c) (i) (d) (iv)"
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": "images/image_645.png"
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Match List - I with List - II. \\begin{tabular} { | l | l | l | l | } \\hline \\multicolumn{2}{|c|} { List - I } & \\multicolumn{2}{c|} { List - II } \\\\ \\hline (a) & Protein & (i) & C = C double bonds \\\\ \\hline (b) & \\begin{tabular} { l } Unsaturated \\\\ fatty acid \\end{tabular} & (ii) & Phosphodiester bonds \\\\ \\hline (c) & Nucleic acid & (iii) & Glycosidic bonds \\\\ \\hline (d) & Polysaccharide & (iv) & Peptide bonds \\\\ \\hline \\end{tabular}  Choose the correct answer from the options given below.",
-      "opts": [
-        "(a) (i) (b) (iv) (c) (iii) (d) (ii)",
-        "(a) (ii) (b) (i) (c) (iv) (d) (iii)",
-        "(a) (iv) (b) (iii) (c) (i) (d) (ii)",
-        "(a) (iv) (b) (i) (c) (ii) (d) (iii)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": "images/image_647.png"
-    },
-    {
-      "year": "NEET 2021",
       "q": "Which of the following RNAs is not required for the synthesis of protein?",
       "opts": [
         "tRNA",
@@ -9195,20 +8873,6 @@
       ],
       "ans": 3,
       "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Following are the statements with reference to 'lipids'. (a) Lipids having only single bonds are called unsaturated fatty acids. (b) Lecithin is a phospholipid. (c) Trihydroxy propane is glycerol. (d) Palmitic acid has 20 carbon atoms including carboxyl carbon. (e) Arachidonic acid has 16 carbon atoms. Choose the correct answer from the options given below.",
-      "opts": [
-        "(c) and (d) only",
-        "(b) and (c) only",
-        "(b) and (e) only",
-        "(a) and (b) only"
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -10289,34 +9953,6 @@
       "diagram": ""
     },
     {
-      "year": "NEET 2021",
-      "q": "Veneral diseases can spread through: (a) Using sterile needles (b) Transfusion of blood from infected person (c) Infected mother to foetus (d) Kissing (e) Inheritance Choose the correct answer from the options given below.",
-      "opts": [
-        "(b), (c) and (d) only",
-        "(b) and (c) only",
-        "(a) and (c) only",
-        "(a), (b) and (c) only"
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Assertion (A) : A person goes to high altitude and experiences 'altitude sickness' with symptoms like breathing difficulty and heart palpitations. Reason (R) : Due to low atmospheric pressure at high altitude, the body does not get sufficient oxygen. In the light of the above statements, choose the correct answer from the options given below.",
-      "opts": [
-        "Both (A) and (R) are true but (R) is not the correct explanation of (A)",
-        "(A) is true but ( \\( R \\) ) is false",
-        "(A) is false but (R) is true",
-        "Both (A) and (R) are true and (R) is the correct explanation of (A)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
       "year": "NEET 2022",
       "q": "In gene therapy of Adenosine Deaminase (ADA) deficiency the patient requires periodic infusion genetically engineered lymphocytes because:",
       "opts": [
@@ -10441,20 +10077,6 @@
       ],
       "ans": 0,
       "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2019",
-      "q": "Use of an artificial kidney during hemodialysis \\( {1} ^ { \\text {a } } \\) may result in : (a) Nitrogenous waste build-up in the body (b) Non-elimination of excess potassium ions (c) Reduced absorption of calcium ions from gastro-intestinal tract (d) Reduced RBC production Which of the following options is the most appropriate?",
-      "opts": [
-        "(a) and (b) are correct",
-        "(b) and (c) are correct",
-        "(c) and (d) are correct",
-        "(a) and (d) are correct"
-      ],
-      "ans": 2,
-      "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -11165,20 +10787,6 @@
       "diagram": ""
     },
     {
-      "year": "NEET 2019",
-      "q": "Match the following hormones with the respective disease: (a) Insulin (i) Addison's disease (b) Thyroxin (ii) Diabetes insipidus (c) Corticoids (iii) Acromegaly (d) Growth Hormone (iv) Goitre (v) Diabetes mellitus",
-      "opts": [
-        "(a) (v) (b) (i) (c) (ii) (d) (iii)",
-        "(a) (ii) (b) (iv) (c) (iii) (d) (i)",
-        "(a) (v) (b) (iv) (c) (i) (d) (iii)",
-        "(a) (ii) (b) (iv) (c) (i) (d) (iii)"
-      ],
-      "ans": 2,
-      "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
       "year": "NEET 2020",
       "q": "Which of the following hormone levels will cause release of ovum (ovulation) from the graffian follicle?",
       "opts": [
@@ -11189,20 +10797,6 @@
       ],
       "ans": 0,
       "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
-      "q": "Match the following columns and select the correct option. Column - I (a) Pituitary gland (b) Thyroid gland (c) Adrenal gland (d) Pancreas Column - II (i) Grave's disease (ii) Diabetes mellitus (iii) Diabetes insipidus (iv) Addison's disease",
-      "opts": [
-        "(d) (iv) (iii) (i) (ii)",
-        "(iii) (ii) (i) (iv)",
-        "(iii) (i) (iv) (ii)",
-        "(ii) (i) (iv) (iii)"
-      ],
-      "ans": 2,
-      "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -11231,20 +10825,6 @@
       ],
       "ans": 0,
       "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "With regard to insulin choose correct options. (a) C-peptide is not present in mature insulin. (b) The insulin produced by rDNA technology has C-peptide. (c) The pro-insulin has C-peptide. (d) A-peptide and B-peptide of insulin are interconnected by disulphide bridges.",
-      "opts": [
-        "(b) and (c) only",
-        "(a), (c) and (d) only",
-        "(a) and (d) only",
-        "(b) and (d) only"
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -11676,20 +11256,6 @@
     },
     {
       "year": "NEET 2017",
-      "q": "Good vision depends on adequate intake of carotenerich food. Select the best option from the following statements. (a) Vitamin A derivatives are formed from carotene. (b) The photopigments are embedded in the membrane discs of the inner segment. (c) Retinal is a derivative of Vitamin A. (d) Retinal is a light absorbing part of all the visual photopigments.",
-      "opts": [
-        "(a) and (b)",
-        "(a), (c) and (d)",
-        "(a) and (c)",
-        "(b), (c) and (d)"
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2017",
       "q": "The morphological nature of the edible part of coconut is :",
       "opts": [
         "Perisperm",
@@ -11741,34 +11307,6 @@
       ],
       "ans": 0,
       "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
-      "q": "The plant parts which consist of two generations one within the other :",
-      "opts": [
-        "(a) Pollen grains inside the anther",
-        "(a) Pollen grains inside the anther, (b) Germinated pollen grain with two male gametes, (c) Seed inside the fruit",
-        "(c) Seed inside the fruit, (d) Embryo sac inside the ovule",
-        "(a) Pollen grains inside the anther, (d) Embryo sac inside the ovule"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Complete the flow chart on central dogma. (a) cDNA \\( \\xrightarrow { ( \\mathrm { b } ) } \\) mRNA \\( \\xrightarrow { ( \\mathrm { c } ) } ( \\mathrm { d } ) \\)",
-      "opts": [
-        "(a)-Translation; (b)-Replication; (c)-Transcription; (d)-Transduction",
-        "(a)-Replication; (b)-Transcription; (c)-Translation; (d)-Protein",
-        "(a)-Transduction; (b)-Translation; (c)-Replication; (d)-Protein",
-        "(a)-Replication; (b)-Transcription; (c)-Transduction; (d)-Protein"
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -12181,20 +11719,6 @@
       ],
       "ans": 3,
       "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
-      "q": "Which of the following refer to correct example(s) of organisms which have evolved due to changes in environment brought about by anthropogenic action? (a) Darwin's Finches of Galapagos islands. (b) Herbicide resistant weeds. (c) Drug resistant eukaryotes. (d) Man-created breeds of domesticated animals like dogs.",
-      "opts": [
-        "only (a)",
-        "(a) and (c)",
-        "(b), (c) and (d)",
-        "only (d)"
-      ],
-      "ans": 2,
-      "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -13924,20 +13448,6 @@
     },
     {
       "year": "NEET 2016",
-      "q": "Match Column-I with Column-II and select the correct option using the codes given below: \\begin{tabular} { | l | l | } \\hline \\multicolumn{1}{|c|} { Column I } & \\multicolumn{1}{c|} { Column II } \\\\ \\hline a. Citric acid & (i) Trichoderma \\\\ \\hline b. Cyclosporin A & (ii) Clostridium \\\\ \\hline c. Statins & (iii) Apsergillus \\\\ \\hline d. Butyric acid & (iv) Monascus \\\\ \\hline \\end{tabular}",
-      "opts": [
-        "(a) (iii) (b) (i) (c) (iv) (d) (ii)",
-        "(a) (i) (b) (iv) (c) (iii) (d) (iv)",
-        "(a) (i) (b) (iv) (c) (iii) (d) (ii)",
-        "image_423.png"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": "images/image_422.png"
-    },
-    {
-      "year": "NEET 2016",
       "q": "Biochemical Oxygen Demand (BOD) may not be a good index for pollution for water bodies receiving effluents from",
       "opts": [
         "Domestic sewage",
@@ -14145,20 +13655,6 @@
       "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "physics",
       "diagram": ""
-    },
-    {
-      "year": "NEET 2017",
-      "q": "The diagrams below show regions of equipotential     A positive charge is moved from \\( A \\) to \\( B \\) in diagram.",
-      "opts": [
-        "Maximum work is required to move figure (c).",
-        "In all the four cases the work done is the (3).",
-        "Minimum work is required to move figure (a).",
-        "Maximum work is required to move figure (b)."
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "physics",
-      "diagram": "images/image_437_438_439_440.png"
     },
     {
       "year": "NEET 2017",
@@ -14722,20 +14218,6 @@
     },
     {
       "year": "NEET 2017",
-      "q": "Adult human RBCs are enucleate. Which of the following statement(s) is/are most appropriate explanation for this feature? (a) They do not need to reproduce (b) They are somatic cells (c) They do not metabolize (d) All their internal space is available for oxygen transport",
-      "opts": [
-        "Only (d)",
-        "Only (a)",
-        "(a), (c) and (d)",
-        "(b) and (c)"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2017",
       "q": "Which one of the following statements is not valid for aerosols?",
       "opts": [
         "They are harmful to human health",
@@ -15292,20 +14774,6 @@
       "ans": 2,
       "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "physics",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2018",
-      "q": "Which one of the following elements is unable to form \\( \\mathrm{MF}_{6}^{3-} \\) ion?",
-      "opts": [
-        "B",
-        "Al",
-        "Ga",
-        "In"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
       "diagram": ""
     },
     {
@@ -16654,20 +16122,6 @@
     },
     {
       "year": "NEET 2019",
-      "q": "Which of the following reactions are disproportionation reaction? (a) \\( 2 \\mathrm { Cu } ^ { + } \\rightarrow \\mathrm { Cu } ^ { 2 + } + \\mathrm { Cu } ^ { 0 } \\) (b) \\( 3 \\mathrm { MnO } _ { 4 } ^ { 2 - } + 4 \\mathrm { H } ^ { + } \\rightarrow 2 \\mathrm { MnO } _ { 4 } ^ { - } + \\mathrm { MnO } _ { 2 } + 2 \\mathrm { H } _ { 2 } \\mathrm { O } \\) (c) \\( 2 \\mathrm { KMnO } _ { 4 } \\xrightarrow { \\Delta } \\mathrm {~K} _ { 2 } \\mathrm { MnO } _ { 4 } + \\mathrm { MnO } _ { 2 } + \\mathrm { O } _ { 2 } \\) (d) \\( 2 \\mathrm { MnO } _ { 4 } ^ { - } + 3 \\mathrm { Mn } ^ { 2 + } + 2 \\mathrm { H } _ { 2 } \\mathrm { O } \\rightarrow 5 \\mathrm { MnO } _ { 2 } + 4 \\mathrm { H } ^ { \\oplus } \\)",
-      "opts": [
-        "(a) and (b) only",
-        "(a), (b) and (c)",
-        "(a), (c) and (d)",
-        "(a) and (d) only"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2019",
       "q": "Among the following, the one that is not a green house gas is:",
       "opts": [
         "nitrous oxide",
@@ -17662,20 +17116,6 @@
     },
     {
       "year": "NEET 2020",
-      "q": "Identify the incorrect match. Name (a) Unnilunium (b) Unniltrium (c) Unnilhexium (d) Unununnium",
-      "opts": [
-        "(a), (i)",
-        "(b), (ii)",
-        "(c), (iii)",
-        "(d), (iv)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
       "q": "An element has a body centered cubic (bcc) structure with a cell edge of 288 pm . The atomic radius is:",
       "opts": [
         "\\( \\frac { \\sqrt { 3 } } { 4 } \\times 288 \\mathrm { pm } \\)",
@@ -17788,20 +17228,6 @@
     },
     {
       "year": "NEET 2020",
-      "q": "Elimination reaction of 2-Bromo-pentane to form pent-2-ene is:",
-      "opts": [
-        "(a) \\( \\beta \\)-Elimination reaction, (b) Follows Zaitsev rule, (c) Dehydrohalogenation reaction",
-        "(a) \\( \\beta \\)-Elimination reaction, (c) Dehydrohalogenation reaction, (d) Dehydration reaction",
-        "(b) Follows Zaitsev rule, (c) Dehydrohalogenation reaction, (d) Dehydration reaction",
-        "\\( \\quad ( a ) , ( b ) , ( d ) \\)"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
       "q": "HCl was passed through a solution of \\( \\mathrm { CaCl } _ { 2 } , \\mathrm { MgCl } _ { 2 } \\) and NaCl . Which of the following compound(s) crystallise(s)?",
       "opts": [
         "Both \\( \\mathrm { MgCl } _ { 2 } \\) and \\( \\mathrm { CaCl } _ { 2 } \\)",
@@ -17895,20 +17321,6 @@
       ],
       "ans": 1,
       "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
-      "q": "Match the following and identify the correct option. (a) \\( \\quad \\mathrm { CO } ( \\mathrm { g } ) + \\mathrm { H } _ { 2 } ( \\mathrm {~g} ) \\) (i) \\( \\quad \\mathrm { Mg } \\left( \\mathrm { HCO } _ { 3 } \\right) _ { 2 } + \\) \\( \\mathrm { Ca } \\left( \\mathrm { HCO } _ { 3 } \\right) _ { 2 } \\) (b) Temporary (ii) An electron hardness of deficient hydride water (c) \\( \\quad \\mathrm { B } _ { 2 } \\mathrm { H } _ { 6 } \\) (iii) Synthesis gas (d) \\( \\mathrm { H } _ { 2 } \\mathrm { O } _ { 2 } \\) (iv) Non-planar structure",
-      "opts": [
-        "(a) (iii) (b) (i) (c) (ii) (d) (iv)",
-        "(a) (iii) (b) (ii) (c) (i) (d) (iv)",
-        "(a) (iii) (b) (iv) (c) (ii) (d) (i)",
-        "(a) (i) (b) (iii) (c) (ii) (d) (iv)"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "chemistry",
       "diagram": ""
     },
@@ -18096,20 +17508,6 @@
     },
     {
       "year": "NEET 2020",
-      "q": "Select the correct events that occur during inspiration.",
-      "opts": [
-        "(a) Contraction of diaphragm (b) Contraction of external inter-costal muscles",
-        "(c) Pulmonary volume decreases (d) Intra pulmonary pressure increases",
-        "(a) Contraction of diaphragm (b) Contraction of external inter-costal muscles (d) Intra pulmonary pressure increases",
-        "only (d) Intra pulmonary pressure increases"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
       "q": "Identify the incorrect statement.",
       "opts": [
         "Heart wood does not conduct water but gives mechanical support.",
@@ -18175,20 +17573,6 @@
       ],
       "ans": 2,
       "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
-      "q": "Match the following columns and select the correct option. Column - I (a) 6-15 pairs of gill slits (b) Heterocercal caudal fin (c) Air Bladder (d) Poison sting Column - II (i) Trygon (ii) Cyclostomes (iii) Chondrichthyes (iv) Osteichthyes",
-      "opts": [
-        "(a) (ii) (b) (iii) (c) (iv) (d) (i)",
-        "(a) (iii) (b) (iv) (c) (i) (d) (ii)",
-        "(a) (iv) (b) (ii) (c) (iii) (d) (i)",
-        "(a) (i) (b) (iv) (c) (iii) (d) (ii)"
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -18329,20 +17713,6 @@
       ],
       "ans": 1,
       "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "biology",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2020",
-      "q": "Match the following columns and select the correct option. Column - I (a) Placenta (b) Zona pellucida (c) Bulbo-urethral glands (d) Leydig cells Column - II (i) Androgens (ii) Human Chorionic Gonadotropin (hCG) (iii) Layer of the ovum (iv) Lubrication of the Penis",
-      "opts": [
-        "(a)-(iv), (b)-(iii), (c)-(i), (d)-(ii)",
-        "(a)-(i), (b)-(iv), (c)-(ii), (d)-(iii)",
-        "(a)-(iii), (b)-(ii), (c)-(iv), (d)-(i)",
-        "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "biology",
       "diagram": ""
     },
@@ -18768,20 +18138,6 @@
     },
     {
       "year": "NEET 2021",
-      "q": "Match List - I with List - II. List - I (a) \\( \\mathrm { PCl } _ { 5 } \\) (b) \\( \\quad \\mathrm { SF } _ { 6 } \\) (c) \\( \\mathrm { BrF } _ { 5 } \\) (d) \\( \\quad \\mathrm { BF } _ { 3 } \\) List - II (i) Square pyramidal (ii) Trigonal planar (iii) Octahedral (iv) Trigonal bipyramidal Choose the correct answer from the options given below.",
-      "opts": [
-        "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
-        "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
-        "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
-        "(a)-(iv), (b)-(iii), (c)-(i), (d)-(ii)"
-      ],
-      "ans": 3,
-      "exp": "Correct option is choice D in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
       "q": "Dihedral angle of least stable conformer of ethane is :",
       "opts": [
         "\\( 180 ^ { \\circ } \\)",
@@ -18956,34 +18312,6 @@
         "\\( \\quad \\mathrm { SbCl } _ { 5 } \\)",
         "\\( \\mathrm { NO } _ { 2 } \\)",
         "\\( \\mathrm { POCl } _ { 3 } \\)"
-      ],
-      "ans": 1,
-      "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Match List - I with List - II. List - I (a) \\( \\quad \\left[ \\mathrm { Fe } ( \\mathrm { CN } ) _ { 6 } \\right] ^ { 3 - } \\) (b) \\( \\left[ \\mathrm { Fe } \\left( \\mathrm { H } _ { 2 } \\mathrm { O } \\right) _ { 6 } \\right] ^ { 3 + } \\) (c) \\( \\quad \\left[ \\mathrm { Fe } ( \\mathrm { CN } ) _ { 6 } \\right] ^ { 4 - } \\) (d) \\( \\left[ \\mathrm { Fe } \\left( \\mathrm { H } _ { 2 } \\mathrm { O } \\right) _ { 6 } \\right] ^ { 2 + } \\) List - II (i) 5.92 BM (ii) 0 BM (iii) 4.90 BM (iv) 1.73 BM",
-      "opts": [
-        "(a)-(ii), (b)-(iv), (c)-(iii), (d)-(i)",
-        "(a)-(i), (b)-(iii), (c)-(iv), (d)-(ii)",
-        "(a)-(iv), (b)-(i), (c)-(ii), (d)-(iii)",
-        "(a)-(iv), (b)-(ii), (c)-(i), (d)-(iii)"
-      ],
-      "ans": 2,
-      "exp": "Correct option is choice C in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
-    },
-    {
-      "year": "NEET 2021",
-      "q": "Match List-I with List - II. \\n\\nList - I\\n(a) \\( \\quad 2 \\mathrm { SO } _ { 2 } ( \\mathrm {~g} ) + \\mathrm { O } _ { 2 } ( \\mathrm {~g} ) \\rightarrow \\) \\( 2 \\mathrm { SO } _ { 3 } ( \\mathrm {~g} ) \\)\\n(b) \\[ \\begin{array} { l } \\mathrm { HOCl } ( \\mathrm {~g} ) \\xrightarrow { \\mathrm { h } \\nu } \\\\ \\dot { \\mathrm { O } } \\mathrm { H } + \\dot { \\mathrm { Cl } } \\end{array} \\]\\n(c) \\( \\mathrm { CaCO } _ { 3 } + \\mathrm { H } _ { 2 } \\mathrm { SO } _ { 4 } \\rightarrow \\) \\[ \\mathrm { CaSO } _ { 4 } + \\mathrm { H } _ { 2 } \\mathrm { O } + \\mathrm { CO } _ { 2 } \\]\\n(d) \\( \\quad \\begin{array} { l } \\mathrm { NO } _ { 2 } ( \\mathrm {~g} ) \\xrightarrow { \\mathrm { NO } ( \\mathrm { g } ) + \\mathrm { O } ( \\mathrm { g } ) } \\mathrm { h } \\nu \\end{array} \\) \\[ \\mathrm { NO } ( \\mathrm {~g} ) + \\mathrm { O } ( \\mathrm {~g} ) \\]",
-      "opts": [
-        "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
-        "(a)-(iv), (b)-(iii), (c)-(i), (d)-(ii)",
-        "(a)-(iii), (b)-(ii), (c)-(iv), (d)-(i)",
-        "(a)-(i), (b)-(ii), (c)-(iii), (d)-(iv)"
       ],
       "ans": 1,
       "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
@@ -21215,20 +20543,6 @@
       "exp": "Correct option is choice B in accordance with the standard NCERT NEET syllabus guidelines.",
       "subject": "chemistry",
       "diagram": "images/image_810.png"
-    },
-    {
-      "year": "NEET 2024",
-      "q": "For an endothermic reaction:",
-      "opts": [
-        "(B) \\( \\Delta _ { r } \\mathrm { H } \\) is positive. (D) \\( \\mathrm { q } _ { \\mathrm { p } } \\) is positive.",
-        "(C) \\( \\Delta _ { \\mathrm { r } } \\mathrm { H } \\) is negative. (D) \\( \\mathrm { q } _ { \\mathrm { p } } \\) is positive.",
-        "(A) \\( q _ { p } \\) is negative. (B) \\( \\Delta _ { r } \\mathrm { H } \\) is positive.",
-        "(A) \\( q _ { p } \\) is negative. (C) \\( \\Delta _ { \\mathrm { r } } \\mathrm { H } \\) is negative."
-      ],
-      "ans": 0,
-      "exp": "Correct option is choice A in accordance with the standard NCERT NEET syllabus guidelines.",
-      "subject": "chemistry",
-      "diagram": ""
     },
     {
       "year": "NEET 2024",
