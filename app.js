@@ -4824,3 +4824,106 @@ window.addPyqToErrorBook = addPyqToErrorBook;
 window.askAiAboutPyq = askAiAboutPyq;
 window.updateErrorBookDeckLabel = updateErrorBookDeckLabel;
 window.renderOverviewCounselorAlert = renderOverviewCounselorAlert;
+
+// 8. NEET POMODORO TIMER SPRINT
+
+let pomoTimerInterval = null;
+let pomoTimeRemaining = 45 * 60;
+let pomoIsRunning = false;
+
+function setPomoDuration() {
+  const durSelect = document.getElementById('pomo-duration');
+  if (!durSelect) return;
+  
+  const minutes = parseInt(durSelect.value) || 45;
+  pausePomoTimer();
+  pomoTimeRemaining = minutes * 60;
+  
+  const display = document.getElementById('pomo-timer-display');
+  if (display) display.textContent = formatPomoTime(pomoTimeRemaining);
+  
+  const status = document.getElementById('pomo-status-message');
+  if (status) status.textContent = '';
+}
+
+function formatPomoTime(secs) {
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+function startPomoTimer() {
+  if (pomoIsRunning) return;
+  pomoIsRunning = true;
+  
+  const startBtn = document.getElementById('pomo-start-btn');
+  const pauseBtn = document.getElementById('pomo-pause-btn');
+  if (startBtn) startBtn.style.display = 'none';
+  if (pauseBtn) pauseBtn.style.display = 'inline-block';
+  
+  const status = document.getElementById('pomo-status-message');
+  if (status) status.textContent = '🔥 Study sprint is active! Stay focused...';
+  
+  pomoTimerInterval = setInterval(() => {
+    pomoTimeRemaining--;
+    
+    const display = document.getElementById('pomo-timer-display');
+    if (display) display.textContent = formatPomoTime(pomoTimeRemaining);
+    
+    if (pomoTimeRemaining <= 0) {
+      clearInterval(pomoTimerInterval);
+      pomoIsRunning = false;
+      
+      if (startBtn) startBtn.style.display = 'inline-block';
+      if (pauseBtn) pauseBtn.style.display = 'none';
+      
+      const subject = document.getElementById('pomo-subject').value;
+      const durationVal = parseInt(document.getElementById('pomo-duration').value) || 45;
+      
+      // Auto populate log hours
+      if (subject !== 'General' && durationVal !== 5) {
+        const hoursToAdd = durationVal / 60;
+        let inputId = 'track-phy';
+        if (subject === 'Chemistry') inputId = 'track-chem';
+        else if (subject === 'Biology') inputId = 'track-bio';
+        
+        const inputField = document.getElementById(inputId);
+        if (inputField) {
+          const currentVal = parseFloat(inputField.value) || 0;
+          inputField.value = currentVal + hoursToAdd;
+        }
+        
+        if (status) status.innerHTML = `🎉 Completed! Added <strong>${hoursToAdd}h</strong> to your ${subject} log. Click "Save Session" above!`;
+      } else {
+        if (status) status.textContent = '🎉 Completed! Time for a short break or next study sprint.';
+      }
+      
+      triggerConfetti();
+      alert(`⏱️ NEET Sprint Complete! Excellent job staying focused on ${subject}.`);
+    }
+  }, 1000);
+}
+
+function pausePomoTimer() {
+  if (!pomoIsRunning) return;
+  pomoIsRunning = false;
+  clearInterval(pomoTimerInterval);
+  
+  const startBtn = document.getElementById('pomo-start-btn');
+  const pauseBtn = document.getElementById('pomo-pause-btn');
+  if (startBtn) startBtn.style.display = 'inline-block';
+  if (pauseBtn) pauseBtn.style.display = 'none';
+  
+  const status = document.getElementById('pomo-status-message');
+  if (status) status.textContent = '⏸️ Timer paused. Click start to resume.';
+}
+
+function resetPomoTimer() {
+  pausePomoTimer();
+  setPomoDuration();
+}
+
+window.setPomoDuration = setPomoDuration;
+window.startPomoTimer = startPomoTimer;
+window.pausePomoTimer = pausePomoTimer;
+window.resetPomoTimer = resetPomoTimer;

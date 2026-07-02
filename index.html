@@ -614,56 +614,98 @@
       </div>
 
       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:24px;">
-        <!-- Log Form -->
-        <div class="glass-card">
-          <h2 style="margin-top:0;">Log Study Session</h2>
-          <form id="study-log-form" onsubmit="logStudy(event)">
-            <div class="form-group">
-              <label for="track-date">Date</label>
-              <input type="date" id="track-date" class="form-control" required>
-            </div>
+        <!-- Log Form & Pomodoro -->
+        <div style="display:flex; flex-direction:column; gap:24px;">
+          <!-- Log Form -->
+          <div class="glass-card">
+            <h2 style="margin-top:0;">Log Study Session</h2>
+            <form id="study-log-form" onsubmit="logStudy(event)">
+              <div class="form-group">
+                <label for="track-date">Date</label>
+                <input type="date" id="track-date" class="form-control" required>
+              </div>
+              
+              <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+                <div class="form-group">
+                  <label for="track-phy" style="color:var(--phy);">Physics (h)</label>
+                  <input type="number" id="track-phy" step="0.5" min="0" max="24" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                  <label for="track-chem" style="color:var(--che);">Chemistry (h)</label>
+                  <input type="number" id="track-chem" step="0.5" min="0" max="24" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                  <label for="track-bio" style="color:var(--bio);">Biology (h)</label>
+                  <input type="number" id="track-bio" step="0.5" min="0" max="24" class="form-control" placeholder="0">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="track-mcqs">MCQs Solved</label>
+                <input type="number" id="track-mcqs" min="0" class="form-control" placeholder="e.g. 50">
+              </div>
+
+              <div class="form-group">
+                <label for="track-confidence">Confidence Level (1-5)</label>
+                <select id="track-confidence" class="form-control">
+                  <option value="5">⭐⭐⭐⭐⭐ Excellent (Crystal Clear)</option>
+                  <option value="4">⭐⭐⭐⭐ Good (Minor doubts)</option>
+                  <option value="3" selected>⭐⭐⭐ Average (Needs practice)</option>
+                  <option value="2">⭐⭐ Weak (Struggling)</option>
+                  <option value="1">⭐ Critical (Don't understand)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="track-notes">Key Notes / Difficulties</label>
+                <textarea id="track-notes" rows="3" class="form-control" placeholder="e.g. Weak in Mechanics formula, Organic conversions are tough..."></textarea>
+              </div>
+
+              <div style="display:flex; gap:12px;">
+                <button type="submit" class="btn btn-primary" style="flex:1;">Save Session</button>
+                <button type="button" class="btn btn-secondary" onclick="exportLogs()">Export</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- NEET Study Sprint Pomodoro -->
+          <div class="glass-card" style="text-align:center; padding:24px; background: linear-gradient(135deg, rgba(0, 212, 170, 0.05), rgba(12, 18, 34, 0.85)); border-left: 5px solid var(--primary);">
+            <h2 style="margin-top:0; margin-bottom:6px;">⏱️ NEET Study Sprint Timer</h2>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:16px;">NEET study sprint rules: 45 minutes focused solving, followed by a 5-minute break.</p>
             
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
-              <div class="form-group">
-                <label for="track-phy" style="color:var(--phy);">Physics (h)</label>
-                <input type="number" id="track-phy" step="0.5" min="0" max="24" class="form-control" placeholder="0">
-              </div>
-              <div class="form-group">
-                <label for="track-chem" style="color:var(--che);">Chemistry (h)</label>
-                <input type="number" id="track-chem" step="0.5" min="0" max="24" class="form-control" placeholder="0">
-              </div>
-              <div class="form-group">
-                <label for="track-bio" style="color:var(--bio);">Biology (h)</label>
-                <input type="number" id="track-bio" step="0.5" min="0" max="24" class="form-control" placeholder="0">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="track-mcqs">MCQs Solved</label>
-              <input type="number" id="track-mcqs" min="0" class="form-control" placeholder="e.g. 50">
-            </div>
-
-            <div class="form-group">
-              <label for="track-confidence">Confidence Level (1-5)</label>
-              <select id="track-confidence" class="form-control">
-                <option value="5">⭐⭐⭐⭐⭐ Excellent (Crystal Clear)</option>
-                <option value="4">⭐⭐⭐⭐ Good (Minor doubts)</option>
-                <option value="3" selected>⭐⭐⭐ Average (Needs practice)</option>
-                <option value="2">⭐⭐ Weak (Struggling)</option>
-                <option value="1">⭐ Critical (Don't understand)</option>
+            <div style="display:flex; justify-content:center; gap:12px; align-items:center; margin-bottom:20px;">
+              <!-- Subject Sprint Selector -->
+              <select id="pomo-subject" class="form-control" style="width: auto; max-width: 140px; font-size:12px; height:32px; padding:0 8px;">
+                <option value="Physics">⚡ Physics Sprint</option>
+                <option value="Chemistry">🧪 Chemistry Sprint</option>
+                <option value="Biology">🧬 Biology Sprint</option>
+                <option value="General">🌿 General Study</option>
+              </select>
+              <!-- Duration Selector -->
+              <select id="pomo-duration" class="form-control" style="width: auto; max-width: 105px; font-size:12px; height:32px; padding:0 8px;" onchange="setPomoDuration()">
+                <option value="45" selected>45 Mins</option>
+                <option value="25">25 Mins</option>
+                <option value="60">60 Mins</option>
+                <option value="5">5 Mins (Break)</option>
               </select>
             </div>
-
-            <div class="form-group">
-              <label for="track-notes">Key Notes / Difficulties</label>
-              <textarea id="track-notes" rows="3" class="form-control" placeholder="e.g. Weak in Mechanics formula, Organic conversions are tough..."></textarea>
+            
+            <!-- Large Timer Display -->
+            <div id="pomo-timer-display" style="font-size:48px; font-weight:800; font-family:var(--font-mono); color:var(--text-primary); margin-bottom:20px; text-shadow: 0 0 15px rgba(255,255,255,0.1); letter-spacing: 2px;">
+              45:00
             </div>
-
-            <div style="display:flex; gap:12px;">
-              <button type="submit" class="btn btn-primary" style="flex:1;">Save Session</button>
-              <button type="button" class="btn btn-secondary" onclick="exportLogs()">Export</button>
+            
+            <!-- Control Buttons -->
+            <div style="display:flex; justify-content:center; gap:12px;">
+              <button id="pomo-start-btn" onclick="startPomoTimer()" class="btn btn-primary" style="padding: 6px 16px; font-size: 12px; font-weight:700; width: 100px;">🚀 Start</button>
+              <button id="pomo-pause-btn" onclick="pausePomoTimer()" class="btn btn-secondary" style="padding: 6px 16px; font-size: 12px; font-weight:700; width: 100px; display:none;">⏸️ Pause</button>
+              <button onclick="resetPomoTimer()" class="btn btn-secondary" style="padding: 6px 16px; font-size: 12px; font-weight:700; width: 100px;">🔄 Reset</button>
             </div>
-          </form>
+            
+            <!-- Dynamic completion notification area -->
+            <div id="pomo-status-message" style="margin-top:16px; font-size:12.5px; font-weight:600; color:var(--primary); min-height:18px;">
+            </div>
+          </div>
         </div>
 
         <!-- Logs History -->
