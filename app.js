@@ -438,6 +438,46 @@ function safeSetSessionStorage(key, value) {
     try {
       errorBookItems = JSON.parse(safeGetLocalStorage('neet_v3_errorbook_items') || '[]');
     } catch(e){}
+
+    // Global constant for Accent Color Customizer (declared at top to prevent TDZ errors)
+    const ACCENT_PRESETS = {
+      default: {
+        name: 'Teal Surge',
+        color: '#00d4aa',
+        hover: '#05b08e',
+        glow: 'rgba(0, 212, 170, 0.12)',
+        glowThick: 'rgba(0, 212, 170, 0.25)'
+      },
+      aiims: {
+        name: 'Astra Blue (AIIMS)',
+        color: '#378ADD',
+        hover: '#296cae',
+        glow: 'rgba(55, 138, 221, 0.12)',
+        glowThick: 'rgba(55, 138, 221, 0.25)'
+      },
+      rosegold: {
+        name: 'Rose Gold',
+        color: '#f43f5e',
+        hover: '#e11d48',
+        glow: 'rgba(244, 63, 94, 0.12)',
+        glowThick: 'rgba(244, 63, 94, 0.25)'
+      },
+      cyberpurple: {
+        name: 'Cyber Purple',
+        color: '#a855f7',
+        hover: '#9333ea',
+        glow: 'rgba(168, 85, 247, 0.12)',
+        glowThick: 'rgba(168, 85, 247, 0.25)'
+      },
+      crimson: {
+        name: 'Crimson Focus',
+        color: '#ef4444',
+        hover: '#dc2626',
+        glow: 'rgba(239, 68, 68, 0.12)',
+        glowThick: 'rgba(239, 68, 68, 0.25)'
+      }
+    };
+
     let currentDeckKey = 'linked';
     let currentCardIdx = 0;
     const FLASHCARD_DECKS = {
@@ -5853,64 +5893,44 @@ window.focusSyllabusChapter = focusSyllabusChapter;
 
 // 13. ACCENT COLOR CUSTOMIZATION
 
-const ACCENT_PRESETS = {
-  default: {
-    name: 'Teal Surge (Default)',
-    color: '#00d4aa',
-    hover: '#05b08e',
-    glow: 'rgba(0, 212, 170, 0.12)'
-  },
-  aiims: {
-    name: 'Astra Blue (AIIMS)',
-    color: '#378ADD',
-    hover: '#296cae',
-    glow: 'rgba(55, 138, 221, 0.12)'
-  },
-  rosegold: {
-    name: 'Rose Gold',
-    color: '#f43f5e',
-    hover: '#e11d48',
-    glow: 'rgba(244, 63, 94, 0.12)'
-  },
-  cyberpurple: {
-    name: 'Cyber Purple',
-    color: '#a855f7',
-    hover: '#9333ea',
-    glow: 'rgba(168, 85, 247, 0.12)'
-  },
-  crimson: {
-    name: 'Crimson Focus',
-    color: '#ef4444',
-    hover: '#dc2626',
-    glow: 'rgba(239, 68, 68, 0.12)'
-  }
-};
-
 function applyAccentTheme(key) {
-  const preset = ACCENT_PRESETS[key];
-  if (!preset) return;
-  
-  if (key === 'default') {
+  if (key === 'theme') {
     document.body.style.removeProperty('--primary');
     document.body.style.removeProperty('--primary-hover');
     document.body.style.removeProperty('--primary-glow');
-    safeRemoveLocalStorage('neet_v3_accent_theme');
-  } else {
-    document.body.style.setProperty('--primary', preset.color);
-    document.body.style.setProperty('--primary-hover', preset.hover);
-    document.body.style.setProperty('--primary-glow', preset.glow);
-    safeSetLocalStorage('neet_v3_accent_theme', key);
+    document.body.style.removeProperty('--primary-glow-thick');
+    safeSetLocalStorage('neet_v3_accent_theme', 'theme');
+    showToast(`🎨 Reset to Theme Default`);
+    return;
   }
+  
+  const preset = ACCENT_PRESETS[key];
+  if (!preset) return;
+  
+  document.body.style.setProperty('--primary', preset.color);
+  document.body.style.setProperty('--primary-hover', preset.hover);
+  document.body.style.setProperty('--primary-glow', preset.glow);
+  document.body.style.setProperty('--primary-glow-thick', preset.glowThick);
+  safeSetLocalStorage('neet_v3_accent_theme', key);
   showToast(`🎨 Accent changed to: ${preset.name}`);
 }
 
 function loadAccentTheme() {
   const savedKey = safeGetLocalStorage('neet_v3_accent_theme') || 'default';
-  if (savedKey !== 'default' && ACCENT_PRESETS[savedKey]) {
-    const preset = ACCENT_PRESETS[savedKey];
+  if (savedKey === 'theme') {
+    document.body.style.removeProperty('--primary');
+    document.body.style.removeProperty('--primary-hover');
+    document.body.style.removeProperty('--primary-glow');
+    document.body.style.removeProperty('--primary-glow-thick');
+    return;
+  }
+  
+  const preset = ACCENT_PRESETS[savedKey];
+  if (preset) {
     document.body.style.setProperty('--primary', preset.color);
     document.body.style.setProperty('--primary-hover', preset.hover);
     document.body.style.setProperty('--primary-glow', preset.glow);
+    document.body.style.setProperty('--primary-glow-thick', preset.glowThick);
   }
 }
 
