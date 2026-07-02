@@ -3772,7 +3772,7 @@ function toggleTheme() {
 }
 
 function applyTheme(themeName) {
-  document.body.classList.remove('theme-midnight-cyber', 'theme-forest-mint', 'theme-deep-cosmos', 'light-mode');
+  document.body.classList.remove('theme-midnight-cyber', 'theme-forest-mint', 'theme-deep-cosmos', 'theme-github-dark', 'theme-matrix-terminal', 'light-mode');
   
   if (themeName === 'light') {
     document.body.classList.add('light-mode');
@@ -3786,6 +3786,12 @@ function applyTheme(themeName) {
   } else if (themeName === 'deep-cosmos') {
     document.body.classList.add('theme-deep-cosmos');
     safeSetLocalStorage('theme', 'deep-cosmos');
+  } else if (themeName === 'github-dark') {
+    document.body.classList.add('theme-github-dark');
+    safeSetLocalStorage('theme', 'github-dark');
+  } else if (themeName === 'matrix-terminal') {
+    document.body.classList.add('theme-matrix-terminal');
+    safeSetLocalStorage('theme', 'matrix-terminal');
   } else {
     safeSetLocalStorage('theme', 'dark');
   }

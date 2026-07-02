@@ -121,6 +121,40 @@ body.light-mode {
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
 }
 
+body.theme-github-dark {
+  --bg-base: #0d1117;
+  --bg-surface: #161b22;
+  --bg-surface-hover: #21262d;
+  --bg-glass: rgba(22, 27, 34, 0.7);
+  --primary: #58a6ff;
+  --primary-hover: #1f6feb;
+  --primary-glow: rgba(88, 166, 255, 0.12);
+  --primary-glow-thick: rgba(88, 166, 255, 0.25);
+  --secondary: #bc8cff;
+  --secondary-glow: rgba(188, 140, 255, 0.12);
+  --accent-success: #3fb950;
+  --accent-success-glow: rgba(63, 185, 80, 0.12);
+  --accent-danger: #f85149;
+  --accent-danger-glow: rgba(248, 81, 73, 0.12);
+}
+
+body.theme-matrix-terminal {
+  --bg-base: #020703;
+  --bg-surface: #08140a;
+  --bg-surface-hover: #0f2b14;
+  --bg-glass: rgba(8, 20, 10, 0.7);
+  --primary: #00ff41;
+  --primary-hover: #00cc33;
+  --primary-glow: rgba(0, 255, 65, 0.12);
+  --primary-glow-thick: rgba(0, 255, 65, 0.25);
+  --secondary: #008f11;
+  --secondary-glow: rgba(0, 143, 17, 0.12);
+  --accent-success: #00ff41;
+  --accent-success-glow: rgba(0, 255, 65, 0.12);
+  --accent-danger: #ff003c;
+  --accent-danger-glow: rgba(255, 0, 60, 0.12);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
