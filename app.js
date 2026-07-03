@@ -478,22 +478,7 @@ function safeSetSessionStorage(key, value) {
       }
     };
 
-    function getGeminiApiKey() {
-      const userKey = safeGetLocalStorage('gemini_api_key');
-      if (userKey) return userKey;
-      
-      // Fallback key with 3-day automatic expiration (expires July 5, 2026 20:58:03 IST)
-      const expiration = 1783351683000;
-      if (Date.now() < expiration) {
-        try {
-          return atob("Z3o0SDdQN21od3dCVnF0Wmw2LXpvVHJxUTQ5bXc3Z3BDUXZnWVh2U1A4Y0k2TlI4YkEuUUE=").split("").reverse().join("");
-        } catch(e) {
-          return null;
-        }
-      }
-      return null;
-    }
-    window.getGeminiApiKey = getGeminiApiKey;
+
 
     let currentDeckKey = 'linked';
     let currentCardIdx = 0;
@@ -3007,7 +2992,7 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
 }
 
 async function startAiParse() {
-  const apiKey = getGeminiApiKey();
+  const apiKey = safeGetLocalStorage('gemini_api_key');
   
   if (!apiKey) {
     alert("Please configure your Gemini API Key first in the '⚙️ Settings' tab.");
@@ -3098,7 +3083,7 @@ async function startAiParse() {
 }
 
 async function generateAiChapterTest(chapterName) {
-  const apiKey = getGeminiApiKey();
+  const apiKey = safeGetLocalStorage('gemini_api_key');
   if (!apiKey) {
     alert("Please configure your Gemini API Key first in the '🤖 AI CBT' tab.");
     showTab('ai-test');
@@ -4840,7 +4825,7 @@ function addPyqToErrorBook(chName, qIdx) {
 }
 
 async function askAiAboutPyq(chName, qIdx) {
-  const apiKey = getGeminiApiKey();
+  const apiKey = safeGetLocalStorage('gemini_api_key');
   if (!apiKey) {
     alert("Please configure your Gemini API Key in the Settings or AI CBT tab first!");
     return;
