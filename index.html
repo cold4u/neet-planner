@@ -291,6 +291,18 @@
         </div>
       </div>
 
+      <!-- Spaced Repetition Revision Scheduler Card -->
+      <div id="spaced-repetition-card" class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(0, 212, 170, 0.03), rgba(12, 18, 34, 0.85));">
+        <h2 style="margin-top:0; font-size:16px; display:flex; align-items:center; gap:8px;">
+          <span>📅 Spaced Repetition Revision Reminders</span>
+        </h2>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.4;">Based on completion dates, these chapters are due for active recall review today (1d, 7d, 30d cycles) to combat the forgetting curve.</p>
+        
+        <div id="spaced-repetition-list" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+
       <div class="glass-card">
         <h2 style="margin-top:0;">Welcome to NEET 309-Day Planner</h2>
         <p style="line-height:1.6; color:#94a3b8;">
@@ -627,6 +639,30 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- NEET Rank Predictor & College Cutoff Estimator Card -->
+      <div id="rank-predictor-card" class="glass-card" style="margin-top: 24px; margin-bottom: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <h3 style="margin:0; display:flex; align-items:center; gap:8px;">🏆 NEET Rank Predictor & Target Cutoffs</h3>
+          <span id="rank-predictor-score" style="font-size:12px; font-weight:700; color:var(--primary); background:var(--primary-glow); padding:4px 10px; border-radius:10px; border:1px solid var(--primary);">Average Score: 0/720</span>
+        </div>
+        
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:20px;">
+          <div class="glass-card" style="background:rgba(255,255,255,0.02); text-align:center; padding:16px; border: 1px solid rgba(255,255,255,0.04);">
+            <span style="font-size:11px; color:var(--text-secondary); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">Predicted All India Rank (AIR)</span>
+            <span id="predicted-rank" style="font-size:28px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">-</span>
+          </div>
+          <div class="glass-card" style="background:rgba(255,255,255,0.02); text-align:center; padding:16px; border: 1px solid rgba(255,255,255,0.04);">
+            <span style="font-size:11px; color:var(--text-secondary); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">Estimated Percentile</span>
+            <span id="predicted-percentile" style="font-size:28px; font-weight:800; color:var(--accent-success); font-family:var(--font-mono);">-</span>
+          </div>
+        </div>
+
+        <h4 style="margin-top:0; margin-bottom:12px; font-size:13px; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Target College Eligibility Cutoffs (General Category):</h4>
+        <div id="college-cutoffs-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:10px; max-height: 240px; overflow-y: auto; padding-right:6px;">
+          <!-- Rendered dynamically via JS -->
         </div>
       </div>
 
@@ -1232,7 +1268,14 @@
         <p class="page-desc">Test your memory on high-weightage constants, Named reactions, and NCERT examples.</p>
       </div>
 
-      <div class="flashcards-container">
+      <!-- Navigation Segment -->
+      <div style="display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+        <button id="toggle-flashcards-btn" class="btn btn-secondary active-theme" onclick="toggleFlashcardMode('cards')" style="padding:6px 14px; font-size:12px;">🎴 Flashcards</button>
+        <button id="toggle-match-game-btn" class="btn btn-secondary" onclick="toggleFlashcardMode('match')" style="padding:6px 14px; font-size:12px;">🧩 Match the Following Game</button>
+      </div>
+
+      <!-- Flashcards Mode Container -->
+      <div id="flashcards-mode-container" class="flashcards-container">
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:12px;">
           <select id="flashcard-deck-select" class="flashcard-deck-select" onchange="loadSelectedFlashcardDeck()">
             <option value="linked">📅 Study Plan Linked Deck (Today & Earlier Chapters)</option>
@@ -1262,6 +1305,31 @@
         <div class="flashcard-controls">
           <button class="btn btn-secondary" style="border-color:rgba(248,113,113,0.3); color:var(--tertiary);" onclick="handleFlashcardAction(false); event.stopPropagation();">❌ Review Again (Hard)</button>
           <button class="btn btn-secondary" style="border-color:rgba(16,185,129,0.3); color:var(--accent-success);" onclick="handleFlashcardAction(true); event.stopPropagation();">✅ Got It (Easy)</button>
+        </div>
+      </div>
+
+      <!-- Match the Following Container -->
+      <div id="match-game-mode-container" style="display:none; max-width: 600px; margin: 0 auto;">
+        <div class="glass-card" style="margin-bottom:16px;">
+          <h3 style="margin-top:0; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span>🧩 NCERT Biology Match Game</span>
+            <span id="match-game-timer" style="font-size:13px; color:var(--primary); font-family:var(--font-mono); font-weight:700;">Time: 0.0s</span>
+          </h3>
+          <p style="font-size:11px; color:var(--text-muted); margin:0 0 16px 0;">Match Column A with the correct values in Column B. Match all 4 to win!</p>
+          
+          <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+            <div style="flex:1; min-width:200px; display:flex; flex-direction:column; gap:10px;" id="match-col-a">
+              <!-- Column A items -->
+            </div>
+            <div style="flex:1; min-width:200px; display:flex; flex-direction:column; gap:10px;" id="match-col-b">
+              <!-- Column B items -->
+            </div>
+          </div>
+          
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <span id="match-game-status" style="font-size:12px; font-weight:700; color:var(--text-secondary);">Score: 0/4</span>
+            <button class="btn btn-primary" id="match-next-btn" onclick="startMatchGameSet()" style="display:none; font-size:12px; padding:6px 12px;">Next Set ➡️</button>
+          </div>
         </div>
       </div>
     </section>

@@ -4367,6 +4367,18 @@ tag in <head>
         </div>
       </div>
 
+      <!-- Spaced Repetition Revision Scheduler Card -->
+      <div id="spaced-repetition-card" class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(0, 212, 170, 0.03), rgba(12, 18, 34, 0.85));">
+        <h2 style="margin-top:0; font-size:16px; display:flex; align-items:center; gap:8px;">
+          <span>📅 Spaced Repetition Revision Reminders</span>
+        </h2>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.4;">Based on completion dates, these chapters are due for active recall review today (1d, 7d, 30d cycles) to combat the forgetting curve.</p>
+        
+        <div id="spaced-repetition-list" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+
       <div class="glass-card">
         <h2 style="margin-top:0;">Welcome to NEET 309-Day Planner</h2>
         <p style="line-height:1.6; color:#94a3b8;">
@@ -4703,6 +4715,30 @@ tag in <head>
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- NEET Rank Predictor & College Cutoff Estimator Card -->
+      <div id="rank-predictor-card" class="glass-card" style="margin-top: 24px; margin-bottom: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <h3 style="margin:0; display:flex; align-items:center; gap:8px;">🏆 NEET Rank Predictor & Target Cutoffs</h3>
+          <span id="rank-predictor-score" style="font-size:12px; font-weight:700; color:var(--primary); background:var(--primary-glow); padding:4px 10px; border-radius:10px; border:1px solid var(--primary);">Average Score: 0/720</span>
+        </div>
+        
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:20px;">
+          <div class="glass-card" style="background:rgba(255,255,255,0.02); text-align:center; padding:16px; border: 1px solid rgba(255,255,255,0.04);">
+            <span style="font-size:11px; color:var(--text-secondary); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">Predicted All India Rank (AIR)</span>
+            <span id="predicted-rank" style="font-size:28px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">-</span>
+          </div>
+          <div class="glass-card" style="background:rgba(255,255,255,0.02); text-align:center; padding:16px; border: 1px solid rgba(255,255,255,0.04);">
+            <span style="font-size:11px; color:var(--text-secondary); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">Estimated Percentile</span>
+            <span id="predicted-percentile" style="font-size:28px; font-weight:800; color:var(--accent-success); font-family:var(--font-mono);">-</span>
+          </div>
+        </div>
+
+        <h4 style="margin-top:0; margin-bottom:12px; font-size:13px; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Target College Eligibility Cutoffs (General Category):</h4>
+        <div id="college-cutoffs-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:10px; max-height: 240px; overflow-y: auto; padding-right:6px;">
+          <!-- Rendered dynamically via JS -->
         </div>
       </div>
 
@@ -5308,7 +5344,14 @@ tag in <head>
         <p class="page-desc">Test your memory on high-weightage constants, Named reactions, and NCERT examples.</p>
       </div>
 
-      <div class="flashcards-container">
+      <!-- Navigation Segment -->
+      <div style="display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+        <button id="toggle-flashcards-btn" class="btn btn-secondary active-theme" onclick="toggleFlashcardMode('cards')" style="padding:6px 14px; font-size:12px;">🎴 Flashcards</button>
+        <button id="toggle-match-game-btn" class="btn btn-secondary" onclick="toggleFlashcardMode('match')" style="padding:6px 14px; font-size:12px;">🧩 Match the Following Game</button>
+      </div>
+
+      <!-- Flashcards Mode Container -->
+      <div id="flashcards-mode-container" class="flashcards-container">
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:12px;">
           <select id="flashcard-deck-select" class="flashcard-deck-select" onchange="loadSelectedFlashcardDeck()">
             <option value="linked">📅 Study Plan Linked Deck (Today & Earlier Chapters)</option>
@@ -5338,6 +5381,31 @@ tag in <head>
         <div class="flashcard-controls">
           <button class="btn btn-secondary" style="border-color:rgba(248,113,113,0.3); color:var(--tertiary);" onclick="handleFlashcardAction(false); event.stopPropagation();">❌ Review Again (Hard)</button>
           <button class="btn btn-secondary" style="border-color:rgba(16,185,129,0.3); color:var(--accent-success);" onclick="handleFlashcardAction(true); event.stopPropagation();">✅ Got It (Easy)</button>
+        </div>
+      </div>
+
+      <!-- Match the Following Container -->
+      <div id="match-game-mode-container" style="display:none; max-width: 600px; margin: 0 auto;">
+        <div class="glass-card" style="margin-bottom:16px;">
+          <h3 style="margin-top:0; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span>🧩 NCERT Biology Match Game</span>
+            <span id="match-game-timer" style="font-size:13px; color:var(--primary); font-family:var(--font-mono); font-weight:700;">Time: 0.0s</span>
+          </h3>
+          <p style="font-size:11px; color:var(--text-muted); margin:0 0 16px 0;">Match Column A with the correct values in Column B. Match all 4 to win!</p>
+          
+          <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+            <div style="flex:1; min-width:200px; display:flex; flex-direction:column; gap:10px;" id="match-col-a">
+              <!-- Column A items -->
+            </div>
+            <div style="flex:1; min-width:200px; display:flex; flex-direction:column; gap:10px;" id="match-col-b">
+              <!-- Column B items -->
+            </div>
+          </div>
+          
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <span id="match-game-status" style="font-size:12px; font-weight:700; color:var(--text-secondary);">Score: 0/4</span>
+            <button class="btn btn-primary" id="match-next-btn" onclick="startMatchGameSet()" style="display:none; font-size:12px; padding:6px 12px;">Next Set ➡️</button>
+          </div>
         </div>
       </div>
     </section>
@@ -7264,12 +7332,21 @@ IV. Formation of DNA-based genetic systems", "opts": ["I, II, III, IV", "I, III,
         chapterProgress[chName] = { understand: false, practice: false, revise: false };
       }
       chapterProgress[chName][step] = !chapterProgress[chName][step];
+      
+      // Store timestamp of completion for spaced repetition
+      if (chapterProgress[chName][step]) {
+        chapterProgress[chName][step + '_date'] = new Date().toISOString().split('T')[0];
+      } else {
+        delete chapterProgress[chName][step + '_date'];
+      }
+      
       safeSetLocalStorage('neet_v3_chapter_progress', JSON.stringify(chapterProgress));
       renderChapters();
       updateOverviewStats();
       if (typeof renderSyllabusCoverageHeatmap === 'function') {
         renderSyllabusCoverageHeatmap();
       }
+      try { updateSpacedRepetitionScheduler(); } catch(e) {}
     }
     
     function getProceduralDiagram(chName, qText, qIdx) {
@@ -8166,6 +8243,8 @@ IV. Formation of DNA-based genetic systems", "opts": ["I, II, III, IV", "I, III,
       if (typeof renderWeeklyReport === 'function') {
         renderWeeklyReport();
       }
+      
+      try { updateSpacedRepetitionScheduler(); } catch(e) { console.error("Error in updateSpacedRepetitionScheduler:", e); }
     }
     
     function renderOverviewStats() {
@@ -10333,6 +10412,7 @@ function renderMockTestsDashboard() {
     if (strengthCard) {
       strengthCard.style.display = 'none';
     }
+    try { updateNeetRankPredictor(); } catch(e) {}
     return;
   }
   
@@ -10476,6 +10556,7 @@ function renderMockTestsDashboard() {
   if (typeof renderSubjectStrengthHeatmap === 'function') {
     renderSubjectStrengthHeatmap(avgPhy, avgChe, avgBio);
   }
+  try { updateNeetRankPredictor(); } catch(e) { console.error("Error in updateNeetRankPredictor:", e); }
 }
 
 function renderErrorBar(label, count, pct, color) {
@@ -11698,6 +11779,457 @@ function updateAccentButtonActiveStates(key) {
 
 window.applyAccentTheme = applyAccentTheme;
 window.loadAccentTheme = loadAccentTheme;
+
+// ==========================================
+// 14. NEET RANK PREDICTOR & COLLEGE CUTOFFS
+// ==========================================
+
+const COLLEGE_CUTOFFS = [
+  { name: "AIIMS New Delhi", cutoff: 710, air: 50 },
+  { name: "MAMC New Delhi", cutoff: 700, air: 150 },
+  { name: "VMMC New Delhi", cutoff: 695, air: 250 },
+  { name: "AIIMS Bhubaneswar", cutoff: 685, air: 600 },
+  { name: "AIIMS Rishikesh", cutoff: 680, air: 800 },
+  { name: "JIPMER Puducherry", cutoff: 680, air: 800 },
+  { name: "GSMC Mumbai (KEM)", cutoff: 675, air: 1200 },
+  { name: "AIIMS Jodhpur", cutoff: 675, air: 1200 },
+  { name: "IMS BHU Varanasi", cutoff: 670, air: 1800 },
+  { name: "BJMC Ahmedabad", cutoff: 670, air: 1800 },
+  { name: "CMC Vellore", cutoff: 660, air: 3000 },
+  { name: "KGMU Lucknow", cutoff: 655, air: 3800 },
+  { name: "SMS Jaipur", cutoff: 650, air: 4800 },
+  { name: "RG Kar GMC Kolkata", cutoff: 640, air: 9000 },
+  { name: "GMC Chandigarh", cutoff: 635, air: 12000 },
+  { name: "State Govt GMC (General Safe Zone)", cutoff: 615, air: 25000 }
+];
+
+function updateNeetRankPredictor() {
+  const rankValEl = document.getElementById('predicted-rank');
+  const percentileValEl = document.getElementById('predicted-percentile');
+  const scoreBadgeEl = document.getElementById('rank-predictor-score');
+  const cutoffsListEl = document.getElementById('college-cutoffs-list');
+  
+  if (!rankValEl || !percentileValEl || !scoreBadgeEl || !cutoffsListEl) return;
+  
+  if (!mockTests || mockTests.length === 0) {
+    rankValEl.textContent = '-';
+    percentileValEl.textContent = '-';
+    scoreBadgeEl.textContent = 'Average Score: 0/720';
+    
+    // Draw all as low probability initially
+    let html = '';
+    COLLEGE_CUTOFFS.forEach(c => {
+      html += `
+        <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+          <div>
+            <div style="font-weight:600; color:var(--text-primary);">${c.name}</div>
+            <div style="font-size:10px; color:var(--text-muted);">Cutoff: ${c.cutoff} | AIR < ${c.air}</div>
+          </div>
+          <span style="font-size:10px; font-weight:700; color:var(--text-muted); background:rgba(255,255,255,0.03); padding:2px 6px; border-radius:4px;">No Score Logged</span>
+        </div>
+      `;
+    });
+    cutoffsListEl.innerHTML = html;
+    return;
+  }
+  
+  // Calculate average of mock test scores
+  let sumTotal = 0;
+  mockTests.forEach(t => sumTotal += t.total);
+  const avgScore = Math.round(sumTotal / mockTests.length);
+  scoreBadgeEl.textContent = `Average Score: ${avgScore}/720`;
+  
+  // Predict Rank
+  let predictedRank = 250000;
+  if (avgScore === 720) predictedRank = 1;
+  else if (avgScore >= 710) predictedRank = Math.round(80 - ((avgScore - 710) / 10) * 79);
+  else if (avgScore >= 700) predictedRank = Math.round(300 - ((avgScore - 700) / 10) * 220);
+  else if (avgScore >= 690) predictedRank = Math.round(800 - ((avgScore - 690) / 10) * 500);
+  else if (avgScore >= 680) predictedRank = Math.round(1500 - ((avgScore - 680) / 10) * 700);
+  else if (avgScore >= 670) predictedRank = Math.round(3000 - ((avgScore - 670) / 10) * 1500);
+  else if (avgScore >= 660) predictedRank = Math.round(5500 - ((avgScore - 660) / 10) * 2500);
+  else if (avgScore >= 650) predictedRank = Math.round(9000 - ((avgScore - 650) / 10) * 3500);
+  else if (avgScore >= 640) predictedRank = Math.round(14000 - ((avgScore - 640) / 10) * 5000);
+  else if (avgScore >= 630) predictedRank = Math.round(20000 - ((avgScore - 630) / 10) * 6000);
+  else if (avgScore >= 620) predictedRank = Math.round(28000 - ((avgScore - 620) / 10) * 8000);
+  else if (avgScore >= 610) predictedRank = Math.round(38000 - ((avgScore - 610) / 10) * 10000);
+  else if (avgScore >= 600) predictedRank = Math.round(50000 - ((avgScore - 600) / 10) * 12000);
+  else if (avgScore >= 580) predictedRank = Math.round(80000 - ((avgScore - 580) / 20) * 30000);
+  else if (avgScore >= 550) predictedRank = Math.round(130000 - ((avgScore - 550) / 30) * 50000);
+  else if (avgScore >= 500) predictedRank = Math.round(220000 - ((avgScore - 500) / 50) * 90000);
+  else predictedRank = Math.round(220000 + ((500 - avgScore) / 500) * 2000000);
+  
+  rankValEl.textContent = `AIR ~${predictedRank.toLocaleString()}`;
+  
+  // Percentile
+  const percentile = ((1 - (predictedRank / 2500000)) * 100).toFixed(4);
+  percentileValEl.textContent = `${percentile}%`;
+  
+  // Draw college cutoff eligibility list
+  let html = '';
+  COLLEGE_CUTOFFS.forEach(c => {
+    let badgeText = '';
+    let badgeStyle = '';
+    
+    if (avgScore >= c.cutoff) {
+      badgeText = '🟢 Safe';
+      badgeStyle = 'background:rgba(16,185,129,0.1); color:var(--accent-success); border:1px solid rgba(16,185,129,0.2);';
+    } else if (avgScore >= c.cutoff - 15) {
+      badgeText = '🟡 Borderline';
+      badgeStyle = 'background:rgba(251,191,36,0.1); color:#fbbf24; border:1px solid rgba(251,191,36,0.2);';
+    } else {
+      badgeText = '🔴 Low Prob';
+      badgeStyle = 'background:rgba(239,68,68,0.1); color:var(--tertiary); border:1px solid rgba(239,68,68,0.2);';
+    }
+    
+    html += `
+      <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <div>
+          <div style="font-weight:600; color:var(--text-primary);">${c.name}</div>
+          <div style="font-size:10px; color:var(--text-muted);">Cutoff: ${c.cutoff} | AIR < ${c.air}</div>
+        </div>
+        <span style="font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; ${badgeStyle}">${badgeText}</span>
+      </div>
+    `;
+  });
+  cutoffsListEl.innerHTML = html;
+}
+
+// ==========================================
+// 15. NCERT BIOLOGY MATCH THE FOLLOWING GAME
+// ==========================================
+
+const MATCH_GAME_SETS = [
+  {
+    title: "Plant Growth Regulators",
+    pairs: [
+      { a: "Apical Dominance", b: "Auxin" },
+      { a: "Bolting / Internode Elongation", b: "Gibberellin" },
+      { a: "Lateral Shoot Growth", b: "Cytokinin" },
+      { a: "Stomatal Closure", b: "Abscisic Acid" }
+    ]
+  },
+  {
+    title: "Cell Organelles & Discoveries",
+    pairs: [
+      { a: "George Palade (1953)", b: "Ribosome" },
+      { a: "Robert Brown (1831)", b: "Nucleus" },
+      { a: "Camillo Golgi (1898)", b: "Golgi Apparatus" },
+      { a: "Christian de Duve", b: "Lysosome" }
+    ]
+  },
+  {
+    title: "Contraceptive Methods",
+    pairs: [
+      { a: "Lippes Loop", b: "Non-medicated IUD" },
+      { a: "Multiload 375 / CuT", b: "Copper-releasing IUD" },
+      { a: "LNG-20 / Progestasert", b: "Hormone-releasing IUD" },
+      { a: "Saheli", b: "Once-a-week Oral Pill" }
+    ]
+  },
+  {
+    title: "Fungi Classes & Examples",
+    pairs: [
+      { a: "Albugo / Mucor", b: "Phycomycetes" },
+      { a: "Penicillium / Yeast", b: "Ascomycetes" },
+      { a: "Agaricus / Ustilago", b: "Basidiomycetes" },
+      { a: "Alternaria / Trichoderma", b: "Deuteromycetes" }
+    ]
+  },
+  {
+    title: "Evolutionary Evidence Structures",
+    pairs: [
+      { a: "Tendril of Bougainvillea & Thorn of Cucurbita", b: "Homologous Organs (Divergent)" },
+      { a: "Eye of Octopus & Mammals", b: "Analogous Organs (Convergent)" },
+      { a: "Flipper of Penguins & Dolphins", b: "Analogous (Convergent)" },
+      { a: "Heart / Brain of Vertebrates", b: "Homologous (Divergent)" }
+    ]
+  },
+  {
+    title: "Mendelian Disorders",
+    pairs: [
+      { a: "G6PD deficiency / Haemophilia", b: "X-linked Recessive" },
+      { a: "Sickle Cell Anaemia / Phenylketonuria", b: "Autosomal Recessive" },
+      { a: "Myotonic Dystrophy", b: "Autosomal Dominant" },
+      { a: "Hypertrichosis pinnae", b: "Y-linked Inheritance" }
+    ]
+  },
+  {
+    title: "Digestive Enzymes & Substrates",
+    pairs: [
+      { a: "Pepsinogen Activation", b: "HCl (Stomach)" },
+      { a: "Trypsinogen Activation", b: "Enterokinase (Duodenum)" },
+      { a: "Casein Digestion", b: "Rennin (Infant)" },
+      { a: "Emulsified Fats Breakdown", b: "Lipases" }
+    ]
+  },
+  {
+    title: "Respirations Volumes & Capacities",
+    pairs: [
+      { a: "Tidal Volume (TV)", b: "500 mL" },
+      { a: "Inspiratory Reserve Volume (IRV)", b: "2500 - 3000 mL" },
+      { a: "Expiratory Reserve Volume (ERV)", b: "1000 - 1100 mL" },
+      { a: "Residual Volume (RV)", b: "1100 - 1200 mL" }
+    ]
+  }
+];
+
+let currentMatchSet = null;
+let selectedColA = null;
+let selectedColB = null;
+let matchedCount = 0;
+let matchGameStartTime = 0;
+let matchGameInterval = null;
+
+function toggleFlashcardMode(mode) {
+  const cardsBtn = document.getElementById('toggle-flashcards-btn');
+  const matchBtn = document.getElementById('toggle-match-game-btn');
+  const cardsContainer = document.getElementById('flashcards-mode-container');
+  const matchContainer = document.getElementById('match-game-mode-container');
+  
+  if (!cardsBtn || !matchBtn || !cardsContainer || !matchContainer) return;
+  
+  if (mode === 'cards') {
+    cardsBtn.classList.add('active-theme');
+    matchBtn.classList.remove('active-theme');
+    cardsContainer.style.display = 'block';
+    matchContainer.style.display = 'none';
+    if (matchGameInterval) clearInterval(matchGameInterval);
+  } else {
+    cardsBtn.classList.remove('active-theme');
+    matchBtn.classList.add('active-theme');
+    cardsContainer.style.display = 'none';
+    matchContainer.style.display = 'block';
+    initMatchGame();
+  }
+}
+
+function initMatchGame() {
+  matchedCount = 0;
+  selectedColA = null;
+  selectedColB = null;
+  if (matchGameInterval) clearInterval(matchGameInterval);
+  document.getElementById('match-next-btn').style.display = 'none';
+  startMatchGameSet();
+}
+
+function startMatchGameSet() {
+  const randSetIdx = Math.floor(Math.random() * MATCH_GAME_SETS.length);
+  currentMatchSet = MATCH_GAME_SETS[randSetIdx];
+  
+  matchedCount = 0;
+  selectedColA = null;
+  selectedColB = null;
+  document.getElementById('match-next-btn').style.display = 'none';
+  document.getElementById('match-game-status').innerHTML = `Score: 0 / 4 | Current Set: <strong>${currentMatchSet.title}</strong>`;
+  
+  const colAItems = currentMatchSet.pairs.map(p => p.a).sort(() => Math.random() - 0.5);
+  const colBItems = currentMatchSet.pairs.map(p => p.b).sort(() => Math.random() - 0.5);
+  
+  const colAEl = document.getElementById('match-col-a');
+  const colBEl = document.getElementById('match-col-b');
+  
+  if (!colAEl || !colBEl) return;
+  
+  colAEl.innerHTML = '';
+  colBEl.innerHTML = '';
+  
+  colAItems.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-secondary';
+    btn.style.textAlign = 'left';
+    btn.style.width = '100%';
+    btn.style.padding = '10px';
+    btn.style.fontSize = '12px';
+    btn.style.textTransform = 'none';
+    btn.textContent = item;
+    btn.onclick = () => selectColAItem(btn, item);
+    colAEl.appendChild(btn);
+  });
+  
+  colBItems.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-secondary';
+    btn.style.textAlign = 'left';
+    btn.style.width = '100%';
+    btn.style.padding = '10px';
+    btn.style.fontSize = '12px';
+    btn.style.textTransform = 'none';
+    btn.textContent = item;
+    btn.onclick = () => selectColBItem(btn, item);
+    colBEl.appendChild(btn);
+  });
+  
+  matchGameStartTime = Date.now();
+  if (matchGameInterval) clearInterval(matchGameInterval);
+  matchGameInterval = setInterval(() => {
+    const elapsed = ((Date.now() - matchGameStartTime) / 1000).toFixed(1);
+    const timerEl = document.getElementById('match-game-timer');
+    if (timerEl) timerEl.textContent = `Time: ${elapsed}s`;
+  }, 100);
+}
+
+function selectColAItem(btn, val) {
+  if (btn.classList.contains('active-theme') || btn.disabled) return;
+  
+  document.querySelectorAll('#match-col-a button').forEach(b => {
+    if (!b.disabled) b.classList.remove('active-theme');
+  });
+  
+  btn.classList.add('active-theme');
+  selectedColA = { btn, val };
+  checkMatchAttempt();
+}
+
+function selectColBItem(btn, val) {
+  if (btn.classList.contains('active-theme') || btn.disabled) return;
+  
+  document.querySelectorAll('#match-col-b button').forEach(b => {
+    if (!b.disabled) b.classList.remove('active-theme');
+  });
+  
+  btn.classList.add('active-theme');
+  selectedColB = { btn, val };
+  checkMatchAttempt();
+}
+
+function checkMatchAttempt() {
+  if (!selectedColA || !selectedColB) return;
+  
+  const pair = currentMatchSet.pairs.find(p => p.a === selectedColA.val && p.b === selectedColB.val);
+  
+  if (pair) {
+    selectedColA.btn.classList.remove('active-theme');
+    selectedColA.btn.style.background = 'rgba(16, 185, 129, 0.2)';
+    selectedColA.btn.style.borderColor = 'var(--accent-success)';
+    selectedColA.btn.disabled = true;
+    
+    selectedColB.btn.classList.remove('active-theme');
+    selectedColB.btn.style.background = 'rgba(16, 185, 129, 0.2)';
+    selectedColB.btn.style.borderColor = 'var(--accent-success)';
+    selectedColB.btn.disabled = true;
+    
+    matchedCount++;
+    document.getElementById('match-game-status').innerHTML = `Score: ${matchedCount} / 4 | Current Set: <strong>${currentMatchSet.title}</strong>`;
+    
+    selectedColA = null;
+    selectedColB = null;
+    
+    if (matchedCount === 4) {
+      clearInterval(matchGameInterval);
+      const finalTime = ((Date.now() - matchGameStartTime) / 1000).toFixed(1);
+      const timerEl = document.getElementById('match-game-timer');
+      if (timerEl) timerEl.textContent = `Completed in ${finalTime}s!`;
+      document.getElementById('match-game-status').innerHTML = `🎉 <strong>Matched All!</strong> Time: ${finalTime}s. Excellent memory recall!`;
+      document.getElementById('match-next-btn').style.display = 'block';
+    }
+  } else {
+    const btnA = selectedColA.btn;
+    const btnB = selectedColB.btn;
+    
+    btnA.style.background = 'rgba(239, 68, 68, 0.2)';
+    btnA.style.borderColor = 'var(--tertiary)';
+    btnB.style.background = 'rgba(239, 68, 68, 0.2)';
+    btnB.style.borderColor = 'var(--tertiary)';
+    
+    setTimeout(() => {
+      if (!btnA.disabled) {
+        btnA.classList.remove('active-theme');
+        btnA.style.removeProperty('background');
+        btnA.style.removeProperty('border-color');
+      }
+      if (!btnB.disabled) {
+        btnB.classList.remove('active-theme');
+        btnB.style.removeProperty('background');
+        btnB.style.removeProperty('border-color');
+      }
+    }, 500);
+    
+    selectedColA = null;
+    selectedColB = null;
+  }
+}
+
+// ==========================================
+// 16. SPACED REPETITION REVISION SCHEDULER
+// ==========================================
+
+function updateSpacedRepetitionScheduler() {
+  const listEl = document.getElementById('spaced-repetition-list');
+  if (!listEl) return;
+  
+  const dueItems = [];
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayMs = Date.parse(todayStr);
+  
+  Object.keys(chapterProgress).forEach(chName => {
+    const p = chapterProgress[chName];
+    const isCompleted = p.understand || p.practice || p.revise;
+    if (!isCompleted) return;
+    
+    const compDateStr = p.revise_date || p.practice_date || p.understand_date;
+    if (!compDateStr) return;
+    
+    const compMs = Date.parse(compDateStr);
+    const dayDelta = Math.round((todayMs - compMs) / (1000 * 60 * 60 * 24));
+    
+    if (dayDelta === 1) {
+      dueItems.push({ ch: chName, cycle: '1-Day Recall (Leitner 1)', color: 'var(--primary)' });
+    } else if (dayDelta === 7) {
+      dueItems.push({ ch: chName, cycle: '7-Day Deep Review (Leitner 2)', color: '#fbbf24' });
+    } else if (dayDelta === 30) {
+      dueItems.push({ ch: chName, cycle: '30-Day Master Revision (Leitner 3)', color: 'var(--accent-success)' });
+    }
+  });
+  
+  if (dueItems.length === 0) {
+    listEl.innerHTML = `
+      <div style="text-align:center; padding:16px; border:1px dashed rgba(255,255,255,0.05); border-radius:8px; color:var(--text-muted); font-size:12px;">
+        ☕ No chapters due for Spaced Revision today. Keep moving forward!
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '';
+  dueItems.forEach(item => {
+    html += `
+      <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04); border-left:4px solid ${item.color}; padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div>
+          <div style="font-size:13px; font-weight:600; color:var(--text-primary);">${item.ch}</div>
+          <span style="font-size:10px; color:${item.color}; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">${item.cycle}</span>
+        </div>
+        <button class="btn btn-secondary" onclick="markSpacedRevisionDone('${item.ch.replace(/'/g, "\'")}')" style="padding:4px 8px; font-size:10px; font-weight:700; border-color:${item.color}33; color:${item.color};">✔️ Mark Revised</button>
+      </div>
+    `;
+  });
+  listEl.innerHTML = html;
+}
+
+function markSpacedRevisionDone(chName) {
+  if (!chapterProgress[chName]) {
+    chapterProgress[chName] = { understand: false, practice: false, revise: false };
+  }
+  chapterProgress[chName].revise = true;
+  chapterProgress[chName].revise_date = new Date().toISOString().split('T')[0];
+  
+  safeSetLocalStorage('neet_v3_chapter_progress', JSON.stringify(chapterProgress));
+  renderChapters();
+  updateOverviewStats();
+  showToast(`📅 Spaced Revision completed for: ${chName}`);
+}
+
+window.applyAccentTheme = applyAccentTheme;
+window.loadAccentTheme = loadAccentTheme;
+window.updateNeetRankPredictor = updateNeetRankPredictor;
+window.toggleFlashcardMode = toggleFlashcardMode;
+window.updateSpacedRepetitionScheduler = updateSpacedRepetitionScheduler;
+window.markSpacedRevisionDone = markSpacedRevisionDone;
+window.initMatchGame = initMatchGame;
+window.startMatchGameSet = startMatchGameSet;
+window.selectColAItem = selectColAItem;
+window.selectColBItem = selectColBItem;
+
 
 </script>
 </body>
