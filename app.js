@@ -3950,6 +3950,13 @@ function initOnLoad() {
             e.preventDefault();
           }
         }, { passive: false });
+        
+        // Close on backdrop click (clicking outside the modal content)
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            closeWelcomeSummary();
+          }
+        });
       }
     }
   } catch(e) { 

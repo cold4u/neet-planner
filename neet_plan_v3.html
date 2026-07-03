@@ -3489,6 +3489,15 @@ tag in <head>
     padding: 20px 16px !important;
     border-radius: 14px !important;
     max-height: 88vh !important;
+    overflow: visible !important;
+  }
+  #welcome-summary-modal .close-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 18px !important;
+    top: -10px !important;
+    right: -4px !important;
+    z-index: 20 !important;
   }
   #welcome-summary-modal h2 {
     font-size: 15px !important;
@@ -9721,6 +9730,13 @@ function initOnLoad() {
             e.preventDefault();
           }
         }, { passive: false });
+        
+        // Close on backdrop click (clicking outside the modal content)
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            closeWelcomeSummary();
+          }
+        });
       }
     }
   } catch(e) { 
