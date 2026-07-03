@@ -5943,7 +5943,7 @@ function applyAccentTheme(key) {
 }
 
 function loadAccentTheme() {
-  const savedKey = safeGetLocalStorage('neet_v3_accent_theme') || 'default';
+  const savedKey = safeGetLocalStorage('neet_v3_accent_theme') || 'rosegold';
   updateAccentButtonActiveStates(savedKey);
   
   if (savedKey === 'theme') {
