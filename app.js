@@ -4012,11 +4012,7 @@ function closeWelcomeSummary() {
   } catch(e) {}
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initOnLoad);
-} else {
-  initOnLoad();
-}
+
 
 window.startAiParse = startAiParse;
 window.generateAiChapterTest = generateAiChapterTest;
@@ -7282,5 +7278,12 @@ window.renderTabFormulas = renderTabFormulas;
 window.toggleTabFormulaGroup = toggleTabFormulaGroup;
 window.filterTabFormulas = filterTabFormulas;
 window.copyTabFormula = copyTabFormula;
+
+// Initialize app after all globals and variables have been fully declared
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initOnLoad);
+} else {
+  initOnLoad();
+}
 
 
