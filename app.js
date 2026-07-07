@@ -6447,11 +6447,11 @@ window.selectColBItem = selectColBItem;
 // ==========================================
 
 // --- FEATURE 1: POMODORO STUDY TIMER ---
-let pomoTimeRemaining = 25 * 60;
-let pomoInterval = null;
-let pomoCurrentMode = 'focus';
-let pomoIsRunning = false;
-const pomoDurationMap = {
+let pomoV3TimeRemaining = 25 * 60;
+let pomoV3Interval = null;
+let pomoV3CurrentMode = 'focus';
+let pomoV3IsRunning = false;
+const pomoV3DurationMap = {
   focus: 25 * 60,
   short: 5 * 60,
   long: 15 * 60
@@ -6497,12 +6497,12 @@ function updatePomodoroSelectOptions() {
 }
 
 function setPomoMode(mode) {
-  pomoCurrentMode = mode;
-  pomoTimeRemaining = pomoDurationMap[mode];
-  pomoIsRunning = false;
-  if (pomoInterval) {
-    clearInterval(pomoInterval);
-    pomoInterval = null;
+  pomoV3CurrentMode = mode;
+  pomoV3TimeRemaining = pomoV3DurationMap[mode];
+  pomoV3IsRunning = false;
+  if (pomoV3Interval) {
+    clearInterval(pomoV3Interval);
+    pomoV3Interval = null;
   }
   
   document.querySelectorAll('.pomo-mode-btn').forEach(btn => btn.classList.remove('active-pomo'));
@@ -6525,29 +6525,29 @@ function togglePomoTimer() {
   const startBtnText = document.getElementById('pomo-start-text');
   const startBtnIcon = document.getElementById('pomo-start-icon');
   
-  if (pomoIsRunning) {
-    pomoIsRunning = false;
-    clearInterval(pomoInterval);
-    pomoInterval = null;
+  if (pomoV3IsRunning) {
+    pomoV3IsRunning = false;
+    clearInterval(pomoV3Interval);
+    pomoV3Interval = null;
     if (startBtnText) startBtnText.textContent = 'Resume';
     if (startBtnIcon) startBtnIcon.textContent = '▶';
   } else {
-    pomoIsRunning = true;
+    pomoV3IsRunning = true;
     if (startBtnText) startBtnText.textContent = 'Pause';
     if (startBtnIcon) startBtnIcon.textContent = '⏸';
     
-    pomoInterval = setInterval(() => {
-      pomoTimeRemaining--;
-      if (pomoTimeRemaining <= 0) {
-        clearInterval(pomoInterval);
-        pomoInterval = null;
-        pomoIsRunning = false;
+    pomoV3Interval = setInterval(() => {
+      pomoV3TimeRemaining--;
+      if (pomoV3TimeRemaining <= 0) {
+        clearInterval(pomoV3Interval);
+        pomoV3Interval = null;
+        pomoV3IsRunning = false;
         playPomoSound();
-        sendStudyNotification("Pomodoro Complete!", pomoCurrentMode === 'focus' ? "Focus session completed! Grab a break." : "Break complete! Back to study.");
-        if (pomoCurrentMode === 'focus') {
+        sendStudyNotification("Pomodoro Complete!", pomoV3CurrentMode === 'focus' ? "Focus session completed! Grab a break." : "Break complete! Back to study.");
+        if (pomoV3CurrentMode === 'focus') {
           logPomodoroSession();
         }
-        setPomoMode(pomoCurrentMode === 'focus' ? 'short' : 'focus');
+        setPomoMode(pomoV3CurrentMode === 'focus' ? 'short' : 'focus');
       }
       updatePomoUI();
     }, 1000);
@@ -6555,19 +6555,19 @@ function togglePomoTimer() {
 }
 
 function resetPomoTimer() {
-  setPomoMode(pomoCurrentMode);
+  setPomoMode(pomoV3CurrentMode);
 }
 
 function updatePomoUI() {
-  const mins = Math.floor(pomoTimeRemaining / 60);
-  const secs = pomoTimeRemaining % 60;
+  const mins = Math.floor(pomoV3TimeRemaining / 60);
+  const secs = pomoV3TimeRemaining % 60;
   const displayStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   
   const display = document.getElementById('pomo-timer-display');
   if (display) display.textContent = displayStr;
   
-  const totalSecs = pomoDurationMap[pomoCurrentMode];
-  const progressRatio = pomoTimeRemaining / totalSecs;
+  const totalSecs = pomoV3DurationMap[pomoV3CurrentMode];
+  const progressRatio = pomoV3TimeRemaining / totalSecs;
   const circle = document.getElementById('pomo-timer-circle');
   if (circle) {
     const offset = 596.9 - (progressRatio * 596.9);
