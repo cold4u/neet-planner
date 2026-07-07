@@ -12640,6 +12640,26 @@ function setPomoMode(mode) {
 }
 
 function togglePomoTimer() {
+  // Automatically apply settings if user changed them in inputs before starting
+  try {
+    const inFocus = document.getElementById('pomo-setting-focus');
+    const inShort = document.getElementById('pomo-setting-short');
+    const inLong = document.getElementById('pomo-setting-long');
+    if (inFocus && inShort && inLong) {
+      const f = parseInt(inFocus.value, 10);
+      const s = parseInt(inShort.value, 10);
+      const l = parseInt(inLong.value, 10);
+      if (!isNaN(f) && !isNaN(s) && !isNaN(l)) {
+        const curF = pomoV3DurationMap.focus / 60;
+        const curS = pomoV3DurationMap.short / 60;
+        const curL = pomoV3DurationMap.long / 60;
+        if (f !== curF || s !== curS || l !== curL) {
+          savePomoSettings(true);
+        }
+      }
+    }
+  } catch(e) {}
+
   const startBtnText = document.getElementById('pomo-start-text');
   const startBtnIcon = document.getElementById('pomo-start-icon');
   
@@ -13420,7 +13440,7 @@ window.filterTabFormulas = filterTabFormulas;
 window.copyTabFormula = copyTabFormula;
 window.savePomoSettings = savePomoSettings;
 
-function savePomoSettings() {
+function savePomoSettings(silent) {
   const inFocus = document.getElementById('pomo-setting-focus');
   const inShort = document.getElementById('pomo-setting-short');
   const inLong = document.getElementById('pomo-setting-long');
@@ -13432,15 +13452,15 @@ function savePomoSettings() {
   const longVal = parseInt(inLong.value, 10);
   
   if (isNaN(focusVal) || focusVal < 1 || focusVal > 180) {
-    showToast("⚠️ Focus time must be between 1 and 180 minutes.");
+    if (!silent) showToast("⚠️ Focus time must be between 1 and 180 minutes.");
     return;
   }
   if (isNaN(shortVal) || shortVal < 1 || shortVal > 180) {
-    showToast("⚠️ Short break must be between 1 and 180 minutes.");
+    if (!silent) showToast("⚠️ Short break must be between 1 and 180 minutes.");
     return;
   }
   if (isNaN(longVal) || longVal < 1 || longVal > 180) {
-    showToast("⚠️ Long break must be between 1 and 180 minutes.");
+    if (!silent) showToast("⚠️ Long break must be between 1 and 180 minutes.");
     return;
   }
   
@@ -13476,7 +13496,7 @@ function savePomoSettings() {
   pomoV3TimeRemaining = pomoV3DurationMap[pomoV3CurrentMode];
   updatePomoUI();
   
-  showToast("⚙️ Pomodoro durations updated!");
+  if (!silent) showToast("⚙️ Pomodoro durations updated!");
 }
 
 // Initialize app after all globals and variables have been fully declared
