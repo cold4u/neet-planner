@@ -3947,10 +3947,17 @@ function initOnLoad() {
 
   try {
     const hideWelcome = safeGetLocalStorage('neet_hide_welcome_modal');
+    const modal = document.getElementById('welcome-summary-modal');
     if (hideWelcome === 'true') {
-      const modal = document.getElementById('welcome-summary-modal');
-      if (modal) modal.classList.remove('active');
+      // Already hidden via inline style in HTML, nothing to do
+      if (modal) modal.style.display = 'none';
     } else {
+      // Show the welcome modal
+      if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+      }
+
       // Save scroll position before locking
       window._scrollLockY = window.scrollY || window.pageYOffset || 0;
       document.body.style.top = `-${window._scrollLockY}px`;
@@ -3958,7 +3965,6 @@ function initOnLoad() {
       document.documentElement.classList.add('modal-open');
 
       // Block touch scroll on the modal overlay, allowing the inner container to scroll
-      const modal = document.getElementById('welcome-summary-modal');
       if (modal) {
         modal.addEventListener('touchmove', function(e) {
           const scrollable = e.target.closest('.welcome-modal-scrollable');
@@ -3969,7 +3975,7 @@ function initOnLoad() {
       }
     }
   } catch(e) { 
-    console.error("Error hiding welcome modal:", e); 
+    console.error("Error handling welcome modal:", e); 
   }
 
   // Dynamic bindings for Error Book
@@ -3991,12 +3997,18 @@ function initOnLoad() {
 
 function closeWelcomeSummary() {
   const modal = document.getElementById('welcome-summary-modal');
-  if (modal) modal.classList.remove('active');
+  if (modal) {
+    modal.style.display = 'none';
+    modal.classList.remove('active');
+  }
   
-  // Unlock scroll
+  // Unlock scroll - remove class AND clear inline styles that modal-open sets
   document.body.classList.remove('modal-open');
   document.documentElement.classList.remove('modal-open');
   document.body.style.top = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
+  document.body.style.overflow = '';
   
   // Restore scroll position
   if (typeof window._scrollLockY === 'number') {

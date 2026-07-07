@@ -1672,9 +1672,9 @@
 
 
   <!-- Welcome Summary Modal -->
-  <div class="modal active" id="welcome-summary-modal">
+  <div class="modal" id="welcome-summary-modal" style="display:none;">
     <div class="modal-content" style="max-width: 600px; background: rgba(8, 12, 24, 0.98); border: 1px solid rgba(255, 200, 50, 0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.65); padding: 32px; border-radius: 12px;">
-      <button class="close-btn" onclick="if (typeof closeWelcomeSummary === 'function') { try { closeWelcomeSummary(); } catch(e) { console.error(e); } } document.getElementById('welcome-summary-modal').classList.remove('active'); document.body.classList.remove('modal-open'); document.documentElement.classList.remove('modal-open'); document.body.style.top = '';" style="color: var(--text-muted); font-size: 24px; top: 18px; right: 20px; z-index: 9999;">✕</button>
+      <button class="close-btn" onclick="var m=document.getElementById('welcome-summary-modal');if(m)m.style.display='none';document.body.classList.remove('modal-open');document.documentElement.classList.remove('modal-open');document.body.style.top='';document.body.style.position='';document.body.style.width='';document.body.style.overflow='';if(typeof closeWelcomeSummary==='function'){try{closeWelcomeSummary();}catch(e){}}" style="color: var(--text-muted); font-size: 24px; top: 18px; right: 20px; z-index: 9999;">✕</button>
       <h2 style="margin-top: 0; color: var(--primary); font-size: 20px; font-weight: 800; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; padding-right: 45px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
         <span>✨ NEET Elite Workspace v3.0</span>
         <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Owner: <a href="https://instagram.com/shubh.m_01" target="_blank" style="color:var(--primary); font-weight:700; text-decoration:none; border-bottom:1px dashed var(--primary);">@shubh.m_01</a></span>
@@ -1735,7 +1735,7 @@
         </div>
       </div>
       
-      <button class="btn btn-primary" onclick="if (typeof closeWelcomeSummary === 'function') { try { closeWelcomeSummary(); } catch(e) { console.error(e); } } document.getElementById('welcome-summary-modal').classList.remove('active'); document.body.classList.remove('modal-open'); document.documentElement.classList.remove('modal-open'); document.body.style.top = '';" style="width: 100%; padding: 12px; margin-top: 25px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #000; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0, 212, 170, 0.2);">
+      <button class="btn btn-primary" onclick="var m=document.getElementById('welcome-summary-modal');if(m)m.style.display='none';document.body.classList.remove('modal-open');document.documentElement.classList.remove('modal-open');document.body.style.top='';document.body.style.position='';document.body.style.width='';document.body.style.overflow='';if(typeof closeWelcomeSummary==='function'){try{closeWelcomeSummary();}catch(e){}}" style="width: 100%; padding: 12px; margin-top: 25px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #000; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0, 212, 170, 0.2);">
         Enter Workspace 🚀
       </button>
       

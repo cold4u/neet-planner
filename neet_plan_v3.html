@@ -5823,9 +5823,9 @@ tag in <head>
 
 
   <!-- Welcome Summary Modal -->
-  <div class="modal active" id="welcome-summary-modal">
+  <div class="modal" id="welcome-summary-modal" style="display:none;">
     <div class="modal-content" style="max-width: 600px; background: rgba(8, 12, 24, 0.98); border: 1px solid rgba(255, 200, 50, 0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.65); padding: 32px; border-radius: 12px;">
-      <button class="close-btn" onclick="if (typeof closeWelcomeSummary === 'function') { try { closeWelcomeSummary(); } catch(e) { console.error(e); } } document.getElementById('welcome-summary-modal').classList.remove('active'); document.body.classList.remove('modal-open'); document.documentElement.classList.remove('modal-open'); document.body.style.top = '';" style="color: var(--text-muted); font-size: 24px; top: 18px; right: 20px; z-index: 9999;">✕</button>
+      <button class="close-btn" onclick="var m=document.getElementById('welcome-summary-modal');if(m)m.style.display='none';document.body.classList.remove('modal-open');document.documentElement.classList.remove('modal-open');document.body.style.top='';document.body.style.position='';document.body.style.width='';document.body.style.overflow='';if(typeof closeWelcomeSummary==='function'){try{closeWelcomeSummary();}catch(e){}}" style="color: var(--text-muted); font-size: 24px; top: 18px; right: 20px; z-index: 9999;">✕</button>
       <h2 style="margin-top: 0; color: var(--primary); font-size: 20px; font-weight: 800; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; padding-right: 45px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
         <span>✨ NEET Elite Workspace v3.0</span>
         <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Owner: <a href="https://instagram.com/shubh.m_01" target="_blank" style="color:var(--primary); font-weight:700; text-decoration:none; border-bottom:1px dashed var(--primary);">@shubh.m_01</a></span>
@@ -5886,7 +5886,7 @@ tag in <head>
         </div>
       </div>
       
-      <button class="btn btn-primary" onclick="if (typeof closeWelcomeSummary === 'function') { try { closeWelcomeSummary(); } catch(e) { console.error(e); } } document.getElementById('welcome-summary-modal').classList.remove('active'); document.body.classList.remove('modal-open'); document.documentElement.classList.remove('modal-open'); document.body.style.top = '';" style="width: 100%; padding: 12px; margin-top: 25px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #000; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0, 212, 170, 0.2);">
+      <button class="btn btn-primary" onclick="var m=document.getElementById('welcome-summary-modal');if(m)m.style.display='none';document.body.classList.remove('modal-open');document.documentElement.classList.remove('modal-open');document.body.style.top='';document.body.style.position='';document.body.style.width='';document.body.style.overflow='';if(typeof closeWelcomeSummary==='function'){try{closeWelcomeSummary();}catch(e){}}" style="width: 100%; padding: 12px; margin-top: 25px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #000; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0, 212, 170, 0.2);">
         Enter Workspace 🚀
       </button>
       
@@ -10012,10 +10012,17 @@ function initOnLoad() {
 
   try {
     const hideWelcome = safeGetLocalStorage('neet_hide_welcome_modal');
+    const modal = document.getElementById('welcome-summary-modal');
     if (hideWelcome === 'true') {
-      const modal = document.getElementById('welcome-summary-modal');
-      if (modal) modal.classList.remove('active');
+      // Already hidden via inline style in HTML, nothing to do
+      if (modal) modal.style.display = 'none';
     } else {
+      // Show the welcome modal
+      if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+      }
+
       // Save scroll position before locking
       window._scrollLockY = window.scrollY || window.pageYOffset || 0;
       document.body.style.top = `-${window._scrollLockY}px`;
@@ -10023,7 +10030,6 @@ function initOnLoad() {
       document.documentElement.classList.add('modal-open');
 
       // Block touch scroll on the modal overlay, allowing the inner container to scroll
-      const modal = document.getElementById('welcome-summary-modal');
       if (modal) {
         modal.addEventListener('touchmove', function(e) {
           const scrollable = e.target.closest('.welcome-modal-scrollable');
@@ -10034,7 +10040,7 @@ function initOnLoad() {
       }
     }
   } catch(e) { 
-    console.error("Error hiding welcome modal:", e); 
+    console.error("Error handling welcome modal:", e); 
   }
 
   // Dynamic bindings for Error Book
@@ -10056,12 +10062,18 @@ function initOnLoad() {
 
 function closeWelcomeSummary() {
   const modal = document.getElementById('welcome-summary-modal');
-  if (modal) modal.classList.remove('active');
+  if (modal) {
+    modal.style.display = 'none';
+    modal.classList.remove('active');
+  }
   
-  // Unlock scroll
+  // Unlock scroll - remove class AND clear inline styles that modal-open sets
   document.body.classList.remove('modal-open');
   document.documentElement.classList.remove('modal-open');
   document.body.style.top = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
+  document.body.style.overflow = '';
   
   // Restore scroll position
   if (typeof window._scrollLockY === 'number') {
