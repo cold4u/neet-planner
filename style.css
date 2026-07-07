@@ -2257,6 +2257,7 @@ body.exam-mode-active .main-wrapper {
 .app-layout {
   display: flex;
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   overflow: hidden;
 }
@@ -2269,6 +2270,7 @@ body.exam-mode-active .main-wrapper {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   transition: var(--transition-smooth);
   z-index: 99;
 }
@@ -2339,6 +2341,7 @@ body.exam-mode-active .main-wrapper {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
