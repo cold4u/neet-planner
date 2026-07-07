@@ -6483,7 +6483,7 @@ function updatePomodoroSelectOptions() {
   const select = document.getElementById('pomo-chapter-select');
   if (!select) return;
   select.innerHTML = '<option value="">-- Select Chapter (Optional) --</option>';
-  const allChapters = [...P1_PHY, ...P1_CHE, ...P1_BIO].map(item => item.ch);
+  const allChapters = [...P1_PHY, ...P2_PHY, ...P1_CHE, ...P2_CHE, ...P1_BIO, ...P2_BIO].map(item => item.ch);
   allChapters.sort().forEach(ch => {
     const opt = document.createElement('option');
     opt.value = ch;
@@ -6572,7 +6572,11 @@ function updatePomoUI() {
 }
 
 function logPomodoroSession() {
-  const sessions = JSON.parse(safeGetLocalStorage('neet_v3_pomodoro_sessions') || '[]');
+  let sessions = [];
+  try {
+    const parsed = JSON.parse(safeGetLocalStorage('neet_v3_pomodoro_sessions') || '[]');
+    if (Array.isArray(parsed)) sessions = parsed;
+  } catch (e) {}
   const chapter = document.getElementById('pomo-chapter-select').value || 'General Study';
   
   const session = {
@@ -6595,7 +6599,7 @@ function logPomodoroSession() {
       else if (subject === 'Chemistry') trackerLogs[dayIdx].cheHours += hoursFraction;
       else trackerLogs[dayIdx].bioHours += hoursFraction;
       
-      safeSetLocalStorage('neet_v3_tracker_logs', JSON.stringify(trackerLogs));
+      safeSetLocalStorage('neet_v3_tracker', JSON.stringify(trackerLogs));
       renderTrackerTable();
       renderAnalytics();
     }
@@ -6609,7 +6613,7 @@ function logPomodoroSession() {
   try {
     const todayStr = new Date().toISOString().split('T')[0];
     const todayMins = sessions
-      .filter(s => s.date === todayStr)
+      .filter(s => s && s.date === todayStr)
       .reduce((sum, s) => sum + s.durationMinutes, 0);
     if (todayMins >= 240) {
       const hourCheckbox = document.getElementById('tgt-study-hours');
@@ -6622,8 +6626,8 @@ function logPomodoroSession() {
 }
 
 function getSubjectOfChapter(chapterName) {
-  if (P1_PHY.some(c => c.ch === chapterName)) return 'Physics';
-  if (P1_CHE.some(c => c.ch === chapterName)) return 'Chemistry';
+  if (P1_PHY.some(c => c.ch === chapterName) || P2_PHY.some(c => c.ch === chapterName)) return 'Physics';
+  if (P1_CHE.some(c => c.ch === chapterName) || P2_CHE.some(c => c.ch === chapterName)) return 'Chemistry';
   return 'Biology';
 }
 
@@ -6964,23 +6968,32 @@ function getWeekNumber(d) {
 
 // --- FEATURE 7: STUDY REMINDERS (BROWSER NOTIFICATIONS) ---
 function initNotificationsUI() {
-  const allowed = safeGetLocalStorage('neet_v3_notifications_enabled') === 'true';
   const btn = document.getElementById('notification-toggle-btn');
   const status = document.getElementById('notification-status-text');
-  
-  if (btn && status) {
-    if (allowed && Notification.permission === 'granted') {
-      btn.textContent = 'Disable Notifications';
-      status.textContent = 'Status: Enabled (Active alerts for study hours & Pomodoro)';
-    } else {
-      btn.textContent = 'Enable Notifications';
-      status.textContent = 'Status: Disabled';
-      safeSetLocalStorage('neet_v3_notifications_enabled', 'false');
-    }
+  if (!btn || !status) return;
+
+  if (!('Notification' in window)) {
+    btn.style.display = 'none';
+    status.textContent = 'Status: Unsupported on this device/browser';
+    return;
+  }
+
+  const allowed = safeGetLocalStorage('neet_v3_notifications_enabled') === 'true';
+  if (allowed && Notification.permission === 'granted') {
+    btn.textContent = 'Disable Notifications';
+    status.textContent = 'Status: Enabled (Active alerts for study hours & Pomodoro)';
+  } else {
+    btn.textContent = 'Enable Notifications';
+    status.textContent = 'Status: Disabled';
+    safeSetLocalStorage('neet_v3_notifications_enabled', 'false');
   }
 }
 
 function toggleNotifications() {
+  if (!('Notification' in window)) {
+    showToast("⚠️ Notifications not supported on this browser.");
+    return;
+  }
   const allowed = safeGetLocalStorage('neet_v3_notifications_enabled') === 'true';
   
   if (allowed) {
@@ -7002,11 +7015,16 @@ function toggleNotifications() {
 }
 
 function sendStudyNotification(title, message) {
+  if (!('Notification' in window)) return;
   const allowed = safeGetLocalStorage('neet_v3_notifications_enabled') === 'true';
   if (allowed && Notification.permission === 'granted') {
-    new Notification(title, {
-      body: message
-    });
+    try {
+      new Notification(title, {
+        body: message
+      });
+    } catch (e) {
+      console.warn("Failed to trigger Notification API:", e);
+    }
   }
 }
 
