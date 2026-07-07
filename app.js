@@ -6477,6 +6477,36 @@ function initPomodoro() {
   const savedSessions = JSON.parse(safeGetLocalStorage('neet_v3_pomodoro_sessions') || '[]');
   updatePomodoroStats(savedSessions);
   updatePomodoroSelectOptions();
+  
+  // Load custom Pomodoro durations if any
+  try {
+    const customSettings = JSON.parse(safeGetLocalStorage('neet_v3_pomo_settings') || 'null');
+    if (customSettings) {
+      pomoV3DurationMap.focus = (customSettings.focus || 25) * 60;
+      pomoV3DurationMap.short = (customSettings.short || 5) * 60;
+      pomoV3DurationMap.long = (customSettings.long || 15) * 60;
+      
+      // Update inputs
+      const inFocus = document.getElementById('pomo-setting-focus');
+      const inShort = document.getElementById('pomo-setting-short');
+      const inLong = document.getElementById('pomo-setting-long');
+      if (inFocus) inFocus.value = customSettings.focus || 25;
+      if (inShort) inShort.value = customSettings.short || 5;
+      if (inLong) inLong.value = customSettings.long || 15;
+    }
+  } catch(e) {}
+  
+  // Update button headers
+  const focusBtn = document.getElementById('pomo-focus-btn');
+  const shortBtn = document.getElementById('pomo-short-btn');
+  const longBtn = document.getElementById('pomo-long-btn');
+  if (focusBtn) focusBtn.textContent = `🎯 Focus (${pomoV3DurationMap.focus / 60}m)`;
+  if (shortBtn) shortBtn.textContent = `☕ Short (${pomoV3DurationMap.short / 60}m)`;
+  if (longBtn) longBtn.textContent = `🌴 Long (${pomoV3DurationMap.long / 60}m)`;
+
+  // Set initial time remaining matching current mode
+  pomoV3TimeRemaining = pomoV3DurationMap[pomoV3CurrentMode];
+  updatePomoUI();
 }
 
 function updatePomodoroSelectOptions() {
@@ -7296,6 +7326,66 @@ window.renderTabFormulas = renderTabFormulas;
 window.toggleTabFormulaGroup = toggleTabFormulaGroup;
 window.filterTabFormulas = filterTabFormulas;
 window.copyTabFormula = copyTabFormula;
+window.savePomoSettings = savePomoSettings;
+
+function savePomoSettings() {
+  const inFocus = document.getElementById('pomo-setting-focus');
+  const inShort = document.getElementById('pomo-setting-short');
+  const inLong = document.getElementById('pomo-setting-long');
+  
+  if (!inFocus || !inShort || !inLong) return;
+  
+  const focusVal = parseInt(inFocus.value, 10);
+  const shortVal = parseInt(inShort.value, 10);
+  const longVal = parseInt(inLong.value, 10);
+  
+  if (isNaN(focusVal) || focusVal < 1 || focusVal > 180) {
+    showToast("⚠️ Focus time must be between 1 and 180 minutes.");
+    return;
+  }
+  if (isNaN(shortVal) || shortVal < 1 || shortVal > 180) {
+    showToast("⚠️ Short break must be between 1 and 180 minutes.");
+    return;
+  }
+  if (isNaN(longVal) || longVal < 1 || longVal > 180) {
+    showToast("⚠️ Long break must be between 1 and 180 minutes.");
+    return;
+  }
+  
+  const settings = { focus: focusVal, short: shortVal, long: longVal };
+  safeSetLocalStorage('neet_v3_pomo_settings', JSON.stringify(settings));
+  
+  pomoV3DurationMap.focus = focusVal * 60;
+  pomoV3DurationMap.short = shortVal * 60;
+  pomoV3DurationMap.long = longVal * 60;
+  
+  // Stop current interval if running
+  pomoV3IsRunning = false;
+  if (pomoV3Interval) {
+    clearInterval(pomoV3Interval);
+    pomoV3Interval = null;
+  }
+  
+  // Reset start button
+  const startBtnText = document.getElementById('pomo-start-text');
+  const startBtnIcon = document.getElementById('pomo-start-icon');
+  if (startBtnText) startBtnText.textContent = pomoV3CurrentMode === 'focus' ? 'Start Focus' : 'Start Break';
+  if (startBtnIcon) startBtnIcon.textContent = '▶';
+  
+  // Update button headers
+  const focusBtn = document.getElementById('pomo-focus-btn');
+  const shortBtn = document.getElementById('pomo-short-btn');
+  const longBtn = document.getElementById('pomo-long-btn');
+  if (focusBtn) focusBtn.textContent = `🎯 Focus (${focusVal}m)`;
+  if (shortBtn) shortBtn.textContent = `☕ Short (${shortVal}m)`;
+  if (longBtn) longBtn.textContent = `🌴 Long (${longVal}m)`;
+  
+  // Reset current timer values
+  pomoV3TimeRemaining = pomoV3DurationMap[pomoV3CurrentMode];
+  updatePomoUI();
+  
+  showToast("⚙️ Pomodoro durations updated!");
+}
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
