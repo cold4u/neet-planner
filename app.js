@@ -6487,9 +6487,9 @@ function initPomodoro() {
       pomoV3DurationMap.long = (customSettings.long || 15) * 60;
       
       // Update inputs
-      const inFocus = document.getElementById('pomo-setting-focus');
-      const inShort = document.getElementById('pomo-setting-short');
-      const inLong = document.getElementById('pomo-setting-long');
+      const inFocus = document.getElementById('pomo-v3-setting-focus');
+      const inShort = document.getElementById('pomo-v3-setting-short');
+      const inLong = document.getElementById('pomo-v3-setting-long');
       if (inFocus) inFocus.value = customSettings.focus || 25;
       if (inShort) inShort.value = customSettings.short || 5;
       if (inLong) inLong.value = customSettings.long || 15;
@@ -6497,9 +6497,9 @@ function initPomodoro() {
   } catch(e) {}
   
   // Update button headers
-  const focusBtn = document.getElementById('pomo-focus-btn');
-  const shortBtn = document.getElementById('pomo-short-btn');
-  const longBtn = document.getElementById('pomo-long-btn');
+  const focusBtn = document.getElementById('pomo-v3-focus-btn');
+  const shortBtn = document.getElementById('pomo-v3-short-btn');
+  const longBtn = document.getElementById('pomo-v3-long-btn');
   if (focusBtn) focusBtn.textContent = `🎯 Focus (${pomoV3DurationMap.focus / 60}m)`;
   if (shortBtn) shortBtn.textContent = `☕ Short (${pomoV3DurationMap.short / 60}m)`;
   if (longBtn) longBtn.textContent = `🌴 Long (${pomoV3DurationMap.long / 60}m)`;
@@ -6510,7 +6510,7 @@ function initPomodoro() {
 }
 
 function updatePomodoroSelectOptions() {
-  const select = document.getElementById('pomo-chapter-select');
+  const select = document.getElementById('pomo-v3-chapter-select');
   if (!select) return;
   select.innerHTML = '<option value="">-- Select Chapter (Optional) --</option>';
   const allChapters = [...P1_PHY, ...P2_PHY, ...P1_CHE, ...P2_CHE, ...P1_BIO, ...P2_BIO].map(item => item.ch);
@@ -6532,15 +6532,15 @@ function setPomoMode(mode) {
   }
   
   document.querySelectorAll('.pomo-mode-btn').forEach(btn => btn.classList.remove('active-pomo'));
-  if (mode === 'focus') document.getElementById('pomo-focus-btn').classList.add('active-pomo');
-  else if (mode === 'short') document.getElementById('pomo-short-btn').classList.add('active-pomo');
-  else if (mode === 'long') document.getElementById('pomo-long-btn').classList.add('active-pomo');
+  if (mode === 'focus') document.getElementById('pomo-v3-focus-btn').classList.add('active-pomo');
+  else if (mode === 'short') document.getElementById('pomo-v3-short-btn').classList.add('active-pomo');
+  else if (mode === 'long') document.getElementById('pomo-v3-long-btn').classList.add('active-pomo');
   
-  const statusLabel = document.getElementById('pomo-status-label');
+  const statusLabel = document.getElementById('pomo-v3-status-label');
   if (statusLabel) statusLabel.textContent = mode === 'focus' ? 'Stay Focused' : 'Take a Break';
   
-  const startBtnText = document.getElementById('pomo-start-text');
-  const startBtnIcon = document.getElementById('pomo-start-icon');
+  const startBtnText = document.getElementById('pomo-v3-start-text');
+  const startBtnIcon = document.getElementById('pomo-v3-start-icon');
   if (startBtnText) startBtnText.textContent = mode === 'focus' ? 'Start Focus' : 'Start Break';
   if (startBtnIcon) startBtnIcon.textContent = '▶';
   
@@ -6550,9 +6550,9 @@ function setPomoMode(mode) {
 function togglePomoTimer() {
   // Automatically apply settings if user changed them in inputs before starting
   try {
-    const inFocus = document.getElementById('pomo-setting-focus');
-    const inShort = document.getElementById('pomo-setting-short');
-    const inLong = document.getElementById('pomo-setting-long');
+    const inFocus = document.getElementById('pomo-v3-setting-focus');
+    const inShort = document.getElementById('pomo-v3-setting-short');
+    const inLong = document.getElementById('pomo-v3-setting-long');
     if (inFocus && inShort && inLong) {
       const f = parseInt(inFocus.value, 10);
       const s = parseInt(inShort.value, 10);
@@ -6568,8 +6568,8 @@ function togglePomoTimer() {
     }
   } catch(e) {}
 
-  const startBtnText = document.getElementById('pomo-start-text');
-  const startBtnIcon = document.getElementById('pomo-start-icon');
+  const startBtnText = document.getElementById('pomo-v3-start-text');
+  const startBtnIcon = document.getElementById('pomo-v3-start-icon');
   
   if (pomoV3IsRunning) {
     pomoV3IsRunning = false;
@@ -6687,8 +6687,8 @@ function updatePomodoroStats(sessions) {
   const countToday = todaySessions.length;
   const timeToday = countToday * 25;
   
-  const elCount = document.getElementById('pomo-count-today');
-  const elTime = document.getElementById('pomo-time-today');
+  const elCount = document.getElementById('pomo-v3-count-today');
+  const elTime = document.getElementById('pomo-v3-time-today');
   if (elCount) elCount.textContent = countToday;
   if (elTime) elTime.textContent = timeToday;
 }
@@ -7349,9 +7349,9 @@ window.copyTabFormula = copyTabFormula;
 window.savePomoSettings = savePomoSettings;
 
 function savePomoSettings(silent) {
-  const inFocus = document.getElementById('pomo-setting-focus');
-  const inShort = document.getElementById('pomo-setting-short');
-  const inLong = document.getElementById('pomo-setting-long');
+  const inFocus = document.getElementById('pomo-v3-setting-focus');
+  const inShort = document.getElementById('pomo-v3-setting-short');
+  const inLong = document.getElementById('pomo-v3-setting-long');
   
   if (!inFocus || !inShort || !inLong) return;
   
@@ -7387,15 +7387,15 @@ function savePomoSettings(silent) {
   }
   
   // Reset start button
-  const startBtnText = document.getElementById('pomo-start-text');
-  const startBtnIcon = document.getElementById('pomo-start-icon');
+  const startBtnText = document.getElementById('pomo-v3-start-text');
+  const startBtnIcon = document.getElementById('pomo-v3-start-icon');
   if (startBtnText) startBtnText.textContent = pomoV3CurrentMode === 'focus' ? 'Start Focus' : 'Start Break';
   if (startBtnIcon) startBtnIcon.textContent = '▶';
   
   // Update button headers
-  const focusBtn = document.getElementById('pomo-focus-btn');
-  const shortBtn = document.getElementById('pomo-short-btn');
-  const longBtn = document.getElementById('pomo-long-btn');
+  const focusBtn = document.getElementById('pomo-v3-focus-btn');
+  const shortBtn = document.getElementById('pomo-v3-short-btn');
+  const longBtn = document.getElementById('pomo-v3-long-btn');
   if (focusBtn) focusBtn.textContent = `🎯 Focus (${focusVal}m)`;
   if (shortBtn) shortBtn.textContent = `☕ Short (${shortVal}m)`;
   if (longBtn) longBtn.textContent = `🌴 Long (${longVal}m)`;

@@ -4146,20 +4146,20 @@ tag in <head>
   }
 }
 
-#pomo-chapter-select {
+#pomo-v3-chapter-select {
   background-color: var(--bg-surface-hover) !important;
   color: var(--text-primary) !important;
   border: 1px solid rgba(139, 92, 246, 0.4) !important;
 }
 
-#pomo-chapter-select:focus {
+#pomo-v3-chapter-select:focus {
   background-color: var(--bg-surface-hover) !important;
   color: var(--text-primary) !important;
   border-color: var(--primary) !important;
   outline: none !important;
 }
 
-#pomo-chapter-select option {
+#pomo-v3-chapter-select option {
   background-color: var(--bg-surface) !important;
   color: var(--text-primary) !important;
 }

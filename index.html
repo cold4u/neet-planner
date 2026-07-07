@@ -1471,28 +1471,28 @@
         <!-- Left: The Timer Display -->
         <div class="glass-card" style="padding: 24px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px; position:relative; overflow:hidden;">
           <div style="display:flex; justify-content:center; gap:8px; width:100%; max-width:320px;">
-            <button class="btn btn-secondary pomo-mode-btn active-pomo" id="pomo-focus-btn" onclick="setPomoMode('focus')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">🎯 Focus (25m)</button>
-            <button class="btn btn-secondary pomo-mode-btn" id="pomo-short-btn" onclick="setPomoMode('short')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">☕ Short (5m)</button>
-            <button class="btn btn-secondary pomo-mode-btn" id="pomo-long-btn" onclick="setPomoMode('long')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">🌴 Long (15m)</button>
+            <button class="btn btn-secondary pomo-mode-btn active-pomo" id="pomo-v3-focus-btn" onclick="setPomoMode('focus')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">🎯 Focus (25m)</button>
+            <button class="btn btn-secondary pomo-mode-btn" id="pomo-v3-short-btn" onclick="setPomoMode('short')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">☕ Short (5m)</button>
+            <button class="btn btn-secondary pomo-mode-btn" id="pomo-v3-long-btn" onclick="setPomoMode('long')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">🌴 Long (15m)</button>
           </div>
 
           <!-- Circular Ring and Digital Display -->
           <div style="position:relative; width:220px; height:220px; display:flex; align-items:center; justify-content:center; margin:10px 0;">
             <svg width="220" height="220" viewBox="0 0 220 220" style="transform: rotate(-90deg); position:absolute; inset:0;">
               <circle cx="110" cy="110" r="95" stroke="rgba(255,255,255,0.03)" stroke-width="8" fill="transparent" />
-              <circle id="pomo-timer-circle" cx="110" cy="110" r="95" stroke="var(--primary)" stroke-width="8" fill="transparent"
+              <circle id="pomo-v3-timer-circle" cx="110" cy="110" r="95" stroke="var(--primary)" stroke-width="8" fill="transparent"
                 stroke-dasharray="596.9" stroke-dashoffset="0" style="transition: stroke-dashoffset 0.1s linear;" stroke-linecap="round" />
             </svg>
             <div style="display:flex; flex-direction:column; align-items:center; z-index:2;">
-              <span id="pomo-timer-display" style="font-size:42px; font-weight:800; font-family:var(--font-mono); color:var(--text-primary); text-shadow:0 0 10px var(--primary-glow);">25:00</span>
-              <span id="pomo-status-label" style="font-size:10px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:1.5px; margin-top:4px;">Stay Focused</span>
+              <span id="pomo-v3-timer-display" style="font-size:42px; font-weight:800; font-family:var(--font-mono); color:var(--text-primary); text-shadow:0 0 10px var(--primary-glow);">25:00</span>
+              <span id="pomo-v3-status-label" style="font-size:10px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:1.5px; margin-top:4px;">Stay Focused</span>
             </div>
           </div>
 
           <!-- Controls -->
           <div style="display:flex; justify-content:center; gap:12px; width:100%;">
-            <button class="btn btn-primary" id="pomo-start-btn" onclick="togglePomoTimer()" style="flex:1; padding:10px 0; font-weight:700; display:flex; justify-content:center; align-items:center; gap:8px;">
-              <span id="pomo-start-icon">▶</span> <span id="pomo-start-text">Start Focus</span>
+            <button class="btn btn-primary" id="pomo-v3-start-btn" onclick="togglePomoTimer()" style="flex:1; padding:10px 0; font-weight:700; display:flex; justify-content:center; align-items:center; gap:8px;">
+              <span id="pomo-v3-start-icon">▶</span> <span id="pomo-v3-start-text">Start Focus</span>
             </button>
             <button class="btn btn-secondary" onclick="resetPomoTimer()" style="padding:10px 16px;" title="Reset Timer">🔄</button>
           </div>
@@ -1505,12 +1505,12 @@
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
               <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:10px; padding:12px; text-align:center;">
                 <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block; margin-bottom:4px;">Focus Sessions</span>
-                <span id="pomo-count-today" style="font-size:24px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0</span>
+                <span id="pomo-v3-count-today" style="font-size:24px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0</span>
                 <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">today</span>
               </div>
               <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:10px; padding:12px; text-align:center;">
                 <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block; margin-bottom:4px;">Total Focus Time</span>
-                <span id="pomo-time-today" style="font-size:24px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0</span>
+                <span id="pomo-v3-time-today" style="font-size:24px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0</span>
                 <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">minutes today</span>
               </div>
             </div>
@@ -1520,7 +1520,7 @@
             <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">📚 Focus Target Chapters</h2>
             <p style="font-size:11px; color:var(--text-muted); margin:0;">Select a chapter to attribute focus sessions. The logged hours will be saved directly into your preparation progress.</p>
             <div class="form-group" style="margin:0;">
-              <select id="pomo-chapter-select" class="form-input" style="font-size: 12px; padding: 8px 10px; background-color: var(--bg-surface-hover); border-color: rgba(139, 92, 246, 0.35); color: var(--text-primary);">
+              <select id="pomo-v3-chapter-select" class="form-input" style="font-size: 12px; padding: 8px 10px; background-color: var(--bg-surface-hover); border-color: rgba(139, 92, 246, 0.35); color: var(--text-primary);">
                 <option value="">-- Select Chapter (Optional) --</option>
               </select>
             </div>
@@ -1532,15 +1532,15 @@
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
               <div class="form-group" style="margin:0;">
                 <label style="font-size:10px; font-weight:700; color:var(--text-secondary); margin-bottom:4px; display:block;">Focus (m)</label>
-                <input type="number" id="pomo-setting-focus" class="form-input" min="1" max="180" value="25" style="font-size:12px; padding:6px 8px; text-align:center;">
+                <input type="number" id="pomo-v3-setting-focus" class="form-input" min="1" max="180" value="25" style="font-size:12px; padding:6px 8px; text-align:center;">
               </div>
               <div class="form-group" style="margin:0;">
                 <label style="font-size:10px; font-weight:700; color:var(--text-secondary); margin-bottom:4px; display:block;">Short (m)</label>
-                <input type="number" id="pomo-setting-short" class="form-input" min="1" max="180" value="5" style="font-size:12px; padding:6px 8px; text-align:center;">
+                <input type="number" id="pomo-v3-setting-short" class="form-input" min="1" max="180" value="5" style="font-size:12px; padding:6px 8px; text-align:center;">
               </div>
               <div class="form-group" style="margin:0;">
                 <label style="font-size:10px; font-weight:700; color:var(--text-secondary); margin-bottom:4px; display:block;">Long (m)</label>
-                <input type="number" id="pomo-setting-long" class="form-input" min="1" max="180" value="15" style="font-size:12px; padding:6px 8px; text-align:center;">
+                <input type="number" id="pomo-v3-setting-long" class="form-input" min="1" max="180" value="15" style="font-size:12px; padding:6px 8px; text-align:center;">
               </div>
             </div>
             <button class="btn btn-secondary" onclick="savePomoSettings()" style="padding:8px 0; font-size:12px; font-weight:700; width:100%; border:1px solid var(--primary);">Save & Apply</button>
