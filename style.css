@@ -4146,7 +4146,20 @@ tag in <head>
   }
 }
 
+#pomo-chapter-select {
+  background-color: var(--bg-surface-hover) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+}
+
+#pomo-chapter-select:focus {
+  background-color: var(--bg-surface-hover) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--primary) !important;
+  outline: none !important;
+}
+
 #pomo-chapter-select option {
-  background-color: var(--bg-surface);
-  color: var(--text-primary);
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
 }
