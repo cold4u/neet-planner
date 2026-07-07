@@ -198,7 +198,10 @@ body.theme-matrix-terminal {
 }
 
 html, body {
-  overflow-x: hidden !important;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important;
   width: 100%;
   max-width: 100vw;
 }
@@ -312,12 +315,14 @@ a:hover {
   transform: translateY(-1px);
 }
 
-/* LAYOUT */
 .main-wrapper {
   padding: 24px;
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
+  flex-grow: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* TAB FADE-IN ANIMATION */
@@ -2271,8 +2276,9 @@ body.exam-mode-active .main-wrapper {
 /* Layout Wrapper for Left Sidebar */
 .app-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -2282,6 +2288,7 @@ body.exam-mode-active .main-wrapper {
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
+  height: 100vh;
   transition: var(--transition-smooth);
   z-index: 99;
 }
@@ -2351,6 +2358,8 @@ body.exam-mode-active .main-wrapper {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Hide sidebar completely on mobile/tablets and let it fit using the hamburger menu drawer navigation */
