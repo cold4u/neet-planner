@@ -1076,6 +1076,10 @@ function safeSetSessionStorage(key, value) {
         renderAnalytics();
       } else if (tabId === 'overview') {
         renderOverviewStats();
+      } else if (tabId === 'pomodoro') {
+        if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
+      } else if (tabId === 'formulas') {
+        if (typeof renderTabFormulas === 'function') renderTabFormulas();
       }
     }
 
@@ -2459,6 +2463,12 @@ function safeSetSessionStorage(key, value) {
       }
       
       try { updateSpacedRepetitionScheduler(); } catch(e) { console.error("Error in updateSpacedRepetitionScheduler:", e); }
+      
+      // Update new feature components on Overview
+      try { if (typeof updateDailyTargetsProgress === 'function') updateDailyTargetsProgress(); } catch(e) { console.error("Error in updateDailyTargetsProgress:", e); }
+      try { if (typeof updateSubjectAccuracyChart === 'function') updateSubjectAccuracyChart(); } catch(e) { console.error("Error in updateSubjectAccuracyChart:", e); }
+      try { if (typeof updateWeakChaptersList === 'function') updateWeakChaptersList(); } catch(e) { console.error("Error in updateWeakChaptersList:", e); }
+      try { if (typeof updateWeeklyLeaderboard === 'function') updateWeeklyLeaderboard(); } catch(e) { console.error("Error in updateWeeklyLeaderboard:", e); }
     }
     
     function renderOverviewStats() {
@@ -3901,6 +3911,12 @@ function initOnLoad() {
 
   // Initial stats updates & start countdown timer
   try { updateOverviewStats(); } catch(e) { console.error("Error in updateOverviewStats:", e); }
+  
+  // Initialize new 9-features components
+  try { if (typeof initPomodoro === 'function') initPomodoro(); } catch(e) { console.error("Error in initPomodoro:", e); }
+  try { if (typeof initDailyTargets === 'function') initDailyTargets(); } catch(e) { console.error("Error in initDailyTargets:", e); }
+  try { if (typeof initNotificationsUI === 'function') initNotificationsUI(); } catch(e) { console.error("Error in initNotificationsUI:", e); }
+  try { if (typeof renderTabFormulas === 'function') renderTabFormulas(); } catch(e) { console.error("Error in renderTabFormulas:", e); }
   try {
     if (typeof renderWeeklyReport === 'function') {
       renderWeeklyReport();
@@ -3950,13 +3966,6 @@ function initOnLoad() {
             e.preventDefault();
           }
         }, { passive: false });
-        
-        // Close on backdrop click (clicking outside the modal content)
-        modal.addEventListener('click', function(e) {
-          if (e.target === modal) {
-            closeWelcomeSummary();
-          }
-        });
       }
     }
   } catch(e) { 
@@ -6432,4 +6441,846 @@ window.initMatchGame = initMatchGame;
 window.startMatchGameSet = startMatchGameSet;
 window.selectColAItem = selectColAItem;
 window.selectColBItem = selectColBItem;
+
+// ==========================================
+// 17. 9 NEW INTEGRATED FEATURES
+// ==========================================
+
+// --- FEATURE 1: POMODORO STUDY TIMER ---
+let pomoTimeRemaining = 25 * 60;
+let pomoInterval = null;
+let pomoCurrentMode = 'focus';
+let pomoIsRunning = false;
+const pomoDurationMap = {
+  focus: 25 * 60,
+  short: 5 * 60,
+  long: 15 * 60
+};
+
+function playPomoSound() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+    osc.frequency.setValueAtTime(1174.66, audioCtx.currentTime + 0.3); // D6
+    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.6);
+  } catch (e) {
+    console.error("Audio Synthesis error:", e);
+  }
+}
+
+function initPomodoro() {
+  const savedSessions = JSON.parse(safeGetLocalStorage('neet_v3_pomodoro_sessions') || '[]');
+  updatePomodoroStats(savedSessions);
+  updatePomodoroSelectOptions();
+}
+
+function updatePomodoroSelectOptions() {
+  const select = document.getElementById('pomo-chapter-select');
+  if (!select) return;
+  select.innerHTML = '<option value="">-- Select Chapter (Optional) --</option>';
+  const allChapters = [...P1_PHY, ...P1_CHE, ...P1_BIO].map(item => item.ch);
+  allChapters.sort().forEach(ch => {
+    const opt = document.createElement('option');
+    opt.value = ch;
+    opt.textContent = ch;
+    select.appendChild(opt);
+  });
+}
+
+function setPomoMode(mode) {
+  pomoCurrentMode = mode;
+  pomoTimeRemaining = pomoDurationMap[mode];
+  pomoIsRunning = false;
+  if (pomoInterval) {
+    clearInterval(pomoInterval);
+    pomoInterval = null;
+  }
+  
+  document.querySelectorAll('.pomo-mode-btn').forEach(btn => btn.classList.remove('active-pomo'));
+  if (mode === 'focus') document.getElementById('pomo-focus-btn').classList.add('active-pomo');
+  else if (mode === 'short') document.getElementById('pomo-short-btn').classList.add('active-pomo');
+  else if (mode === 'long') document.getElementById('pomo-long-btn').classList.add('active-pomo');
+  
+  const statusLabel = document.getElementById('pomo-status-label');
+  if (statusLabel) statusLabel.textContent = mode === 'focus' ? 'Stay Focused' : 'Take a Break';
+  
+  const startBtnText = document.getElementById('pomo-start-text');
+  const startBtnIcon = document.getElementById('pomo-start-icon');
+  if (startBtnText) startBtnText.textContent = mode === 'focus' ? 'Start Focus' : 'Start Break';
+  if (startBtnIcon) startBtnIcon.textContent = '▶';
+  
+  updatePomoUI();
+}
+
+function togglePomoTimer() {
+  const startBtnText = document.getElementById('pomo-start-text');
+  const startBtnIcon = document.getElementById('pomo-start-icon');
+  
+  if (pomoIsRunning) {
+    pomoIsRunning = false;
+    clearInterval(pomoInterval);
+    pomoInterval = null;
+    if (startBtnText) startBtnText.textContent = 'Resume';
+    if (startBtnIcon) startBtnIcon.textContent = '▶';
+  } else {
+    pomoIsRunning = true;
+    if (startBtnText) startBtnText.textContent = 'Pause';
+    if (startBtnIcon) startBtnIcon.textContent = '⏸';
+    
+    pomoInterval = setInterval(() => {
+      pomoTimeRemaining--;
+      if (pomoTimeRemaining <= 0) {
+        clearInterval(pomoInterval);
+        pomoInterval = null;
+        pomoIsRunning = false;
+        playPomoSound();
+        sendStudyNotification("Pomodoro Complete!", pomoCurrentMode === 'focus' ? "Focus session completed! Grab a break." : "Break complete! Back to study.");
+        if (pomoCurrentMode === 'focus') {
+          logPomodoroSession();
+        }
+        setPomoMode(pomoCurrentMode === 'focus' ? 'short' : 'focus');
+      }
+      updatePomoUI();
+    }, 1000);
+  }
+}
+
+function resetPomoTimer() {
+  setPomoMode(pomoCurrentMode);
+}
+
+function updatePomoUI() {
+  const mins = Math.floor(pomoTimeRemaining / 60);
+  const secs = pomoTimeRemaining % 60;
+  const displayStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  
+  const display = document.getElementById('pomo-timer-display');
+  if (display) display.textContent = displayStr;
+  
+  const totalSecs = pomoDurationMap[pomoCurrentMode];
+  const progressRatio = pomoTimeRemaining / totalSecs;
+  const circle = document.getElementById('pomo-timer-circle');
+  if (circle) {
+    const offset = 596.9 - (progressRatio * 596.9);
+    circle.style.strokeDashoffset = offset;
+  }
+}
+
+function logPomodoroSession() {
+  const sessions = JSON.parse(safeGetLocalStorage('neet_v3_pomodoro_sessions') || '[]');
+  const chapter = document.getElementById('pomo-chapter-select').value || 'General Study';
+  
+  const session = {
+    timestamp: Date.now(),
+    date: new Date().toISOString().split('T')[0],
+    durationMinutes: 25,
+    chapter: chapter
+  };
+  
+  sessions.push(session);
+  safeSetLocalStorage('neet_v3_pomodoro_sessions', JSON.stringify(sessions));
+  
+  try {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const hoursFraction = 25 / 60;
+    const dayIdx = trackerLogs.findIndex(l => l.date === todayStr);
+    if (dayIdx !== -1) {
+      const subject = getSubjectOfChapter(chapter);
+      if (subject === 'Physics') trackerLogs[dayIdx].phyHours += hoursFraction;
+      else if (subject === 'Chemistry') trackerLogs[dayIdx].cheHours += hoursFraction;
+      else trackerLogs[dayIdx].bioHours += hoursFraction;
+      
+      safeSetLocalStorage('neet_v3_tracker_logs', JSON.stringify(trackerLogs));
+      renderTrackerTable();
+      renderAnalytics();
+    }
+  } catch (e) {
+    console.error("Error logging pomodoro to trackerLogs:", e);
+  }
+  
+  updatePomodoroStats(sessions);
+  updateOverviewStats();
+  
+  try {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todayMins = sessions
+      .filter(s => s.date === todayStr)
+      .reduce((sum, s) => sum + s.durationMinutes, 0);
+    if (todayMins >= 240) {
+      const hourCheckbox = document.getElementById('tgt-study-hours');
+      if (hourCheckbox && !hourCheckbox.checked) {
+        hourCheckbox.checked = true;
+        toggleDailyTarget('hours');
+      }
+    }
+  } catch (e) {}
+}
+
+function getSubjectOfChapter(chapterName) {
+  if (P1_PHY.some(c => c.ch === chapterName)) return 'Physics';
+  if (P1_CHE.some(c => c.ch === chapterName)) return 'Chemistry';
+  return 'Biology';
+}
+
+function updatePomodoroStats(sessions) {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todaySessions = sessions.filter(s => s.date === todayStr);
+  const countToday = todaySessions.length;
+  const timeToday = countToday * 25;
+  
+  const elCount = document.getElementById('pomo-count-today');
+  const elTime = document.getElementById('pomo-time-today');
+  if (elCount) elCount.textContent = countToday;
+  if (elTime) elTime.textContent = timeToday;
+}
+
+// --- FEATURE 4: DAILY TARGET & STREAK SYSTEM ---
+function initDailyTargets() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const targets = JSON.parse(safeGetLocalStorage('neet_v3_daily_targets_' + todayStr) || '{"quiz":false,"syllabus":false,"pyq":false,"hours":false}');
+  
+  const qEl = document.getElementById('tgt-daily-quiz');
+  const sEl = document.getElementById('tgt-syllabus-read');
+  const pEl = document.getElementById('tgt-pyqs');
+  const hEl = document.getElementById('tgt-study-hours');
+  
+  if (qEl) qEl.checked = targets.quiz;
+  if (sEl) sEl.checked = targets.syllabus;
+  if (pEl) pEl.checked = targets.pyq;
+  if (hEl) hEl.checked = targets.hours;
+  
+  updateDailyTargetsProgress();
+}
+
+function toggleDailyTarget(key) {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const targets = JSON.parse(safeGetLocalStorage('neet_v3_daily_targets_' + todayStr) || '{"quiz":false,"syllabus":false,"pyq":false,"hours":false}');
+  
+  const qEl = document.getElementById('tgt-daily-quiz');
+  const sEl = document.getElementById('tgt-syllabus-read');
+  const pEl = document.getElementById('tgt-pyqs');
+  const hEl = document.getElementById('tgt-study-hours');
+  
+  if (key === 'quiz' && qEl) targets.quiz = qEl.checked;
+  else if (key === 'syllabus' && sEl) targets.syllabus = sEl.checked;
+  else if (key === 'pyq' && pEl) targets.pyq = pEl.checked;
+  else if (key === 'hours' && hEl) targets.hours = hEl.checked;
+  
+  safeSetLocalStorage('neet_v3_daily_targets_' + todayStr, JSON.stringify(targets));
+  updateDailyTargetsProgress();
+}
+
+function updateDailyTargetsProgress() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const targets = JSON.parse(safeGetLocalStorage('neet_v3_daily_targets_' + todayStr) || '{"quiz":false,"syllabus":false,"pyq":false,"hours":false}');
+  
+  let checkedCount = 0;
+  if (targets.quiz) checkedCount++;
+  if (targets.syllabus) checkedCount++;
+  if (targets.pyq) checkedCount++;
+  if (targets.hours) checkedCount++;
+  
+  const percentage = (checkedCount / 4) * 100;
+  const bar = document.getElementById('target-progress-bar');
+  if (bar) bar.style.width = percentage + '%';
+  
+  calculateTargetStreak();
+}
+
+function calculateTargetStreak() {
+  const completedDates = JSON.parse(safeGetLocalStorage('neet_v3_target_streak_dates') || '[]');
+  const todayStr = new Date().toISOString().split('T')[0];
+  
+  const targetsToday = JSON.parse(safeGetLocalStorage('neet_v3_daily_targets_' + todayStr) || '{"quiz":false,"syllabus":false,"pyq":false,"hours":false}');
+  const isTodayDone = targetsToday.quiz && targetsToday.syllabus && targetsToday.pyq && targetsToday.hours;
+  
+  let updatedDates = [...completedDates];
+  if (isTodayDone) {
+    if (!updatedDates.includes(todayStr)) {
+      updatedDates.push(todayStr);
+      triggerConfetti();
+      showToast("🎉 Daily Targets 100% Completed! Keep it up!");
+    }
+  } else {
+    updatedDates = updatedDates.filter(d => d !== todayStr);
+  }
+  
+  updatedDates.sort();
+  safeSetLocalStorage('neet_v3_target_streak_dates', JSON.stringify(updatedDates));
+  
+  let streak = 0;
+  let cursor = new Date();
+  
+  if (!updatedDates.includes(todayStr)) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  
+  while (true) {
+    const cursorStr = cursor.toISOString().split('T')[0];
+    if (updatedDates.includes(cursorStr)) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  
+  const badge = document.getElementById('target-streak-count');
+  if (badge) badge.textContent = streak;
+}
+
+// --- FEATURE 2: SUBJECT-WISE ACCURACY ANALYTICS ---
+function initSubjectAccuracy() {
+  updateSubjectAccuracyChart();
+}
+
+function updateSubjectAccuracyChart() {
+  const container = document.getElementById('subject-accuracy-chart-container');
+  if (!container) return;
+  
+  let phySum = 0, cheSum = 0, bioSum = 0, count = 0;
+  mockTests.forEach(test => {
+    phySum += test.phy;
+    cheSum += test.che;
+    bioSum += test.bio;
+    count++;
+  });
+  
+  const phyAvg = count ? Math.round((phySum / (count * 180)) * 100) : 0;
+  const cheAvg = count ? Math.round((cheSum / (count * 180)) * 100) : 0;
+  const bioAvg = count ? Math.round((bioSum / (count * 360)) * 100) : 0;
+  
+  container.innerHTML = `
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:4px;">
+        <span style="font-weight:600; color:#60a5fa;">⚡ Physics Accuracy</span>
+        <span style="font-family:var(--font-mono); font-weight:700;">${phyAvg}%</span>
+      </div>
+      <div style="width:100%; height:12px; background:rgba(255,255,255,0.03); border-radius:6px; overflow:hidden; border:1px solid var(--border-color);">
+        <div style="width:${phyAvg}%; height:100%; background:linear-gradient(90deg, #3b82f6, #60a5fa); transition:width 0.4s ease;"></div>
+      </div>
+    </div>
+    
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:4px;">
+        <span style="font-weight:600; color:#34d399;">🧪 Chemistry Accuracy</span>
+        <span style="font-family:var(--font-mono); font-weight:700;">${cheAvg}%</span>
+      </div>
+      <div style="width:100%; height:12px; background:rgba(255,255,255,0.03); border-radius:6px; overflow:hidden; border:1px solid var(--border-color);">
+        <div style="width:${cheAvg}%; height:100%; background:linear-gradient(90deg, #10b981, #34d399); transition:width 0.4s ease;"></div>
+      </div>
+    </div>
+    
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:4px;">
+        <span style="font-weight:600; color:#f43f5e;">🧬 Biology Accuracy</span>
+        <span style="font-family:var(--font-mono); font-weight:700;">${bioAvg}%</span>
+      </div>
+      <div style="width:100%; height:12px; background:rgba(255,255,255,0.03); border-radius:6px; overflow:hidden; border:1px solid var(--border-color);">
+        <div style="width:${bioAvg}%; height:100%; background:linear-gradient(90deg, #e11d48, #f43f5e); transition:width 0.4s ease;"></div>
+      </div>
+    </div>
+    
+    <div style="font-size:11px; color:var(--text-muted); line-height:1.4; border-top:1px dashed rgba(255,255,255,0.05); padding-top:10px; margin-top:4px; text-align:center;">
+      📊 Average Mock Test Score: <strong>${count ? Math.round((phySum+cheSum+bioSum)/count) : 0}/720</strong> (across ${count} log${count === 1 ? '' : 's'})
+    </div>
+  `;
+}
+
+// --- FEATURE 5: WEAK CHAPTER AUTO-DETECTION ---
+function initWeakChapters() {
+  updateWeakChaptersList();
+}
+
+function updateWeakChaptersList() {
+  const container = document.getElementById('priority-chapters-list');
+  const card = document.getElementById('weak-chapters-alert-card');
+  if (!container || !card) return;
+  
+  const errorBook = JSON.parse(safeGetLocalStorage('neet_v3_error_book') || '[]');
+  
+  const chapCounts = {};
+  errorBook.forEach(item => {
+    if (item.chapter) {
+      chapCounts[item.chapter] = (chapCounts[item.chapter] || 0) + 1;
+    }
+  });
+  
+  const sorted = Object.keys(chapCounts)
+    .map(ch => ({ name: ch, count: chapCounts[ch] }))
+    .sort((a, b) => b.count - a.count);
+  
+  const weakChaps = sorted.slice(0, 3);
+  
+  if (weakChaps.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+  
+  card.style.display = 'block';
+  
+  let html = '';
+  weakChaps.forEach(ch => {
+    html += `
+      <div style="background:rgba(239, 68, 68, 0.05); border:1px solid rgba(239, 68, 68, 0.1); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div>
+          <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${ch.name}</div>
+          <span style="font-size:11px; color:var(--accent-danger); font-weight:600;">⚠️ ${ch.count} mistakes logged in Error Book</span>
+        </div>
+        <button class="btn btn-secondary" onclick="jumpToChapterPractice('${ch.name.replace(/'/g, "\\'")}')" style="padding:4px 10px; font-size:10px; font-weight:700; border-color:rgba(239, 68, 68, 0.2); color:var(--accent-danger);">Practice PYQs ➡️</button>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function jumpToChapterPractice(chapterName) {
+  showTab('papers');
+  const searchInput = document.getElementById('paper-search-input');
+  if (searchInput) {
+    searchInput.value = chapterName;
+    const event = new Event('keyup');
+    searchInput.dispatchEvent(event);
+  }
+}
+
+// --- FEATURE 9: SELF-COMPETE WEEKLY LEADERBOARD ---
+function initWeeklyLeaderboard() {
+  updateWeeklyLeaderboard();
+}
+
+function updateWeeklyLeaderboard() {
+  const body = document.getElementById('weekly-leaderboard-body');
+  if (!body) return;
+  
+  const today = new Date();
+  const currentWeekNum = getWeekNumber(today);
+  const weekKey = `${today.getFullYear()}-W${currentWeekNum}`;
+  
+  const snapshots = JSON.parse(safeGetLocalStorage('neet_v3_weekly_snapshots') || '{}');
+  
+  let currentHours = 0;
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay()); // Sunday
+  startOfWeek.setHours(0,0,0,0);
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday
+  endOfWeek.setHours(23,59,59,999);
+  
+  trackerLogs.forEach(l => {
+    const d = new Date(l.date);
+    if (d >= startOfWeek && d <= endOfWeek) {
+      currentHours += (l.phyHours + l.cheHours + l.bioHours);
+    }
+  });
+  
+  let currentCompleted = 0;
+  Object.values(chapterProgress).forEach(p => {
+    const compDateStr = p.revise_date || p.practice_date || p.understand_date;
+    if (compDateStr) {
+      const compDate = new Date(compDateStr);
+      if (compDate >= startOfWeek && compDate <= endOfWeek) {
+        currentCompleted++;
+      }
+    }
+  });
+  
+  let currentMockSum = 0, currentMockCount = 0;
+  mockTests.forEach(t => {
+    const d = new Date(t.date);
+    if (d >= startOfWeek && d <= endOfWeek) {
+      currentMockSum += t.total;
+      currentMockCount++;
+    }
+  });
+  const currentMockAvg = currentMockCount ? Math.round(currentMockSum / currentMockCount) : 0;
+  
+  snapshots[weekKey] = {
+    hours: currentHours,
+    completed: currentCompleted,
+    mockAvg: currentMockAvg
+  };
+  
+  safeSetLocalStorage('neet_v3_weekly_snapshots', JSON.stringify(snapshots));
+  
+  const sortedWeekKeys = Object.keys(snapshots).sort().reverse().slice(0, 4);
+  
+  let html = '';
+  sortedWeekKeys.forEach((key, idx) => {
+    const snap = snapshots[key];
+    
+    let hoursTrend = '=';
+    let compTrend = '=';
+    let mockTrend = '=';
+    
+    if (idx + 1 < sortedWeekKeys.length) {
+      const prevSnap = snapshots[sortedWeekKeys[idx + 1]];
+      if (snap.hours > prevSnap.hours) hoursTrend = '↑';
+      else if (snap.hours < prevSnap.hours) hoursTrend = '↓';
+      
+      if (snap.completed > prevSnap.completed) compTrend = '↑';
+      else if (snap.completed < prevSnap.completed) compTrend = '↓';
+      
+      if (snap.mockAvg > prevSnap.mockAvg) mockTrend = '↑';
+      else if (snap.mockAvg < prevSnap.mockAvg) mockTrend = '↓';
+    }
+    
+    const hColor = hoursTrend === '↑' ? 'var(--accent-success)' : hoursTrend === '↓' ? 'var(--accent-danger)' : 'var(--text-muted)';
+    const cColor = compTrend === '↑' ? 'var(--accent-success)' : compTrend === '↓' ? 'var(--accent-danger)' : 'var(--text-muted)';
+    const mColor = mockTrend === '↑' ? 'var(--accent-success)' : mockTrend === '↓' ? 'var(--accent-danger)' : 'var(--text-muted)';
+    
+    const isCurrent = key === weekKey;
+    const rowBg = isCurrent ? 'background:rgba(255,255,255,0.02); font-weight:700;' : '';
+    
+    html += `
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.02); ${rowBg}">
+        <td style="padding:10px 4px; color:${isCurrent ? 'var(--primary)' : 'var(--text-primary)'};">${isCurrent ? '⭐ This Week' : 'Week ' + key.split('-W')[1]}</td>
+        <td style="padding:10px 4px; text-align:center; font-family:var(--font-mono);">${snap.hours.toFixed(1)}h <span style="color:${hColor}; font-size:10px;">${hoursTrend}</span></td>
+        <td style="padding:10px 4px; text-align:center; font-family:var(--font-mono);">${snap.completed} <span style="color:${cColor}; font-size:10px;">${compTrend}</span></td>
+        <td style="padding:10px 4px; text-align:center; font-family:var(--font-mono);">${snap.mockAvg > 0 ? snap.mockAvg : '—'} <span style="color:${mColor}; font-size:10px;">${mockTrend}</span></td>
+        <td style="padding:10px 4px; text-align:right; font-weight:700; color:${isCurrent ? 'var(--primary)' : 'var(--text-secondary)'};">
+          ${isCurrent ? 'Active 🔥' : 'Logged 💾'}
+        </td>
+      </tr>
+    `;
+  });
+  
+  body.innerHTML = html;
+}
+
+function getWeekNumber(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return weekNo;
+}
+
+// --- FEATURE 7: STUDY REMINDERS (BROWSER NOTIFICATIONS) ---
+function initNotificationsUI() {
+  const allowed = safeGetLocalStorage('neet_v3_notifications_enabled') === 'true';
+  const btn = document.getElementById('notification-toggle-btn');
+  const status = document.getElementById('notification-status-text');
+  
+  if (btn && status) {
+    if (allowed && Notification.permission === 'granted') {
+      btn.textContent = 'Disable Notifications';
+      status.textContent = 'Status: Enabled (Active alerts for study hours & Pomodoro)';
+    } else {
+      btn.textContent = 'Enable Notifications';
+      status.textContent = 'Status: Disabled';
+      safeSetLocalStorage('neet_v3_notifications_enabled', 'false');
+    }
+  }
+}
+
+function toggleNotifications() {
+  const allowed = safeGetLocalStorage('neet_v3_notifications_enabled') === 'true';
+  
+  if (allowed) {
+    safeSetLocalStorage('neet_v3_notifications_enabled', 'false');
+    showToast("🔔 Notifications Disabled");
+    initNotificationsUI();
+  } else {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        safeSetLocalStorage('neet_v3_notifications_enabled', 'true');
+        showToast("🔔 Notifications Enabled successfully!");
+        sendStudyNotification("NEET Planner Ready!", "You will receive reminders for mock tests and revision slots here.");
+      } else {
+        alert("Permission denied! Please enable notifications in your browser settings.");
+      }
+      initNotificationsUI();
+    });
+  }
+}
+
+function sendStudyNotification(title, message) {
+  const allowed = safeGetLocalStorage('neet_v3_notifications_enabled') === 'true';
+  if (allowed && Notification.permission === 'granted') {
+    new Notification(title, {
+      body: message
+    });
+  }
+}
+
+// --- FEATURE 8: PROGRESS EXPORT AS PDF ---
+function exportProgressReportPDF() {
+  const printArea = document.getElementById('print-report-area');
+  if (!printArea) return;
+  
+  const totalTests = mockTests.length;
+  let mockScoresHtml = '';
+  mockTests.slice(0, 10).forEach(t => {
+    mockScoresHtml += `<li>${t.name} (${t.date}): <strong>${t.total}/720</strong> (P:${t.phy} C:${t.che} B:${t.bio})</li>`;
+  });
+  
+  const doneTotal = Object.values(done).filter(Boolean).length;
+  const pctSyllabus = PLAN.length ? Math.round((doneTotal / PLAN.length) * 100) : 0;
+  
+  const streak = calculateStreak();
+  
+  let phySum = 0, cheSum = 0, bioSum = 0;
+  mockTests.forEach(test => {
+    phySum += test.phy;
+    cheSum += test.che;
+    bioSum += test.bio;
+  });
+  const count = mockTests.length;
+  const phyAvg = count ? Math.round(phySum / count) : 0;
+  const cheAvg = count ? Math.round(cheSum / count) : 0;
+  const bioAvg = count ? Math.round(bioSum / count) : 0;
+  
+  printArea.innerHTML = `
+    <div style="font-family:'Inter', sans-serif; padding:40px; color:#f8fafc; background:#0f172a;">
+      <div style="border-bottom:2px solid var(--primary); padding-bottom:15px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h1 style="margin:0; font-size:28px; color:var(--primary);">🚀 NEET Preparation Progress Report</h1>
+          <p style="margin:5px 0 0 0; font-size:12px; color:#94a3b8;">Generated on ${new Date().toLocaleDateString()} — Personal Study Companion</p>
+        </div>
+        <div style="text-align:right;">
+          <span style="font-family:monospace; font-size:18px; font-weight:bold; color:var(--primary);">SHUBxCOLD</span>
+        </div>
+      </div>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:25px;">
+        <div class="print-card" style="border: 1px solid rgba(255,255,255,0.1); background: rgba(30, 41, 59, 0.5); padding: 15px; border-radius: 8px;">
+          <h3 style="margin-top:0; color:var(--primary);">Syllabus Status</h3>
+          <p>Syllabus Completed: <strong>${pctSyllabus}%</strong> (${doneTotal}/${PLAN.length} topics)</p>
+          <p>Current Study Streak: <strong>${streak} Days</strong></p>
+          <p>Total Mocks Logged: <strong>${totalTests} tests</strong></p>
+        </div>
+        <div class="print-card" style="border: 1px solid rgba(255,255,255,0.1); background: rgba(30, 41, 59, 0.5); padding: 15px; border-radius: 8px;">
+          <h3 style="margin-top:0; color:var(--primary);">Mock Score Averages</h3>
+          <p>Physics Average: <strong>${phyAvg}/180</strong></p>
+          <p>Chemistry Average: <strong>${cheAvg}/180</strong></p>
+          <p>Biology Average: <strong>${bioAvg}/360</strong></p>
+          <p>Cumulative Average: <strong>${phyAvg + cheAvg + bioAvg}/720</strong></p>
+        </div>
+      </div>
+      
+      <div class="print-card" style="border: 1px solid rgba(255,255,255,0.1); background: rgba(30, 41, 59, 0.5); padding: 15px; border-radius: 8px; margin-bottom:25px;">
+        <h3 style="margin-top:0; color:var(--primary);">Recent Mock Test History (Last 10)</h3>
+        <ul style="padding-left:20px; line-height:1.6;">
+          ${mockScoresHtml || '<li>No mock tests logged yet.</li>'}
+        </ul>
+      </div>
+      
+      <div class="print-card" style="border: 1px solid rgba(255,255,255,0.1); background: rgba(30, 41, 59, 0.5); padding: 15px; border-radius: 8px; margin-bottom:25px;">
+        <h3 style="margin-top:0; color:var(--primary);">Logged Silly Mistakes Breakdown</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left; margin-top:10px;">
+          <thead>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8;">
+              <th style="padding:6px 0;">Mistake Category</th>
+              <th style="padding:6px 0; text-align:right;">Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 0;">Concept Misunderstanding</td>
+              <td style="padding:6px 0; text-align:right;">${mockTests.reduce((acc, t) => acc + (t.mistakes?.concept || 0), 0)}</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;">Calculation Error</td>
+              <td style="padding:6px 0; text-align:right;">${mockTests.reduce((acc, t) => acc + (t.mistakes?.calc || 0), 0)}</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;">Question Misreading / Silly Mistake</td>
+              <td style="padding:6px 0; text-align:right;">${mockTests.reduce((acc, t) => acc + (t.mistakes?.read || 0), 0)}</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;">OMR Bubbling Error</td>
+              <td style="padding:6px 0; text-align:right;">${mockTests.reduce((acc, t) => acc + (t.mistakes?.omr || 0), 0)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div style="text-align:center; font-size:11px; color:#64748b; margin-top:40px;">
+        Keep practicing, analyze errors daily, and remain consistent. Your AIIMS goals are within reach!
+      </div>
+    </div>
+  `;
+  
+  printArea.style.display = 'block';
+  window.print();
+  printArea.style.display = 'none';
+}
+
+// --- FEATURE 3: FORMULA BOOK ACCORDION ---
+// Add extra biology facts and genetics ratios to FORMULAS array
+FORMULAS.push(
+  {
+    sub: 'Biology',
+    cat: 'Genetics',
+    title: 'Mendelian Dihybrid Ratio',
+    expr: '9 : 3 : 3 : 1',
+    desc: 'Phenotypic ratio of F2 generation in a dihybrid cross of two independent genes.'
+  },
+  {
+    sub: 'Biology',
+    cat: 'Human Physiology',
+    title: 'Cardiac Output Equation',
+    expr: '\\text{Cardiac Output} = \\text{Stroke Volume} \\times \\text{Heart Rate}',
+    desc: 'Typically 70 mL x 72 beats/min \\approx 5040 mL/min (approx 5 Litres).'
+  },
+  {
+    sub: 'Biology',
+    cat: 'Plant Physiology',
+    title: 'Photosynthesis Balanced Equation',
+    expr: '6\\text{CO}_2 + 12\\text{H}_2\\text{O} \\xrightarrow{\\text{Light/Chlorophyll}} \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2 + 6\\text{H}_2\\text{O}',
+    desc: 'Reduction of carbon dioxide to glucose using light energy absorbed by chlorophyll.'
+  },
+  {
+    sub: 'Biology',
+    cat: 'Cell Biology',
+    title: 'Mitotic Division Chromosome Number',
+    expr: '2n \\rightarrow 2n',
+    desc: 'Equational division preserving chromosome number in daughter cells.'
+  },
+  {
+    sub: 'Biology',
+    cat: 'Genetics',
+    title: 'Hardy-Weinberg Equilibrium',
+    expr: 'p^2 + 2pq + q^2 = 1, \\; p + q = 1',
+    desc: 'p is dominant allele frequency, q is recessive allele frequency, 2pq is heterozygous frequency.'
+  }
+);
+
+function renderTabFormulas() {
+  const container = document.getElementById('formulas-tab-container');
+  if (!container) return;
+  
+  const searchVal = document.getElementById('formulas-tab-search').value.trim().toLowerCase();
+  const subFilter = document.getElementById('formulas-tab-subject-filter').value;
+  
+  const filtered = FORMULAS.filter(f => {
+    const matchesSearch = f.title.toLowerCase().includes(searchVal) ||
+                          f.expr.toLowerCase().includes(searchVal) ||
+                          f.cat.toLowerCase().includes(searchVal) ||
+                          f.desc.toLowerCase().includes(searchVal);
+    const matchesSub = subFilter === 'all' || f.sub === subFilter;
+    return matchesSearch && matchesSub;
+  });
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="glass-card" style="text-align:center; padding:30px; color:var(--text-muted); font-size:13px;">
+        🔍 No matching formulas or facts found. Try a different search query.
+      </div>
+    `;
+    return;
+  }
+  
+  const grouped = {};
+  filtered.forEach(f => {
+    const key = `${f.sub} - ${f.cat}`;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(f);
+  });
+  
+  let html = '';
+  let groupIdx = 0;
+  for (const grpName in grouped) {
+    groupIdx++;
+    const items = grouped[grpName];
+    
+    let itemsHtml = '';
+    items.forEach((item, itemIdx) => {
+      itemsHtml += `
+        <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); border-radius:6px; padding:12px; display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:start; gap:12px;">
+            <div style="font-weight:700; font-size:13.5px; color:var(--primary);">${item.title}</div>
+            <button class="btn btn-secondary" onclick="copyTabFormula(this, '${item.expr.replace(/'/g, "\\'")}')" style="padding:2px 8px; font-size:10px; font-weight:700; cursor:pointer;">Copy</button>
+          </div>
+          <div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:4px; text-align:center; font-family:var(--font-mono); font-size:13.5px; color:var(--text-primary); margin:4px 0; border:1px solid rgba(255,255,255,0.02); overflow-x:auto;">
+            \$\$${item.expr}\$\$
+          </div>
+          <div style="font-size:11.5px; color:var(--text-secondary); line-height:1.4;">${item.desc}</div>
+        </div>
+      `;
+    });
+    
+    html += `
+      <div class="formula-tab-group" id="formula-tab-group-${groupIdx}">
+        <div class="formula-tab-header" onclick="toggleTabFormulaGroup(${groupIdx})">
+          <span>📖 ${grpName} (${items.length})</span>
+          <span class="accordion-arrow" id="accordion-arrow-${groupIdx}">▼</span>
+        </div>
+        <div class="formula-tab-content">
+          ${itemsHtml}
+        </div>
+      </div>
+    `;
+  }
+  
+  container.innerHTML = html;
+  
+  try {
+    renderMath(container);
+  } catch(e) {
+    console.error("Math rendering error in formulas tab:", e);
+  }
+}
+
+function toggleTabFormulaGroup(idx) {
+  const group = document.getElementById(`formula-tab-group-${idx}`);
+  const arrow = document.getElementById(`accordion-arrow-${idx}`);
+  if (group) {
+    const isExpanded = group.classList.toggle('expanded');
+    if (arrow) arrow.textContent = isExpanded ? '▲' : '▼';
+  }
+}
+
+function filterTabFormulas() {
+  renderTabFormulas();
+}
+
+function copyTabFormula(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const originalText = btn.textContent;
+    btn.textContent = 'Copied! ✓';
+    btn.style.color = 'var(--accent-success)';
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.color = '';
+    }, 1500);
+  });
+}
+
+// Window Globals Exports
+window.initPomodoro = initPomodoro;
+window.setPomoMode = setPomoMode;
+window.togglePomoTimer = togglePomoTimer;
+window.resetPomoTimer = resetPomoTimer;
+window.updatePomodoroSelectOptions = updatePomodoroSelectOptions;
+window.initDailyTargets = initDailyTargets;
+window.toggleDailyTarget = toggleDailyTarget;
+window.updateDailyTargetsProgress = updateDailyTargetsProgress;
+window.initSubjectAccuracy = initSubjectAccuracy;
+window.updateSubjectAccuracyChart = updateSubjectAccuracyChart;
+window.initWeakChapters = initWeakChapters;
+window.updateWeakChaptersList = updateWeakChaptersList;
+window.jumpToChapterPractice = jumpToChapterPractice;
+window.initWeeklyLeaderboard = initWeeklyLeaderboard;
+window.updateWeeklyLeaderboard = updateWeeklyLeaderboard;
+window.initNotificationsUI = initNotificationsUI;
+window.toggleNotifications = toggleNotifications;
+window.sendStudyNotification = sendStudyNotification;
+window.exportProgressReportPDF = exportProgressReportPDF;
+window.renderTabFormulas = renderTabFormulas;
+window.toggleTabFormulaGroup = toggleTabFormulaGroup;
+window.filterTabFormulas = filterTabFormulas;
+window.copyTabFormula = copyTabFormula;
+
 
