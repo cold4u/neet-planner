@@ -1735,7 +1735,7 @@
         </div>
       </div>
       
-      <button class="btn btn-primary" onclick="closeWelcomeSummary()" style="width: 100%; padding: 12px; margin-top: 25px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #000; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0, 212, 170, 0.2);">
+      <button class="btn btn-primary" onclick="if (typeof closeWelcomeSummary === 'function') { try { closeWelcomeSummary(); } catch(e) { console.error(e); } } document.getElementById('welcome-summary-modal').classList.remove('active'); document.body.classList.remove('modal-open'); document.documentElement.classList.remove('modal-open'); document.body.style.top = '';" style="width: 100%; padding: 12px; margin-top: 25px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #000; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0, 212, 170, 0.2);">
         Enter Workspace 🚀
       </button>
       
