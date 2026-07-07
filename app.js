@@ -3913,7 +3913,7 @@ function initOnLoad() {
   try { updateOverviewStats(); } catch(e) { console.error("Error in updateOverviewStats:", e); }
   
   // Initialize new 9-features components
-
+  try { if (typeof renderStudyHubReports === 'function') renderStudyHubReports(); } catch(e) { console.error("Error in renderStudyHubReports:", e); }
   try { if (typeof initDailyTargets === 'function') initDailyTargets(); } catch(e) { console.error("Error in initDailyTargets:", e); }
   try { if (typeof initNotificationsUI === 'function') initNotificationsUI(); } catch(e) { console.error("Error in initNotificationsUI:", e); }
   try { if (typeof renderTabFormulas === 'function') renderTabFormulas(); } catch(e) { console.error("Error in renderTabFormulas:", e); }
@@ -6442,27 +6442,339 @@ window.selectColBItem = selectColBItem;
 // 17. 9 NEW INTEGRATED FEATURES
 // ==========================================
 
+// --- FEATURE 1: STUDY HUB (YOUTUBE PLAYER & WIKIPEDIA TRACKER) ---
+let shPlayer = null;
+let shWatchSecondsToday = 0;
+let shWatchTimerInterval = null;
+let shActiveVideoTitle = "";
+let shActiveVideoId = "";
+
+// Load YouTube API
+if (!window.YT) {
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  if (firstScriptTag && firstScriptTag.parentNode) {
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  } else {
+    document.head.appendChild(tag);
+  }
+}
+
+function extractYouTubeVideoId(url) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+}
+
+function loadStudyVideo() {
+  const urlInput = document.getElementById('sh-video-url');
+  if (!urlInput) return;
+  const url = urlInput.value.trim();
+  const videoId = extractYouTubeVideoId(url);
+  
+  if (!videoId) {
+    showToast("⚠️ Invalid YouTube URL. Please copy/paste a valid link.");
+    return;
+  }
+
+  // Hide placeholder and show player container
+  const placeholder = document.getElementById('sh-youtube-player-placeholder');
+  const container = document.getElementById('sh-youtube-player-container');
+  if (placeholder) placeholder.style.display = 'none';
+  if (container) container.style.display = 'block';
+
+  // Check if API is ready
+  if (typeof YT === 'undefined' || !YT.Player) {
+    showToast("⏳ Loading YouTube player API, please try again in a moment...");
+    return;
+  }
+
+  try {
+    if (shPlayer) {
+      shPlayer.destroy();
+      shPlayer = null;
+    }
+    
+    stopWatchTimer();
+    shActiveVideoId = videoId;
+    shActiveVideoTitle = "YouTube Video";
+
+    shPlayer = new YT.Player('sh-youtube-player-container', {
+      height: '100%',
+      width: '100%',
+      videoId: videoId,
+      playerVars: {
+        'autoplay': 1,
+        'rel': 0,
+        'modestbranding': 1,
+        'playsinline': 1
+      },
+      events: {
+        'onReady': onShPlayerReady,
+        'onStateChange': onShPlayerStateChange
       }
+    });
+  } catch (e) {
+    console.error("Error creating YT.Player:", e);
+    showToast("⚠️ Failed to load the video player.");
+  }
+}
+
+function onShPlayerReady(event) {
+  try {
+    const data = event.target.getVideoData();
+    if (data && data.title) {
+      shActiveVideoTitle = data.title;
     }
   } catch (e) {}
+  updateTrackingIndicator(`Ready to Play: ${shActiveVideoTitle.substring(0, 30)}...`, "var(--text-secondary)");
 }
 
-function getSubjectOfChapter(chapterName) {
-  if (P1_PHY.some(c => c.ch === chapterName) || P2_PHY.some(c => c.ch === chapterName)) return 'Physics';
-  if (P1_CHE.some(c => c.ch === chapterName) || P2_CHE.some(c => c.ch === chapterName)) return 'Chemistry';
-  return 'Biology';
+function onShPlayerStateChange(event) {
+  const state = event.data;
+  if (state === 1) { // Playing
+    updateTrackingIndicator("Studying (Tracking Time)", "var(--accent-success)");
+    startWatchTimer();
+  } else {
+    if (state === 2) {
+      updateTrackingIndicator("Paused", "var(--text-warning)");
+    } else if (state === 0) {
+      updateTrackingIndicator("Finished", "var(--primary)");
+      logStudyVideoSession(shActiveVideoTitle, shActiveVideoId, true);
+    } else {
+      updateTrackingIndicator("Idle", "var(--text-muted)");
+    }
+    stopWatchTimer();
+  }
 }
 
-function updatePomodoroStats(sessions) {
+function updateTrackingIndicator(text, color) {
+  const indText = document.getElementById('sh-tracking-text');
+  const indDot = document.getElementById('sh-tracking-dot');
+  if (indText) indText.textContent = text;
+  if (indDot) indDot.style.background = color;
+}
+
+function startWatchTimer() {
+  if (shWatchTimerInterval) return;
+  shWatchTimerInterval = setInterval(() => {
+    shWatchSecondsToday++;
+    incrementWatchTimeLog();
+  }, 1000);
+}
+
+function stopWatchTimer() {
+  if (shWatchTimerInterval) {
+    clearInterval(shWatchTimerInterval);
+    shWatchTimerInterval = null;
+  }
+  if (shWatchSecondsToday > 5) {
+    logStudyVideoSession(shActiveVideoTitle, shActiveVideoId, false, shWatchSecondsToday);
+    shWatchSecondsToday = 0;
+  }
+}
+
+function getStudyHubLogs() {
   const todayStr = new Date().toISOString().split('T')[0];
-  const todaySessions = sessions.filter(s => s.date === todayStr);
-  const countToday = todaySessions.length;
-  const timeToday = countToday * 25;
+  let logs = {};
+  try {
+    const raw = safeGetLocalStorage('neet_v3_study_hub_logs');
+    if (raw) logs = JSON.parse(raw);
+  } catch (e) {}
   
-  const elCount = document.getElementById('pomo-v3-count-today');
-  const elTime = document.getElementById('pomo-v3-time-today');
-  if (elCount) elCount.textContent = countToday;
-  if (elTime) elTime.textContent = timeToday;
+  if (!logs[todayStr]) {
+    logs[todayStr] = {
+      watchSeconds: 0,
+      videoSessions: [],
+      queries: []
+    };
+  }
+  return logs;
+}
+
+function saveStudyHubLogs(logsObj) {
+  safeSetLocalStorage('neet_v3_study_hub_logs', JSON.stringify(logsObj));
+}
+
+function incrementWatchTimeLog() {
+  const logs = getStudyHubLogs();
+  const todayStr = new Date().toISOString().split('T')[0];
+  logs[todayStr].watchSeconds = (logs[todayStr].watchSeconds || 0) + 1;
+  saveStudyHubLogs(logs);
+  renderStudyHubReports();
+}
+
+function logStudyVideoSession(title, id, finished = false, customDuration = 0) {
+  const logs = getStudyHubLogs();
+  const todayStr = new Date().toISOString().split('T')[0];
+  
+  const seconds = customDuration > 0 ? customDuration : shWatchSecondsToday;
+  if (seconds < 5 && !finished) return;
+  
+  const formattedDuration = seconds >= 60 ? `${Math.floor(seconds / 60)}m ${seconds % 60}s` : `${seconds}s`;
+
+  logs[todayStr].videoSessions.push({
+    timestamp: Date.now(),
+    title: title,
+    id: id,
+    durationText: formattedDuration,
+    finished: finished
+  });
+  
+  // Link watch hours to the planner's main bioHours stats
+  try {
+    const hoursFraction = seconds / 3600;
+    const dayIdx = trackerLogs.findIndex(l => l.date === todayStr);
+    if (dayIdx !== -1 && hoursFraction > 0) {
+      trackerLogs[dayIdx].bioHours += hoursFraction;
+      safeSetLocalStorage('neet_v3_tracker', JSON.stringify(trackerLogs));
+      renderTrackerTable();
+      renderAnalytics();
+      updateOverviewStats();
+    }
+  } catch (e) {
+    console.error("Error linking watch time to main logs:", e);
+  }
+
+  saveStudyHubLogs(logs);
+  renderStudyHubReports();
+}
+
+function handleStudySearch(event) {
+  if (event) event.preventDefault();
+  const queryInput = document.getElementById('sh-search-query');
+  if (!queryInput) return;
+  const query = queryInput.value.trim();
+  if (!query) return;
+
+  const logs = getStudyHubLogs();
+  const todayStr = new Date().toISOString().split('T')[0];
+  logs[todayStr].queries.push({
+    timestamp: Date.now(),
+    query: query
+  });
+  saveStudyHubLogs(logs);
+  renderStudyHubReports();
+
+  fetchWikiSummary(query);
+}
+
+function fetchWikiSummary(query) {
+  const resultsPanel = document.getElementById('sh-search-results-panel');
+  const resultsContent = document.getElementById('sh-search-results-content');
+  const googleBtn = document.getElementById('sh-search-google-btn');
+  const wikiBtn = document.getElementById('sh-search-wiki-btn');
+
+  if (!resultsPanel || !resultsContent) return;
+
+  resultsPanel.style.display = 'block';
+  resultsContent.innerHTML = `<span style="color:var(--text-muted);">🔍 Searching Wikipedia for "${query}"...</span>`;
+  
+  if (googleBtn) googleBtn.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+  
+  const cleanQuery = encodeURIComponent(query);
+  const openSearchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${cleanQuery}&limit=1&namespace=0&format=json&origin=*`;
+  
+  fetch(openSearchUrl)
+    .then(r => r.json())
+    .then(data => {
+      if (data && data[1] && data[1].length > 0) {
+        const bestTitle = data[1][0];
+        const pageUrl = data[3][0];
+        if (wikiBtn) wikiBtn.href = pageUrl;
+        
+        const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(bestTitle)}`;
+        return fetch(summaryUrl);
+      } else {
+        throw new Error("No wiki match found");
+      }
+    })
+    .then(r => {
+      if (r.ok) return r.json();
+      throw new Error("Wiki summary failed");
+    })
+    .then(summary => {
+      let html = `<h3 style="margin:0 0 6px 0; color:var(--text-primary); font-size:13px;">${summary.title}</h3>`;
+      if (summary.thumbnail && summary.thumbnail.source) {
+        html += `<img src="${summary.thumbnail.source}" style="float:right; max-width:80px; max-height:80px; border-radius:6px; margin:0 0 8px 8px; border:1px solid var(--glass-border);" alt="${summary.title}">`;
+      }
+      html += `<p style="margin:0; font-size:11.5px; line-height:1.4;">${summary.extract}</p>`;
+      resultsContent.innerHTML = html;
+    })
+    .catch(err => {
+      console.warn("Wiki search fallback:", err);
+      resultsContent.innerHTML = `
+        <div style="padding:4px 0;">
+          <span style="color:var(--text-warning); font-weight:700;">No instant page match found.</span>
+          <p style="margin:4px 0 0 0; font-size:11px; color:var(--text-muted);">We logged your study query. Click below to search broader resources on Google or Wikipedia search results.</p>
+        </div>
+      `;
+      if (wikiBtn) wikiBtn.href = `https://en.wikipedia.org/wiki/Special:Search?search=${cleanQuery}`;
+    });
+}
+
+function closeStudySearchResults() {
+  const panel = document.getElementById('sh-search-results-panel');
+  if (panel) panel.style.display = 'none';
+}
+
+function renderStudyHubReports() {
+  const logs = getStudyHubLogs();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayLog = logs[todayStr];
+
+  const totalWatchSecs = todayLog.watchSeconds || 0;
+  const watchTimeEl = document.getElementById('sh-metric-watchtime');
+  if (watchTimeEl) {
+    if (totalWatchSecs >= 60) {
+      watchTimeEl.textContent = `${Math.floor(totalWatchSecs / 60)}m ${totalWatchSecs % 60}s`;
+    } else {
+      watchTimeEl.textContent = `${totalWatchSecs}s`;
+    }
+  }
+
+  const queriesEl = document.getElementById('sh-metric-queries');
+  const queriesCount = todayLog.queries ? todayLog.queries.length : 0;
+  if (queriesEl) queriesEl.textContent = queriesCount;
+
+  const videoList = document.getElementById('sh-video-log-list');
+  if (videoList) {
+    if (!todayLog.videoSessions || todayLog.videoSessions.length === 0) {
+      videoList.innerHTML = '<div style="text-align:center; padding:12px; color:var(--text-muted);">No videos tracked today yet.</div>';
+    } else {
+      videoList.innerHTML = [...todayLog.videoSessions].reverse().map(sess => {
+        const timeStr = new Date(sess.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return `
+          <div style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); padding:8px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="max-width:70%;">
+              <span style="font-weight:700; color:var(--text-primary); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">🎥 ${sess.title}</span>
+              <span style="font-size:10px; color:var(--text-muted);">${timeStr}</span>
+            </div>
+            <span style="font-size:11px; font-weight:700; color:var(--primary);">${sess.durationText} watched</span>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  const queryList = document.getElementById('sh-query-log-list');
+  if (queryList) {
+    if (!todayLog.queries || todayLog.queries.length === 0) {
+      queryList.innerHTML = '<div style="text-align:center; padding:12px; color:var(--text-muted);">No queries logged today yet.</div>';
+    } else {
+      queryList.innerHTML = [...todayLog.queries].reverse().map(q => {
+        const timeStr = new Date(q.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return `
+          <div style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); padding:6px 10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:600; color:var(--text-secondary);">🔍 ${q.query}</span>
+            <span style="font-size:10px; color:var(--text-muted);">${timeStr}</span>
+          </div>
+        `;
+      }).join('');
+    }
+  }
 }
 
 // --- FEATURE 4: DAILY TARGET & STREAK SYSTEM ---
@@ -7114,6 +7426,10 @@ window.renderTabFormulas = renderTabFormulas;
 window.toggleTabFormulaGroup = toggleTabFormulaGroup;
 window.filterTabFormulas = filterTabFormulas;
 window.copyTabFormula = copyTabFormula;
+window.loadStudyVideo = loadStudyVideo;
+window.handleStudySearch = handleStudySearch;
+window.closeStudySearchResults = closeStudySearchResults;
+window.renderStudyHubReports = renderStudyHubReports;
 
 
 // Initialize app after all globals and variables have been fully declared

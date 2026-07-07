@@ -91,8 +91,13 @@ html_content = re.sub(r'<link rel="stylesheet" href="style\.css[^"]*">', f"<styl
 print("Successfully inlined CSS.")
 
 # 4. Inline JS in HTML content
-html_content = re.sub(r'<script defer src="app.js[^"]*"></script>', f"<script>\n{js_content}\n</script>", html_content)
-print("Successfully inlined JS.")
+script_pattern = r'<script defer src="app.js[^"]*"></script>'
+match = re.search(script_pattern, html_content)
+if match:
+    html_content = html_content.replace(match.group(0), f"<script>\n{js_content}\n</script>")
+    print("Successfully inlined JS.")
+else:
+    print("Warning: Could not find script tag for app.js in HTML.")
 
 # 5. Save bundled HTML to both paths
 for out_path in [output_path_home, output_path_local]:

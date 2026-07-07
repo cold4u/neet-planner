@@ -85,6 +85,10 @@
         <span class="nav-label">Flashcards</span>
       </button>
 
+      <button class="nav-item" data-tab="studyhub" onclick="showTab('studyhub')">
+        <span class="nav-icon">📺</span>
+        <span class="nav-label">Study Hub</span>
+      </button>
       <button class="nav-item" data-tab="formulas" onclick="showTab('formulas')">
         <span class="nav-icon">📖</span>
         <span class="nav-label">Formula Book</span>
@@ -1459,6 +1463,104 @@
 
 
 
+    <!-- STUDY HUB TAB -->
+    <section id="studyhub" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">📺 Study & Video Resource Hub</h1>
+        <p class="page-desc">Search NCERT concepts and play study videos in-app while tracking your focus sessions automatically.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: start; margin-top:20px;">
+        <!-- Left: YouTube Player & Search Card -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- YouTube Loader -->
+          <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:16px;">
+            <h2 style="margin:0; font-size:16px; display:flex; align-items:center; gap:8px;">🎥 Study Video Player</h2>
+            <p style="font-size:11px; color:var(--text-muted); margin:0;">Paste any YouTube video link below. The planner will embed it and track exactly how long you study.</p>
+            <div class="form-group" style="margin:0; display:flex; gap:10px;">
+              <input type="text" id="sh-video-url" class="form-input" placeholder="Paste YouTube link (e.g., https://youtu.be/...)" style="font-size:12px; flex:1;">
+              <button class="btn btn-primary" onclick="loadStudyVideo()" style="padding:0 16px; font-weight:700; font-size:12px;">Load Video</button>
+            </div>
+            
+            <!-- Player Placeholder / Actual Iframe -->
+            <div style="position:relative; width:100%; aspect-ratio:16/9; background:#0b1222; border:1px solid var(--glass-border); border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+              <div id="sh-youtube-player-placeholder" style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">
+                <span style="font-size:32px; display:block; margin-bottom:8px;">📺</span>
+                Load a YouTube video to begin tracking
+              </div>
+              <div id="sh-youtube-player-container" style="display:none; width:100%; height:100%;"></div>
+            </div>
+            
+            <div id="sh-tracking-indicator" style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:1px; display:flex; align-items:center; gap:6px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:var(--text-muted); display:inline-block;" id="sh-tracking-dot"></span>
+              <span id="sh-tracking-text">Player Idle</span>
+            </div>
+          </div>
+
+          <!-- Google Study Search Card -->
+          <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:14px;">
+            <h2 style="margin:0; font-size:16px; display:flex; align-items:center; gap:8px;">🔍 Concepts & Doubt Search</h2>
+            <p style="font-size:11px; color:var(--text-muted); margin:0;">Search NCERT definitions or formulas. Your queries are logged here to track your study topics.</p>
+            <form onsubmit="handleStudySearch(event)" style="margin:0; display:flex; gap:10px;">
+              <input type="text" id="sh-search-query" class="form-input" placeholder="What are you studying today? (e.g. Electromagnetism)" style="font-size:12px; flex:1;" required>
+              <button type="submit" class="btn btn-secondary" style="padding:0 16px; font-weight:700; font-size:12px; border:1px solid var(--primary);">Search</button>
+            </form>
+            
+            <!-- In-App Search Results Panel -->
+            <div id="sh-search-results-panel" style="display:none; border-top: 1px solid var(--glass-border); padding-top: 12px; margin-top: 4px; display:flex; flex-direction:column; gap:10px; text-align:left;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:11px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">Concept Definition</span>
+                <button type="button" class="btn btn-secondary" onclick="closeStudySearchResults()" style="padding:2px 8px; font-size:10px;">Close</button>
+              </div>
+              <div id="sh-search-results-content" style="font-size:12px; line-height:1.5; color:var(--text-secondary);">
+                <!-- Loaded Wikipedia Summary will go here -->
+              </div>
+              <div style="display:flex; gap:8px;">
+                <a id="sh-search-google-btn" href="#" target="_blank" class="btn btn-secondary" style="flex:1; text-align:center; font-size:11px; padding:6px 0; border:1px solid rgba(255,255,255,0.05); font-weight:700;">🌐 Search on Google</a>
+                <a id="sh-search-wiki-btn" href="#" target="_blank" class="btn btn-secondary" style="flex:1; text-align:center; font-size:11px; padding:6px 0; border:1px solid rgba(255,255,255,0.05); font-weight:700;">📚 View Wiki Page</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Log history & Reports -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- Metrics -->
+          <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:12px;">
+            <h2 style="margin:0; font-size:16px; display:flex; align-items:center; gap:8px;">📈 Study Hub Analytics</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:10px; padding:12px; text-align:center;">
+                <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block; margin-bottom:4px;">Watch Session Time</span>
+                <span id="sh-metric-watchtime" style="font-size:22px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0m 0s</span>
+                <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">today</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:10px; padding:12px; text-align:center;">
+                <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block; margin-bottom:4px;">Search Queries</span>
+                <span id="sh-metric-queries" style="font-size:22px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0</span>
+                <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">searched today</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Log History -->
+          <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:12px;">
+            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">📋 Video Study History</h2>
+            <div id="sh-video-log-list" style="display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto; font-size:12px; color:var(--text-secondary);">
+              <div style="text-align:center; padding:12px; color:var(--text-muted);">No videos tracked today yet.</div>
+            </div>
+          </div>
+
+          <!-- Search Query Logs -->
+          <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:12px;">
+            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">🕵️ Concept Search History</h2>
+            <div id="sh-query-log-list" style="display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto; font-size:12px; color:var(--text-secondary);">
+              <div style="text-align:center; padding:12px; color:var(--text-muted);">No queries logged today yet.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- FORMULA BOOK TAB -->
     <section id="formulas" class="tab-content">
       <div class="page-header">
@@ -1797,6 +1899,7 @@
       <button class="drawer-item" data-tab="support" onclick="navigateTab('support')">💛 Support</button>
       <button class="drawer-item" data-tab="errorbook" onclick="navigateTab('errorbook')">📕 Error Book</button>
       <button class="drawer-item" data-tab="flashcards" onclick="navigateTab('flashcards')">🎴 Flashcards</button>
+      <button class="drawer-item" data-tab="studyhub" onclick="navigateTab('studyhub')">📺 Study Hub</button>
       <button class="drawer-item" data-tab="formulas" onclick="navigateTab('formulas')">📖 Formula Book</button>
       <button class="drawer-item" data-tab="settings" onclick="navigateTab('settings')">⚙️ Settings</button>
     </nav>
