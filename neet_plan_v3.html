@@ -4158,23 +4158,7 @@ tag in <head>
   }
 }
 
-#pomo-v3-chapter-select {
-  background-color: var(--bg-surface-hover) !important;
-  color: var(--text-primary) !important;
-  border: 1px solid rgba(139, 92, 246, 0.4) !important;
-}
 
-#pomo-v3-chapter-select:focus {
-  background-color: var(--bg-surface-hover) !important;
-  color: var(--text-primary) !important;
-  border-color: var(--primary) !important;
-  outline: none !important;
-}
-
-#pomo-v3-chapter-select option {
-  background-color: var(--bg-surface) !important;
-  color: var(--text-primary) !important;
-}
 
 </style>
   <!-- KaTeX for beautiful math equation rendering -->
@@ -4251,10 +4235,7 @@ tag in <head>
         <span class="nav-icon">🎴</span>
         <span class="nav-label">Flashcards</span>
       </button>
-      <button class="nav-item" data-tab="pomodoro" onclick="showTab('pomodoro')">
-        <span class="nav-icon">🍅</span>
-        <span class="nav-label">Pomodoro Timer</span>
-      </button>
+
       <button class="nav-item" data-tab="formulas" onclick="showTab('formulas')">
         <span class="nav-icon">📖</span>
         <span class="nav-label">Formula Book</span>
@@ -5627,94 +5608,7 @@ tag in <head>
       </div>
     </section>
 
-    <!-- POMODORO TIMER TAB -->
-    <section id="pomodoro" class="tab-content">
-      <div class="page-header">
-        <h1 class="page-title">🍅 Pomodoro Study Timer</h1>
-        <p class="page-desc">Maximize your cognitive stamina and focus using structured intervals (25m Focus / 5m Break).</p>
-      </div>
 
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start; margin-top:20px;">
-        <!-- Left: The Timer Display -->
-        <div class="glass-card" style="padding: 24px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px; position:relative; overflow:hidden;">
-          <div style="display:flex; justify-content:center; gap:8px; width:100%; max-width:320px;">
-            <button class="btn btn-secondary pomo-mode-btn active-pomo" id="pomo-v3-focus-btn" onclick="setPomoMode('focus')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">🎯 Focus (25m)</button>
-            <button class="btn btn-secondary pomo-mode-btn" id="pomo-v3-short-btn" onclick="setPomoMode('short')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">☕ Short (5m)</button>
-            <button class="btn btn-secondary pomo-mode-btn" id="pomo-v3-long-btn" onclick="setPomoMode('long')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">🌴 Long (15m)</button>
-          </div>
-
-          <!-- Circular Ring and Digital Display -->
-          <div style="position:relative; width:220px; height:220px; display:flex; align-items:center; justify-content:center; margin:10px 0;">
-            <svg width="220" height="220" viewBox="0 0 220 220" style="transform: rotate(-90deg); position:absolute; inset:0;">
-              <circle cx="110" cy="110" r="95" stroke="rgba(255,255,255,0.03)" stroke-width="8" fill="transparent" />
-              <circle id="pomo-v3-timer-circle" cx="110" cy="110" r="95" stroke="var(--primary)" stroke-width="8" fill="transparent"
-                stroke-dasharray="596.9" stroke-dashoffset="0" style="transition: stroke-dashoffset 0.1s linear;" stroke-linecap="round" />
-            </svg>
-            <div style="display:flex; flex-direction:column; align-items:center; z-index:2;">
-              <span id="pomo-v3-timer-display" style="font-size:42px; font-weight:800; font-family:var(--font-mono); color:var(--text-primary); text-shadow:0 0 10px var(--primary-glow);">25:00</span>
-              <span id="pomo-v3-status-label" style="font-size:10px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:1.5px; margin-top:4px;">Stay Focused</span>
-            </div>
-          </div>
-
-          <!-- Controls -->
-          <div style="display:flex; justify-content:center; gap:12px; width:100%;">
-            <button class="btn btn-primary" id="pomo-v3-start-btn" onclick="togglePomoTimer()" style="flex:1; padding:10px 0; font-weight:700; display:flex; justify-content:center; align-items:center; gap:8px;">
-              <span id="pomo-v3-start-icon">▶</span> <span id="pomo-v3-start-text">Start Focus</span>
-            </button>
-            <button class="btn btn-secondary" onclick="resetPomoTimer()" style="padding:10px 16px;" title="Reset Timer">🔄</button>
-          </div>
-        </div>
-
-        <!-- Right: Stats & Logs -->
-        <div style="display:flex; flex-direction:column; gap:20px;">
-          <div class="glass-card" style="padding:20px; display:flex; flex-direction:column; gap:12px;">
-            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">🍅 Pomodoro Metrics</h2>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-              <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:10px; padding:12px; text-align:center;">
-                <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block; margin-bottom:4px;">Focus Sessions</span>
-                <span id="pomo-v3-count-today" style="font-size:24px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0</span>
-                <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">today</span>
-              </div>
-              <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:10px; padding:12px; text-align:center;">
-                <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block; margin-bottom:4px;">Total Focus Time</span>
-                <span id="pomo-v3-time-today" style="font-size:24px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0</span>
-                <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">minutes today</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="glass-card" style="padding:20px; display:flex; flex-direction:column; gap:12px;">
-            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">📚 Focus Target Chapters</h2>
-            <p style="font-size:11px; color:var(--text-muted); margin:0;">Select a chapter to attribute focus sessions. The logged hours will be saved directly into your preparation progress.</p>
-            <div class="form-group" style="margin:0;">
-              <select id="pomo-v3-chapter-select" class="form-input" style="font-size: 12px; padding: 8px 10px; background-color: var(--bg-surface-hover); border-color: rgba(139, 92, 246, 0.35); color: var(--text-primary);">
-                <option value="">-- Select Chapter (Optional) --</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="glass-card" style="padding:20px; display:flex; flex-direction:column; gap:12px;">
-            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">⚙️ Pomodoro Durations</h2>
-            <p style="font-size:11px; color:var(--text-muted); margin:0;">Customize the study/break intervals in minutes. Any changes will save locally.</p>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
-              <div class="form-group" style="margin:0;">
-                <label style="font-size:10px; font-weight:700; color:var(--text-secondary); margin-bottom:4px; display:block;">Focus (m)</label>
-                <input type="number" id="pomo-v3-setting-focus" class="form-input" min="1" max="180" value="25" style="font-size:12px; padding:6px 8px; text-align:center;">
-              </div>
-              <div class="form-group" style="margin:0;">
-                <label style="font-size:10px; font-weight:700; color:var(--text-secondary); margin-bottom:4px; display:block;">Short (m)</label>
-                <input type="number" id="pomo-v3-setting-short" class="form-input" min="1" max="180" value="5" style="font-size:12px; padding:6px 8px; text-align:center;">
-              </div>
-              <div class="form-group" style="margin:0;">
-                <label style="font-size:10px; font-weight:700; color:var(--text-secondary); margin-bottom:4px; display:block;">Long (m)</label>
-                <input type="number" id="pomo-v3-setting-long" class="form-input" min="1" max="180" value="15" style="font-size:12px; padding:6px 8px; text-align:center;">
-              </div>
-            </div>
-            <button class="btn btn-secondary" onclick="savePomoSettings()" style="padding:8px 0; font-size:12px; font-weight:700; width:100%; border:1px solid var(--primary);">Save & Apply</button>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- FORMULA BOOK TAB -->
     <section id="formulas" class="tab-content">
@@ -9987,7 +9881,7 @@ function initOnLoad() {
   try { updateOverviewStats(); } catch(e) { console.error("Error in updateOverviewStats:", e); }
   
   // Initialize new 9-features components
-  try { if (typeof initPomodoro === 'function') initPomodoro(); } catch(e) { console.error("Error in initPomodoro:", e); }
+
   try { if (typeof initDailyTargets === 'function') initDailyTargets(); } catch(e) { console.error("Error in initDailyTargets:", e); }
   try { if (typeof initNotificationsUI === 'function') initNotificationsUI(); } catch(e) { console.error("Error in initNotificationsUI:", e); }
   try { if (typeof renderTabFormulas === 'function') renderTabFormulas(); } catch(e) { console.error("Error in renderTabFormulas:", e); }
@@ -12534,234 +12428,6 @@ window.selectColBItem = selectColBItem;
 // 17. 9 NEW INTEGRATED FEATURES
 // ==========================================
 
-// --- FEATURE 1: POMODORO STUDY TIMER ---
-let pomoV3TimeRemaining = 25 * 60;
-let pomoV3Interval = null;
-let pomoV3CurrentMode = 'focus';
-let pomoV3IsRunning = false;
-const pomoV3DurationMap = {
-  focus: 25 * 60,
-  short: 5 * 60,
-  long: 15 * 60
-};
-
-function playPomoSound() {
-  try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-    osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5
-    osc.frequency.setValueAtTime(1174.66, audioCtx.currentTime + 0.3); // D6
-    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.6);
-  } catch (e) {
-    console.error("Audio Synthesis error:", e);
-  }
-}
-
-function initPomodoro() {
-  const savedSessions = JSON.parse(safeGetLocalStorage('neet_v3_pomodoro_sessions') || '[]');
-  updatePomodoroStats(savedSessions);
-  updatePomodoroSelectOptions();
-  
-  // Load custom Pomodoro durations if any
-  try {
-    const customSettings = JSON.parse(safeGetLocalStorage('neet_v3_pomo_settings') || 'null');
-    if (customSettings) {
-      pomoV3DurationMap.focus = (customSettings.focus || 25) * 60;
-      pomoV3DurationMap.short = (customSettings.short || 5) * 60;
-      pomoV3DurationMap.long = (customSettings.long || 15) * 60;
-      
-      // Update inputs
-      const inFocus = document.getElementById('pomo-v3-setting-focus');
-      const inShort = document.getElementById('pomo-v3-setting-short');
-      const inLong = document.getElementById('pomo-v3-setting-long');
-      if (inFocus) inFocus.value = customSettings.focus || 25;
-      if (inShort) inShort.value = customSettings.short || 5;
-      if (inLong) inLong.value = customSettings.long || 15;
-    }
-  } catch(e) {}
-  
-  // Update button headers
-  const focusBtn = document.getElementById('pomo-v3-focus-btn');
-  const shortBtn = document.getElementById('pomo-v3-short-btn');
-  const longBtn = document.getElementById('pomo-v3-long-btn');
-  if (focusBtn) focusBtn.textContent = `🎯 Focus (${pomoV3DurationMap.focus / 60}m)`;
-  if (shortBtn) shortBtn.textContent = `☕ Short (${pomoV3DurationMap.short / 60}m)`;
-  if (longBtn) longBtn.textContent = `🌴 Long (${pomoV3DurationMap.long / 60}m)`;
-
-  // Set initial time remaining matching current mode
-  pomoV3TimeRemaining = pomoV3DurationMap[pomoV3CurrentMode];
-  updatePomoUI();
-}
-
-function updatePomodoroSelectOptions() {
-  const select = document.getElementById('pomo-v3-chapter-select');
-  if (!select) return;
-  select.innerHTML = '<option value="">-- Select Chapter (Optional) --</option>';
-  const allChapters = [...P1_PHY, ...P2_PHY, ...P1_CHE, ...P2_CHE, ...P1_BIO, ...P2_BIO].map(item => item.ch);
-  allChapters.sort().forEach(ch => {
-    const opt = document.createElement('option');
-    opt.value = ch;
-    opt.textContent = ch;
-    select.appendChild(opt);
-  });
-}
-
-function setPomoMode(mode) {
-  pomoV3CurrentMode = mode;
-  pomoV3TimeRemaining = pomoV3DurationMap[mode];
-  pomoV3IsRunning = false;
-  if (pomoV3Interval) {
-    clearInterval(pomoV3Interval);
-    pomoV3Interval = null;
-  }
-  
-  document.querySelectorAll('.pomo-mode-btn').forEach(btn => btn.classList.remove('active-pomo'));
-  if (mode === 'focus') document.getElementById('pomo-v3-focus-btn').classList.add('active-pomo');
-  else if (mode === 'short') document.getElementById('pomo-v3-short-btn').classList.add('active-pomo');
-  else if (mode === 'long') document.getElementById('pomo-v3-long-btn').classList.add('active-pomo');
-  
-  const statusLabel = document.getElementById('pomo-v3-status-label');
-  if (statusLabel) statusLabel.textContent = mode === 'focus' ? 'Stay Focused' : 'Take a Break';
-  
-  const startBtnText = document.getElementById('pomo-v3-start-text');
-  const startBtnIcon = document.getElementById('pomo-v3-start-icon');
-  if (startBtnText) startBtnText.textContent = mode === 'focus' ? 'Start Focus' : 'Start Break';
-  if (startBtnIcon) startBtnIcon.textContent = '▶';
-  
-  updatePomoUI();
-}
-
-function togglePomoTimer() {
-  // Automatically apply settings if user changed them in inputs before starting
-  try {
-    const inFocus = document.getElementById('pomo-v3-setting-focus');
-    const inShort = document.getElementById('pomo-v3-setting-short');
-    const inLong = document.getElementById('pomo-v3-setting-long');
-    if (inFocus && inShort && inLong) {
-      const f = parseInt(inFocus.value, 10);
-      const s = parseInt(inShort.value, 10);
-      const l = parseInt(inLong.value, 10);
-      if (!isNaN(f) && !isNaN(s) && !isNaN(l)) {
-        const curF = pomoV3DurationMap.focus / 60;
-        const curS = pomoV3DurationMap.short / 60;
-        const curL = pomoV3DurationMap.long / 60;
-        if (f !== curF || s !== curS || l !== curL) {
-          savePomoSettings(true);
-        }
-      }
-    }
-  } catch(e) {}
-
-  const startBtnText = document.getElementById('pomo-v3-start-text');
-  const startBtnIcon = document.getElementById('pomo-v3-start-icon');
-  
-  if (pomoV3IsRunning) {
-    pomoV3IsRunning = false;
-    clearInterval(pomoV3Interval);
-    pomoV3Interval = null;
-    if (startBtnText) startBtnText.textContent = 'Resume';
-    if (startBtnIcon) startBtnIcon.textContent = '▶';
-  } else {
-    pomoV3IsRunning = true;
-    if (startBtnText) startBtnText.textContent = 'Pause';
-    if (startBtnIcon) startBtnIcon.textContent = '⏸';
-    
-    pomoV3Interval = setInterval(() => {
-      pomoV3TimeRemaining--;
-      if (pomoV3TimeRemaining <= 0) {
-        clearInterval(pomoV3Interval);
-        pomoV3Interval = null;
-        pomoV3IsRunning = false;
-        playPomoSound();
-        sendStudyNotification("Pomodoro Complete!", pomoV3CurrentMode === 'focus' ? "Focus session completed! Grab a break." : "Break complete! Back to study.");
-        if (pomoV3CurrentMode === 'focus') {
-          logPomodoroSession();
-        }
-        setPomoMode(pomoV3CurrentMode === 'focus' ? 'short' : 'focus');
-      }
-      updatePomoUI();
-    }, 1000);
-  }
-}
-
-function resetPomoTimer() {
-  setPomoMode(pomoV3CurrentMode);
-}
-
-function updatePomoUI() {
-  const mins = Math.floor(pomoV3TimeRemaining / 60);
-  const secs = pomoV3TimeRemaining % 60;
-  const displayStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  
-  const display = document.getElementById('pomo-timer-display');
-  if (display) display.textContent = displayStr;
-  
-  const totalSecs = pomoV3DurationMap[pomoV3CurrentMode];
-  const progressRatio = pomoV3TimeRemaining / totalSecs;
-  const circle = document.getElementById('pomo-timer-circle');
-  if (circle) {
-    const offset = 596.9 - (progressRatio * 596.9);
-    circle.style.strokeDashoffset = offset;
-  }
-}
-
-function logPomodoroSession() {
-  let sessions = [];
-  try {
-    const parsed = JSON.parse(safeGetLocalStorage('neet_v3_pomodoro_sessions') || '[]');
-    if (Array.isArray(parsed)) sessions = parsed;
-  } catch (e) {}
-  const chapter = document.getElementById('pomo-chapter-select').value || 'General Study';
-  
-  const session = {
-    timestamp: Date.now(),
-    date: new Date().toISOString().split('T')[0],
-    durationMinutes: 25,
-    chapter: chapter
-  };
-  
-  sessions.push(session);
-  safeSetLocalStorage('neet_v3_pomodoro_sessions', JSON.stringify(sessions));
-  
-  try {
-    const todayStr = new Date().toISOString().split('T')[0];
-    const hoursFraction = 25 / 60;
-    const dayIdx = trackerLogs.findIndex(l => l.date === todayStr);
-    if (dayIdx !== -1) {
-      const subject = getSubjectOfChapter(chapter);
-      if (subject === 'Physics') trackerLogs[dayIdx].phyHours += hoursFraction;
-      else if (subject === 'Chemistry') trackerLogs[dayIdx].cheHours += hoursFraction;
-      else trackerLogs[dayIdx].bioHours += hoursFraction;
-      
-      safeSetLocalStorage('neet_v3_tracker', JSON.stringify(trackerLogs));
-      renderTrackerTable();
-      renderAnalytics();
-    }
-  } catch (e) {
-    console.error("Error logging pomodoro to trackerLogs:", e);
-  }
-  
-  updatePomodoroStats(sessions);
-  updateOverviewStats();
-  
-  try {
-    const todayStr = new Date().toISOString().split('T')[0];
-    const todayMins = sessions
-      .filter(s => s && s.date === todayStr)
-      .reduce((sum, s) => sum + s.durationMinutes, 0);
-    if (todayMins >= 240) {
-      const hourCheckbox = document.getElementById('tgt-study-hours');
-      if (hourCheckbox && !hourCheckbox.checked) {
-        hourCheckbox.checked = true;
-        toggleDailyTarget('hours');
       }
     }
   } catch (e) {}
@@ -13415,11 +13081,7 @@ function copyTabFormula(btn, text) {
 }
 
 // Window Globals Exports
-window.initPomodoro = initPomodoro;
-window.setPomoMode = setPomoMode;
-window.togglePomoTimer = togglePomoTimer;
-window.resetPomoTimer = resetPomoTimer;
-window.updatePomodoroSelectOptions = updatePomodoroSelectOptions;
+
 window.initDailyTargets = initDailyTargets;
 window.toggleDailyTarget = toggleDailyTarget;
 window.updateDailyTargetsProgress = updateDailyTargetsProgress;
@@ -13438,66 +13100,7 @@ window.renderTabFormulas = renderTabFormulas;
 window.toggleTabFormulaGroup = toggleTabFormulaGroup;
 window.filterTabFormulas = filterTabFormulas;
 window.copyTabFormula = copyTabFormula;
-window.savePomoSettings = savePomoSettings;
 
-function savePomoSettings(silent) {
-  const inFocus = document.getElementById('pomo-v3-setting-focus');
-  const inShort = document.getElementById('pomo-v3-setting-short');
-  const inLong = document.getElementById('pomo-v3-setting-long');
-  
-  if (!inFocus || !inShort || !inLong) return;
-  
-  const focusVal = parseInt(inFocus.value, 10);
-  const shortVal = parseInt(inShort.value, 10);
-  const longVal = parseInt(inLong.value, 10);
-  
-  if (isNaN(focusVal) || focusVal < 1 || focusVal > 180) {
-    if (!silent) showToast("⚠️ Focus time must be between 1 and 180 minutes.");
-    return;
-  }
-  if (isNaN(shortVal) || shortVal < 1 || shortVal > 180) {
-    if (!silent) showToast("⚠️ Short break must be between 1 and 180 minutes.");
-    return;
-  }
-  if (isNaN(longVal) || longVal < 1 || longVal > 180) {
-    if (!silent) showToast("⚠️ Long break must be between 1 and 180 minutes.");
-    return;
-  }
-  
-  const settings = { focus: focusVal, short: shortVal, long: longVal };
-  safeSetLocalStorage('neet_v3_pomo_settings', JSON.stringify(settings));
-  
-  pomoV3DurationMap.focus = focusVal * 60;
-  pomoV3DurationMap.short = shortVal * 60;
-  pomoV3DurationMap.long = longVal * 60;
-  
-  // Stop current interval if running
-  pomoV3IsRunning = false;
-  if (pomoV3Interval) {
-    clearInterval(pomoV3Interval);
-    pomoV3Interval = null;
-  }
-  
-  // Reset start button
-  const startBtnText = document.getElementById('pomo-v3-start-text');
-  const startBtnIcon = document.getElementById('pomo-v3-start-icon');
-  if (startBtnText) startBtnText.textContent = pomoV3CurrentMode === 'focus' ? 'Start Focus' : 'Start Break';
-  if (startBtnIcon) startBtnIcon.textContent = '▶';
-  
-  // Update button headers
-  const focusBtn = document.getElementById('pomo-v3-focus-btn');
-  const shortBtn = document.getElementById('pomo-v3-short-btn');
-  const longBtn = document.getElementById('pomo-v3-long-btn');
-  if (focusBtn) focusBtn.textContent = `🎯 Focus (${focusVal}m)`;
-  if (shortBtn) shortBtn.textContent = `☕ Short (${shortVal}m)`;
-  if (longBtn) longBtn.textContent = `🌴 Long (${longVal}m)`;
-  
-  // Reset current timer values
-  pomoV3TimeRemaining = pomoV3DurationMap[pomoV3CurrentMode];
-  updatePomoUI();
-  
-  if (!silent) showToast("⚙️ Pomodoro durations updated!");
-}
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
