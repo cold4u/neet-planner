@@ -4158,6 +4158,11 @@ tag in <head>
   }
 }
 
+#pomo-chapter-select option {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
 </style>
   <!-- KaTeX for beautiful math equation rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -5669,7 +5674,7 @@ tag in <head>
             <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">📚 Focus Target Chapters</h2>
             <p style="font-size:11px; color:var(--text-muted); margin:0;">Select a chapter to attribute focus sessions. The logged hours will be saved directly into your preparation progress.</p>
             <div class="form-group" style="margin:0;">
-              <select id="pomo-chapter-select" class="form-input" style="font-size:12px; padding:8px 10px;">
+              <select id="pomo-chapter-select" class="form-input" style="font-size: 12px; padding: 8px 10px; background-color: var(--bg-surface-hover); border-color: rgba(139, 92, 246, 0.35); color: var(--text-primary);">
                 <option value="">-- Select Chapter (Optional) --</option>
               </select>
             </div>

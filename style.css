@@ -4145,3 +4145,8 @@ tag in <head>
     page-break-inside: avoid;
   }
 }
+
+#pomo-chapter-select option {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
