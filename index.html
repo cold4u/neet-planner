@@ -84,14 +84,6 @@
         <span class="nav-icon">🎴</span>
         <span class="nav-label">Flashcards</span>
       </button>
-      <button class="nav-item" data-tab="pomodoro" onclick="showTab('pomodoro')">
-        <span class="nav-icon">🍅</span>
-        <span class="nav-label">Pomodoro Timer</span>
-      </button>
-      <button class="nav-item" data-tab="formulas" onclick="showTab('formulas')">
-        <span class="nav-icon">📖</span>
-        <span class="nav-label">Formula Book</span>
-      </button>
       <button class="nav-item" data-tab="settings" onclick="showTab('settings')">
         <span class="nav-icon">⚙️</span>
         <span class="nav-label">Settings</span>
@@ -252,76 +244,6 @@
         </div>
         <div id="weekly-report-critique" style="font-size:12px; color:var(--text-muted); line-height:1.5; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.05);">
           <!-- Dynamic critique text from JS -->
-        </div>
-      </div>
-
-      <!-- Daily Targets & Consistency Streak -->
-      <div id="daily-targets-card" class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(244, 63, 94, 0.03), rgba(12, 18, 34, 0.85)); border-left: 5px solid #f43f5e;">
-        <h2 style="margin-top:0; font-size:16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-          <span style="display:flex; align-items:center; gap:8px;">🎯 Daily Targets Checklist</span>
-          <span style="font-size:13px; font-weight:700; color:#f43f5e; display:flex; align-items:center; gap:4px;" id="target-streak-badge">🔥 <span id="target-streak-count">0</span> Day Streak</span>
-        </h2>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">Achieve all targets below to keep your streak glowing! Streaks are computed based on target completions.</p>
-        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px;">
-            <input type="checkbox" id="tgt-daily-quiz" onchange="toggleDailyTarget('quiz')" style="width:16px; height:16px; accent-color:#f43f5e;">
-            <span>Solve the Daily Recall Quiz challenge</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px;">
-            <input type="checkbox" id="tgt-syllabus-read" onchange="toggleDailyTarget('syllabus')" style="width:16px; height:16px; accent-color:#f43f5e;">
-            <span>Read line-by-line NCERT/Study scheduled topics of the day</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px;">
-            <input type="checkbox" id="tgt-pyqs" onchange="toggleDailyTarget('pyq')" style="width:16px; height:16px; accent-color:#f43f5e;">
-            <span>Solve at least 25 PYQs / Practice Questions</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px;">
-            <input type="checkbox" id="tgt-study-hours" onchange="toggleDailyTarget('hours')" style="width:16px; height:16px; accent-color:#f43f5e;">
-            <span>Log or focus for at least 4 study hours today</span>
-          </label>
-        </div>
-        <div style="width:100%; height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden;">
-          <div id="target-progress-bar" style="width:0%; height:100%; background:#f43f5e; transition:width 0.3s ease;"></div>
-        </div>
-      </div>
-
-      <!-- Subject-wise Accuracy Analytics -->
-      <div id="subject-accuracy-card" class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.03), rgba(12, 18, 34, 0.85));">
-        <h2 style="margin-top:0; font-size:16px;">📊 Subject-wise Accuracy Breakdown</h2>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Overall correctness accuracy per subject calculated across all logged Mock Tests.</p>
-        <div id="subject-accuracy-chart-container" style="display:flex; flex-direction:column; gap:14px;">
-          <!-- Will be dynamically rendered with beautiful CSS bar graph -->
-        </div>
-      </div>
-
-      <!-- Priority Weak Chapters Detection -->
-      <div id="weak-chapters-alert-card" class="glass-card" style="margin-bottom: 24px; display:none; background: linear-gradient(135deg, rgba(239, 68, 68, 0.04), rgba(12, 18, 34, 0.85)); border-left: 5px solid var(--accent-danger);">
-        <h2 style="margin-top:0; font-size:16px; color:var(--accent-danger); display:flex; align-items:center; gap:8px;">⚠️ High Priority Weak Chapters</h2>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">Based on Error Book logs, these chapters need urgent revision. Click to jump to the PYQ practice tab to review.</p>
-        <div id="priority-chapters-list" style="display:flex; flex-direction:column; gap:8px;">
-          <!-- Dynamically populated -->
-        </div>
-      </div>
-
-      <!-- Self-Compete Weekly Leaderboard -->
-      <div id="self-compete-card" class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.03), rgba(12, 18, 34, 0.85));">
-        <h2 style="margin-top:0; font-size:16px; display:flex; align-items:center; gap:8px;">🏆 Personal Weekly Leaderboard</h2>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">Compare your weekly preparation velocity. Strive to beat your own scores week over week!</p>
-        <div style="overflow-x:auto;">
-          <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
-            <thead>
-              <tr style="border-bottom:1px solid var(--border-color); color:var(--text-secondary);">
-                <th style="padding:8px 4px;">Week</th>
-                <th style="padding:8px 4px; text-align:center;">Study Hours</th>
-                <th style="padding:8px 4px; text-align:center;">Topics Done</th>
-                <th style="padding:8px 4px; text-align:center;">Avg Mock Score</th>
-                <th style="padding:8px 4px; text-align:right;">Performance</th>
-              </tr>
-            </thead>
-            <tbody id="weekly-leaderboard-body">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
         </div>
       </div>
 
@@ -1252,19 +1174,6 @@
         </div>
       </div>
 
-      <!-- Study Reminders Configuration Card -->
-      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
-        <h2>🔔 Study Reminders & Notifications</h2>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Enable browser alerts to stay on track for scheduled mock tests, pomodoro focus timers, and spaced repetition revisions.</p>
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-          <div>
-            <span style="font-size:13px; font-weight:600; color:var(--text-primary);">Browser Notification Alerts</span>
-            <p style="font-size:11px; color:var(--text-muted); margin:4px 0 0 0;" id="notification-status-text">Status: Disabled</p>
-          </div>
-          <button class="btn btn-secondary" id="notification-toggle-btn" onclick="toggleNotifications()" style="padding:6px 16px; font-size:12px; font-weight:700;">Enable Notifications</button>
-        </div>
-      </div>
-
       <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
         <h2>💾 Data Backup & Restore Center</h2>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Protect your progress! Export your mock test scores, logs, and Error Book entries, or restore them from a backup file.</p>
@@ -1273,15 +1182,9 @@
           <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()" style="flex:1; min-width:130px; font-weight:700;">📥 Import Backup</button>
           <button class="btn btn-secondary" onclick="resetAllPlannerData()" style="flex:1; min-width:130px; border-color:var(--tertiary); color:var(--tertiary); font-weight:700;">⚠️ Reset App</button>
         </div>
-        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top: 8px;">
-          <button class="btn btn-primary" onclick="exportProgressReportPDF()" style="flex:1; min-width:200px; font-weight:700; background:linear-gradient(135deg, var(--primary), var(--primary-hover)); border:none;">📤 Export Beautiful Progress Report (PDF)</button>
-        </div>
         <input type="file" id="import-file-input" style="display:none;" onchange="importAllPlannerData(event)" accept=".json">
         <div id="backup-status" style="margin-top: 8px; font-size: 12px; font-weight: 600; display: none; text-align: center; color:var(--primary);"></div>
       </div>
-      
-      <!-- Hidden print area for dynamic PDF export -->
-      <div id="print-report-area" style="display:none;"></div>
     </section>
 
     <!-- 12. ERROR BOOK TAB -->
@@ -1457,99 +1360,6 @@
             Available for voice notes, text, or call. No question is too small. No feeling is too silly. 🫶
           </p>
         </div>
-      </div>
-    </section>
-
-    <!-- POMODORO TIMER TAB -->
-    <section id="pomodoro" class="tab-content">
-      <div class="page-header">
-        <h1 class="page-title">🍅 Pomodoro Study Timer</h1>
-        <p class="page-desc">Maximize your cognitive stamina and focus using structured intervals (25m Focus / 5m Break).</p>
-      </div>
-
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start; margin-top:20px;">
-        <!-- Left: The Timer Display -->
-        <div class="glass-card" style="padding: 24px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px; position:relative; overflow:hidden;">
-          <div style="display:flex; justify-content:center; gap:8px; width:100%; max-width:320px;">
-            <button class="btn btn-secondary pomo-mode-btn active-pomo" id="pomo-focus-btn" onclick="setPomoMode('focus')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">🎯 Focus (25m)</button>
-            <button class="btn btn-secondary pomo-mode-btn" id="pomo-short-btn" onclick="setPomoMode('short')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">☕ Short (5m)</button>
-            <button class="btn btn-secondary pomo-mode-btn" id="pomo-long-btn" onclick="setPomoMode('long')" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700;">🌴 Long (15m)</button>
-          </div>
-
-          <!-- Circular Ring and Digital Display -->
-          <div style="position:relative; width:220px; height:220px; display:flex; align-items:center; justify-content:center; margin:10px 0;">
-            <svg width="220" height="220" viewBox="0 0 220 220" style="transform: rotate(-90deg); position:absolute; inset:0;">
-              <circle cx="110" cy="110" r="95" stroke="rgba(255,255,255,0.03)" stroke-width="8" fill="transparent" />
-              <circle id="pomo-timer-circle" cx="110" cy="110" r="95" stroke="var(--primary)" stroke-width="8" fill="transparent"
-                stroke-dasharray="596.9" stroke-dashoffset="0" style="transition: stroke-dashoffset 0.1s linear;" stroke-linecap="round" />
-            </svg>
-            <div style="display:flex; flex-direction:column; align-items:center; z-index:2;">
-              <span id="pomo-timer-display" style="font-size:42px; font-weight:800; font-family:var(--font-mono); color:var(--text-primary); text-shadow:0 0 10px var(--primary-glow);">25:00</span>
-              <span id="pomo-status-label" style="font-size:10px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:1.5px; margin-top:4px;">Stay Focused</span>
-            </div>
-          </div>
-
-          <!-- Controls -->
-          <div style="display:flex; justify-content:center; gap:12px; width:100%;">
-            <button class="btn btn-primary" id="pomo-start-btn" onclick="togglePomoTimer()" style="flex:1; padding:10px 0; font-weight:700; display:flex; justify-content:center; align-items:center; gap:8px;">
-              <span id="pomo-start-icon">▶</span> <span id="pomo-start-text">Start Focus</span>
-            </button>
-            <button class="btn btn-secondary" onclick="resetPomoTimer()" style="padding:10px 16px;" title="Reset Timer">🔄</button>
-          </div>
-        </div>
-
-        <!-- Right: Stats & Logs -->
-        <div style="display:flex; flex-direction:column; gap:20px;">
-          <div class="glass-card" style="padding:20px; display:flex; flex-direction:column; gap:12px;">
-            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">🍅 Pomodoro Metrics</h2>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-              <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:10px; padding:12px; text-align:center;">
-                <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block; margin-bottom:4px;">Focus Sessions</span>
-                <span id="pomo-count-today" style="font-size:24px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0</span>
-                <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">today</span>
-              </div>
-              <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:10px; padding:12px; text-align:center;">
-                <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block; margin-bottom:4px;">Total Focus Time</span>
-                <span id="pomo-time-today" style="font-size:24px; font-weight:800; color:var(--primary); font-family:var(--font-mono);">0</span>
-                <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">minutes today</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="glass-card" style="padding:20px; display:flex; flex-direction:column; gap:12px;">
-            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">📚 Focus Target Chapters</h2>
-            <p style="font-size:11px; color:var(--text-muted); margin:0;">Select a chapter to attribute focus sessions. The logged hours will be saved directly into your preparation progress.</p>
-            <div class="form-group" style="margin:0;">
-              <select id="pomo-chapter-select" class="form-input" style="font-size:12px; padding:8px 10px;">
-                <option value="">-- Select Chapter (Optional) --</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FORMULA BOOK TAB -->
-    <section id="formulas" class="tab-content">
-      <div class="page-header">
-        <h1 class="page-title">📖 NCERT Formula & Key Facts Book</h1>
-        <p class="page-desc">Searchable, collapsible formula bank organized by subject and chapter for rapid revision.</p>
-      </div>
-
-      <div class="glass-card" style="padding:16px; margin-bottom:20px; display:flex; flex-direction:column; gap:12px;">
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <input type="text" id="formulas-tab-search" placeholder="🔍 Search formulas, reactions, or key concepts..." onkeyup="filterTabFormulas()" style="flex:1; min-width:200px; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); color:var(--text-primary); font-size:13px;">
-          <select id="formulas-tab-subject-filter" onchange="filterTabFormulas()" class="form-input" style="width:auto; min-width:130px; font-size:12px; margin:0; padding:10px;">
-            <option value="all">All Subjects</option>
-            <option value="Physics">⚡ Physics</option>
-            <option value="Chemistry">🧪 Chemistry</option>
-            <option value="Biology">🧬 Biology</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="formulas-tab-container" style="display:flex; flex-direction:column; gap:14px;">
-        <!-- Dynamically rendered via JS -->
       </div>
     </section>
 
@@ -1867,8 +1677,6 @@
       <button class="drawer-item" data-tab="support" onclick="navigateTab('support')">💛 Support</button>
       <button class="drawer-item" data-tab="errorbook" onclick="navigateTab('errorbook')">📕 Error Book</button>
       <button class="drawer-item" data-tab="flashcards" onclick="navigateTab('flashcards')">🎴 Flashcards</button>
-      <button class="drawer-item" data-tab="pomodoro" onclick="navigateTab('pomodoro')">🍅 Pomodoro Timer</button>
-      <button class="drawer-item" data-tab="formulas" onclick="navigateTab('formulas')">📖 Formula Book</button>
       <button class="drawer-item" data-tab="settings" onclick="navigateTab('settings')">⚙️ Settings</button>
     </nav>
   </aside>
