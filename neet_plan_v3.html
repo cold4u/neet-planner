@@ -12962,12 +12962,15 @@ function renderStudyHubReports() {
       videoList.innerHTML = [...todayLog.videoSessions].reverse().map(sess => {
         const timeStr = new Date(sess.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         return `
-          <div style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); padding:8px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-            <div style="max-width:70%;">
+          <div style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); padding:8px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; gap: 8px;">
+            <div style="max-width:65%; text-align:left;">
               <span style="font-weight:700; color:var(--text-primary); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">🎥 ${sess.title}</span>
               <span style="font-size:10px; color:var(--text-muted);">${timeStr}</span>
             </div>
-            <span style="font-size:11px; font-weight:700; color:var(--primary);">${sess.durationText} watched</span>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <span style="font-size:11px; font-weight:700; color:var(--primary);">${sess.durationText}</span>
+              <button onclick="deleteStudyVideoSession(${sess.timestamp})" style="padding:2px 6px; font-size:11px; background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-weight:700; transition:color 0.2s;" onmouseover="this.style.color='var(--text-warning)'" onmouseout="this.style.color='var(--text-muted)'">✕</button>
+            </div>
           </div>
         `;
       }).join('');
@@ -12982,9 +12985,12 @@ function renderStudyHubReports() {
       queryList.innerHTML = [...todayLog.queries].reverse().map(q => {
         const timeStr = new Date(q.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         return `
-          <div style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); padding:6px 10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:600; color:var(--text-secondary);">🔍 ${q.query}</span>
-            <span style="font-size:10px; color:var(--text-muted);">${timeStr}</span>
+          <div style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); padding:6px 10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; gap: 8px;">
+            <span style="font-weight:600; color:var(--text-secondary); text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:70%;">🔍 ${q.query}</span>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <span style="font-size:10px; color:var(--text-muted);">${timeStr}</span>
+              <button onclick="deleteStudyQuery(${q.timestamp})" style="padding:2px 6px; font-size:11px; background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-weight:700; transition:color 0.2s;" onmouseover="this.style.color='var(--text-warning)'" onmouseout="this.style.color='var(--text-muted)'">✕</button>
+            </div>
           </div>
         `;
       }).join('');
@@ -13846,11 +13852,45 @@ function resetPwVariables() {
   pwElapsedSeconds = 0;
 }
 
+function deleteStudyVideoSession(timestamp) {
+  const logs = getStudyHubLogs();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayLog = logs[todayStr];
+  
+  if (todayLog && todayLog.videoSessions) {
+    const idx = todayLog.videoSessions.findIndex(s => s.timestamp === timestamp);
+    if (idx !== -1) {
+      todayLog.videoSessions.splice(idx, 1);
+      saveStudyHubLogs(logs);
+      renderStudyHubReports();
+      showToast("🗑️ Video log deleted.");
+    }
+  }
+}
+
+function deleteStudyQuery(timestamp) {
+  const logs = getStudyHubLogs();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayLog = logs[todayStr];
+  
+  if (todayLog && todayLog.queries) {
+    const idx = todayLog.queries.findIndex(q => q.timestamp === timestamp);
+    if (idx !== -1) {
+      todayLog.queries.splice(idx, 1);
+      saveStudyHubLogs(logs);
+      renderStudyHubReports();
+      showToast("🗑️ Search log deleted.");
+    }
+  }
+}
+
 window.launchPhysicsWallah = launchPhysicsWallah;
 window.discardPwSession = discardPwSession;
 window.forceLogPwSession = forceLogPwSession;
 window.discardPwConfirmation = discardPwConfirmation;
 window.savePwLoggedSession = savePwLoggedSession;
+window.deleteStudyVideoSession = deleteStudyVideoSession;
+window.deleteStudyQuery = deleteStudyQuery;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
