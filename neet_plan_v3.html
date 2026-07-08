@@ -5677,10 +5677,10 @@ tag in <head>
             <div id="pw-setup-controls" style="display:flex; flex-direction:column; gap:10px;">
               <div style="display:flex; gap:10px; align-items:center;">
                 <label for="pw-subject-select" style="font-size:12px; font-weight:600; color:var(--text-secondary); margin:0;">Subject:</label>
-                <select id="pw-subject-select" class="form-control" style="font-size:12px; padding:6px; flex:1; background:var(--bg-body); border:1px solid var(--border-color); color:var(--text-color); border-radius:6px; cursor:pointer;">
-                  <option value="physics">Physics 🌌</option>
-                  <option value="chemistry">Chemistry 🧪</option>
-                  <option value="biology">Biology 🧬</option>
+                <select id="pw-subject-select" class="form-control" style="font-size:12px; padding:6px; flex:1; background:var(--bg-surface) !important; color:var(--text-primary) !important; border:1px solid var(--border-color); border-radius:6px; cursor:pointer;">
+                  <option value="physics" style="background:var(--bg-surface); color:var(--text-primary);">Physics 🌌</option>
+                  <option value="chemistry" style="background:var(--bg-surface); color:var(--text-primary);">Chemistry 🧪</option>
+                  <option value="biology" style="background:var(--bg-surface); color:var(--text-primary);">Biology 🧬</option>
                 </select>
               </div>
               <button class="btn btn-primary" onclick="launchPhysicsWallah()" style="width:100%; font-weight:700; font-size:12px; padding:10px; background:linear-gradient(135deg, #f2cf43, #d9b62b); color:#000; border:none; border-radius:8px; cursor:pointer;">Launch & Track PW App 🚀</button>
