@@ -4226,5 +4226,11 @@ tag in <head>
   margin-top: 4px;
 }
 
+/* STUDY TIMER CIRCULAR RING STYLING */
+#timer-progress-ring {
+  transform-origin: center;
+}
+
+
 
 

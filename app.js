@@ -1076,6 +1076,8 @@ function safeSetSessionStorage(key, value) {
         renderAnalytics();
       } else if (tabId === 'overview') {
         renderOverviewStats();
+      } else if (tabId === 'study-timer') {
+        initStudyTimerTab();
       } else if (tabId === 'pomodoro') {
         if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
       } else if (tabId === 'formulas') {
@@ -5351,6 +5353,415 @@ window.setPomoDuration = setPomoDuration;
 window.startPomoTimer = startPomoTimer;
 window.pausePomoTimer = pausePomoTimer;
 window.resetPomoTimer = resetPomoTimer;
+
+// --- STUDY TIMER & POMODORO SYSTEM ---
+
+let studyTimerInterval = null;
+let studyTimerSecondsRemaining = 25 * 60;
+let studyTimerDurationTotal = 25 * 60;
+let studyTimerIsRunning = false;
+let studyTimerIsBreak = false;
+
+function handleTimerPresetChange() {
+  const modeSelect = document.getElementById('timer-mode-select');
+  const customInputs = document.getElementById('timer-custom-inputs');
+  if (!modeSelect) return;
+
+  const val = modeSelect.value;
+  pauseStudyTimer();
+
+  if (val === 'custom') {
+    if (customInputs) customInputs.style.display = 'grid';
+    setCustomTimerDuration();
+  } else {
+    if (customInputs) customInputs.style.display = 'none';
+    const mins = parseInt(val) || 25;
+    studyTimerSecondsRemaining = mins * 60;
+    studyTimerDurationTotal = mins * 60;
+    studyTimerIsBreak = (val === '5' || val === '15');
+    updateTimerUI();
+  }
+}
+
+function setCustomTimerDuration() {
+  const customMinsInput = document.getElementById('timer-custom-minutes');
+  if (!customMinsInput) return;
+  let mins = parseInt(customMinsInput.value) || 25;
+  if (mins < 1) mins = 1;
+  if (mins > 180) mins = 180;
+  
+  studyTimerSecondsRemaining = mins * 60;
+  studyTimerDurationTotal = mins * 60;
+  studyTimerIsBreak = false;
+  updateTimerUI();
+}
+
+function updateTimerUI() {
+  const display = document.getElementById('timer-clock-display');
+  const badge = document.getElementById('timer-phase-badge');
+  const ring = document.getElementById('timer-progress-ring');
+  
+  if (display) {
+    const m = Math.floor(studyTimerSecondsRemaining / 60);
+    const s = studyTimerSecondsRemaining % 60;
+    display.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+  
+  if (badge) {
+    if (studyTimerIsBreak) {
+      badge.textContent = 'Break Time ☕';
+      badge.style.background = 'rgba(74, 222, 128, 0.1)';
+      badge.style.color = '#4ade80';
+    } else {
+      badge.textContent = 'Focus Session 🧠';
+      badge.style.background = 'rgba(0, 212, 170, 0.1)';
+      badge.style.color = 'var(--primary)';
+    }
+  }
+  
+  if (ring) {
+    const pct = studyTimerSecondsRemaining / studyTimerDurationTotal;
+    const offset = 596.9 - (pct * 596.9);
+    ring.style.strokeDashoffset = offset;
+    
+    if (studyTimerIsBreak) {
+      ring.style.stroke = '#4ade80';
+      ring.style.filter = 'drop-shadow(0 0 6px #4ade80)';
+    } else {
+      ring.style.stroke = 'var(--primary)';
+      ring.style.filter = 'drop-shadow(0 0 6px var(--primary))';
+    }
+  }
+}
+
+function toggleStudyTimer() {
+  if (studyTimerIsRunning) {
+    pauseStudyTimer();
+  } else {
+    startStudyTimer();
+  }
+}
+
+function startStudyTimer() {
+  if (studyTimerIsRunning) return;
+  studyTimerIsRunning = true;
+  
+  const btn = document.getElementById('timer-start-btn');
+  if (btn) {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause Studying`;
+    btn.style.background = 'var(--tertiary)';
+    btn.style.boxShadow = '0 4px 12px rgba(255,107,107,0.15)';
+  }
+  
+  studyTimerInterval = setInterval(() => {
+    studyTimerSecondsRemaining--;
+    updateTimerUI();
+    
+    if (studyTimerSecondsRemaining <= 0) {
+      clearInterval(studyTimerInterval);
+      studyTimerIsRunning = false;
+      handleTimerCompletion();
+    }
+  }, 1000);
+}
+
+function pauseStudyTimer() {
+  if (!studyTimerIsRunning) return;
+  studyTimerIsRunning = false;
+  clearInterval(studyTimerInterval);
+  
+  const btn = document.getElementById('timer-start-btn');
+  if (btn) {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;"><path d="M8 5v14l11-7z"/></svg> Start Studying`;
+    btn.style.background = 'var(--primary)';
+    btn.style.boxShadow = '0 4px 12px rgba(0,212,170,0.15)';
+  }
+}
+
+function resetStudyTimer() {
+  pauseStudyTimer();
+  const modeSelect = document.getElementById('timer-mode-select');
+  if (modeSelect) {
+    handleTimerPresetChange();
+  } else {
+    studyTimerSecondsRemaining = 25 * 60;
+    studyTimerDurationTotal = 25 * 60;
+    studyTimerIsBreak = false;
+    updateTimerUI();
+  }
+}
+
+function playTimerChime() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const playTone = (freq, time, duration) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, time);
+      
+      gain.gain.setValueAtTime(0.15, time);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.start(time);
+      osc.stop(time + duration);
+    };
+    
+    playTone(523.25, audioCtx.currentTime, 0.4);
+    playTone(659.25, audioCtx.currentTime + 0.15, 0.5);
+  } catch (e) {
+    console.warn("Web Audio chime failed:", e);
+  }
+}
+
+function handleTimerCompletion() {
+  playTimerChime();
+  if (typeof triggerConfetti === 'function') triggerConfetti();
+  
+  const subject = document.getElementById('timer-subject-select').value;
+  const durationMins = Math.round(studyTimerDurationTotal / 60);
+  const hoursStudied = durationMins / 60;
+  const todayStr = new Date().toISOString().split('T')[0];
+  
+  let alertMsg = "";
+  
+  if (studyTimerIsBreak) {
+    alertMsg = `☕ Break is over! Ready for the next study sprint?`;
+  } else {
+    alertMsg = `🎉 Great job! You successfully completed a ${durationMins}-minute focus session on ${subject}!`;
+    
+    let phyHours = 0, cheHours = 0, bioHours = 0;
+    if (subject === 'Physics') phyHours = hoursStudied;
+    else if (subject === 'Chemistry') cheHours = hoursStudied;
+    else if (subject === 'Biology') bioHours = hoursStudied;
+    else {
+      bioHours = hoursStudied;
+    }
+    
+    let entryIdx = trackerLogs.findIndex(l => l.date === todayStr);
+    if (entryIdx !== -1) {
+      trackerLogs[entryIdx].phyHours += phyHours;
+      trackerLogs[entryIdx].cheHours += cheHours;
+      trackerLogs[entryIdx].bioHours += bioHours;
+    } else {
+      trackerLogs.push({
+        date: todayStr,
+        phyHours: phyHours,
+        cheHours: cheHours,
+        bioHours: bioHours,
+        mcqs: 0,
+        confidence: 3,
+        notes: `Logged via Study Timer focus session (${durationMins}m).`
+      });
+    }
+    
+    trackerLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+    safeSetLocalStorage('neet_v3_tracker', JSON.stringify(trackerLogs));
+    
+    let sprintsToday = parseInt(safeGetLocalStorage('neet_timer_sprints_today') || 0);
+    safeSetLocalStorage('neet_timer_sprints_today', sprintsToday + 1);
+    
+    renderTrackerTable();
+    updateOverviewStats();
+    
+    alertMsg += ` Added ${hoursStudied.toFixed(2)}h to your logs.`;
+  }
+  
+  resetStudyTimer();
+  initStudyTimerTab();
+  
+  setTimeout(() => {
+    alert(alertMsg);
+  }, 300);
+}
+
+function initStudyTimerTab() {
+  const statToday = document.getElementById('timer-stat-today');
+  const statSprints = document.getElementById('timer-stat-sprints');
+  const statWeekly = document.getElementById('timer-stat-weekly');
+  
+  const todayStr = new Date().toISOString().split('T')[0];
+  
+  const todayLog = trackerLogs.find(l => l.date === todayStr);
+  const todayHours = todayLog ? (todayLog.phyHours + todayLog.cheHours + todayLog.bioHours) : 0;
+  if (statToday) statToday.textContent = `${todayHours.toFixed(1)}h`;
+  
+  const lastSprintResetDate = safeGetLocalStorage('neet_timer_sprint_reset_date');
+  if (lastSprintResetDate !== todayStr) {
+    safeSetLocalStorage('neet_timer_sprints_today', '0');
+    safeSetLocalStorage('neet_timer_sprint_reset_date', todayStr);
+  }
+  const sprintsCount = parseInt(safeGetLocalStorage('neet_timer_sprints_today') || 0);
+  if (statSprints) statSprints.textContent = sprintsCount;
+
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  let weeklySum = 0;
+  dates.forEach(d => {
+    const log = trackerLogs.find(l => l.date === d);
+    if (log) {
+      weeklySum += log.phyHours + log.cheHours + log.bioHours;
+    }
+  });
+  if (statWeekly) statWeekly.textContent = `${weeklySum.toFixed(1)}h`;
+
+  drawStudyTimerGraph();
+}
+
+function drawStudyTimerGraph() {
+  const container = document.getElementById('study-duration-chart-wrapper');
+  if (!container) return;
+  
+  const dates = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  
+  const chartData = dates.map(dateStr => {
+    const log = trackerLogs.find(l => l.date === dateStr);
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const d = new Date(dateStr);
+    return {
+      date: dateStr,
+      label: dayNames[d.getDay()] + ' ' + d.getDate(),
+      phy: log ? log.phyHours : 0,
+      che: log ? log.cheHours : 0,
+      bio: log ? log.bioHours : 0,
+      total: log ? (log.phyHours + log.cheHours + log.bioHours) : 0
+    };
+  });
+  
+  const maxVal = Math.max(6, ...chartData.map(d => d.total)) * 1.1;
+  
+  const w = container.clientWidth || 450;
+  const h = 230;
+  const paddingLeft = 35;
+  const paddingRight = 15;
+  const paddingTop = 20;
+  const paddingBottom = 30;
+  
+  const graphWidth = w - paddingLeft - paddingRight;
+  const graphHeight = h - paddingTop - paddingBottom;
+  
+  let svg = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="font-family: 'Inter', sans-serif;">`;
+  
+  const gridLinesCount = 4;
+  for (let i = 0; i <= gridLinesCount; i++) {
+    const yVal = (maxVal / gridLinesCount) * i;
+    const yPos = h - paddingBottom - (yVal / maxVal) * graphHeight;
+    svg += `
+      <line x1="${paddingLeft}" y1="${yPos}" x2="${w - paddingRight}" y2="${yPos}" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+      <text x="${paddingLeft - 8}" y="${yPos + 4}" fill="var(--text-muted)" font-size="9" text-anchor="end">${yVal.toFixed(1)}h</text>
+    `;
+  }
+  
+  const barWidth = Math.max(12, Math.min(32, (graphWidth / 7) * 0.5));
+  const colSpacing = graphWidth / 7;
+  
+  chartData.forEach((d, idx) => {
+    const xPos = paddingLeft + colSpacing * idx + (colSpacing - barWidth) / 2;
+    
+    const phyHeight = (d.phy / maxVal) * graphHeight;
+    const cheHeight = (d.che / maxVal) * graphHeight;
+    const bioHeight = (d.bio / maxVal) * graphHeight;
+    const totalHeight = (d.total / maxVal) * graphHeight;
+    
+    let yCurrent = h - paddingBottom;
+    
+    if (d.phy > 0) {
+      svg += `
+        <rect x="${xPos}" y="${yCurrent - phyHeight}" width="${barWidth}" height="${phyHeight}" fill="var(--phy)" rx="${d.che + d.bio === 0 ? 3 : 0}" ry="${d.che + d.bio === 0 ? 3 : 0}" />
+      `;
+      yCurrent -= phyHeight;
+    }
+    
+    if (d.che > 0) {
+      svg += `
+        <rect x="${xPos}" y="${yCurrent - cheHeight}" width="${barWidth}" height="${cheHeight}" fill="var(--che)" rx="${d.bio === 0 ? 3 : 0}" ry="${d.bio === 0 ? 3 : 0}" />
+      `;
+      yCurrent -= cheHeight;
+    }
+    
+    if (d.bio > 0) {
+      svg += `
+        <rect x="${xPos}" y="${yCurrent - bioHeight}" width="${barWidth}" height="${bioHeight}" fill="var(--bio)" rx="3" ry="3" />
+      `;
+      yCurrent -= bioHeight;
+    }
+    
+    const triggerHeight = Math.max(10, totalHeight);
+    const triggerY = h - paddingBottom - totalHeight;
+    svg += `
+      <rect x="${xPos - 5}" y="${triggerY - 10}" width="${barWidth + 10}" height="${triggerHeight + 10}" fill="transparent" style="cursor:pointer;"
+            onmouseover="showStudyTimerTooltip(event, '${d.label}', ${d.total}, ${d.phy}, ${d.che}, ${d.bio})"
+            onmouseout="hideStudyTimerTooltip()" />
+    `;
+    
+    svg += `
+      <text x="${xPos + barWidth / 2}" y="${h - paddingBottom + 16}" fill="var(--text-muted)" font-size="9.5" text-anchor="middle">${d.label.split(' ')[0]}</text>
+      <text x="${xPos + barWidth / 2}" y="${h - paddingBottom + 26}" fill="var(--text-muted)" font-size="8" opacity="0.6" text-anchor="middle">${d.label.split(' ')[1]}</text>
+    `;
+  });
+  
+  svg += `</svg>`;
+  container.innerHTML = svg;
+}
+
+function showStudyTimerTooltip(e, dateStr, total, phy, che, bio) {
+  const tooltip = document.getElementById('study-duration-chart-tooltip');
+  const container = document.getElementById('study-duration-chart-wrapper');
+  if (!tooltip || !container) return;
+
+  tooltip.innerHTML = `
+    <div style="font-weight:700; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:4px; margin-bottom:4px; font-size:10.5px; color:#fff;">${dateStr}</div>
+    <div style="color:var(--primary); font-weight:700; margin-bottom:2px;">Total: ${total.toFixed(2)}h</div>
+    <div style="display:flex; flex-direction:column; gap:1px; font-size:9.5px; opacity:0.85;">
+      <span style="color:var(--phy);">Phy: ${phy.toFixed(2)}h</span>
+      <span style="color:var(--che);">Chem: ${che.toFixed(2)}h</span>
+      <span style="color:var(--bio);">Bio: ${bio.toFixed(2)}h</span>
+    </div>
+  `;
+
+  tooltip.style.display = 'block';
+
+  const containerRect = container.getBoundingClientRect();
+  const x = e.clientX - containerRect.left;
+  const y = e.clientY - containerRect.top;
+
+  tooltip.style.left = (x + 12) + 'px';
+  tooltip.style.top = (y - 70) + 'px';
+}
+
+function hideStudyTimerTooltip() {
+  const tooltip = document.getElementById('study-duration-chart-tooltip');
+  if (tooltip) tooltip.style.display = 'none';
+}
+
+window.addEventListener('resize', () => {
+  const studyTimerEl = document.getElementById('study-timer');
+  if (studyTimerEl && studyTimerEl.classList.contains('active')) {
+    drawStudyTimerGraph();
+  }
+});
+
+// Expose study timer functions
+window.toggleStudyTimer = toggleStudyTimer;
+window.resetStudyTimer = resetStudyTimer;
+window.handleTimerPresetChange = handleTimerPresetChange;
+window.setCustomTimerDuration = setCustomTimerDuration;
+window.showStudyTimerTooltip = showStudyTimerTooltip;
+window.hideStudyTimerTooltip = hideStudyTimerTooltip;
+window.initStudyTimerTab = initStudyTimerTab;
 
 // 9. BACKUP & RESTORE CENTER
 

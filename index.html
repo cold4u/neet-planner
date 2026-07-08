@@ -17,7 +17,7 @@
   <title>SHUBxCOLD — 309-Day Ultimate Planner</title>
   <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap' rel='stylesheet'>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.3.0">
+  <link rel="stylesheet" href="style.css?v=3.3.1">
   <!-- KaTeX for beautiful math equation rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
@@ -67,6 +67,10 @@
       <button class="nav-item" data-tab="tracker" onclick="showTab('tracker')">
         <span class="nav-icon">🔥</span>
         <span class="nav-label">Daily Tracker</span>
+      </button>
+      <button class="nav-item" data-tab="study-timer" onclick="showTab('study-timer')">
+        <span class="nav-icon">⏱️</span>
+        <span class="nav-label">Study Timer</span>
       </button>
       <button class="nav-item" data-tab="analytics" onclick="showTab('analytics')">
         <span class="nav-icon">📈</span>
@@ -960,6 +964,130 @@
           <div style="width: 12px; height: 12px; background: #0284c7; border-radius: 2px;"></div> <!-- 4-6h -->
           <div style="width: 12px; height: 12px; background: #0369a1; border-radius: 2px;"></div> <!-- 6h+ -->
           <span>More</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7b. STUDY TIMER & POMODORO TAB -->
+    <section id="study-timer" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">⏱️ Study Timer & Pomodoro</h1>
+        <p class="page-desc">Stay productive with focused study sprints and analyze how much you studied.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:24px; align-items: start;">
+        <!-- Left Column: Circular Timer -->
+        <div class="glass-card" style="display:flex; flex-direction:column; align-items:center; padding:28px; text-align:center; min-height:480px; justify-content:space-between; position:relative;">
+          <h2 style="margin-top:0; margin-bottom:8px; font-size:16px;">Study Session Timer</h2>
+          <p style="font-size:11px; color:var(--text-muted); margin-bottom:20px; max-width:280px;">Select your session type, choose a subject, and click start studying.</p>
+          
+          <!-- Circular Progress Ring SVG -->
+          <div style="position:relative; width:220px; height:220px; margin-bottom:20px;">
+            <svg width="220" height="220" viewBox="0 0 220 220" style="transform: rotate(-90deg);">
+              <circle cx="110" cy="110" r="95" stroke="rgba(255,255,255,0.03)" stroke-width="8" fill="transparent" />
+              <circle id="timer-progress-ring" cx="110" cy="110" r="95" stroke="var(--primary)" stroke-width="8" fill="transparent" 
+                      stroke-dasharray="596.9" stroke-dashoffset="0" stroke-linecap="round" style="transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease; filter: drop-shadow(0 0 6px var(--primary));" />
+            </svg>
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center;">
+              <span id="timer-clock-display" style="font-size:38px; font-weight:800; font-family:var(--font-mono); color:var(--text-primary); letter-spacing:1px; text-shadow:0 0 10px rgba(0,212,170,0.1);">25:00</span>
+              <span id="timer-phase-badge" style="font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; background:rgba(0,212,170,0.1); color:var(--primary); padding:3px 8px; border-radius:12px; margin-top:8px;">Focus Session</span>
+            </div>
+          </div>
+
+          <!-- Configuration Controls -->
+          <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px; margin-bottom:20px;">
+            <!-- Select Subject and Sprint Preset -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div class="form-group" style="margin:0;">
+                <label for="timer-subject-select" style="font-size:9.5px; text-align:left; display:block; margin-bottom:4px; font-weight:700;">Subject</label>
+                <select id="timer-subject-select" class="form-control" style="font-size:11px; height:32px; padding:0 8px;">
+                  <option value="Physics">⚡ Physics</option>
+                  <option value="Chemistry">🧪 Chemistry</option>
+                  <option value="Biology">🧬 Biology</option>
+                  <option value="General" selected>🌿 General</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label for="timer-mode-select" style="font-size:9.5px; text-align:left; display:block; margin-bottom:4px; font-weight:700;">Sprint Mode</label>
+                <select id="timer-mode-select" class="form-control" style="font-size:11px; height:32px; padding:0 8px;" onchange="handleTimerPresetChange()">
+                  <option value="25" selected>🍅 Pomodoro (25m)</option>
+                  <option value="50">🚀 Deep Work (50m)</option>
+                  <option value="45">⚡ Study Sprint (45m)</option>
+                  <option value="5">☕ Short Break (5m)</option>
+                  <option value="15">🌴 Long Break (15m)</option>
+                  <option value="custom">⚙️ Custom Timer</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Custom duration inputs (hidden by default) -->
+            <div id="timer-custom-inputs" style="display:none; grid-template-columns:1fr; gap:10px;">
+              <div class="form-group" style="margin:0; text-align:left;">
+                <label style="font-size:9.5px; font-weight:700; margin-bottom:4px; display:block;">Custom Minutes</label>
+                <input type="number" id="timer-custom-minutes" class="form-control" style="font-size:11px; height:32px; padding:0 8px;" min="1" max="180" value="25" oninput="setCustomTimerDuration()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Actions -->
+          <div style="display:flex; gap:12px; width:100%; max-width:280px; justify-content:center;">
+            <button id="timer-start-btn" onclick="toggleStudyTimer()" class="btn btn-primary" style="flex:1; padding:10px 16px; font-size:12px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; background:var(--primary); color:#000; border:none; box-shadow: 0 4px 12px rgba(0,212,170,0.15);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Start Studying
+            </button>
+            <button id="timer-reset-btn" onclick="resetStudyTimer()" class="btn btn-secondary" style="padding:10px 14px; font-size:12px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:4px; cursor:pointer;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Graphs & Stats -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- Metrics Grid -->
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+            <div class="glass-card" style="padding:16px; text-align:center;">
+              <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:4px;">Today's Study</span>
+              <h3 id="timer-stat-today" style="margin:0; font-size:18px; color:var(--text-primary); font-family:var(--font-mono);">0.0h</h3>
+            </div>
+            <div class="glass-card" style="padding:16px; text-align:center;">
+              <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:4px;">Focus Sprints</span>
+              <h3 id="timer-stat-sprints" style="margin:0; font-size:18px; color:var(--text-primary); font-family:var(--font-mono);">0</h3>
+            </div>
+            <div class="glass-card" style="padding:16px; text-align:center;">
+              <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:4px;">Weekly Sum</span>
+              <h3 id="timer-stat-weekly" style="margin:0; font-size:18px; color:var(--text-primary); font-family:var(--font-mono);">0.0h</h3>
+            </div>
+          </div>
+
+          <!-- Study Chart Card -->
+          <div class="glass-card" style="padding:20px; min-height:362px; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h2 style="margin:0; font-size:14px; display:flex; align-items:center; gap:8px;">📈 Study Duration (Last 7 Days)</h2>
+              <span style="font-size:9px; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:8px; color:var(--text-muted);">Self-Updated Graph</span>
+            </div>
+
+            <!-- SVG Bar Chart Container -->
+            <div id="study-duration-chart-wrapper" style="width:100%; height:230px; display:flex; align-items:center; justify-content:center; position:relative;">
+              <!-- Rendered dynamically via SVG in JS -->
+            </div>
+            <!-- Tooltip -->
+            <div id="study-duration-chart-tooltip" style="display:none; position:absolute; z-index:100; pointer-events:none; padding:8px 12px; background:rgba(10,14,26,0.95); border:1px solid rgba(255,255,255,0.08); border-radius:8px; font-size:11px; color:#fff; box-shadow:0 10px 30px rgba(0,0,0,0.5); min-width:110px; text-align:left;">
+            </div>
+            
+            <!-- Subject Legend -->
+            <div style="display:flex; gap:16px; justify-content:center; font-size:10px; color:var(--text-muted); margin-top:10px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:10px; height:10px; background:var(--phy); border-radius:3px;"></div> Physics
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:10px; height:10px; background:var(--che); border-radius:3px;"></div> Chemistry
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:10px; height:10px; background:var(--bio); border-radius:3px;"></div> Biology
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -2120,6 +2248,7 @@
       <button class="drawer-item" data-tab="tests" onclick="navigateTab('tests')">📝 Tests & Mocks</button>
       <button class="drawer-item" data-tab="strategy" onclick="navigateTab('strategy')">💡 Strategy Hub</button>
       <button class="drawer-item" data-tab="tracker" onclick="navigateTab('tracker')">🔥 Daily Tracker</button>
+      <button class="drawer-item" data-tab="study-timer" onclick="navigateTab('study-timer')">⏱️ Study Timer</button>
       <button class="drawer-item" data-tab="analytics" onclick="navigateTab('analytics')">📈 Analytics</button>
 
       <button class="drawer-item" data-tab="ai-test" onclick="navigateTab('ai-test')">🤖 AI CBT</button>
@@ -2151,6 +2280,6 @@
     </div>
   </aside>
 
-  <script defer src="app.js?v=3.3.0"></script>
+  <script defer src="app.js?v=3.3.1"></script>
 </body>
 </html>

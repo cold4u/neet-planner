@@ -4246,6 +4246,12 @@ tag in <head>
   margin-top: 4px;
 }
 
+/* STUDY TIMER CIRCULAR RING STYLING */
+#timer-progress-ring {
+  transform-origin: center;
+}
+
+
 
 
 
@@ -4299,6 +4305,10 @@ tag in <head>
       <button class="nav-item" data-tab="tracker" onclick="showTab('tracker')">
         <span class="nav-icon">🔥</span>
         <span class="nav-label">Daily Tracker</span>
+      </button>
+      <button class="nav-item" data-tab="study-timer" onclick="showTab('study-timer')">
+        <span class="nav-icon">⏱️</span>
+        <span class="nav-label">Study Timer</span>
       </button>
       <button class="nav-item" data-tab="analytics" onclick="showTab('analytics')">
         <span class="nav-icon">📈</span>
@@ -5192,6 +5202,130 @@ tag in <head>
           <div style="width: 12px; height: 12px; background: #0284c7; border-radius: 2px;"></div> <!-- 4-6h -->
           <div style="width: 12px; height: 12px; background: #0369a1; border-radius: 2px;"></div> <!-- 6h+ -->
           <span>More</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7b. STUDY TIMER & POMODORO TAB -->
+    <section id="study-timer" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">⏱️ Study Timer & Pomodoro</h1>
+        <p class="page-desc">Stay productive with focused study sprints and analyze how much you studied.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:24px; align-items: start;">
+        <!-- Left Column: Circular Timer -->
+        <div class="glass-card" style="display:flex; flex-direction:column; align-items:center; padding:28px; text-align:center; min-height:480px; justify-content:space-between; position:relative;">
+          <h2 style="margin-top:0; margin-bottom:8px; font-size:16px;">Study Session Timer</h2>
+          <p style="font-size:11px; color:var(--text-muted); margin-bottom:20px; max-width:280px;">Select your session type, choose a subject, and click start studying.</p>
+          
+          <!-- Circular Progress Ring SVG -->
+          <div style="position:relative; width:220px; height:220px; margin-bottom:20px;">
+            <svg width="220" height="220" viewBox="0 0 220 220" style="transform: rotate(-90deg);">
+              <circle cx="110" cy="110" r="95" stroke="rgba(255,255,255,0.03)" stroke-width="8" fill="transparent" />
+              <circle id="timer-progress-ring" cx="110" cy="110" r="95" stroke="var(--primary)" stroke-width="8" fill="transparent" 
+                      stroke-dasharray="596.9" stroke-dashoffset="0" stroke-linecap="round" style="transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease; filter: drop-shadow(0 0 6px var(--primary));" />
+            </svg>
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center;">
+              <span id="timer-clock-display" style="font-size:38px; font-weight:800; font-family:var(--font-mono); color:var(--text-primary); letter-spacing:1px; text-shadow:0 0 10px rgba(0,212,170,0.1);">25:00</span>
+              <span id="timer-phase-badge" style="font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; background:rgba(0,212,170,0.1); color:var(--primary); padding:3px 8px; border-radius:12px; margin-top:8px;">Focus Session</span>
+            </div>
+          </div>
+
+          <!-- Configuration Controls -->
+          <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px; margin-bottom:20px;">
+            <!-- Select Subject and Sprint Preset -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div class="form-group" style="margin:0;">
+                <label for="timer-subject-select" style="font-size:9.5px; text-align:left; display:block; margin-bottom:4px; font-weight:700;">Subject</label>
+                <select id="timer-subject-select" class="form-control" style="font-size:11px; height:32px; padding:0 8px;">
+                  <option value="Physics">⚡ Physics</option>
+                  <option value="Chemistry">🧪 Chemistry</option>
+                  <option value="Biology">🧬 Biology</option>
+                  <option value="General" selected>🌿 General</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label for="timer-mode-select" style="font-size:9.5px; text-align:left; display:block; margin-bottom:4px; font-weight:700;">Sprint Mode</label>
+                <select id="timer-mode-select" class="form-control" style="font-size:11px; height:32px; padding:0 8px;" onchange="handleTimerPresetChange()">
+                  <option value="25" selected>🍅 Pomodoro (25m)</option>
+                  <option value="50">🚀 Deep Work (50m)</option>
+                  <option value="45">⚡ Study Sprint (45m)</option>
+                  <option value="5">☕ Short Break (5m)</option>
+                  <option value="15">🌴 Long Break (15m)</option>
+                  <option value="custom">⚙️ Custom Timer</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Custom duration inputs (hidden by default) -->
+            <div id="timer-custom-inputs" style="display:none; grid-template-columns:1fr; gap:10px;">
+              <div class="form-group" style="margin:0; text-align:left;">
+                <label style="font-size:9.5px; font-weight:700; margin-bottom:4px; display:block;">Custom Minutes</label>
+                <input type="number" id="timer-custom-minutes" class="form-control" style="font-size:11px; height:32px; padding:0 8px;" min="1" max="180" value="25" oninput="setCustomTimerDuration()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Actions -->
+          <div style="display:flex; gap:12px; width:100%; max-width:280px; justify-content:center;">
+            <button id="timer-start-btn" onclick="toggleStudyTimer()" class="btn btn-primary" style="flex:1; padding:10px 16px; font-size:12px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; background:var(--primary); color:#000; border:none; box-shadow: 0 4px 12px rgba(0,212,170,0.15);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Start Studying
+            </button>
+            <button id="timer-reset-btn" onclick="resetStudyTimer()" class="btn btn-secondary" style="padding:10px 14px; font-size:12px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:4px; cursor:pointer;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Graphs & Stats -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- Metrics Grid -->
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+            <div class="glass-card" style="padding:16px; text-align:center;">
+              <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:4px;">Today's Study</span>
+              <h3 id="timer-stat-today" style="margin:0; font-size:18px; color:var(--text-primary); font-family:var(--font-mono);">0.0h</h3>
+            </div>
+            <div class="glass-card" style="padding:16px; text-align:center;">
+              <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:4px;">Focus Sprints</span>
+              <h3 id="timer-stat-sprints" style="margin:0; font-size:18px; color:var(--text-primary); font-family:var(--font-mono);">0</h3>
+            </div>
+            <div class="glass-card" style="padding:16px; text-align:center;">
+              <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:4px;">Weekly Sum</span>
+              <h3 id="timer-stat-weekly" style="margin:0; font-size:18px; color:var(--text-primary); font-family:var(--font-mono);">0.0h</h3>
+            </div>
+          </div>
+
+          <!-- Study Chart Card -->
+          <div class="glass-card" style="padding:20px; min-height:362px; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h2 style="margin:0; font-size:14px; display:flex; align-items:center; gap:8px;">📈 Study Duration (Last 7 Days)</h2>
+              <span style="font-size:9px; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:8px; color:var(--text-muted);">Self-Updated Graph</span>
+            </div>
+
+            <!-- SVG Bar Chart Container -->
+            <div id="study-duration-chart-wrapper" style="width:100%; height:230px; display:flex; align-items:center; justify-content:center; position:relative;">
+              <!-- Rendered dynamically via SVG in JS -->
+            </div>
+            <!-- Tooltip -->
+            <div id="study-duration-chart-tooltip" style="display:none; position:absolute; z-index:100; pointer-events:none; padding:8px 12px; background:rgba(10,14,26,0.95); border:1px solid rgba(255,255,255,0.08); border-radius:8px; font-size:11px; color:#fff; box-shadow:0 10px 30px rgba(0,0,0,0.5); min-width:110px; text-align:left;">
+            </div>
+            
+            <!-- Subject Legend -->
+            <div style="display:flex; gap:16px; justify-content:center; font-size:10px; color:var(--text-muted); margin-top:10px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:10px; height:10px; background:var(--phy); border-radius:3px;"></div> Physics
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:10px; height:10px; background:var(--che); border-radius:3px;"></div> Chemistry
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:10px; height:10px; background:var(--bio); border-radius:3px;"></div> Biology
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -6352,6 +6486,7 @@ tag in <head>
       <button class="drawer-item" data-tab="tests" onclick="navigateTab('tests')">📝 Tests & Mocks</button>
       <button class="drawer-item" data-tab="strategy" onclick="navigateTab('strategy')">💡 Strategy Hub</button>
       <button class="drawer-item" data-tab="tracker" onclick="navigateTab('tracker')">🔥 Daily Tracker</button>
+      <button class="drawer-item" data-tab="study-timer" onclick="navigateTab('study-timer')">⏱️ Study Timer</button>
       <button class="drawer-item" data-tab="analytics" onclick="navigateTab('analytics')">📈 Analytics</button>
 
       <button class="drawer-item" data-tab="ai-test" onclick="navigateTab('ai-test')">🤖 AI CBT</button>
@@ -7450,6 +7585,8 @@ function safeSetSessionStorage(key, value) {
         renderAnalytics();
       } else if (tabId === 'overview') {
         renderOverviewStats();
+      } else if (tabId === 'study-timer') {
+        initStudyTimerTab();
       } else if (tabId === 'pomodoro') {
         if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
       } else if (tabId === 'formulas') {
@@ -11725,6 +11862,415 @@ window.setPomoDuration = setPomoDuration;
 window.startPomoTimer = startPomoTimer;
 window.pausePomoTimer = pausePomoTimer;
 window.resetPomoTimer = resetPomoTimer;
+
+// --- STUDY TIMER & POMODORO SYSTEM ---
+
+let studyTimerInterval = null;
+let studyTimerSecondsRemaining = 25 * 60;
+let studyTimerDurationTotal = 25 * 60;
+let studyTimerIsRunning = false;
+let studyTimerIsBreak = false;
+
+function handleTimerPresetChange() {
+  const modeSelect = document.getElementById('timer-mode-select');
+  const customInputs = document.getElementById('timer-custom-inputs');
+  if (!modeSelect) return;
+
+  const val = modeSelect.value;
+  pauseStudyTimer();
+
+  if (val === 'custom') {
+    if (customInputs) customInputs.style.display = 'grid';
+    setCustomTimerDuration();
+  } else {
+    if (customInputs) customInputs.style.display = 'none';
+    const mins = parseInt(val) || 25;
+    studyTimerSecondsRemaining = mins * 60;
+    studyTimerDurationTotal = mins * 60;
+    studyTimerIsBreak = (val === '5' || val === '15');
+    updateTimerUI();
+  }
+}
+
+function setCustomTimerDuration() {
+  const customMinsInput = document.getElementById('timer-custom-minutes');
+  if (!customMinsInput) return;
+  let mins = parseInt(customMinsInput.value) || 25;
+  if (mins < 1) mins = 1;
+  if (mins > 180) mins = 180;
+  
+  studyTimerSecondsRemaining = mins * 60;
+  studyTimerDurationTotal = mins * 60;
+  studyTimerIsBreak = false;
+  updateTimerUI();
+}
+
+function updateTimerUI() {
+  const display = document.getElementById('timer-clock-display');
+  const badge = document.getElementById('timer-phase-badge');
+  const ring = document.getElementById('timer-progress-ring');
+  
+  if (display) {
+    const m = Math.floor(studyTimerSecondsRemaining / 60);
+    const s = studyTimerSecondsRemaining % 60;
+    display.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+  
+  if (badge) {
+    if (studyTimerIsBreak) {
+      badge.textContent = 'Break Time ☕';
+      badge.style.background = 'rgba(74, 222, 128, 0.1)';
+      badge.style.color = '#4ade80';
+    } else {
+      badge.textContent = 'Focus Session 🧠';
+      badge.style.background = 'rgba(0, 212, 170, 0.1)';
+      badge.style.color = 'var(--primary)';
+    }
+  }
+  
+  if (ring) {
+    const pct = studyTimerSecondsRemaining / studyTimerDurationTotal;
+    const offset = 596.9 - (pct * 596.9);
+    ring.style.strokeDashoffset = offset;
+    
+    if (studyTimerIsBreak) {
+      ring.style.stroke = '#4ade80';
+      ring.style.filter = 'drop-shadow(0 0 6px #4ade80)';
+    } else {
+      ring.style.stroke = 'var(--primary)';
+      ring.style.filter = 'drop-shadow(0 0 6px var(--primary))';
+    }
+  }
+}
+
+function toggleStudyTimer() {
+  if (studyTimerIsRunning) {
+    pauseStudyTimer();
+  } else {
+    startStudyTimer();
+  }
+}
+
+function startStudyTimer() {
+  if (studyTimerIsRunning) return;
+  studyTimerIsRunning = true;
+  
+  const btn = document.getElementById('timer-start-btn');
+  if (btn) {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause Studying`;
+    btn.style.background = 'var(--tertiary)';
+    btn.style.boxShadow = '0 4px 12px rgba(255,107,107,0.15)';
+  }
+  
+  studyTimerInterval = setInterval(() => {
+    studyTimerSecondsRemaining--;
+    updateTimerUI();
+    
+    if (studyTimerSecondsRemaining <= 0) {
+      clearInterval(studyTimerInterval);
+      studyTimerIsRunning = false;
+      handleTimerCompletion();
+    }
+  }, 1000);
+}
+
+function pauseStudyTimer() {
+  if (!studyTimerIsRunning) return;
+  studyTimerIsRunning = false;
+  clearInterval(studyTimerInterval);
+  
+  const btn = document.getElementById('timer-start-btn');
+  if (btn) {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;"><path d="M8 5v14l11-7z"/></svg> Start Studying`;
+    btn.style.background = 'var(--primary)';
+    btn.style.boxShadow = '0 4px 12px rgba(0,212,170,0.15)';
+  }
+}
+
+function resetStudyTimer() {
+  pauseStudyTimer();
+  const modeSelect = document.getElementById('timer-mode-select');
+  if (modeSelect) {
+    handleTimerPresetChange();
+  } else {
+    studyTimerSecondsRemaining = 25 * 60;
+    studyTimerDurationTotal = 25 * 60;
+    studyTimerIsBreak = false;
+    updateTimerUI();
+  }
+}
+
+function playTimerChime() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const playTone = (freq, time, duration) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, time);
+      
+      gain.gain.setValueAtTime(0.15, time);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.start(time);
+      osc.stop(time + duration);
+    };
+    
+    playTone(523.25, audioCtx.currentTime, 0.4);
+    playTone(659.25, audioCtx.currentTime + 0.15, 0.5);
+  } catch (e) {
+    console.warn("Web Audio chime failed:", e);
+  }
+}
+
+function handleTimerCompletion() {
+  playTimerChime();
+  if (typeof triggerConfetti === 'function') triggerConfetti();
+  
+  const subject = document.getElementById('timer-subject-select').value;
+  const durationMins = Math.round(studyTimerDurationTotal / 60);
+  const hoursStudied = durationMins / 60;
+  const todayStr = new Date().toISOString().split('T')[0];
+  
+  let alertMsg = "";
+  
+  if (studyTimerIsBreak) {
+    alertMsg = `☕ Break is over! Ready for the next study sprint?`;
+  } else {
+    alertMsg = `🎉 Great job! You successfully completed a ${durationMins}-minute focus session on ${subject}!`;
+    
+    let phyHours = 0, cheHours = 0, bioHours = 0;
+    if (subject === 'Physics') phyHours = hoursStudied;
+    else if (subject === 'Chemistry') cheHours = hoursStudied;
+    else if (subject === 'Biology') bioHours = hoursStudied;
+    else {
+      bioHours = hoursStudied;
+    }
+    
+    let entryIdx = trackerLogs.findIndex(l => l.date === todayStr);
+    if (entryIdx !== -1) {
+      trackerLogs[entryIdx].phyHours += phyHours;
+      trackerLogs[entryIdx].cheHours += cheHours;
+      trackerLogs[entryIdx].bioHours += bioHours;
+    } else {
+      trackerLogs.push({
+        date: todayStr,
+        phyHours: phyHours,
+        cheHours: cheHours,
+        bioHours: bioHours,
+        mcqs: 0,
+        confidence: 3,
+        notes: `Logged via Study Timer focus session (${durationMins}m).`
+      });
+    }
+    
+    trackerLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+    safeSetLocalStorage('neet_v3_tracker', JSON.stringify(trackerLogs));
+    
+    let sprintsToday = parseInt(safeGetLocalStorage('neet_timer_sprints_today') || 0);
+    safeSetLocalStorage('neet_timer_sprints_today', sprintsToday + 1);
+    
+    renderTrackerTable();
+    updateOverviewStats();
+    
+    alertMsg += ` Added ${hoursStudied.toFixed(2)}h to your logs.`;
+  }
+  
+  resetStudyTimer();
+  initStudyTimerTab();
+  
+  setTimeout(() => {
+    alert(alertMsg);
+  }, 300);
+}
+
+function initStudyTimerTab() {
+  const statToday = document.getElementById('timer-stat-today');
+  const statSprints = document.getElementById('timer-stat-sprints');
+  const statWeekly = document.getElementById('timer-stat-weekly');
+  
+  const todayStr = new Date().toISOString().split('T')[0];
+  
+  const todayLog = trackerLogs.find(l => l.date === todayStr);
+  const todayHours = todayLog ? (todayLog.phyHours + todayLog.cheHours + todayLog.bioHours) : 0;
+  if (statToday) statToday.textContent = `${todayHours.toFixed(1)}h`;
+  
+  const lastSprintResetDate = safeGetLocalStorage('neet_timer_sprint_reset_date');
+  if (lastSprintResetDate !== todayStr) {
+    safeSetLocalStorage('neet_timer_sprints_today', '0');
+    safeSetLocalStorage('neet_timer_sprint_reset_date', todayStr);
+  }
+  const sprintsCount = parseInt(safeGetLocalStorage('neet_timer_sprints_today') || 0);
+  if (statSprints) statSprints.textContent = sprintsCount;
+
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  let weeklySum = 0;
+  dates.forEach(d => {
+    const log = trackerLogs.find(l => l.date === d);
+    if (log) {
+      weeklySum += log.phyHours + log.cheHours + log.bioHours;
+    }
+  });
+  if (statWeekly) statWeekly.textContent = `${weeklySum.toFixed(1)}h`;
+
+  drawStudyTimerGraph();
+}
+
+function drawStudyTimerGraph() {
+  const container = document.getElementById('study-duration-chart-wrapper');
+  if (!container) return;
+  
+  const dates = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  
+  const chartData = dates.map(dateStr => {
+    const log = trackerLogs.find(l => l.date === dateStr);
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const d = new Date(dateStr);
+    return {
+      date: dateStr,
+      label: dayNames[d.getDay()] + ' ' + d.getDate(),
+      phy: log ? log.phyHours : 0,
+      che: log ? log.cheHours : 0,
+      bio: log ? log.bioHours : 0,
+      total: log ? (log.phyHours + log.cheHours + log.bioHours) : 0
+    };
+  });
+  
+  const maxVal = Math.max(6, ...chartData.map(d => d.total)) * 1.1;
+  
+  const w = container.clientWidth || 450;
+  const h = 230;
+  const paddingLeft = 35;
+  const paddingRight = 15;
+  const paddingTop = 20;
+  const paddingBottom = 30;
+  
+  const graphWidth = w - paddingLeft - paddingRight;
+  const graphHeight = h - paddingTop - paddingBottom;
+  
+  let svg = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="font-family: 'Inter', sans-serif;">`;
+  
+  const gridLinesCount = 4;
+  for (let i = 0; i <= gridLinesCount; i++) {
+    const yVal = (maxVal / gridLinesCount) * i;
+    const yPos = h - paddingBottom - (yVal / maxVal) * graphHeight;
+    svg += `
+      <line x1="${paddingLeft}" y1="${yPos}" x2="${w - paddingRight}" y2="${yPos}" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+      <text x="${paddingLeft - 8}" y="${yPos + 4}" fill="var(--text-muted)" font-size="9" text-anchor="end">${yVal.toFixed(1)}h</text>
+    `;
+  }
+  
+  const barWidth = Math.max(12, Math.min(32, (graphWidth / 7) * 0.5));
+  const colSpacing = graphWidth / 7;
+  
+  chartData.forEach((d, idx) => {
+    const xPos = paddingLeft + colSpacing * idx + (colSpacing - barWidth) / 2;
+    
+    const phyHeight = (d.phy / maxVal) * graphHeight;
+    const cheHeight = (d.che / maxVal) * graphHeight;
+    const bioHeight = (d.bio / maxVal) * graphHeight;
+    const totalHeight = (d.total / maxVal) * graphHeight;
+    
+    let yCurrent = h - paddingBottom;
+    
+    if (d.phy > 0) {
+      svg += `
+        <rect x="${xPos}" y="${yCurrent - phyHeight}" width="${barWidth}" height="${phyHeight}" fill="var(--phy)" rx="${d.che + d.bio === 0 ? 3 : 0}" ry="${d.che + d.bio === 0 ? 3 : 0}" />
+      `;
+      yCurrent -= phyHeight;
+    }
+    
+    if (d.che > 0) {
+      svg += `
+        <rect x="${xPos}" y="${yCurrent - cheHeight}" width="${barWidth}" height="${cheHeight}" fill="var(--che)" rx="${d.bio === 0 ? 3 : 0}" ry="${d.bio === 0 ? 3 : 0}" />
+      `;
+      yCurrent -= cheHeight;
+    }
+    
+    if (d.bio > 0) {
+      svg += `
+        <rect x="${xPos}" y="${yCurrent - bioHeight}" width="${barWidth}" height="${bioHeight}" fill="var(--bio)" rx="3" ry="3" />
+      `;
+      yCurrent -= bioHeight;
+    }
+    
+    const triggerHeight = Math.max(10, totalHeight);
+    const triggerY = h - paddingBottom - totalHeight;
+    svg += `
+      <rect x="${xPos - 5}" y="${triggerY - 10}" width="${barWidth + 10}" height="${triggerHeight + 10}" fill="transparent" style="cursor:pointer;"
+            onmouseover="showStudyTimerTooltip(event, '${d.label}', ${d.total}, ${d.phy}, ${d.che}, ${d.bio})"
+            onmouseout="hideStudyTimerTooltip()" />
+    `;
+    
+    svg += `
+      <text x="${xPos + barWidth / 2}" y="${h - paddingBottom + 16}" fill="var(--text-muted)" font-size="9.5" text-anchor="middle">${d.label.split(' ')[0]}</text>
+      <text x="${xPos + barWidth / 2}" y="${h - paddingBottom + 26}" fill="var(--text-muted)" font-size="8" opacity="0.6" text-anchor="middle">${d.label.split(' ')[1]}</text>
+    `;
+  });
+  
+  svg += `</svg>`;
+  container.innerHTML = svg;
+}
+
+function showStudyTimerTooltip(e, dateStr, total, phy, che, bio) {
+  const tooltip = document.getElementById('study-duration-chart-tooltip');
+  const container = document.getElementById('study-duration-chart-wrapper');
+  if (!tooltip || !container) return;
+
+  tooltip.innerHTML = `
+    <div style="font-weight:700; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:4px; margin-bottom:4px; font-size:10.5px; color:#fff;">${dateStr}</div>
+    <div style="color:var(--primary); font-weight:700; margin-bottom:2px;">Total: ${total.toFixed(2)}h</div>
+    <div style="display:flex; flex-direction:column; gap:1px; font-size:9.5px; opacity:0.85;">
+      <span style="color:var(--phy);">Phy: ${phy.toFixed(2)}h</span>
+      <span style="color:var(--che);">Chem: ${che.toFixed(2)}h</span>
+      <span style="color:var(--bio);">Bio: ${bio.toFixed(2)}h</span>
+    </div>
+  `;
+
+  tooltip.style.display = 'block';
+
+  const containerRect = container.getBoundingClientRect();
+  const x = e.clientX - containerRect.left;
+  const y = e.clientY - containerRect.top;
+
+  tooltip.style.left = (x + 12) + 'px';
+  tooltip.style.top = (y - 70) + 'px';
+}
+
+function hideStudyTimerTooltip() {
+  const tooltip = document.getElementById('study-duration-chart-tooltip');
+  if (tooltip) tooltip.style.display = 'none';
+}
+
+window.addEventListener('resize', () => {
+  const studyTimerEl = document.getElementById('study-timer');
+  if (studyTimerEl && studyTimerEl.classList.contains('active')) {
+    drawStudyTimerGraph();
+  }
+});
+
+// Expose study timer functions
+window.toggleStudyTimer = toggleStudyTimer;
+window.resetStudyTimer = resetStudyTimer;
+window.handleTimerPresetChange = handleTimerPresetChange;
+window.setCustomTimerDuration = setCustomTimerDuration;
+window.showStudyTimerTooltip = showStudyTimerTooltip;
+window.hideStudyTimerTooltip = hideStudyTimerTooltip;
+window.initStudyTimerTab = initStudyTimerTab;
 
 // 9. BACKUP & RESTORE CENTER
 
