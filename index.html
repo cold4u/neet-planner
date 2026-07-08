@@ -17,7 +17,7 @@
   <title>SHUBxCOLD — 309-Day Ultimate Planner</title>
   <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap' rel='stylesheet'>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.2.7">
+  <link rel="stylesheet" href="style.css?v=3.2.8">
   <!-- KaTeX for beautiful math equation rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
@@ -678,8 +678,10 @@
               <div style="font-size:12px; color:var(--text-muted);">No mock tests logged yet. Log your first test score to see details!</div>
             </div>
 
-            <!-- Trajectory Chart -->
-            <div id="mock-trajectory-chart" class="bar-chart-vertical" style="height:120px; display:none; justify-content:space-around; align-items:flex-end; gap:6px; margin: 12px 0; padding: 10px 0 4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <!-- Trajectory Line Chart -->
+            <div id="mock-overview-chart-container" style="position:relative; background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:12px; padding:12px; display:none; flex-direction:column; justify-content:center; min-height:150px; margin: 12px 0;">
+              <div id="mock-overview-tooltip" style="position:absolute; background:rgba(12,18,34,0.95); border:1px solid var(--primary); padding:10px; border-radius:8px; pointer-events:none; font-size:10px; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.5); display:none; min-width:130px;"></div>
+              <div id="mock-overview-chart-canvas" style="flex:1; width:100%; position:relative;"></div>
             </div>
 
             <div id="silly-mistakes-breakdown-panel" style="margin-top:12px;">
@@ -2149,6 +2151,6 @@
     </div>
   </aside>
 
-  <script defer src="app.js?v=3.2.7"></script>
+  <script defer src="app.js?v=3.2.8"></script>
 </body>
 </html>

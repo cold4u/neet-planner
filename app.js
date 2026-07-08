@@ -2496,6 +2496,147 @@ function safeSetSessionStorage(key, value) {
       if (tooltip) tooltip.style.display = 'none';
     }
 
+    function renderOverviewMockLineChart() {
+      const container = document.getElementById('mock-overview-chart-canvas');
+      const wrapper = document.getElementById('mock-overview-chart-container');
+      if (!container || !wrapper) return;
+
+      if (!mockTests || mockTests.length === 0) {
+        wrapper.style.display = 'none';
+        return;
+      }
+
+      wrapper.style.display = 'flex';
+
+      const sortedTests = [...mockTests].slice(0, 10).reverse();
+      const count = sortedTests.length;
+
+      const width = 500;
+      const height = 120;
+      const paddingLeft = 35;
+      const paddingRight = 15;
+      const paddingTop = 10;
+      const paddingBottom = 18;
+
+      const chartWidth = width - paddingLeft - paddingRight;
+      const chartHeight = height - paddingTop - paddingBottom;
+
+      const getX = (index) => {
+        if (count <= 1) return paddingLeft + chartWidth / 2;
+        return paddingLeft + (index / (count - 1)) * chartWidth;
+      };
+
+      const getY = (score) => {
+        const pct = score / 720;
+        return paddingTop + chartHeight - (pct * chartHeight);
+      };
+
+      let linePath = '';
+      let areaPath = '';
+      
+      if (count > 0) {
+        linePath = `M ${getX(0)} ${getY(sortedTests[0].total)}`;
+        areaPath = `M ${getX(0)} ${getY(0)} L ${getX(0)} ${getY(sortedTests[0].total)}`;
+
+        for (let i = 1; i < count; i++) {
+          const x = getX(i);
+          const y = getY(sortedTests[i].total);
+          linePath += ` L ${x} ${y}`;
+          areaPath += ` L ${x} ${y}`;
+        }
+        
+        areaPath += ` L ${getX(count - 1)} ${getY(0)} Z`;
+      }
+
+      let gridLines = '';
+      const ticks = [180, 360, 540, 720];
+      ticks.forEach(score => {
+        const y = getY(score);
+        gridLines += `
+          <line x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="3,3" />
+          <text x="${paddingLeft - 8}" y="${y + 3}" fill="var(--text-muted)" font-size="8" text-anchor="end">${score}</text>
+        `;
+      });
+
+      let points = '';
+      let interactiveOverlays = '';
+
+      sortedTests.forEach((t, i) => {
+        const x = getX(i);
+        const y = getY(t.total);
+        
+        points += `
+          <circle cx="${x}" cy="${y}" r="3" fill="var(--primary)" stroke="#0c1222" stroke-width="1.5" />
+        `;
+
+        let dateStr = t.date || '';
+        if (dateStr.includes('-')) {
+          const parts = dateStr.split('-');
+          if (parts.length >= 3) dateStr = `${parts[2]}/${parts[1]}`;
+        }
+
+        gridLines += `
+          <text x="${x}" y="${height - 3}" fill="var(--text-muted)" font-size="8" text-anchor="middle">${dateStr}</text>
+        `;
+
+        interactiveOverlays += `
+          <rect x="${x - 15}" y="${paddingTop}" width="30" height="${chartHeight + 10}" fill="transparent" style="cursor:pointer;" 
+            onmouseover="showOverviewMockTooltip(event, '${t.name.replace(/'/g, "\\'")}', '${t.date}', ${t.total}, ${t.phy}, ${t.che}, ${t.bio})" 
+            onmouseout="hideOverviewMockTooltip()" />
+        `;
+      });
+
+      const svg = `
+        <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:100%; display:block; overflow:visible;">
+          <defs>
+            <linearGradient id="overview-area-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.25" />
+              <stop offset="100%" stop-color="var(--primary)" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
+          
+          ${gridLines}
+          ${count > 0 ? `<path d="${areaPath}" fill="url(#overview-area-grad)" />` : ''}
+          ${count > 0 ? `<path d="${linePath}" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />` : ''}
+          ${points}
+          ${interactiveOverlays}
+        </svg>
+      `;
+
+      container.innerHTML = svg;
+    }
+
+    function showOverviewMockTooltip(e, name, date, total, phy, che, bio) {
+      const tooltip = document.getElementById('mock-overview-tooltip');
+      const container = document.getElementById('mock-overview-chart-canvas');
+      if (!tooltip || !container) return;
+
+      tooltip.innerHTML = `
+        <div style="font-weight:700; color:var(--text-primary); margin-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:4px;">${name}</div>
+        <div style="color:var(--text-muted); margin-bottom:4px;">Date: ${date}</div>
+        <div style="font-size:12px; font-weight:800; color:var(--primary); margin-bottom:6px;">Score: ${total}/720</div>
+        <div style="display:flex; flex-direction:column; gap:2px; font-size:9.5px; color:var(--text-secondary);">
+          <span>Physics: <strong style="color:var(--text-primary);">${phy}</strong></span>
+          <span>Chemistry: <strong style="color:var(--text-primary);">${che}</strong></span>
+          <span>Biology: <strong style="color:var(--text-primary);">${bio}</strong></span>
+        </div>
+      `;
+
+      tooltip.style.display = 'block';
+
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      tooltip.style.left = (x + 12) + 'px';
+      tooltip.style.top = (y - 70) + 'px';
+    }
+
+    function hideOverviewMockTooltip() {
+      const tooltip = document.getElementById('mock-overview-tooltip');
+      if (tooltip) tooltip.style.display = 'none';
+    }
+
     // Overview tab calculations
     function updateCountdown() {
       const now = new Date();
@@ -4790,10 +4931,9 @@ function renderMockTestsDashboard() {
     if (safeZoneContainer) {
       safeZoneContainer.innerHTML = '';
     }
-    const chartBody = document.getElementById('mock-trajectory-chart');
+    const chartBody = document.getElementById('mock-overview-chart-container');
     if (chartBody) {
       chartBody.style.display = 'none';
-      chartBody.innerHTML = '';
     }
     const strengthCard = document.getElementById('subject-strength-profile-card');
     if (strengthCard) {
@@ -4845,40 +4985,7 @@ function renderMockTestsDashboard() {
     `;
   }
   
-  const chartBody = document.getElementById('mock-trajectory-chart');
-  if (chartBody) {
-    chartBody.style.display = 'flex';
-    const last5 = mockTests.slice(0, 5).reverse();
-    let chartHtml = '';
-    last5.forEach(t => {
-      const pct = Math.min(100, Math.round((t.total / 720) * 100));
-      let barColor = 'var(--tertiary)';
-      if (t.total >= 610) {
-        barColor = 'var(--accent-success)';
-      } else if (t.total >= 550) {
-        barColor = '#fbbf24';
-      }
-      
-      let dLabel = t.date;
-      if (dLabel && dLabel.includes('-')) {
-        const parts = dLabel.split('-');
-        dLabel = parts.length >= 3 ? `${parts[2]}/${parts[1]}` : dLabel;
-      } else if (dLabel && dLabel.includes('/')) {
-        const parts = dLabel.split('/');
-        dLabel = parts.length >= 2 ? `${parts[0]}/${parts[1]}` : dLabel;
-      }
-      
-      chartHtml += `
-        <div class="chart-bar-col" style="width: auto; flex: 1; max-width: 50px; height: 100%;">
-          <div class="chart-bar-fill" style="height:${pct}%; width: 16px; background:${barColor}; box-shadow: 0 0 8px ${barColor}55;">
-            <div class="chart-bar-tooltip">${t.name}<br/><strong>${t.total}/720</strong></div>
-          </div>
-          <span class="chart-label" style="font-size: 9px; white-space: nowrap; margin-top:4px;">${dLabel}</span>
-        </div>
-      `;
-    });
-    chartBody.innerHTML = chartHtml;
-  }
+  try { renderOverviewMockLineChart(); } catch(e) { console.error("Error in renderOverviewMockLineChart:", e); }
   
   if (safeZoneContainer) {
     let zoneBadge = '';
@@ -8323,6 +8430,9 @@ window.toggleDailyTargetDynamic = toggleDailyTargetDynamic;
 window.updateMockScoreTrajectoryChart = updateMockScoreTrajectoryChart;
 window.showMockChartTooltip = showMockChartTooltip;
 window.hideMockChartTooltip = hideMockChartTooltip;
+window.renderOverviewMockLineChart = renderOverviewMockLineChart;
+window.showOverviewMockTooltip = showOverviewMockTooltip;
+window.hideOverviewMockTooltip = hideOverviewMockTooltip;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
