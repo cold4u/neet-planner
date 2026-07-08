@@ -6869,6 +6869,7 @@ function renderStudyHubReports() {
 }
 
 // --- FEATURE 4: DAILY TARGET & STREAK SYSTEM ---
+var targetEditModeActive = false;
 const DEFAULT_TARGET_TEMPLATE = [
   { id: "quiz", text: "Solve the Daily Recall Quiz challenge" },
   { id: "syllabus", text: "Read line-by-line NCERT/Study scheduled topics of the day" },
@@ -8072,8 +8073,6 @@ function resetPlannerEverything() {
     }
   }
 }
-
-let targetEditModeActive = false;
 
 function toggleEditTargetsMode() {
   const btn = document.getElementById('toggle-edit-targets-btn');
