@@ -17,7 +17,7 @@
   <title>SHUBxCOLD — 309-Day Ultimate Planner</title>
   <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap' rel='stylesheet'>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.2.4">
+  <link rel="stylesheet" href="style.css?v=3.2.5">
   <!-- KaTeX for beautiful math equation rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
@@ -268,27 +268,26 @@
       <div id="daily-targets-card" class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(244, 63, 94, 0.03), rgba(12, 18, 34, 0.85)); border-left: 5px solid #f43f5e;">
         <h2 style="margin-top:0; font-size:16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
           <span style="display:flex; align-items:center; gap:8px;">🎯 Daily Targets Checklist</span>
-          <span style="font-size:13px; font-weight:700; color:#f43f5e; display:flex; align-items:center; gap:4px;" id="target-streak-badge">🔥 <span id="target-streak-count">0</span> Day Streak</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button id="toggle-edit-targets-btn" onclick="toggleEditTargetsMode()" class="btn btn-secondary" style="padding:2px 8px; font-size:11px; background:transparent; border:1px solid var(--border-color); color:var(--text-muted); cursor:pointer; font-weight:700; border-radius:4px; transition:all 0.2s;" onmouseover="this.style.color='var(--text-warning)'" onmouseout="this.style.color='var(--text-muted)'">Customize ✏️</button>
+            <span style="font-size:13px; font-weight:700; color:#f43f5e; display:flex; align-items:center; gap:4px;" id="target-streak-badge">🔥 <span id="target-streak-count">0</span> Day Streak</span>
+          </div>
         </h2>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">Achieve all targets below to keep your streak glowing! Streaks are computed based on target completions.</p>
-        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px;">
-            <input type="checkbox" id="tgt-daily-quiz" onchange="toggleDailyTarget('quiz')" style="width:16px; height:16px; accent-color:#f43f5e;">
-            <span>Solve the Daily Recall Quiz challenge</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px;">
-            <input type="checkbox" id="tgt-syllabus-read" onchange="toggleDailyTarget('syllabus')" style="width:16px; height:16px; accent-color:#f43f5e;">
-            <span>Read line-by-line NCERT/Study scheduled topics of the day</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px;">
-            <input type="checkbox" id="tgt-pyqs" onchange="toggleDailyTarget('pyq')" style="width:16px; height:16px; accent-color:#f43f5e;">
-            <span>Solve at least 25 PYQs / Practice Questions</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px;">
-            <input type="checkbox" id="tgt-study-hours" onchange="toggleDailyTarget('hours')" style="width:16px; height:16px; accent-color:#f43f5e;">
-            <span>Log or focus for at least 4 study hours today</span>
-          </label>
+        
+        <!-- Dynamic Checklist Container -->
+        <div id="daily-targets-list-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+          <!-- Loaded dynamically from LocalStorage template -->
         </div>
+
+        <!-- Add Target Form (Hidden by default, shown during edit mode) -->
+        <div id="target-edit-controls" style="display:none; flex-direction:column; gap:10px; border-top:1px solid var(--glass-border); padding-top:12px; margin-top:12px; margin-bottom:16px;">
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="new-target-text-input" placeholder="Type new daily target... (e.g. Solve 20 Chemistry questions)" style="font-size:12px; padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-body); color:var(--text-color); flex:1; box-sizing:border-box;">
+            <button onclick="addNewTargetItem()" class="btn btn-primary" style="padding:6px 14px; font-size:11px; font-weight:700; border-radius:6px;">Add Target</button>
+          </div>
+        </div>
+
         <div style="width:100%; height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden;">
           <div id="target-progress-bar" style="width:0%; height:100%; background:#f43f5e; transition:width 0.3s ease;"></div>
         </div>
@@ -2113,6 +2112,6 @@
     </div>
   </aside>
 
-  <script defer src="app.js?v=3.2.4"></script>
+  <script defer src="app.js?v=3.2.5"></script>
 </body>
 </html>

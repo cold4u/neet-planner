@@ -6869,65 +6869,130 @@ function renderStudyHubReports() {
 }
 
 // --- FEATURE 4: DAILY TARGET & STREAK SYSTEM ---
+const DEFAULT_TARGET_TEMPLATE = [
+  { id: "quiz", text: "Solve the Daily Recall Quiz challenge" },
+  { id: "syllabus", text: "Read line-by-line NCERT/Study scheduled topics of the day" },
+  { id: "pyq", text: "Solve at least 25 PYQs / Practice Questions" },
+  { id: "hours", text: "Log or focus for at least 4 study hours today" }
+];
+
+function getTargetTemplate() {
+  const stored = safeGetLocalStorage('neet_v3_target_template');
+  if (stored) {
+    try { return JSON.parse(stored); } catch(e) {}
+  }
+  return DEFAULT_TARGET_TEMPLATE;
+}
+
+function saveTargetTemplate(template) {
+  safeSetLocalStorage('neet_v3_target_template', JSON.stringify(template));
+}
+
+function getDailyTargetsState(todayStr) {
+  const stored = safeGetLocalStorage('neet_v3_daily_targets_' + todayStr);
+  if (stored) {
+    try { return JSON.parse(stored); } catch(e) {}
+  }
+  return {};
+}
+
+function saveDailyTargetsState(todayStr, state) {
+  safeSetLocalStorage('neet_v3_daily_targets_' + todayStr, JSON.stringify(state));
+}
+
 function initDailyTargets() {
-  const todayStr = new Date().toISOString().split('T')[0];
-  const targets = JSON.parse(safeGetLocalStorage('neet_v3_daily_targets_' + todayStr) || '{"quiz":false,"syllabus":false,"pyq":false,"hours":false}');
-  
-  const qEl = document.getElementById('tgt-daily-quiz');
-  const sEl = document.getElementById('tgt-syllabus-read');
-  const pEl = document.getElementById('tgt-pyqs');
-  const hEl = document.getElementById('tgt-study-hours');
-  
-  if (qEl) qEl.checked = targets.quiz;
-  if (sEl) sEl.checked = targets.syllabus;
-  if (pEl) pEl.checked = targets.pyq;
-  if (hEl) hEl.checked = targets.hours;
-  
+  renderDailyTargetsChecklist();
   updateDailyTargetsProgress();
 }
 
-function toggleDailyTarget(key) {
+function renderDailyTargetsChecklist() {
+  const container = document.getElementById('daily-targets-list-container');
+  if (!container) return;
+
   const todayStr = new Date().toISOString().split('T')[0];
-  const targets = JSON.parse(safeGetLocalStorage('neet_v3_daily_targets_' + todayStr) || '{"quiz":false,"syllabus":false,"pyq":false,"hours":false}');
+  const template = getTargetTemplate();
+  const state = getDailyTargetsState(todayStr);
+
+  let html = '';
+  template.forEach(item => {
+    const isChecked = state[item.id] === true;
+    html += `
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:13px; padding:2px 0;">
+        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; flex:1; text-align:left;">
+          <input type="checkbox" id="tgt-cb-${item.id}" onchange="toggleDailyTargetDynamic('${item.id}')" ${isChecked ? 'checked' : ''} style="width:16px; height:16px; accent-color:#f43f5e; flex-shrink:0;">
+          <span style="color: ${isChecked ? 'var(--text-muted)' : 'var(--text-primary)'}; text-decoration: ${isChecked ? 'line-through' : 'none'}; transition: all 0.2s;">${item.text}</span>
+        </label>
+        
+        <!-- Delete Button (Visible only when in edit mode) -->
+        <button class="target-delete-btn" onclick="removeTargetItem('${item.id}')" style="display:none; background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:11px; font-weight:700; padding:2px 6px;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--text-muted)'">✕</button>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleDailyTargetDynamic(id) {
+  const cb = document.getElementById(`tgt-cb-${id}`);
+  if (!cb) return;
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const state = getDailyTargetsState(todayStr);
+  state[id] = cb.checked;
+
+  saveDailyTargetsState(todayStr, state);
+  renderDailyTargetsChecklist(); // re-render to apply strikethrough instantly
   
-  const qEl = document.getElementById('tgt-daily-quiz');
-  const sEl = document.getElementById('tgt-syllabus-read');
-  const pEl = document.getElementById('tgt-pyqs');
-  const hEl = document.getElementById('tgt-study-hours');
-  
-  if (key === 'quiz' && qEl) targets.quiz = qEl.checked;
-  else if (key === 'syllabus' && sEl) targets.syllabus = sEl.checked;
-  else if (key === 'pyq' && pEl) targets.pyq = pEl.checked;
-  else if (key === 'hours' && hEl) targets.hours = hEl.checked;
-  
-  safeSetLocalStorage('neet_v3_daily_targets_' + todayStr, JSON.stringify(targets));
+  // Keep delete buttons visible if we toggle during edit mode
+  if (targetEditModeActive) {
+    const deleteBtns = document.querySelectorAll('.target-delete-btn');
+    deleteBtns.forEach(el => el.style.display = 'block');
+  }
+
   updateDailyTargetsProgress();
 }
 
 function updateDailyTargetsProgress() {
   const todayStr = new Date().toISOString().split('T')[0];
-  const targets = JSON.parse(safeGetLocalStorage('neet_v3_daily_targets_' + todayStr) || '{"quiz":false,"syllabus":false,"pyq":false,"hours":false}');
-  
+  const template = getTargetTemplate();
+  const state = getDailyTargetsState(todayStr);
+
+  if (template.length === 0) {
+    const bar = document.getElementById('target-progress-bar');
+    if (bar) bar.style.width = '0%';
+    const countBadge = document.getElementById('target-streak-count');
+    if (countBadge) countBadge.textContent = '0';
+    return;
+  }
+
   let checkedCount = 0;
-  if (targets.quiz) checkedCount++;
-  if (targets.syllabus) checkedCount++;
-  if (targets.pyq) checkedCount++;
-  if (targets.hours) checkedCount++;
-  
-  const percentage = (checkedCount / 4) * 100;
+  template.forEach(item => {
+    if (state[item.id] === true) {
+      checkedCount++;
+    }
+  });
+
+  const percentage = (checkedCount / template.length) * 100;
   const bar = document.getElementById('target-progress-bar');
   if (bar) bar.style.width = percentage + '%';
-  
-  calculateTargetStreak();
+
+  calculateTargetStreakDynamic();
 }
 
-function calculateTargetStreak() {
+function calculateTargetStreakDynamic() {
   const completedDates = JSON.parse(safeGetLocalStorage('neet_v3_target_streak_dates') || '[]');
   const todayStr = new Date().toISOString().split('T')[0];
   
-  const targetsToday = JSON.parse(safeGetLocalStorage('neet_v3_daily_targets_' + todayStr) || '{"quiz":false,"syllabus":false,"pyq":false,"hours":false}');
-  const isTodayDone = targetsToday.quiz && targetsToday.syllabus && targetsToday.pyq && targetsToday.hours;
-  
+  const template = getTargetTemplate();
+  const state = getDailyTargetsState(todayStr);
+
+  let isTodayDone = template.length > 0;
+  template.forEach(item => {
+    if (state[item.id] !== true) {
+      isTodayDone = false;
+    }
+  });
+
   let updatedDates = [...completedDates];
   if (isTodayDone) {
     if (!updatedDates.includes(todayStr)) {
@@ -8008,6 +8073,76 @@ function resetPlannerEverything() {
   }
 }
 
+let targetEditModeActive = false;
+
+function toggleEditTargetsMode() {
+  const btn = document.getElementById('toggle-edit-targets-btn');
+  const editControls = document.getElementById('target-edit-controls');
+  if (!editControls) return;
+
+  targetEditModeActive = !targetEditModeActive;
+
+  if (targetEditModeActive) {
+    if (btn) btn.textContent = "Done ✕";
+    editControls.style.display = 'flex';
+    const deleteBtns = document.querySelectorAll('.target-delete-btn');
+    deleteBtns.forEach(el => el.style.display = 'block');
+  } else {
+    if (btn) btn.textContent = "Customize ✏️";
+    editControls.style.display = 'none';
+    const deleteBtns = document.querySelectorAll('.target-delete-btn');
+    deleteBtns.forEach(el => el.style.display = 'none');
+  }
+}
+
+function addNewTargetItem() {
+  const input = document.getElementById('new-target-text-input');
+  if (!input) return;
+
+  const text = input.value.trim();
+  if (!text) {
+    showToast("⚠️ Target description cannot be empty.");
+    return;
+  }
+
+  const template = getTargetTemplate();
+  const newId = 'target_' + Date.now();
+  template.push({ id: newId, text: text });
+  
+  saveTargetTemplate(template);
+  input.value = '';
+
+  renderDailyTargetsChecklist();
+  if (targetEditModeActive) {
+    const deleteBtns = document.querySelectorAll('.target-delete-btn');
+    deleteBtns.forEach(el => el.style.display = 'block');
+  }
+
+  updateDailyTargetsProgress();
+  showToast("🎯 Custom target added successfully!");
+}
+
+function removeTargetItem(id) {
+  let template = getTargetTemplate();
+  template = template.filter(item => item.id !== id);
+
+  saveTargetTemplate(template);
+  
+  const todayStr = new Date().toISOString().split('T')[0];
+  const state = getDailyTargetsState(todayStr);
+  delete state[id];
+  saveDailyTargetsState(todayStr, state);
+
+  renderDailyTargetsChecklist();
+  if (targetEditModeActive) {
+    const deleteBtns = document.querySelectorAll('.target-delete-btn');
+    deleteBtns.forEach(el => el.style.display = 'block');
+  }
+
+  updateDailyTargetsProgress();
+  showToast("🗑️ Target removed.");
+}
+
 window.launchPhysicsWallah = launchPhysicsWallah;
 window.discardPwSession = discardPwSession;
 window.forceLogPwSession = forceLogPwSession;
@@ -8025,6 +8160,10 @@ window.exportPlannerData = exportPlannerData;
 window.triggerImportInput = triggerImportInput;
 window.importPlannerData = importPlannerData;
 window.resetPlannerEverything = resetPlannerEverything;
+window.toggleEditTargetsMode = toggleEditTargetsMode;
+window.addNewTargetItem = addNewTargetItem;
+window.removeTargetItem = removeTargetItem;
+window.toggleDailyTargetDynamic = toggleDailyTargetDynamic;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
