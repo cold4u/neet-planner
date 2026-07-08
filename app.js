@@ -2337,8 +2337,165 @@ function safeSetSessionStorage(key, value) {
           weakList.innerHTML = wHtml;
         }
       }
+      try { updateMockScoreTrajectoryChart(); } catch(e) { console.error("Error in updateMockScoreTrajectoryChart:", e); }
     }
-    
+
+    function updateMockScoreTrajectoryChart() {
+      const container = document.getElementById('mock-line-chart-container');
+      const emptyMessage = document.getElementById('mock-line-chart-empty');
+      const bestScoreEl = document.getElementById('best-mock-score');
+      const avgScoreEl = document.getElementById('avg-mock-score');
+      if (!container) return;
+
+      if (!mockTests || mockTests.length === 0) {
+        if (emptyMessage) emptyMessage.style.display = 'block';
+        if (bestScoreEl) bestScoreEl.innerHTML = '-- <span style="font-size:12px; font-weight:500; color:var(--text-muted);">/ 720</span>';
+        if (avgScoreEl) avgScoreEl.innerHTML = '-- <span style="font-size:12px; font-weight:500; color:var(--text-muted);">/ 720</span>';
+        return;
+      }
+
+      if (emptyMessage) emptyMessage.style.display = 'none';
+
+      let maxScore = 0;
+      let totalSum = 0;
+      mockTests.forEach(t => {
+        if (t.total > maxScore) maxScore = t.total;
+        totalSum += t.total;
+      });
+      const avgScore = Math.round(totalSum / mockTests.length);
+
+      if (bestScoreEl) bestScoreEl.innerHTML = `${maxScore} <span style="font-size:12px; font-weight:500; color:var(--text-muted);">/ 720</span>`;
+      if (avgScoreEl) avgScoreEl.innerHTML = `${avgScore} <span style="font-size:12px; font-weight:500; color:var(--text-muted);">/ 720</span>`;
+
+      const sortedTests = [...mockTests].slice(0, 10).reverse();
+      const count = sortedTests.length;
+
+      const width = 500;
+      const height = 150;
+      const paddingLeft = 35;
+      const paddingRight = 15;
+      const paddingTop = 15;
+      const paddingBottom = 20;
+
+      const chartWidth = width - paddingLeft - paddingRight;
+      const chartHeight = height - paddingTop - paddingBottom;
+
+      const getX = (index) => {
+        if (count <= 1) return paddingLeft + chartWidth / 2;
+        return paddingLeft + (index / (count - 1)) * chartWidth;
+      };
+
+      const getY = (score) => {
+        const pct = score / 720;
+        return paddingTop + chartHeight - (pct * chartHeight);
+      };
+
+      let linePath = '';
+      let areaPath = '';
+      
+      if (count > 0) {
+        linePath = `M ${getX(0)} ${getY(sortedTests[0].total)}`;
+        areaPath = `M ${getX(0)} ${getY(0)} L ${getX(0)} ${getY(sortedTests[0].total)}`;
+
+        for (let i = 1; i < count; i++) {
+          const x = getX(i);
+          const y = getY(sortedTests[i].total);
+          linePath += ` L ${x} ${y}`;
+          areaPath += ` L ${x} ${y}`;
+        }
+        
+        areaPath += ` L ${getX(count - 1)} ${getY(0)} Z`;
+      }
+
+      let gridLines = '';
+      const ticks = [180, 360, 540, 720];
+      ticks.forEach(score => {
+        const y = getY(score);
+        gridLines += `
+          <line x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="3,3" />
+          <text x="${paddingLeft - 8}" y="${y + 3}" fill="var(--text-muted)" font-size="8" text-anchor="end">${score}</text>
+        `;
+      });
+
+      let points = '';
+      let interactiveOverlays = '';
+
+      sortedTests.forEach((t, i) => {
+        const x = getX(i);
+        const y = getY(t.total);
+        
+        points += `
+          <circle cx="${x}" cy="${y}" r="4" fill="var(--primary)" stroke="#0c1222" stroke-width="2" />
+        `;
+
+        let dateStr = t.date || '';
+        if (dateStr.includes('-')) {
+          const parts = dateStr.split('-');
+          if (parts.length >= 3) dateStr = `${parts[2]}/${parts[1]}`;
+        }
+
+        gridLines += `
+          <text x="${x}" y="${height - 4}" fill="var(--text-muted)" font-size="8" text-anchor="middle">${dateStr}</text>
+        `;
+
+        interactiveOverlays += `
+          <rect x="${x - 15}" y="${paddingTop}" width="30" height="${chartHeight + 10}" fill="transparent" style="cursor:pointer;" 
+            onmouseover="showMockChartTooltip(event, '${t.name.replace(/'/g, "\\'")}', '${t.date}', ${t.total}, ${t.phy}, ${t.che}, ${t.bio})" 
+            onmouseout="hideMockChartTooltip()" />
+        `;
+      });
+
+      const svg = `
+        <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:100%; display:block; overflow:visible;">
+          <defs>
+            <linearGradient id="chart-area-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.25" />
+              <stop offset="100%" stop-color="var(--primary)" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
+          
+          ${gridLines}
+          ${count > 0 ? `<path d="${areaPath}" fill="url(#chart-area-grad)" />` : ''}
+          ${count > 0 ? `<path d="${linePath}" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />` : ''}
+          ${points}
+          ${interactiveOverlays}
+        </svg>
+      `;
+
+      container.innerHTML = svg;
+    }
+
+    function showMockChartTooltip(e, name, date, total, phy, che, bio) {
+      const tooltip = document.getElementById('mock-line-chart-tooltip');
+      const container = document.getElementById('mock-line-chart-container');
+      if (!tooltip || !container) return;
+
+      tooltip.innerHTML = `
+        <div style="font-weight:700; color:var(--text-primary); margin-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:4px;">${name}</div>
+        <div style="color:var(--text-muted); margin-bottom:4px;">Date: ${date}</div>
+        <div style="font-size:13px; font-weight:800; color:var(--primary); margin-bottom:6px;">Score: ${total}/720</div>
+        <div style="display:flex; flex-direction:column; gap:2px; font-size:10px; color:var(--text-secondary);">
+          <span>Physics: <strong style="color:var(--text-primary);">${phy}</strong></span>
+          <span>Chemistry: <strong style="color:var(--text-primary);">${che}</strong></span>
+          <span>Biology: <strong style="color:var(--text-primary);">${bio}</strong></span>
+        </div>
+      `;
+
+      tooltip.style.display = 'block';
+
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      tooltip.style.left = (x + 12) + 'px';
+      tooltip.style.top = (y - 75) + 'px';
+    }
+
+    function hideMockChartTooltip() {
+      const tooltip = document.getElementById('mock-line-chart-tooltip');
+      if (tooltip) tooltip.style.display = 'none';
+    }
+
     // Overview tab calculations
     function updateCountdown() {
       const now = new Date();
@@ -8163,6 +8320,9 @@ window.toggleEditTargetsMode = toggleEditTargetsMode;
 window.addNewTargetItem = addNewTargetItem;
 window.removeTargetItem = removeTargetItem;
 window.toggleDailyTargetDynamic = toggleDailyTargetDynamic;
+window.updateMockScoreTrajectoryChart = updateMockScoreTrajectoryChart;
+window.showMockChartTooltip = showMockChartTooltip;
+window.hideMockChartTooltip = hideMockChartTooltip;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
