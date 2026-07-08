@@ -1597,7 +1597,10 @@
 
           <!-- Video Log History -->
           <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:12px;">
-            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">📋 Video Study History</h2>
+            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; justify-content:space-between; width:100%;">
+              <span style="display:flex; align-items:center; gap:8px;">📋 Video Study History</span>
+              <button onclick="clearAllStudyVideos()" class="btn btn-secondary" style="padding:2px 8px; font-size:10px; background:transparent; border:1px solid var(--border-color); color:var(--text-muted); cursor:pointer; font-weight:700; border-radius:4px; transition:all 0.2s;" onmouseover="this.style.color='var(--text-warning)'" onmouseout="this.style.color='var(--text-muted)'">Clear All</button>
+            </h2>
             <div id="sh-video-log-list" style="display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto; font-size:12px; color:var(--text-secondary);">
               <div style="text-align:center; padding:12px; color:var(--text-muted);">No videos tracked today yet.</div>
             </div>
@@ -1605,7 +1608,10 @@
 
           <!-- Search Query Logs -->
           <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:12px;">
-            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px;">🕵️ Concept Search History</h2>
+            <h2 style="margin:0; font-size:15px; display:flex; align-items:center; justify-content:space-between; width:100%;">
+              <span style="display:flex; align-items:center; gap:8px;">🕵️ Concept Search History</span>
+              <button onclick="clearAllStudyQueries()" class="btn btn-secondary" style="padding:2px 8px; font-size:10px; background:transparent; border:1px solid var(--border-color); color:var(--text-muted); cursor:pointer; font-weight:700; border-radius:4px; transition:all 0.2s;" onmouseover="this.style.color='var(--text-warning)'" onmouseout="this.style.color='var(--text-muted)'">Clear All</button>
+            </h2>
             <div id="sh-query-log-list" style="display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto; font-size:12px; color:var(--text-secondary);">
               <div style="text-align:center; padding:12px; color:var(--text-muted);">No queries logged today yet.</div>
             </div>

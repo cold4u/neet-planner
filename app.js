@@ -7754,6 +7754,29 @@ function deleteStudyQuery(timestamp) {
   }
 }
 
+function clearAllStudyVideos() {
+  const logs = getStudyHubLogs();
+  const todayStr = new Date().toISOString().split('T')[0];
+  if (logs[todayStr]) {
+    logs[todayStr].videoSessions = [];
+    logs[todayStr].watchSeconds = 0; // also reset watch time metric for clean slate
+    saveStudyHubLogs(logs);
+    renderStudyHubReports();
+    showToast("🗑️ All video logs cleared.");
+  }
+}
+
+function clearAllStudyQueries() {
+  const logs = getStudyHubLogs();
+  const todayStr = new Date().toISOString().split('T')[0];
+  if (logs[todayStr]) {
+    logs[todayStr].queries = [];
+    saveStudyHubLogs(logs);
+    renderStudyHubReports();
+    showToast("🗑️ All query logs cleared.");
+  }
+}
+
 window.launchPhysicsWallah = launchPhysicsWallah;
 window.discardPwSession = discardPwSession;
 window.forceLogPwSession = forceLogPwSession;
@@ -7761,6 +7784,8 @@ window.discardPwConfirmation = discardPwConfirmation;
 window.savePwLoggedSession = savePwLoggedSession;
 window.deleteStudyVideoSession = deleteStudyVideoSession;
 window.deleteStudyQuery = deleteStudyQuery;
+window.clearAllStudyVideos = clearAllStudyVideos;
+window.clearAllStudyQueries = clearAllStudyQueries;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
