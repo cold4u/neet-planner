@@ -6984,7 +6984,6 @@ function fetchWikiSummary(query) {
 
   const apiKey = safeGetLocalStorage('gemini_api_key');
   if (apiKey) {
-    // Use AI Doubt Solver
     resultsContent.innerHTML = `<span class="active-pulse-dot" style="animation: pulse 1.5s infinite; color:var(--primary); font-weight:700;">🤖 AI Doubt Solver is thinking...</span>`;
     
     fetchGeminiExplanation(query)
@@ -6999,69 +6998,26 @@ function fetchWikiSummary(query) {
         `;
       })
       .catch(err => {
-        console.error("AI Doubt Solver failed, falling back to Wikipedia:", err);
-        resultsContent.innerHTML = `<span style="color:var(--text-warning); font-size:11px;">⚠️ AI Doubt Solver failed. Falling back to Wikipedia...</span>`;
-        setTimeout(() => {
-          runWikiFallback(query, resultsContent, wikiBtn);
-        }, 1500);
+        console.error("AI Doubt Solver failed:", err);
+        resultsContent.innerHTML = `
+          <div style="background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); border-radius:10px; padding:16px; text-align:center; font-size:12px; line-height:1.6;">
+            <div style="font-size:24px; margin-bottom:8px;">⚠️</div>
+            <div style="font-weight:700; color:var(--tertiary); font-size:13px; margin-bottom:6px;">AI Explanation Failed</div>
+            <p style="color:var(--text-secondary); margin:0 0 12px 0;">We couldn't connect to Google Gemini. Please check your internet connection or verify your API key in the **Settings tab (⚙️)**.</p>
+            <button onclick="navigateTab('settings')" class="btn btn-secondary" style="padding:6px 14px; font-size:11px; font-weight:700; border-radius:6px; cursor:pointer; background:transparent; border:1px solid var(--border-color); color:var(--text-secondary);">Verify Settings ⚙️</button>
+          </div>
+        `;
       });
   } else {
-    // No API key - show alert banner and fallback to Wikipedia
-    runWikiFallback(query, resultsContent, wikiBtn, true);
-  }
-}
-
-function runWikiFallback(query, resultsContent, wikiBtn, showKeyWarning = false) {
-  const cleanQuery = encodeURIComponent(query);
-  const openSearchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${cleanQuery}&limit=1&namespace=0&format=json&origin=*`;
-  
-  let prefix = "";
-  if (showKeyWarning) {
-    prefix = `
-      <div style="background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.15); border-radius:6px; padding:8px; margin-bottom:12px; font-size:11px; color:#f59e0b; text-align:left; line-height: 1.4;">
-        🔑 <strong>AI Doubt Solver is locked:</strong> Save your Gemini API Key in the Settings tab (⚙️) to get AI explanations for any doubt. Falling back to Wikipedia...
+    resultsContent.innerHTML = `
+      <div style="background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); border-radius:10px; padding:16px; text-align:center; font-size:12px; line-height:1.6;">
+        <div style="font-size:24px; margin-bottom:8px;">🔑</div>
+        <div style="font-weight:700; color:var(--tertiary); font-size:13px; margin-bottom:6px;">AI Doubt Solver is Locked</div>
+        <p style="color:var(--text-secondary); margin:0 0 12px 0;">Please save your Gemini API Key in the **Settings tab (⚙️)** to get instant AI explanation cards for any doubts or questions.</p>
+        <button onclick="navigateTab('settings')" class="btn btn-primary" style="padding:6px 14px; font-size:11px; font-weight:700; border-radius:6px; cursor:pointer;">Go to Settings ⚙️</button>
       </div>
     `;
   }
-
-  resultsContent.innerHTML = prefix + `<span style="color:var(--text-muted);">🔍 Searching Wikipedia for "${query}"...</span>`;
-
-  fetch(openSearchUrl)
-    .then(r => r.json())
-    .then(data => {
-      if (data && data[1] && data[1].length > 0) {
-        const bestTitle = data[1][0];
-        const pageUrl = data[3][0];
-        if (wikiBtn) wikiBtn.href = pageUrl;
-        
-        const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(bestTitle)}`;
-        return fetch(summaryUrl);
-      } else {
-        throw new Error("No wiki match found");
-      }
-    })
-    .then(r => {
-      if (r.ok) return r.json();
-      throw new Error("Wiki summary failed");
-    })
-    .then(summary => {
-      let html = prefix + `<h3 style="margin:0 0 6px 0; color:var(--text-primary); font-size:13px;">${summary.title}</h3>`;
-      if (summary.thumbnail && summary.thumbnail.source) {
-        html += `<img src="${summary.thumbnail.source}" style="float:right; max-width:80px; max-height:80px; border-radius:6px; margin:0 0 8px 8px; border:1px solid var(--glass-border);" alt="${summary.title}">`;
-      }
-      html += `<p style="margin:0; font-size:11.5px; line-height:1.4;">${summary.extract}</p>`;
-      resultsContent.innerHTML = html;
-    })
-    .catch(err => {
-      console.warn("Wiki search fallback:", err);
-      resultsContent.innerHTML = prefix + `
-        <div style="padding:4px 0;">
-          <span style="color:var(--text-warning); font-weight:700;">No instant page match found.</span>
-          <p style="margin:4px 0 0 0; font-size:11px; color:var(--text-muted);">We logged your study query. Click below to search broader resources on Google or Wikipedia search results.</p>
-        </div>
-      `;
-      if (wikiBtn) wikiBtn.href = `https://en.wikipedia.org/wiki/Special:Search?search=${cleanQuery}`;
-    });
 }
 
 function closeStudySearchResults() {
