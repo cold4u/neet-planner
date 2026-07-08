@@ -5614,6 +5614,7 @@ function initStudyTimerTab() {
   if (statWeekly) statWeekly.textContent = `${weeklySum.toFixed(1)}h`;
 
   drawStudyTimerGraph();
+  renderWeeklyReportCard();
 }
 
 function drawStudyTimerGraph() {
@@ -5762,6 +5763,155 @@ window.setCustomTimerDuration = setCustomTimerDuration;
 window.showStudyTimerTooltip = showStudyTimerTooltip;
 window.hideStudyTimerTooltip = hideStudyTimerTooltip;
 window.initStudyTimerTab = initStudyTimerTab;
+window.renderWeeklyReportCard = renderWeeklyReportCard;
+
+function renderWeeklyReportCard() {
+  const container = document.getElementById('weekly-report-card-container');
+  if (!container) return;
+  
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  
+  let totalHours = 0;
+  let totalPhy = 0;
+  let totalChe = 0;
+  let totalBio = 0;
+  let totalMCQs = 0;
+  let confSum = 0;
+  let confCount = 0;
+  
+  dates.forEach(d => {
+    const log = trackerLogs.find(l => l.date === d);
+    if (log) {
+      totalHours += log.phyHours + log.cheHours + log.bioHours;
+      totalPhy += log.phyHours;
+      totalChe += log.cheHours;
+      totalBio += log.bioHours;
+      totalMCQs += log.mcqs;
+      if (log.confidence) {
+        confSum += log.confidence;
+        confCount++;
+      }
+    }
+  });
+  
+  const avgConfidence = confCount > 0 ? (confSum / confCount) : 3.0;
+  
+  const weekTests = mockTests.filter(t => dates.includes(t.date));
+  const testsCount = weekTests.length;
+  const avgScore = testsCount > 0 ? Math.round(weekTests.reduce((sum, t) => sum + t.total, 0) / testsCount) : 0;
+  
+  let stepsCount = 0;
+  for (const chName in chapterProgress) {
+    const ch = chapterProgress[chName];
+    if (ch) {
+      if (dates.includes(ch.understand_date)) stepsCount++;
+      if (dates.includes(ch.practice_date)) stepsCount++;
+      if (dates.includes(ch.revise_date)) stepsCount++;
+    }
+  }
+  
+  let gradeText = "";
+  let gradeColor = "";
+  let gradeBg = "";
+  let gradeIcon = "";
+  
+  if (totalHours >= 42) {
+    gradeText = "Elite Master Class";
+    gradeColor = "#ffd700";
+    gradeBg = "rgba(255, 215, 0, 0.15)";
+    gradeIcon = "🏆";
+  } else if (totalHours >= 21) {
+    gradeText = "Steady Runner Class";
+    gradeColor = "#00d4aa";
+    gradeBg = "rgba(0, 212, 170, 0.15)";
+    gradeIcon = "🚀";
+  } else {
+    gradeText = "Needs Focus Class";
+    gradeColor = "#ff6b6b";
+    gradeBg = "rgba(255, 107, 107, 0.15)";
+    gradeIcon = "⚠️";
+  }
+  
+  let advice = "Consistent daily targets build your foundation. ";
+  if (totalHours >= 35) {
+    advice += "Spectacular effort this week! Your consistency is exemplary. Keep pushing this magnificent momentum to score 650+ on mocks! 🌟";
+  } else {
+    const minHours = Math.min(totalPhy, totalChe, totalBio);
+    if (totalHours > 0) {
+      if (minHours === totalPhy) {
+        advice += "Your Physics study time is lagging this week. Physics numerical practice is crucial — consider prioritizing a 45-minute Physics sprint today! ⚡";
+      } else if (minHours === totalChe) {
+        advice += "Your Chemistry study hours are relatively low. Try dedicating your next focus session to Organic conversion revisions! 🧪";
+      } else {
+        advice += "Biology theory reviews seem low this week. Assign a 25-minute Pomodoro block to revise high-yield NCERT diagrams today! 🧬";
+      }
+    } else {
+      advice += "Your timer logs are currently empty. Start studying today to log your first session and unlock real-time analytics graphs! ⏱️";
+    }
+  }
+  
+  if (avgConfidence < 3.0 && totalHours > 0) {
+    advice += " Additionally, your average confidence score indicates difficulties. Review weak chapters in your **Error Book (📕)** to clear up doubts.";
+  }
+  
+  const startD = new Date(dates[6]);
+  const endD = new Date(dates[0]);
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const dateRangeStr = `${startD.getDate()} ${monthNames[startD.getMonth()]} - ${endD.getDate()} ${monthNames[endD.getMonth()]}`;
+
+  container.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 style="margin:0; font-size:12px; display:flex; align-items:center; gap:6px; font-weight:800; text-transform:uppercase; color:var(--text-primary);">📋 Weekly Report Card</h2>
+      <span style="font-size:9.5px; color:var(--text-muted); font-weight:700;">${dateRangeStr}</span>
+    </div>
+    
+    <div style="display:flex; align-items:center; gap:12px; background:${gradeBg}; border:1px solid ${gradeColor}33; border-radius:10px; padding:10px 14px; margin-top:4px;">
+      <span style="font-size:22px;">${gradeIcon}</span>
+      <div style="text-align:left;">
+        <div style="font-size:9px; color:var(--text-muted); text-transform:uppercase; font-weight:700; letter-spacing:0.5px;">Weekly Class Standing</div>
+        <div style="font-size:13px; font-weight:800; color:${gradeColor};">${gradeText}</div>
+      </div>
+    </div>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px; text-align:left;">
+      <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px; padding:8px 10px;">
+        <span style="font-size:9px; color:var(--text-muted); display:block; margin-bottom:2px;">Study Target Met</span>
+        <span style="font-size:12px; font-weight:700; color:var(--text-primary);">${totalHours.toFixed(1)}h / 42.0h</span>
+        <div style="width:100%; height:4px; background:rgba(255,255,255,0.05); border-radius:2px; margin-top:4px; overflow:hidden;">
+          <div style="width:${Math.min(100, (totalHours / 42) * 100)}%; height:100%; background:${gradeColor}; border-radius:2px;"></div>
+        </div>
+      </div>
+      
+      <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px; padding:8px 10px;">
+        <span style="font-size:9px; color:var(--text-muted); display:block; margin-bottom:2px;">MCQs Solved</span>
+        <span style="font-size:12px; font-weight:700; color:var(--text-primary);">${totalMCQs} MCQs</span>
+        <span style="font-size:8px; color:var(--text-muted); display:block; margin-top:4px;">Keep practicing daily</span>
+      </div>
+      
+      <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px; padding:8px 10px;">
+        <span style="font-size:9px; color:var(--text-muted); display:block; margin-bottom:2px;">Syllabus Steps Done</span>
+        <span style="font-size:12px; font-weight:700; color:var(--text-primary);">${stepsCount} Steps</span>
+        <span style="font-size:8px; color:var(--text-muted); display:block; margin-top:4px;">Chapters checked off</span>
+      </div>
+      
+      <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px; padding:8px 10px;">
+        <span style="font-size:9px; color:var(--text-muted); display:block; margin-bottom:2px;">Mock Standings</span>
+        <span style="font-size:12px; font-weight:700; color:var(--text-primary);">${testsCount > 0 ? avgScore + ' (' + testsCount + 't)' : 'No Mocks Taken'}</span>
+        <span style="font-size:8px; color:var(--text-muted); display:block; margin-top:4px;">Average mock score</span>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.04); border-radius:10px; padding:12px 14px; font-size:11px; line-height:1.5; color:var(--text-secondary); text-align:left;">
+      <span style="font-weight:700; color:${gradeColor}; display:block; font-size:9px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">🎓 Counselor Advice</span>
+      ${advice}
+    </div>
+  `;
+}
 
 // 9. BACKUP & RESTORE CENTER
 
