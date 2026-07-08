@@ -7777,6 +7777,237 @@ function clearAllStudyQueries() {
   }
 }
 
+// --- EMOTIONAL SUPPORT SECTION ---
+const MOTIVATIONAL_QUOTES = [
+  { text: "The only limit to our realization of tomorrow will be our doubts of today.", author: "Franklin D. Roosevelt" },
+  { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+  { text: "Your time is limited, so don't waste it living someone else's life.", author: "Steve Jobs" },
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { text: "Don't wish it were easier. Wish you were better.", author: "Jim Rohn" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "Study like there's no tomorrow, because if you keep putting off your studies, you'll have no tomorrow.", author: "Anonymous" },
+  { text: "Focus on the progress, not the perfection.", author: "Bill Gates" },
+  { text: "Do what you can, with what you have, where you are.", author: "Theodore Roosevelt" },
+  { text: "The difference between ordinary and extraordinary is that little extra.", author: "Jimmy Johnson" },
+  { text: "Persistence guarantees that results are inevitable.", author: "Paramahansa Yogananda" }
+];
+
+function rotateMotivationalQuote() {
+  const textEl = document.getElementById('motivational-quote-text');
+  const authorEl = document.getElementById('motivational-quote-author');
+  if (!textEl || !authorEl) return;
+
+  const randomQuote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+  textEl.textContent = `"${randomQuote.text}"`;
+  authorEl.textContent = `— ${randomQuote.author}`;
+}
+
+let breathingTimer = null;
+let breathingActive = false;
+
+function toggleBreathingExercise() {
+  const btn = document.getElementById('breathing-toggle-btn');
+  const info = document.getElementById('breathing-phase-info');
+  const outerCircle = document.getElementById('breathing-circle-outer');
+  const innerCircleText = document.getElementById('breathing-circle-inner');
+
+  if (!btn || !info || !outerCircle || !innerCircleText) return;
+
+  if (breathingActive) {
+    breathingActive = false;
+    clearTimeout(breathingTimer);
+    btn.textContent = "Start Exercise";
+    btn.className = "btn btn-primary";
+    btn.style = "";
+    info.textContent = "Relax and click Start";
+    outerCircle.style.transform = "scale(0.6)";
+    outerCircle.style.background = "var(--primary)";
+    innerCircleText.textContent = "Inhale";
+    innerCircleText.style.transform = "scale(0.6)";
+  } else {
+    breathingActive = true;
+    btn.textContent = "Stop Exercise";
+    btn.className = "btn btn-secondary";
+    btn.style.borderColor = "rgba(239, 68, 68, 0.2)";
+    btn.style.background = "rgba(239, 68, 68, 0.05)";
+    btn.style.color = "#ef4444";
+    runBreathingCycle();
+  }
+}
+
+function runBreathingCycle() {
+  if (!breathingActive) return;
+
+  const info = document.getElementById('breathing-phase-info');
+  const outerCircle = document.getElementById('breathing-circle-outer');
+  const innerCircleText = document.getElementById('breathing-circle-inner');
+  if (!info || !outerCircle || !innerCircleText) return;
+
+  // Phase 1: Inhale (4s)
+  info.textContent = "💨 Breathe In deeply... (4s)";
+  outerCircle.style.transition = "transform 4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease";
+  outerCircle.style.transform = "scale(1.3)";
+  outerCircle.style.background = "var(--primary)";
+  innerCircleText.style.transition = "transform 4s cubic-bezier(0.4, 0, 0.2, 1)";
+  innerCircleText.style.transform = "scale(1.1)";
+  innerCircleText.textContent = "Inhale";
+
+  breathingTimer = setTimeout(() => {
+    if (!breathingActive) return;
+
+    // Phase 2: Hold (7s)
+    info.textContent = "🛑 Hold your breath... (7s)";
+    outerCircle.style.transition = "transform 7s linear, background-color 0.5s ease";
+    outerCircle.style.background = "#fbbf24";
+    innerCircleText.textContent = "Hold";
+
+    breathingTimer = setTimeout(() => {
+      if (!breathingActive) return;
+
+      // Phase 3: Exhale (8s)
+      info.textContent = "🌬️ Breathe Out slowly... (8s)";
+      outerCircle.style.transition = "transform 8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease";
+      outerCircle.style.transform = "scale(0.6)";
+      outerCircle.style.background = "var(--primary)";
+      innerCircleText.style.transition = "transform 8s cubic-bezier(0.4, 0, 0.2, 1)";
+      innerCircleText.style.transform = "scale(0.6)";
+      innerCircleText.textContent = "Exhale";
+
+      breathingTimer = setTimeout(() => {
+        if (!breathingActive) return;
+        runBreathingCycle();
+      }, 8000);
+
+    }, 7000);
+
+  }, 4000);
+}
+
+const MOOD_FEEDBACKS = {
+  great: "Awesome! Catch this momentum and crush your targets today. Remember to take small breaks to preserve this positive energy! ⚡",
+  good: "That's wonderful! You are in a balanced state of mind. Keep up the consistent focus, you've got this! 🌟",
+  okay: "Balanced and steady wins the race. Take a deep breath, review your goals, and proceed one chapter at a time. 🧘",
+  stressed: "It's completely okay to feel overwhelmed. NEET prep is demanding. Pause for 5 minutes, try the 4-7-8 breathing circle below, and remember your worth isn't defined by a score. 💛",
+  low: "Please be gentle with yourself today. If you need to scale back study hours, do it. Your mental health is the engine of your success. You can talk to Shubh on Insta anytime. 🤝"
+};
+
+function selectDailyMood(moodKey, clickedBtn) {
+  const container = document.getElementById('mood-feedback-container');
+  const textEl = document.getElementById('mood-feedback-text');
+  if (!container || !textEl) return;
+
+  textEl.textContent = MOOD_FEEDBACKS[moodKey] || "";
+  container.style.display = 'block';
+
+  if (clickedBtn && clickedBtn.parentElement) {
+    const buttons = clickedBtn.parentElement.querySelectorAll('button');
+    buttons.forEach(btn => {
+      btn.style.borderColor = 'var(--glass-border)';
+      btn.style.background = 'rgba(255, 255, 255, 0.03)';
+      btn.style.boxShadow = 'none';
+    });
+    clickedBtn.style.borderColor = 'var(--primary)';
+    clickedBtn.style.background = 'rgba(0, 212, 170, 0.08)';
+    clickedBtn.style.boxShadow = '0 0 10px rgba(0, 212, 170, 0.15)';
+  }
+}
+
+// --- SUPPORT TAB SECTION ---
+function toggleFaqAccordion(index) {
+  const content = document.getElementById(`faq-content-${index}`);
+  const chevron = document.getElementById(`faq-chevron-${index}`);
+  if (!content || !chevron) return;
+
+  if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+    content.style.maxHeight = '0px';
+    chevron.style.transform = 'rotate(0deg)';
+  } else {
+    for (let i = 0; i < 3; i++) {
+      const c = document.getElementById(`faq-content-${i}`);
+      const ch = document.getElementById(`faq-chevron-${i}`);
+      if (c && ch) {
+        c.style.maxHeight = '0px';
+        ch.style.transform = 'rotate(0deg)';
+      }
+    }
+    content.style.maxHeight = '150px';
+    chevron.style.transform = 'rotate(180deg)';
+  }
+}
+
+function exportPlannerData() {
+  try {
+    const dataObj = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      dataObj[key] = localStorage.getItem(key);
+    }
+    const jsonStr = JSON.stringify(dataObj, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement("a");
+    a.href = url;
+    const dateStr = new Date().toISOString().split('T')[0];
+    a.download = `SHUBxCOLD_NEET_Planner_Backup_${dateStr}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast("📤 Backup JSON downloaded successfully!");
+  } catch (err) {
+    console.error("Export failed:", err);
+    showToast("❌ Export failed: " + err.message);
+  }
+}
+
+function triggerImportInput() {
+  const input = document.getElementById('planner-import-file-input');
+  if (input) input.click();
+}
+
+function importPlannerData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      if (!importedData || typeof importedData !== 'object') {
+        throw new Error("Invalid backup file format.");
+      }
+      
+      localStorage.clear();
+      for (const key in importedData) {
+        localStorage.setItem(key, importedData[key]);
+      }
+      
+      showToast("📥 Progress restored successfully! Reloading...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (err) {
+      console.error("Import failed:", err);
+      alert("❌ Failed to import backup file: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetPlannerEverything() {
+  const firstConfirm = confirm("⚠️ WARNING: This will permanently wipe all your study logs, progress trackers, targets, and API keys. Are you sure you want to reset EVERYTHING?");
+  if (firstConfirm) {
+    const secondConfirm = confirm("🚨 LAST CHANCE: Do you want to proceed and delete all data permanently?");
+    if (secondConfirm) {
+      localStorage.clear();
+      alert("🗑️ All data cleared. Resetting your workspace...");
+      window.location.reload();
+    }
+  }
+}
+
 window.launchPhysicsWallah = launchPhysicsWallah;
 window.discardPwSession = discardPwSession;
 window.forceLogPwSession = forceLogPwSession;
@@ -7786,6 +8017,14 @@ window.deleteStudyVideoSession = deleteStudyVideoSession;
 window.deleteStudyQuery = deleteStudyQuery;
 window.clearAllStudyVideos = clearAllStudyVideos;
 window.clearAllStudyQueries = clearAllStudyQueries;
+window.rotateMotivationalQuote = rotateMotivationalQuote;
+window.toggleBreathingExercise = toggleBreathingExercise;
+window.selectDailyMood = selectDailyMood;
+window.toggleFaqAccordion = toggleFaqAccordion;
+window.exportPlannerData = exportPlannerData;
+window.triggerImportInput = triggerImportInput;
+window.importPlannerData = importPlannerData;
+window.resetPlannerEverything = resetPlannerEverything;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {

@@ -5630,6 +5630,56 @@ tag in <head>
           </p>
         </div>
       </div>
+
+      <!-- Interactive Wellness Widgets Grid -->
+      <div class="support-wrapper" style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; width: 100%; max-width: 1000px; padding: 0 10px; box-sizing: border-box;">
+        
+        <!-- Motivational Quotes Card -->
+        <div class="support-card" style="display:flex; flex-direction:column; justify-content:space-between; gap:16px; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">✨ Daily Spark</div>
+            <p id="motivational-quote-text" style="font-size: 14px; font-style: italic; line-height: 1.6; color: var(--text-primary); margin: 0 0 8px 0;">"The only limit to our realization of tomorrow will be our doubts of today."</p>
+            <span id="motivational-quote-author" style="font-size: 11px; color: var(--text-muted); font-weight: 600;">— Franklin D. Roosevelt</span>
+          </div>
+          <button onclick="rotateMotivationalQuote()" class="btn btn-secondary" style="align-self: flex-start; padding: 6px 14px; font-size: 11px; font-weight: 700; border: 1px solid var(--border-color); border-radius: 6px;">Next Quote 🔄</button>
+        </div>
+
+        <!-- 4-7-8 Breathing Guide Card -->
+        <div class="support-card" style="display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); position: relative;">
+          <div style="align-self: flex-start; font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">🧘 Stress Reliever (4-7-8)</div>
+          
+          <!-- Animated Circle Container -->
+          <div style="width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; position: relative;">
+            <div id="breathing-circle-outer" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: var(--primary); opacity: 0.15; transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease; transform: scale(0.6);"></div>
+            <div id="breathing-circle-inner" style="width: 70px; height: 70px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #080c18; font-weight: 800; font-size: 12px; z-index: 2; transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1); transform: scale(0.6);">
+              Inhale
+            </div>
+          </div>
+          
+          <div id="breathing-phase-info" style="font-size: 11px; color: var(--text-muted); font-weight: 600; min-height: 16px;">Relax and click Start</div>
+          
+          <button id="breathing-toggle-btn" onclick="toggleBreathingExercise()" class="btn btn-primary" style="padding: 6px 20px; font-size: 11px; font-weight: 700; border-radius: 6px;">Start Exercise</button>
+        </div>
+
+        <!-- Daily Mood Selector Card -->
+        <div class="support-card" style="display:flex; flex-direction:column; justify-content:space-between; gap:16px; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">🧠 Daily Mood Check-In</div>
+            <div style="display: flex; justify-content: space-between; gap: 8px; margin: 12px 0;">
+              <button onclick="selectDailyMood('great', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😄</button>
+              <button onclick="selectDailyMood('good', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">🙂</button>
+              <button onclick="selectDailyMood('okay', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😐</button>
+              <button onclick="selectDailyMood('stressed', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😰</button>
+              <button onclick="selectDailyMood('low', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😢</button>
+            </div>
+            <div id="mood-feedback-container" style="display:none; background: rgba(255,255,255,0.02); border-left: 2px solid var(--primary); padding: 8px 12px; border-radius: 0 6px 6px 0; margin-top: 8px;">
+              <p id="mood-feedback-text" style="font-size: 11px; line-height: 1.4; color: var(--text-secondary); margin: 0;"></p>
+            </div>
+          </div>
+          <div style="font-size: 10px; color: var(--text-muted); font-weight: 500;">How are you holding up today?</div>
+        </div>
+
+      </div>
     </section>
 
 
@@ -5883,6 +5933,91 @@ tag in <head>
         <strong>got ideas or something's broken? slide into my DMs 👇</strong>
         <a href="https://instagram.com/shubh.m_01" target="_blank" class="support-insta-id">@shubh.m_01</a>
       </p>
+    </div>
+
+  </div>
+
+  <!-- Interactive Support Widgets Grid -->
+  <div class="support-wrapper" style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; width: 100%; max-width: 1000px; padding: 0 10px; box-sizing: border-box; align-items: stretch;">
+    
+    <!-- Collapsible FAQ Accordion Card -->
+    <div class="support-card" style="display:flex; flex-direction:column; gap:16px; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); height: 100%; box-sizing: border-box;">
+      <div style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">💡 Frequently Asked Questions</div>
+      
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        
+        <!-- FAQ Item 1 -->
+        <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">
+          <button onclick="toggleFaqAccordion(0)" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: none; padding: 6px 0; color: var(--text-primary); font-weight: 700; font-size: 12.5px; cursor: pointer; text-align: left;">
+            <span>How does the 309-Day Planner schedule work?</span>
+            <span id="faq-chevron-0" style="transition: transform 0.3s ease; transform: rotate(0deg); color: var(--text-muted); font-size: 10px;">▼</span>
+          </button>
+          <div id="faq-content-0" style="max-height: 0px; overflow: hidden; transition: max-height 0.3s cubic-bezier(0, 1, 0, 1); font-size: 11px; line-height: 1.5; color: var(--text-secondary);">
+            <div style="padding-top: 6px;">
+              The plan divides the NEET syllabus over 309 days into systematic daily milestones. Each day lists specific chapters across Physics, Chemistry, and Biology to help you maintain a high-yield learning rhythm and complete the syllabus with multiple rounds of revisions.
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ Item 2 -->
+        <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">
+          <button onclick="toggleFaqAccordion(1)" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: none; padding: 6px 0; color: var(--text-primary); font-weight: 700; font-size: 12.5px; cursor: pointer; text-align: left;">
+            <span>Are mock tests (AI CBT) customizable?</span>
+            <span id="faq-chevron-1" style="transition: transform 0.3s ease; transform: rotate(0deg); color: var(--text-muted); font-size: 10px;">▼</span>
+          </button>
+          <div id="faq-content-1" style="max-height: 0px; overflow: hidden; transition: max-height 0.3s cubic-bezier(0, 1, 0, 1); font-size: 11px; line-height: 1.5; color: var(--text-secondary);">
+            <div style="padding-top: 6px;">
+              Yes! Under the AI CBT Exam tab, you can select custom chapter combinations, select question counts, configure a real-time exam timer, and take tests with immediate answer evaluations, explanation notes, and incorrect-attempt tracking.
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ Item 3 -->
+        <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">
+          <button onclick="toggleFaqAccordion(2)" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: none; padding: 6px 0; color: var(--text-primary); font-weight: 700; font-size: 12.5px; cursor: pointer; text-align: left;">
+            <span>Where is my data stored? Is it safe?</span>
+            <span id="faq-chevron-2" style="transition: transform 0.3s ease; transform: rotate(0deg); color: var(--text-muted); font-size: 10px;">▼</span>
+          </button>
+          <div id="faq-content-2" style="max-height: 0px; overflow: hidden; transition: max-height 0.3s cubic-bezier(0, 1, 0, 1); font-size: 11px; line-height: 1.5; color: var(--text-secondary);">
+            <div style="padding-top: 6px;">
+              100% of your progress, logs, API keys, and target records are stored locally in your browser's LocalStorage. No data is uploaded to external databases. To avoid losing progress, we highly recommend exporting backups periodically using the Data Utilities tool on the right.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Local Data Management Card -->
+    <div class="support-card" style="display:flex; flex-direction:column; justify-content:space-between; gap:16px; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); height: 100%; box-sizing: border-box;">
+      <div>
+        <div style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">🛠️ Local Data Utilities</div>
+        <p style="font-size: 11px; line-height: 1.5; color: var(--text-secondary); margin: 0 0 12px 0;">Backup, restore, or reset your daily targets, progress charts, video logs, and settings parameters.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Export -->
+          <button onclick="exportPlannerData()" class="btn btn-secondary" style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 11px; font-weight: 700; border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; text-align: left;">
+            <span>📤 Backup stats (Export JSON)</span>
+            <span style="opacity: 0.7;">Download</span>
+          </button>
+
+          <!-- Import -->
+          <button onclick="triggerImportInput()" class="btn btn-secondary" style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 11px; font-weight: 700; border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; text-align: left;">
+            <span>📥 Restore backup (Import JSON)</span>
+            <span style="opacity: 0.7;">Upload</span>
+          </button>
+          <input type="file" id="planner-import-file-input" accept=".json" onchange="importPlannerData(event)" style="display: none;">
+
+          <!-- Reset -->
+          <button onclick="resetPlannerEverything()" class="btn btn-secondary" style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 11px; font-weight: 700; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.03); color: #ef4444; border-radius: 6px; cursor: pointer; transition: all 0.2s; text-align: left;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='rgba(239,68,68,0.03)'">
+            <span>⚠️ Clear all data (Reset Everything)</span>
+            <span>Reset</span>
+          </button>
+        </div>
+      </div>
+      <div style="font-size: 10px; color: var(--text-muted); font-weight: 500; border-top: 1px solid var(--glass-border); padding-top: 8px;">
+        💡 Periodic backups keep your 309-day study logs secure.
+      </div>
     </div>
 
   </div>
@@ -13913,6 +14048,237 @@ function clearAllStudyQueries() {
   }
 }
 
+// --- EMOTIONAL SUPPORT SECTION ---
+const MOTIVATIONAL_QUOTES = [
+  { text: "The only limit to our realization of tomorrow will be our doubts of today.", author: "Franklin D. Roosevelt" },
+  { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+  { text: "Your time is limited, so don't waste it living someone else's life.", author: "Steve Jobs" },
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { text: "Don't wish it were easier. Wish you were better.", author: "Jim Rohn" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "Study like there's no tomorrow, because if you keep putting off your studies, you'll have no tomorrow.", author: "Anonymous" },
+  { text: "Focus on the progress, not the perfection.", author: "Bill Gates" },
+  { text: "Do what you can, with what you have, where you are.", author: "Theodore Roosevelt" },
+  { text: "The difference between ordinary and extraordinary is that little extra.", author: "Jimmy Johnson" },
+  { text: "Persistence guarantees that results are inevitable.", author: "Paramahansa Yogananda" }
+];
+
+function rotateMotivationalQuote() {
+  const textEl = document.getElementById('motivational-quote-text');
+  const authorEl = document.getElementById('motivational-quote-author');
+  if (!textEl || !authorEl) return;
+
+  const randomQuote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+  textEl.textContent = `"${randomQuote.text}"`;
+  authorEl.textContent = `— ${randomQuote.author}`;
+}
+
+let breathingTimer = null;
+let breathingActive = false;
+
+function toggleBreathingExercise() {
+  const btn = document.getElementById('breathing-toggle-btn');
+  const info = document.getElementById('breathing-phase-info');
+  const outerCircle = document.getElementById('breathing-circle-outer');
+  const innerCircleText = document.getElementById('breathing-circle-inner');
+
+  if (!btn || !info || !outerCircle || !innerCircleText) return;
+
+  if (breathingActive) {
+    breathingActive = false;
+    clearTimeout(breathingTimer);
+    btn.textContent = "Start Exercise";
+    btn.className = "btn btn-primary";
+    btn.style = "";
+    info.textContent = "Relax and click Start";
+    outerCircle.style.transform = "scale(0.6)";
+    outerCircle.style.background = "var(--primary)";
+    innerCircleText.textContent = "Inhale";
+    innerCircleText.style.transform = "scale(0.6)";
+  } else {
+    breathingActive = true;
+    btn.textContent = "Stop Exercise";
+    btn.className = "btn btn-secondary";
+    btn.style.borderColor = "rgba(239, 68, 68, 0.2)";
+    btn.style.background = "rgba(239, 68, 68, 0.05)";
+    btn.style.color = "#ef4444";
+    runBreathingCycle();
+  }
+}
+
+function runBreathingCycle() {
+  if (!breathingActive) return;
+
+  const info = document.getElementById('breathing-phase-info');
+  const outerCircle = document.getElementById('breathing-circle-outer');
+  const innerCircleText = document.getElementById('breathing-circle-inner');
+  if (!info || !outerCircle || !innerCircleText) return;
+
+  // Phase 1: Inhale (4s)
+  info.textContent = "💨 Breathe In deeply... (4s)";
+  outerCircle.style.transition = "transform 4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease";
+  outerCircle.style.transform = "scale(1.3)";
+  outerCircle.style.background = "var(--primary)";
+  innerCircleText.style.transition = "transform 4s cubic-bezier(0.4, 0, 0.2, 1)";
+  innerCircleText.style.transform = "scale(1.1)";
+  innerCircleText.textContent = "Inhale";
+
+  breathingTimer = setTimeout(() => {
+    if (!breathingActive) return;
+
+    // Phase 2: Hold (7s)
+    info.textContent = "🛑 Hold your breath... (7s)";
+    outerCircle.style.transition = "transform 7s linear, background-color 0.5s ease";
+    outerCircle.style.background = "#fbbf24";
+    innerCircleText.textContent = "Hold";
+
+    breathingTimer = setTimeout(() => {
+      if (!breathingActive) return;
+
+      // Phase 3: Exhale (8s)
+      info.textContent = "🌬️ Breathe Out slowly... (8s)";
+      outerCircle.style.transition = "transform 8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease";
+      outerCircle.style.transform = "scale(0.6)";
+      outerCircle.style.background = "var(--primary)";
+      innerCircleText.style.transition = "transform 8s cubic-bezier(0.4, 0, 0.2, 1)";
+      innerCircleText.style.transform = "scale(0.6)";
+      innerCircleText.textContent = "Exhale";
+
+      breathingTimer = setTimeout(() => {
+        if (!breathingActive) return;
+        runBreathingCycle();
+      }, 8000);
+
+    }, 7000);
+
+  }, 4000);
+}
+
+const MOOD_FEEDBACKS = {
+  great: "Awesome! Catch this momentum and crush your targets today. Remember to take small breaks to preserve this positive energy! ⚡",
+  good: "That's wonderful! You are in a balanced state of mind. Keep up the consistent focus, you've got this! 🌟",
+  okay: "Balanced and steady wins the race. Take a deep breath, review your goals, and proceed one chapter at a time. 🧘",
+  stressed: "It's completely okay to feel overwhelmed. NEET prep is demanding. Pause for 5 minutes, try the 4-7-8 breathing circle below, and remember your worth isn't defined by a score. 💛",
+  low: "Please be gentle with yourself today. If you need to scale back study hours, do it. Your mental health is the engine of your success. You can talk to Shubh on Insta anytime. 🤝"
+};
+
+function selectDailyMood(moodKey, clickedBtn) {
+  const container = document.getElementById('mood-feedback-container');
+  const textEl = document.getElementById('mood-feedback-text');
+  if (!container || !textEl) return;
+
+  textEl.textContent = MOOD_FEEDBACKS[moodKey] || "";
+  container.style.display = 'block';
+
+  if (clickedBtn && clickedBtn.parentElement) {
+    const buttons = clickedBtn.parentElement.querySelectorAll('button');
+    buttons.forEach(btn => {
+      btn.style.borderColor = 'var(--glass-border)';
+      btn.style.background = 'rgba(255, 255, 255, 0.03)';
+      btn.style.boxShadow = 'none';
+    });
+    clickedBtn.style.borderColor = 'var(--primary)';
+    clickedBtn.style.background = 'rgba(0, 212, 170, 0.08)';
+    clickedBtn.style.boxShadow = '0 0 10px rgba(0, 212, 170, 0.15)';
+  }
+}
+
+// --- SUPPORT TAB SECTION ---
+function toggleFaqAccordion(index) {
+  const content = document.getElementById(`faq-content-${index}`);
+  const chevron = document.getElementById(`faq-chevron-${index}`);
+  if (!content || !chevron) return;
+
+  if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+    content.style.maxHeight = '0px';
+    chevron.style.transform = 'rotate(0deg)';
+  } else {
+    for (let i = 0; i < 3; i++) {
+      const c = document.getElementById(`faq-content-${i}`);
+      const ch = document.getElementById(`faq-chevron-${i}`);
+      if (c && ch) {
+        c.style.maxHeight = '0px';
+        ch.style.transform = 'rotate(0deg)';
+      }
+    }
+    content.style.maxHeight = '150px';
+    chevron.style.transform = 'rotate(180deg)';
+  }
+}
+
+function exportPlannerData() {
+  try {
+    const dataObj = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      dataObj[key] = localStorage.getItem(key);
+    }
+    const jsonStr = JSON.stringify(dataObj, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement("a");
+    a.href = url;
+    const dateStr = new Date().toISOString().split('T')[0];
+    a.download = `SHUBxCOLD_NEET_Planner_Backup_${dateStr}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast("📤 Backup JSON downloaded successfully!");
+  } catch (err) {
+    console.error("Export failed:", err);
+    showToast("❌ Export failed: " + err.message);
+  }
+}
+
+function triggerImportInput() {
+  const input = document.getElementById('planner-import-file-input');
+  if (input) input.click();
+}
+
+function importPlannerData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      if (!importedData || typeof importedData !== 'object') {
+        throw new Error("Invalid backup file format.");
+      }
+      
+      localStorage.clear();
+      for (const key in importedData) {
+        localStorage.setItem(key, importedData[key]);
+      }
+      
+      showToast("📥 Progress restored successfully! Reloading...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (err) {
+      console.error("Import failed:", err);
+      alert("❌ Failed to import backup file: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetPlannerEverything() {
+  const firstConfirm = confirm("⚠️ WARNING: This will permanently wipe all your study logs, progress trackers, targets, and API keys. Are you sure you want to reset EVERYTHING?");
+  if (firstConfirm) {
+    const secondConfirm = confirm("🚨 LAST CHANCE: Do you want to proceed and delete all data permanently?");
+    if (secondConfirm) {
+      localStorage.clear();
+      alert("🗑️ All data cleared. Resetting your workspace...");
+      window.location.reload();
+    }
+  }
+}
+
 window.launchPhysicsWallah = launchPhysicsWallah;
 window.discardPwSession = discardPwSession;
 window.forceLogPwSession = forceLogPwSession;
@@ -13922,6 +14288,14 @@ window.deleteStudyVideoSession = deleteStudyVideoSession;
 window.deleteStudyQuery = deleteStudyQuery;
 window.clearAllStudyVideos = clearAllStudyVideos;
 window.clearAllStudyQueries = clearAllStudyQueries;
+window.rotateMotivationalQuote = rotateMotivationalQuote;
+window.toggleBreathingExercise = toggleBreathingExercise;
+window.selectDailyMood = selectDailyMood;
+window.toggleFaqAccordion = toggleFaqAccordion;
+window.exportPlannerData = exportPlannerData;
+window.triggerImportInput = triggerImportInput;
+window.importPlannerData = importPlannerData;
+window.resetPlannerEverything = resetPlannerEverything;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
