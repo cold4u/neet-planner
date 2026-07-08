@@ -6673,6 +6673,38 @@ function handleStudySearch(event) {
   fetchWikiSummary(query);
 }
 
+async function fetchGeminiExplanation(query) {
+  const apiKey = safeGetLocalStorage('gemini_api_key');
+  if (!apiKey) {
+    throw new Error("No API key configured");
+  }
+
+  const payload = {
+    contents: [
+      {
+        parts: [
+          {
+            text: `You are an expert AI tutor and doubt solver. Explain this concept or resolve this doubt/question clearly, concisely, and accurately (whether it is study-related or general/any other topic). If it is a science or math topic, include key formulas or definitions where appropriate. Format your response beautifully using HTML tags like <h3>, <p>, <ul>, <li>, <strong> (do not use markdown like asterisks or hashtags, write raw HTML content directly): "${query}"`
+          }
+        ]
+      }
+    ],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 800
+    }
+  };
+
+  const response = await fetchGeminiWithRetry(apiKey, payload);
+  const data = await response.json();
+  
+  if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+    return data.candidates[0].content.parts[0].text;
+  } else {
+    throw new Error("Invalid response format from Gemini");
+  }
+}
+
 function fetchWikiSummary(query) {
   const resultsPanel = document.getElementById('sh-search-results-panel');
   const resultsContent = document.getElementById('sh-search-results-content');
@@ -6682,13 +6714,54 @@ function fetchWikiSummary(query) {
   if (!resultsPanel || !resultsContent) return;
 
   resultsPanel.style.display = 'block';
-  resultsContent.innerHTML = `<span style="color:var(--text-muted);">🔍 Searching Wikipedia for "${query}"...</span>`;
   
   if (googleBtn) googleBtn.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-  
+  if (wikiBtn) wikiBtn.href = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}`;
+
+  const apiKey = safeGetLocalStorage('gemini_api_key');
+  if (apiKey) {
+    // Use AI Doubt Solver
+    resultsContent.innerHTML = `<span class="active-pulse-dot" style="animation: pulse 1.5s infinite; color:var(--primary); font-weight:700;">🤖 AI Doubt Solver is thinking...</span>`;
+    
+    fetchGeminiExplanation(query)
+      .then(html => {
+        resultsContent.innerHTML = `
+          <div style="border-left: 3px solid var(--primary); padding-left: 10px; margin-bottom: 8px;">
+            <span style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">🤖 AI Doubt Explanation</span>
+          </div>
+          <div style="font-size:12px; line-height:1.5; color:var(--text-secondary);">
+            ${html}
+          </div>
+        `;
+      })
+      .catch(err => {
+        console.error("AI Doubt Solver failed, falling back to Wikipedia:", err);
+        resultsContent.innerHTML = `<span style="color:var(--text-warning); font-size:11px;">⚠️ AI Doubt Solver failed. Falling back to Wikipedia...</span>`;
+        setTimeout(() => {
+          runWikiFallback(query, resultsContent, wikiBtn);
+        }, 1500);
+      });
+  } else {
+    // No API key - show alert banner and fallback to Wikipedia
+    runWikiFallback(query, resultsContent, wikiBtn, true);
+  }
+}
+
+function runWikiFallback(query, resultsContent, wikiBtn, showKeyWarning = false) {
   const cleanQuery = encodeURIComponent(query);
   const openSearchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${cleanQuery}&limit=1&namespace=0&format=json&origin=*`;
   
+  let prefix = "";
+  if (showKeyWarning) {
+    prefix = `
+      <div style="background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.15); border-radius:6px; padding:8px; margin-bottom:12px; font-size:11px; color:#f59e0b; text-align:left; line-height: 1.4;">
+        🔑 <strong>AI Doubt Solver is locked:</strong> Save your Gemini API Key in the Settings tab (⚙️) to get AI explanations for any doubt. Falling back to Wikipedia...
+      </div>
+    `;
+  }
+
+  resultsContent.innerHTML = prefix + `<span style="color:var(--text-muted);">🔍 Searching Wikipedia for "${query}"...</span>`;
+
   fetch(openSearchUrl)
     .then(r => r.json())
     .then(data => {
@@ -6708,7 +6781,7 @@ function fetchWikiSummary(query) {
       throw new Error("Wiki summary failed");
     })
     .then(summary => {
-      let html = `<h3 style="margin:0 0 6px 0; color:var(--text-primary); font-size:13px;">${summary.title}</h3>`;
+      let html = prefix + `<h3 style="margin:0 0 6px 0; color:var(--text-primary); font-size:13px;">${summary.title}</h3>`;
       if (summary.thumbnail && summary.thumbnail.source) {
         html += `<img src="${summary.thumbnail.source}" style="float:right; max-width:80px; max-height:80px; border-radius:6px; margin:0 0 8px 8px; border:1px solid var(--glass-border);" alt="${summary.title}">`;
       }
@@ -6717,7 +6790,7 @@ function fetchWikiSummary(query) {
     })
     .catch(err => {
       console.warn("Wiki search fallback:", err);
-      resultsContent.innerHTML = `
+      resultsContent.innerHTML = prefix + `
         <div style="padding:4px 0;">
           <span style="color:var(--text-warning); font-weight:700;">No instant page match found.</span>
           <p style="margin:4px 0 0 0; font-size:11px; color:var(--text-muted);">We logged your study query. Click below to search broader resources on Google or Wikipedia search results.</p>
