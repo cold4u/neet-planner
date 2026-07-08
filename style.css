@@ -4158,4 +4158,73 @@ tag in <head>
   }
 }
 
+/* DOUBT DIAGRAM SEARCH RESULTS STYLING */
+.doubt-diagram-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.doubt-diagram-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.doubt-diagram-img-wrapper {
+  width: 100%;
+  max-height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.25);
+  position: relative;
+  padding: 8px;
+}
+
+.doubt-diagram-img {
+  max-width: 100%;
+  max-height: 234px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.doubt-diagram-img:hover {
+  transform: scale(1.02);
+}
+
+.doubt-diagram-caption {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+  font-style: italic;
+}
+
+.doubt-diagram-actions {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+
 

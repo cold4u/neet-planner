@@ -6996,6 +6996,7 @@ function fetchWikiSummary(query) {
             ${html}
           </div>
         `;
+        fetchRealDiagram(query);
       })
       .catch(err => {
         console.error("AI Doubt Solver failed:", err);
@@ -7007,6 +7008,7 @@ function fetchWikiSummary(query) {
             <button onclick="navigateTab('settings')" class="btn btn-secondary" style="padding:6px 14px; font-size:11px; font-weight:700; border-radius:6px; cursor:pointer; background:transparent; border:1px solid var(--border-color); color:var(--text-secondary);">Verify Settings ⚙️</button>
           </div>
         `;
+        fetchRealDiagram(query);
       });
   } else {
     resultsContent.innerHTML = `
@@ -7017,7 +7019,96 @@ function fetchWikiSummary(query) {
         <button onclick="navigateTab('settings')" class="btn btn-primary" style="padding:6px 14px; font-size:11px; font-weight:700; border-radius:6px; cursor:pointer;">Go to Settings ⚙️</button>
       </div>
     `;
+    fetchRealDiagram(query);
   }
+}
+
+function fetchRealDiagram(query) {
+  const resultsContent = document.getElementById('sh-search-results-content');
+  if (!resultsContent) return;
+
+  let diagContainer = document.getElementById('sh-search-diagram-container');
+  if (!diagContainer) {
+    diagContainer = document.createElement('div');
+    diagContainer.id = 'sh-search-diagram-container';
+    resultsContent.appendChild(diagContainer);
+  }
+
+  diagContainer.innerHTML = `
+    <div class="doubt-diagram-card" style="opacity:0.7;">
+      <div class="doubt-diagram-title">
+        <span class="active-pulse-dot" style="animation:pulse 1.5s infinite; color:var(--primary);">🖼️</span> Searching Reference Diagram...
+      </div>
+    </div>
+  `;
+
+  const cleanQuery = encodeURIComponent(query + " diagram");
+  const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${cleanQuery}&gsrnamespace=6&prop=imageinfo&iiprop=url|size&format=json&origin=*`;
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.query && data.query.pages) {
+        const pages = data.query.pages;
+        const pageList = Object.values(pages);
+        
+        const nonEnglishSuffixes = ['-es', '-pl', '-fr', '-de', '-it', '-cs', '-ca', '-ru', '-zh', '-ja', '-pt', '_es', '_pl', '_fr', '_de', '_it', '_cs', '_ca', '_ru', '_zh', '_ja', '_pt', ' (es)', ' (pl)', ' (fr)', ' (de)', ' (it)'];
+        const englishPages = pageList.filter(p => {
+          const titleLower = p.title.toLowerCase();
+          return !nonEnglishSuffixes.some(suffix => titleLower.includes(suffix));
+        });
+
+        const bestPage = englishPages.length > 0 ? englishPages[0] : pageList[0];
+
+        if (bestPage && bestPage.imageinfo && bestPage.imageinfo[0]) {
+          const imgUrl = bestPage.imageinfo[0].url;
+          
+          let cleanTitle = bestPage.title.replace(/^File:/, '');
+          cleanTitle = cleanTitle.substring(0, cleanTitle.lastIndexOf('.')) || cleanTitle;
+          cleanTitle = cleanTitle.replace(/_/g, ' ').replace(/-/g, ' ');
+
+          diagContainer.innerHTML = `
+            <div class="doubt-diagram-card">
+              <div class="doubt-diagram-title">
+                <span>🖼️</span> Reference Diagram
+              </div>
+              <div class="doubt-diagram-img-wrapper" onclick="window.open('${imgUrl}', '_blank')">
+                <img src="${imgUrl}" class="doubt-diagram-img" alt="${cleanTitle}" title="Click to view full size">
+              </div>
+              <p class="doubt-diagram-caption">${cleanTitle}</p>
+              <div class="doubt-diagram-actions">
+                <a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query + ' diagram')}" target="_blank" class="btn btn-secondary" style="flex:1; padding:6px 12px; font-size:11px; font-weight:700; border-radius:6px; cursor:pointer; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text-secondary);">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:2px;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  Search Google Images ↗️
+                </a>
+              </div>
+            </div>
+          `;
+          return;
+        }
+      }
+
+      diagContainer.innerHTML = `
+        <div class="doubt-diagram-card" style="padding:14px; text-align:center;">
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">No instant reference diagram found in our database.</div>
+          <a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query + ' diagram')}" target="_blank" class="btn btn-secondary" style="padding:6px 14px; font-size:11px; font-weight:700; border-radius:6px; cursor:pointer; text-align:center; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text-secondary);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            Search Google Images for diagrams ↗️
+          </a>
+        </div>
+      `;
+    })
+    .catch(err => {
+      console.warn("Failed to fetch reference diagram:", err);
+      diagContainer.innerHTML = `
+        <div class="doubt-diagram-card" style="padding:14px; text-align:center;">
+          <a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query + ' diagram')}" target="_blank" class="btn btn-secondary" style="padding:6px 14px; font-size:11px; font-weight:700; border-radius:6px; cursor:pointer; text-align:center; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text-secondary);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            Search Google Images for diagrams ↗️
+          </a>
+        </div>
+      `;
+    });
 }
 
 function closeStudySearchResults() {
