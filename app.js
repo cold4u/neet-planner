@@ -7443,6 +7443,211 @@ window.handleStudySearch = handleStudySearch;
 window.closeStudySearchResults = closeStudySearchResults;
 window.renderStudyHubReports = renderStudyHubReports;
 
+// --- FEATURE: PHYSICS WALLAH FOCUS TRACKING ---
+let pwWindowRef = null;
+let pwStartTime = null;
+let pwTimerInterval = null;
+let pwPollInterval = null;
+let pwSubject = 'physics';
+let pwElapsedSeconds = 0;
+
+function launchPhysicsWallah() {
+  const select = document.getElementById('pw-subject-select');
+  pwSubject = select ? select.value : 'physics';
+
+  // UI Setup
+  const setupControls = document.getElementById('pw-setup-controls');
+  const activeTracker = document.getElementById('pw-active-tracker');
+  const confirmBanner = document.getElementById('pw-confirm-banner');
+  const activeSubjEl = document.getElementById('pw-active-subject');
+  const timerDisplay = document.getElementById('pw-timer-display');
+
+  if (confirmBanner) confirmBanner.style.display = 'none';
+  if (setupControls) setupControls.style.display = 'none';
+  if (activeTracker) activeTracker.style.display = 'flex';
+  
+  if (activeSubjEl) {
+    activeSubjEl.textContent = `Subject: ${pwSubject.charAt(0).toUpperCase() + pwSubject.slice(1)}`;
+  }
+  if (timerDisplay) {
+    timerDisplay.textContent = '00:00:00';
+  }
+
+  pwStartTime = Date.now();
+  pwElapsedSeconds = 0;
+
+  // Start visual timer update
+  clearInterval(pwTimerInterval);
+  pwTimerInterval = setInterval(updatePwTimer, 1000);
+
+  // Open Physics Wallah Web App in new tab
+  pwWindowRef = window.open('https://study.physicswallah.live/dashboard', '_blank');
+  
+  // Start polling interval to detect when the tab is closed
+  clearInterval(pwPollInterval);
+  pwPollInterval = setInterval(pollPwTabClosed, 1000);
+}
+
+function updatePwTimer() {
+  if (!pwStartTime) return;
+  const elapsed = Math.floor((Date.now() - pwStartTime) / 1000);
+  pwElapsedSeconds = elapsed;
+  
+  const timerDisplay = document.getElementById('pw-timer-display');
+  if (timerDisplay) {
+    const hours = Math.floor(elapsed / 3600);
+    const minutes = Math.floor((elapsed % 3600) / 60);
+    const seconds = elapsed % 60;
+    
+    const formatted = [
+      hours.toString().padStart(2, '0'),
+      minutes.toString().padStart(2, '0'),
+      seconds.toString().padStart(2, '0')
+    ].join(':');
+    
+    timerDisplay.textContent = formatted;
+  }
+}
+
+function pollPwTabClosed() {
+  if (pwWindowRef && pwWindowRef.closed) {
+    clearInterval(pwPollInterval);
+    handlePwTabClosed();
+  }
+}
+
+function handlePwTabClosed() {
+  clearInterval(pwTimerInterval);
+  clearInterval(pwPollInterval);
+  
+  const setupControls = document.getElementById('pw-setup-controls');
+  const activeTracker = document.getElementById('pw-active-tracker');
+  const confirmBanner = document.getElementById('pw-confirm-banner');
+  const confirmText = document.getElementById('pw-confirm-text');
+
+  if (activeTracker) activeTracker.style.display = 'none';
+
+  // 60-second rule: discard accidental or too short clicks automatically
+  if (pwElapsedSeconds < 60) {
+    showToast("⚠️ PW session discarded (too short, under 60 seconds).");
+    if (setupControls) setupControls.style.display = 'flex';
+    resetPwVariables();
+    return;
+  }
+
+  // Show confirmation banner
+  if (confirmBanner) confirmBanner.style.display = 'flex';
+  
+  const hours = Math.floor(pwElapsedSeconds / 3600);
+  const minutes = Math.floor((pwElapsedSeconds % 3600) / 60);
+  const seconds = pwElapsedSeconds % 60;
+  
+  let durationStr = "";
+  if (hours > 0) {
+    durationStr = `${hours}h ${minutes}m ${seconds}s`;
+  } else if (minutes > 0) {
+    durationStr = `${minutes}m ${seconds}s`;
+  } else {
+    durationStr = `${seconds}s`;
+  }
+
+  if (confirmText) {
+    confirmText.textContent = `You studied ${pwSubject.toUpperCase()} for ${durationStr}. Save this PW session?`;
+  }
+}
+
+function savePwLoggedSession() {
+  // Add to main daily tracker logs
+  const hoursFraction = pwElapsedSeconds / 3600;
+  const todayStr = new Date().toISOString().split('T')[0];
+  const dayIdx = trackerLogs.findIndex(l => l.date === todayStr);
+
+  if (dayIdx !== -1 && hoursFraction > 0) {
+    if (pwSubject === 'physics') {
+      trackerLogs[dayIdx].phyHours += hoursFraction;
+    } else if (pwSubject === 'chemistry') {
+      trackerLogs[dayIdx].chemHours += hoursFraction;
+    } else {
+      trackerLogs[dayIdx].bioHours += hoursFraction;
+    }
+    safeSetLocalStorage('neet_v3_tracker', JSON.stringify(trackerLogs));
+    renderTrackerTable();
+    renderAnalytics();
+    updateOverviewStats();
+  }
+
+  // Also log it to the Study Hub's video logs list
+  const logs = getStudyHubLogs();
+  const formattedDuration = pwElapsedSeconds >= 60 ? `${Math.floor(pwElapsedSeconds / 60)}m ${pwElapsedSeconds % 60}s` : `${pwElapsedSeconds}s`;
+
+  logs[todayStr].videoSessions.push({
+    timestamp: Date.now(),
+    title: `PW Lecture: ${pwSubject.toUpperCase()}`,
+    id: "pw-tracked",
+    durationText: formattedDuration,
+    finished: true
+  });
+  saveStudyHubLogs(logs);
+  renderStudyHubReports();
+
+  showToast(`✅ PW Session Saved! Added ${formattedDuration} to ${pwSubject.toUpperCase()} log.`);
+  
+  // Reset UI
+  const setupControls = document.getElementById('pw-setup-controls');
+  const confirmBanner = document.getElementById('pw-confirm-banner');
+  if (confirmBanner) confirmBanner.style.display = 'none';
+  if (setupControls) setupControls.style.display = 'flex';
+
+  resetPwVariables();
+}
+
+function discardPwConfirmation() {
+  showToast("❌ PW study session discarded.");
+  const setupControls = document.getElementById('pw-setup-controls');
+  const confirmBanner = document.getElementById('pw-confirm-banner');
+  if (confirmBanner) confirmBanner.style.display = 'none';
+  if (setupControls) setupControls.style.display = 'flex';
+  resetPwVariables();
+}
+
+function discardPwSession() {
+  showToast("❌ PW study session discarded.");
+  const setupControls = document.getElementById('pw-setup-controls');
+  const activeTracker = document.getElementById('pw-active-tracker');
+  if (activeTracker) activeTracker.style.display = 'none';
+  if (setupControls) setupControls.style.display = 'flex';
+  
+  clearInterval(pwTimerInterval);
+  clearInterval(pwPollInterval);
+  if (pwWindowRef && !pwWindowRef.closed) {
+    try { pwWindowRef.close(); } catch(e) {}
+  }
+  resetPwVariables();
+}
+
+function forceLogPwSession() {
+  // If the user wants to log manually while it is running
+  clearInterval(pwTimerInterval);
+  clearInterval(pwPollInterval);
+  if (pwWindowRef && !pwWindowRef.closed) {
+    try { pwWindowRef.close(); } catch(e) {}
+  }
+  handlePwTabClosed();
+}
+
+function resetPwVariables() {
+  pwWindowRef = null;
+  pwStartTime = null;
+  pwTimerInterval = null;
+  pwPollInterval = null;
+  pwElapsedSeconds = 0;
+}
+
+window.launchPhysicsWallah = launchPhysicsWallah;
+window.discardPwSession = discardPwSession;
+window.forceLogPwSession = forceLogPwSession;
+window.discardPwConfirmation = discardPwConfirmation;
+window.savePwLoggedSession = savePwLoggedSession;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {

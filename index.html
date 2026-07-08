@@ -1505,6 +1505,51 @@
             </div>
           </div>
 
+          <!-- Physics Wallah Focus Tracker -->
+          <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:14px; border-left: 4px solid #f2cf43; background: linear-gradient(135deg, rgba(242, 207, 67, 0.03), rgba(12, 18, 34, 0.85));">
+            <h2 style="margin:0; font-size:16px; display:flex; align-items:center; gap:8px;">⚡ Physics Wallah Focus Tracker</h2>
+            <p style="font-size:11px; color:var(--text-muted); margin:0;">Launch your PW lectures. The planner will automatically monitor the tab and auto-log your focus hours on exit.</p>
+            
+            <!-- Subject Selector & Launcher Control -->
+            <div id="pw-setup-controls" style="display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; gap:10px; align-items:center;">
+                <label for="pw-subject-select" style="font-size:12px; font-weight:600; color:var(--text-secondary); margin:0;">Subject:</label>
+                <select id="pw-subject-select" class="form-control" style="font-size:12px; padding:6px; flex:1; background:var(--bg-body); border:1px solid var(--border-color); color:var(--text-color); border-radius:6px; cursor:pointer;">
+                  <option value="physics">Physics 🌌</option>
+                  <option value="chemistry">Chemistry 🧪</option>
+                  <option value="biology">Biology 🧬</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="launchPhysicsWallah()" style="width:100%; font-weight:700; font-size:12px; padding:10px; background:linear-gradient(135deg, #f2cf43, #d9b62b); color:#000; border:none; border-radius:8px; cursor:pointer;">Launch & Track PW App 🚀</button>
+            </div>
+            
+            <!-- Active Timer Tracker overlay (hidden by default) -->
+            <div id="pw-active-tracker" style="display:none; flex-direction:column; gap:12px; background:rgba(242,207,67,0.06); border:1px solid rgba(242,207,67,0.15); border-radius:10px; padding:12px; text-align:center;">
+              <div style="display:flex; align-items:center; justify-content:center; gap:8px; font-size:12px; font-weight:700; color:#f2cf43; text-transform:uppercase; letter-spacing:1px;">
+                <span class="active-pulse-dot" style="width:8px; height:8px; border-radius:50%; background:#f2cf43; display:inline-block; animation: pulse 1.5s infinite;"></span>
+                <span>Active PW Lecture Sprint</span>
+              </div>
+              <div id="pw-timer-display" style="font-size:26px; font-weight:800; font-family:var(--font-mono); color:var(--text-primary); margin:4px 0;">00:00:00</div>
+              <div id="pw-active-subject" style="font-size:11px; color:var(--text-secondary); font-weight:600; text-transform:uppercase;">Subject: Physics</div>
+              <p style="font-size:10px; color:var(--text-muted); margin:0 0 6px 0; line-height:1.4;">Closing the Physics Wallah browser tab will automatically finish and prompt you to log this session.</p>
+              
+              <div style="display:flex; gap:10px;">
+                <button class="btn btn-secondary" onclick="discardPwSession()" style="flex:1; font-size:11px; padding:8px 0; border:1px solid var(--border-color); color:var(--text-secondary); font-weight:700;">Discard ✕</button>
+                <button class="btn btn-primary" onclick="forceLogPwSession()" style="flex:1; font-size:11px; padding:8px 0; background:#4ade80; color:#000; border:none; border-radius:6px; font-weight:700; cursor:pointer;">Log Session ✓</button>
+              </div>
+            </div>
+
+            <!-- Post-closed confirmation banner (hidden by default) -->
+            <div id="pw-confirm-banner" style="display:none; flex-direction:column; gap:12px; background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.15); border-radius:10px; padding:12px; text-align:center;">
+              <h4 style="margin:0; font-size:13px; color:#4ade80; font-weight:700;">📊 PW Tab Closed!</h4>
+              <p id="pw-confirm-text" style="font-size:11px; color:var(--text-secondary); margin:0;">You studied for 15 minutes. Save this session?</p>
+              <div style="display:flex; gap:10px;">
+                <button class="btn btn-secondary" onclick="discardPwConfirmation()" style="flex:1; font-size:11px; padding:6px 0; border:1px solid var(--border-color); color:var(--text-secondary); font-weight:700;">Discard ✕</button>
+                <button class="btn btn-primary" onclick="savePwLoggedSession()" style="flex:1; font-size:11px; padding:6px 0; background:#4ade80; color:#000; border:none; border-radius:6px; font-weight:700; cursor:pointer;">Save Focus Log</button>
+              </div>
+            </div>
+          </div>
+
           <!-- Google Study Search Card -->
           <div class="glass-card" style="padding: 20px; display:flex; flex-direction:column; gap:14px;">
             <h2 style="margin:0; font-size:16px; display:flex; align-items:center; gap:8px;">🔍 Concepts & Doubt Search</h2>
