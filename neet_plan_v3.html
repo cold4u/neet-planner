@@ -4262,13 +4262,6 @@ tag in <head>
   <!-- KaTeX for beautiful math equation rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <!-- PDF.js library for low-resolution client-side question image cropping -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>
-    if (typeof pdfjsLib !== 'undefined') {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    }
-  </script>
 </head>
 <body>
 
@@ -9895,125 +9888,6 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
   }
 }
 
-// Low-resolution & low-memory PDF/Image rendering helpers to prevent device memory pressure
-async function renderPagesToCanvases(file) {
-  if (typeof pdfjsLib === 'undefined') return [];
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-    const pdf = await loadingTask.promise;
-    const canvases = [];
-    const maxPages = Math.min(pdf.numPages, 12); // Limit to max 12 pages for memory safety
-
-    for (let i = 1; i <= maxPages; i++) {
-      const page = await pdf.getPage(i);
-      // Low resolution scale (0.8x) consumes 85% less RAM than 2.0x
-      const viewport = page.getViewport({ scale: 0.8 });
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-      canvases.push(canvas);
-    }
-    return canvases;
-  } catch (err) {
-    console.error("Error rendering PDF pages:", err);
-    return [];
-  }
-}
-
-async function renderImageToCanvas(file) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      // Downscale large source images to max width 1000px for memory safety
-      const origW = img.naturalWidth || img.width;
-      const origH = img.naturalHeight || img.height;
-      const maxDim = 1000;
-      const scale = origW > maxDim ? (maxDim / origW) : 1;
-      
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(origW * scale);
-      canvas.height = Math.round(origH * scale);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      resolve([canvas]);
-    };
-    img.onerror = () => resolve([]);
-    img.src = URL.createObjectURL(file);
-  });
-}
-
-function cropQuestionImage(pageCanvases, pageNum, boundingBox) {
-  try {
-    if (!pageCanvases || pageCanvases.length === 0) return null;
-
-    const pageIdx = (pageNum && typeof pageNum === 'number' && pageNum > 0) ? pageNum - 1 : 0;
-    const pageCanvas = pageCanvases[pageIdx] || pageCanvases[0];
-    if (!pageCanvas) return null;
-
-    let cropX = 0, cropY = 0, cropW = pageCanvas.width, cropH = pageCanvas.height;
-
-    if (Array.isArray(boundingBox) && boundingBox.length === 4) {
-      const [ymin, xmin, ymax, xmax] = boundingBox;
-
-      if (typeof ymin === 'number' && typeof xmin === 'number' && typeof ymax === 'number' && typeof xmax === 'number') {
-        const rawYmin = Math.max(0, (ymin / 1000) * pageCanvas.height);
-        const rawXmin = Math.max(0, (xmin / 1000) * pageCanvas.width);
-        const rawYmax = Math.min(pageCanvas.height, (ymax / 1000) * pageCanvas.height);
-        const rawXmax = Math.min(pageCanvas.width, (xmax / 1000) * pageCanvas.width);
-
-        const boxW = rawXmax - rawXmin;
-        const boxH = rawYmax - rawYmin;
-
-        if (boxW > 10 && boxH > 10) {
-          const padX = boxW * 0.03;
-          const padY = boxH * 0.03;
-
-          cropX = Math.max(0, rawXmin - padX);
-          cropY = Math.max(0, rawYmin - padY);
-          cropW = Math.min(pageCanvas.width - cropX, boxW + (2 * padX));
-          cropH = Math.min(pageCanvas.height - cropY, boxH + (2 * padY));
-        }
-      }
-    }
-
-    // Low resolution export (max 380px width, quality 0.5) to keep image payload under ~15KB
-    const maxExportWidth = 380;
-    const scale = cropW > maxExportWidth ? (maxExportWidth / cropW) : 1;
-    const exportW = Math.round(cropW * scale);
-    const exportH = Math.round(cropH * scale);
-
-    const cropCanvas = document.createElement('canvas');
-    cropCanvas.width = exportW;
-    cropCanvas.height = exportH;
-
-    const ctx = cropCanvas.getContext('2d');
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, exportW, exportH);
-    ctx.drawImage(pageCanvas, cropX, cropY, cropW, cropH, 0, 0, exportW, exportH);
-
-    const dataUrl = cropCanvas.toDataURL('image/jpeg', 0.5);
-    cropCanvas.width = 0;
-    cropCanvas.height = 0;
-    return dataUrl;
-  } catch (err) {
-    console.error("Error cropping question image:", err);
-    return null;
-  }
-}
-
-function cleanupCanvases(canvases) {
-  if (!Array.isArray(canvases)) return;
-  canvases.forEach(c => {
-    if (c) {
-      c.width = 0;
-      c.height = 0;
-    }
-  });
-}
-
 function safeParseAiJson(rawText) {
   if (!rawText || typeof rawText !== 'string') return null;
 
@@ -10117,22 +9991,10 @@ async function startAiParse() {
   document.getElementById('ai-setup-view').style.display = 'none';
   document.getElementById('ai-loading-view').style.display = 'flex';
   document.getElementById('ai-loading-title').textContent = "AI is parsing your Question Paper...";
-  document.getElementById('ai-loading-desc').textContent = "Extracting MCQs & generating low-resolution question images safely. Please wait...";
+  document.getElementById('ai-loading-desc').textContent = "Extracting MCQs, options, subject tags, and explanations directly from your document. Please wait...";
   
   try {
     window.cbtCurrentSource = (selectedFile && selectedFile.name) ? selectedFile.name : "Uploaded Paper";
-
-    // Low-resolution client page rendering
-    let pageCanvases = [];
-    try {
-      if (selectedFile.type === 'application/pdf') {
-        pageCanvases = await renderPagesToCanvases(selectedFile);
-      } else {
-        pageCanvases = await renderImageToCanvas(selectedFile);
-      }
-    } catch (renderErr) {
-      console.warn("Client page rendering failed:", renderErr);
-    }
 
     const base64Data = await fileToBase64(selectedFile);
     const mimeType = selectedFile.type || "application/pdf";
@@ -10143,7 +10005,7 @@ async function startAiParse() {
           role: "user",
           parts: [
             {
-              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper. Ensure each question has exactly 4 options. Identify the correct option, provide a concise 1-2 sentence explanation, classify the subject as exactly one of: \"Physics\", \"Chemistry\", or \"Biology\", and assign a short concept tag (e.g. \"Newton's Laws - Friction\", \"Photosynthesis - Light Reaction\"). For each question, identify its page number (1-indexed) and its bounding box on that page (including question text, diagram, options). Return page_number as a 1-based integer, and bounding_box as an array of 4 integers [ymin, xmin, ymax, xmax] normalized from 0 to 1000 relative to page height (0=top, 1000=bottom) and width (0=left, 1000=right). CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$. Return the results in the required JSON schema format."
+              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper. Ensure each question has exactly 4 options. Identify the correct option, provide a concise 1-2 sentence explanation, classify the subject as exactly one of: \"Physics\", \"Chemistry\", or \"Biology\", and assign a short concept tag (e.g. \"Newton's Laws - Friction\", \"Photosynthesis - Light Reaction\"). CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$. Return the results in the required JSON schema format."
             },
             {
               inlineData: {
@@ -10176,14 +10038,9 @@ async function startAiParse() {
                   subject: {
                     type: "STRING",
                     enum: ["Physics", "Chemistry", "Biology"]
-                  },
-                  page_number: { type: "INTEGER" },
-                  bounding_box: {
-                    type: "ARRAY",
-                    items: { type: "INTEGER" }
                   }
                 },
-                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject", "page_number", "bounding_box"]
+                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject"]
               }
             }
           },
@@ -10201,14 +10058,6 @@ async function startAiParse() {
     if (!parsedData || !parsedData.questions || parsedData.questions.length === 0) {
       throw new Error("No questions could be extracted from the uploaded document. Please check the document quality and try again.");
     }
-
-    // Attach low-resolution cropped questionImage
-    parsedData.questions.forEach(q => {
-      q.questionImage = cropQuestionImage(pageCanvases, q.page_number, q.bounding_box);
-    });
-
-    // Reclaim memory immediately
-    cleanupCanvases(pageCanvases);
 
     initCbt(parsedData.questions, durationMinutes);
     
@@ -10365,12 +10214,7 @@ function cbtRenderQuestion() {
   if (!question) return;
   
   qNum.textContent = `Question ${cbtCurrentIdx + 1} of ${cbtTotalQuestions}`;
-
-  let imageHtml = '';
-  if (question.questionImage) {
-    imageHtml = `<div style="margin-bottom:14px; text-align:center;"><img src="${question.questionImage}" alt="Source Question Image" style="max-width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.1); display:inline-block;"></div>`;
-  }
-  qText.innerHTML = `${imageHtml}<div>${question.question}</div>`;
+  qText.innerHTML = question.question;
   
   optContainer.innerHTML = '';
   
@@ -10542,8 +10386,7 @@ function cbtSubmitTest() {
       user_answer_idx: cbtAnswers[idx] !== undefined ? cbtAnswers[idx] : null,
       explanation: q.explanation || '',
       concept: q.concept || 'General',
-      subject: q.subject || 'Biology',
-      questionImage: q.questionImage || null
+      subject: q.subject || 'Biology'
     }))
   };
   
@@ -10553,29 +10396,7 @@ function cbtSubmitTest() {
   } catch(e) {}
   cbtResults.unshift(reportCard);
 
-  try {
-    safeSetLocalStorage('neet_v3_cbt_results', JSON.stringify(cbtResults));
-  } catch (err) {
-    console.warn("Storage quota exceeded when saving CBT results. Stripping source images to conserve quota...", err);
-    
-    // Fallback: Strip questionImage from reportCard to save quota
-    const strippedReportCard = {
-      ...reportCard,
-      questions: reportCard.questions.map(q => {
-        const copy = { ...q };
-        delete copy.questionImage;
-        return copy;
-      })
-    };
-
-    cbtResults[0] = strippedReportCard;
-
-    try {
-      safeSetLocalStorage('neet_v3_cbt_results', JSON.stringify(cbtResults));
-    } catch (err2) {
-      console.error("Failed to save even after stripping images:", err2);
-    }
-  }
+  safeSetLocalStorage('neet_v3_cbt_results', JSON.stringify(cbtResults));
   
   buildCbtReview();
 }
@@ -10598,11 +10419,6 @@ function renderCbtQuestionReviewCard(questionObj, userAnswerIdx, cardIndex, cont
 
   const subjectBadgeHtml = questionObj.subject ? `<span style="background:rgba(0,212,170,0.1); color:var(--primary); border:1px solid rgba(0,212,170,0.25); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">⚡ ${questionObj.subject}</span>` : '';
   const conceptBadgeHtml = questionObj.concept ? `<span style="background:rgba(255,215,0,0.1); color:#FFD700; border:1px solid rgba(255,215,0,0.25); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">📌 ${questionObj.concept}</span>` : '';
-
-  let questionImageHtml = '';
-  if (questionObj.questionImage) {
-    questionImageHtml = `<div style="margin-bottom:14px; text-align:center;"><img src="${questionObj.questionImage}" alt="Source Question Image" style="max-width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.1); display:inline-block;"></div>`;
-  }
 
   let optionsHtml = '';
   if (questionObj.options && Array.isArray(questionObj.options)) {
@@ -10638,7 +10454,6 @@ function renderCbtQuestionReviewCard(questionObj, userAnswerIdx, cardIndex, cont
         </div>
         ${statusBadgeHtml}
       </div>
-      ${questionImageHtml}
       <div style="font-size:15px; font-weight:600; margin-bottom:14px; line-height:1.5; color:#fff;">${questionObj.question}</div>
       <div style="margin-bottom:16px;">${optionsHtml}</div>
       <div style="background:rgba(255,215,0,0.03); border-left:3px solid #FFD700; padding:12px 16px; border-radius:0 8px 8px 0; font-size:13px; line-height:1.5;">
