@@ -5494,10 +5494,13 @@ tag in <head>
         <p class="page-desc">Upload a PDF or image of a question paper, and let AI build an interactive test with detailed explanations.</p>
       </div>
 
-      <!-- Upload Screen -->
-      <div id="ai-setup-view">
-        <div class="ai-config-card">
+      <!-- Upload & Custom Test Screen -->
+      <div id="ai-setup-view" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:24px; align-items:start;">
+        <!-- Option 1: Upload Question Paper -->
+        <div class="ai-config-card" style="margin:0;">
           <h2>1. Upload Question Paper</h2>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Extract questions from any PDF or Image paper using Gemini AI.</p>
+          
           <div class="form-group">
             <input type="file" id="ai-file-input" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;" accept="application/pdf, image/*">
             <label id="drag-zone" class="drag-zone" for="ai-file-input" style="display:block;">
@@ -5508,13 +5511,46 @@ tag in <head>
             <div id="file-info" style="margin-top:12px; font-size:13px; color:#FFD700; display:none; text-align:center; font-weight:600;"></div>
           </div>
 
-          <h2>2. Test Settings</h2>
+          <h3 style="font-size:14px; margin-top:20px; margin-bottom:8px; color:#fff;">Test Settings</h3>
           <div class="form-group">
             <label for="ai-test-duration">Test Duration (Minutes)</label>
             <input type="number" id="ai-test-duration" class="form-input" value="30" min="5" max="180">
           </div>
 
-          <button class="btn btn-primary" style="width:100%; padding:14px; font-size:14px; font-weight:700;" onclick="startAiParse()">Generate CBT Test</button>
+          <button class="btn btn-primary" style="width:100%; padding:14px; font-size:14px; font-weight:700;" onclick="startAiParse()">Generate CBT from File</button>
+        </div>
+
+        <!-- Option 2: Generate Custom Multi-Chapter Test -->
+        <div class="ai-config-card" style="margin:0;">
+          <h2>2. Generate Custom Chapter Test</h2>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Select chapters across subjects, pick a difficulty, and generate a tailored practice test.</p>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+            <div class="form-group" style="margin:0;">
+              <label for="custom-cbt-difficulty">Difficulty Level</label>
+              <select id="custom-cbt-difficulty" class="form-control" style="font-size:12px; height:38px;">
+                <option value="Mixed" selected>🔀 Mixed (Balanced)</option>
+                <option value="Easy">🟢 Easy (Conceptual)</option>
+                <option value="Medium">🟡 Medium (Standard)</option>
+                <option value="Hard">🔴 Hard (Advanced)</option>
+                <option value="PYQ-Style">🎯 PYQ-Style (Real NEET)</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label for="custom-cbt-qcount">Questions Count</label>
+              <input type="number" id="custom-cbt-qcount" class="form-input" value="20" min="5" max="50" style="height:38px;">
+            </div>
+          </div>
+
+          <!-- Multi-Select Chapters Container -->
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12px; font-weight:700; margin-bottom:8px; display:block; color:#fff;">Select Syllabus Chapters</label>
+            <div id="custom-cbt-chapters-container" style="max-height:280px; overflow-y:auto; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; background:rgba(0,0,0,0.2); display:flex; flex-direction:column; gap:12px;">
+              <!-- Dynamic Checkbox groups for Phy, Chem, Bio -->
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%; padding:14px; font-size:14px; font-weight:700; background:linear-gradient(135deg, var(--primary), #00a887); border:none;" onclick="generateCustomAiTest()">🚀 Generate Custom Test</button>
         </div>
       </div>
 
@@ -5611,8 +5647,9 @@ tag in <head>
             </div>
           </div>
           
-          <div style="display:flex; justify-content:center; gap:12px; margin-bottom:40px;">
+          <div style="display:flex; justify-content:center; gap:12px; margin-bottom:40px; flex-wrap:wrap;">
             <button class="btn btn-primary" onclick="cbtShowReview()">Review Questions & Explanations</button>
+            <button id="cbt-retest-wrong-btn" class="btn btn-secondary" onclick="retestCbtWrongAnswers(cbtQuestions, cbtAnswers)" style="border-color:#FFD700; color:#FFD700;">🔁 Retest Wrong Answers</button>
             <button class="btn btn-secondary" onclick="cbtExitResults()">Go to Home</button>
           </div>
           
@@ -7619,6 +7656,8 @@ function safeSetSessionStorage(key, value) {
         if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
       } else if (tabId === 'formulas') {
         if (typeof renderTabFormulas === 'function') renderTabFormulas();
+      } else if (tabId === 'ai-test') {
+        if (typeof populateCustomTestChapters === 'function') populateCustomTestChapters();
       } else if (tabId === 'cbt-results') {
         renderCbtResultsSection();
       }
@@ -9874,7 +9913,7 @@ async function startAiParse() {
           role: "user",
           parts: [
             {
-              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper. Ensure each question has exactly 4 options. Identify the correct option, provide a very concise 1-2 sentence explanation, and assign a short concept tag (e.g. \"Newton's Laws - Friction\", \"Photosynthesis - Light Reaction\"). CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$. Return the results in the required JSON schema format."
+              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper. Ensure each question has exactly 4 options. Identify the correct option, provide a very concise 1-2 sentence explanation, classify the subject as exactly one of: \"Physics\", \"Chemistry\", or \"Biology\", and assign a short concept tag (e.g. \"Newton's Laws - Friction\", \"Photosynthesis - Light Reaction\"). CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$. Return the results in the required JSON schema format."
             },
             {
               inlineData: {
@@ -9902,9 +9941,13 @@ async function startAiParse() {
                   },
                   correct_option_idx: { type: "INTEGER" },
                   explanation: { type: "STRING" },
-                  concept: { type: "STRING" }
+                  concept: { type: "STRING" },
+                  subject: {
+                    type: "STRING",
+                    enum: ["Physics", "Chemistry", "Biology"]
+                  }
                 },
-                required: ["question", "options", "correct_option_idx", "explanation", "concept"]
+                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject"]
               }
             }
           },
@@ -9929,7 +9972,7 @@ async function startAiParse() {
     console.error("AI CBT Parser Error:", error);
     alert(`Failed to generate CBT: ${error.message}`);
     document.getElementById('ai-loading-view').style.display = 'none';
-    document.getElementById('ai-setup-view').style.display = 'block';
+    document.getElementById('ai-setup-view').style.display = 'grid';
   }
 }
 
@@ -9951,7 +9994,7 @@ async function generateAiChapterTest(chapterName) {
   
   try {
     window.cbtCurrentSource = `${chapterName} - Chapter Test`;
-    const prompt = `You are a premium NEET question bank generator. Generate exactly 30 high-quality, NEET-level MCQs for the chapter: '${chapterName}'. The questions should cover key concepts, theories, and numericals from this chapter, matching the standard and style of the NEET exam. Keep questions, options, and explanations extremely concise and brief (explanations must be at most 1-2 short sentences) to ensure super fast response generation. Each question must have exactly 4 plausible options, a single correct option (0-based index), a concise explanation, and a short concept tag (e.g. "${chapterName} - Friction"). CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$.`;
+    const prompt = `You are a premium NEET question bank generator. Generate exactly 30 high-quality, NEET-level MCQs for the chapter: '${chapterName}'. The questions should cover key concepts, theories, and numericals from this chapter, matching the standard and style of the NEET exam. Keep questions, options, and explanations extremely concise and brief (explanations must be at most 1-2 short sentences) to ensure super fast response generation. Each question must have exactly 4 plausible options, a single correct option (0-based index), a concise explanation, a short concept tag (e.g. "${chapterName} - Friction"), and subject classified as exactly one of: "Physics", "Chemistry", or "Biology". CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$.`;
     
     const requestPayload = {
       contents: [
@@ -9981,9 +10024,13 @@ async function generateAiChapterTest(chapterName) {
                   },
                   correct_option_idx: { type: "INTEGER" },
                   explanation: { type: "STRING" },
-                  concept: { type: "STRING" }
+                  concept: { type: "STRING" },
+                  subject: {
+                    type: "STRING",
+                    enum: ["Physics", "Chemistry", "Biology"]
+                  }
                 },
-                required: ["question", "options", "correct_option_idx", "explanation", "concept"]
+                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject"]
               }
             }
           },
@@ -10197,6 +10244,16 @@ function cbtSubmitTest() {
   document.getElementById('cbt-score-unanswered').textContent = unanswered;
   document.getElementById('cbt-score-accuracy').textContent = `${accuracy}%`;
   
+  // Retest button state in live results
+  const retestBtn = document.getElementById('cbt-retest-wrong-btn');
+  if (retestBtn) {
+    if (incorrect + unanswered === 0) {
+      retestBtn.style.display = 'none';
+    } else {
+      retestBtn.style.display = 'inline-block';
+    }
+  }
+
   document.getElementById('ai-exam-view').style.display = 'none';
   document.getElementById('ai-results-view').style.display = 'block';
   document.getElementById('cbt-review-section').style.display = 'none';
@@ -10228,7 +10285,8 @@ function cbtSubmitTest() {
       correct_option_idx: q.correct_option_idx,
       user_answer_idx: cbtAnswers[idx] !== undefined ? cbtAnswers[idx] : null,
       explanation: q.explanation || '',
-      concept: q.concept || 'General'
+      concept: q.concept || 'General',
+      subject: q.subject || 'Biology'
     }))
   };
   
@@ -10242,47 +10300,39 @@ function cbtSubmitTest() {
   buildCbtReview();
 }
 
-function buildCbtReview() {
-  const container = document.getElementById('cbt-review-container');
-  if (!container) return;
-  container.innerHTML = '';
-  
+window.cbtReviewQuestionMap = window.cbtReviewQuestionMap || {};
+
+function renderCbtQuestionReviewCard(questionObj, userAnswerIdx, cardIndex, contextId) {
+  window.cbtReviewQuestionMap[contextId] = { questionObj, userAnswerIdx };
+
   const optionPrefixes = ['A', 'B', 'C', 'D'];
-  
-  cbtQuestions.forEach((q, qIdx) => {
-    const card = document.createElement('div');
-    card.className = 'review-question-card';
-    card.style.background = 'rgba(255, 255, 255, 0.02)';
-    card.style.border = '1px solid rgba(255, 255, 255, 0.06)';
-    card.style.borderRadius = '12px';
-    card.style.padding = '20px';
-    card.style.marginBottom = '16px';
-    
-    let statusBadgeHtml = '';
-    const userAns = cbtAnswers[qIdx];
-    if (userAns === undefined) {
-      statusBadgeHtml = `<span style="background:rgba(156,163,175,0.1); color:#9ca3af; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Unanswered</span>`;
-    } else if (userAns === q.correct_option_idx) {
-      statusBadgeHtml = `<span style="background:rgba(0,212,170,0.1); color:var(--primary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Correct (+4)</span>`;
-    } else {
-      statusBadgeHtml = `<span style="background:rgba(255,107,107,0.1); color:var(--tertiary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Incorrect (-1)</span>`;
-    }
-    
-    const conceptBadgeHtml = q.concept ? `<span style="background:rgba(255,215,0,0.1); color:#FFD700; border:1px solid rgba(255,215,0,0.25); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">📌 ${q.concept}</span>` : '';
-    
-    let optionsHtml = '';
-    q.options.forEach((opt, optIdx) => {
+  let statusBadgeHtml = '';
+
+  if (userAnswerIdx === null || userAnswerIdx === undefined) {
+    statusBadgeHtml = `<span style="background:rgba(156,163,175,0.1); color:#9ca3af; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Unanswered</span>`;
+  } else if (userAnswerIdx === questionObj.correct_option_idx) {
+    statusBadgeHtml = `<span style="background:rgba(0,212,170,0.1); color:var(--primary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Correct (+4)</span>`;
+  } else {
+    statusBadgeHtml = `<span style="background:rgba(255,107,107,0.1); color:var(--tertiary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Incorrect (-1)</span>`;
+  }
+
+  const subjectBadgeHtml = questionObj.subject ? `<span style="background:rgba(0,212,170,0.1); color:var(--primary); border:1px solid rgba(0,212,170,0.25); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">⚡ ${questionObj.subject}</span>` : '';
+  const conceptBadgeHtml = questionObj.concept ? `<span style="background:rgba(255,215,0,0.1); color:#FFD700; border:1px solid rgba(255,215,0,0.25); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">📌 ${questionObj.concept}</span>` : '';
+
+  let optionsHtml = '';
+  if (questionObj.options && Array.isArray(questionObj.options)) {
+    questionObj.options.forEach((opt, optIdx) => {
       let optStyle = 'border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.01); color:#d1d5db;';
       let badge = '';
-      
-      if (optIdx === q.correct_option_idx) {
+
+      if (optIdx === questionObj.correct_option_idx) {
         optStyle = 'border:1px solid var(--primary); background:rgba(0,212,170,0.08); color:var(--primary); font-weight:600;';
         badge = ' <span style="font-size:11px; margin-left:auto; color:var(--primary); font-weight:700;">✓ Correct</span>';
-      } else if (userAns === optIdx) {
+      } else if (userAnswerIdx === optIdx) {
         optStyle = 'border:1px solid var(--tertiary); background:rgba(255,107,107,0.08); color:var(--tertiary); font-weight:600;';
         badge = ' <span style="font-size:11px; margin-left:auto; color:var(--tertiary); font-weight:700;">✗ Your Answer</span>';
       }
-      
+
       optionsHtml += `
         <div style="display:flex; align-items:center; padding:10px 14px; border-radius:6px; margin-top:8px; font-size:13px; ${optStyle}">
           <span style="font-weight:700; margin-right:10px;">${optionPrefixes[optIdx]}.</span>
@@ -10291,27 +10341,445 @@ function buildCbtReview() {
         </div>
       `;
     });
-    
-    card.innerHTML = `
+  }
+
+  return `
+    <div class="review-question-card" style="background:rgba(255, 255, 255, 0.02); border:1px solid rgba(255, 255, 255, 0.06); border-radius:12px; padding:20px; margin-bottom:16px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-          <span style="font-weight:700; font-family:'Share Tech',sans-serif; color:#FFD700;">Question ${qIdx + 1}</span>
+          <span style="font-weight:700; font-family:'Share Tech',sans-serif; color:#FFD700;">Question ${cardIndex + 1}</span>
+          ${subjectBadgeHtml}
           ${conceptBadgeHtml}
         </div>
         ${statusBadgeHtml}
       </div>
-      <div style="font-size:15px; font-weight:600; margin-bottom:14px; line-height:1.5; color:#fff;">${q.question}</div>
+      <div style="font-size:15px; font-weight:600; margin-bottom:14px; line-height:1.5; color:#fff;">${questionObj.question}</div>
       <div style="margin-bottom:16px;">${optionsHtml}</div>
       <div style="background:rgba(255,215,0,0.03); border-left:3px solid #FFD700; padding:12px 16px; border-radius:0 8px 8px 0; font-size:13px; line-height:1.5;">
         <strong style="color:#FFD700; display:block; margin-bottom:4px; font-family:'Share Tech',sans-serif;">Explanation:</strong>
-        <span style="color:#e5e7eb;">${q.explanation}</span>
+        <span style="color:#e5e7eb;">${questionObj.explanation || ''}</span>
       </div>
-    `;
-    
-    container.appendChild(card);
+
+      <!-- Action Buttons -->
+      <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:11px; display:flex; align-items:center; gap:6px; border-color:var(--primary); color:var(--primary);" onclick="askAiAboutCbtQuestion('${contextId}')">
+          🤖 Explain with AI
+        </button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:11px; display:flex; align-items:center; gap:6px; border-color:var(--tertiary); color:var(--tertiary);" onclick="addCbtQuestionToErrorBook('${contextId}')">
+          📕 Add to Error Book
+        </button>
+      </div>
+
+      <!-- Dynamic AI Explanation Box -->
+      <div id="cbt-ai-response-${contextId}" style="display:none; margin-top:12px; padding:12px 14px; background:rgba(0,212,170,0.03); border:1px solid rgba(0,212,170,0.15); border-radius:8px; font-size:12px; line-height:1.5; color:#e5e7eb;">
+      </div>
+    </div>
+  `;
+}
+
+function buildCbtReview() {
+  const container = document.getElementById('cbt-review-container');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  cbtQuestions.forEach((q, qIdx) => {
+    const contextId = `live_${qIdx}`;
+    const userAns = cbtAnswers[qIdx];
+    const cardHtml = renderCbtQuestionReviewCard(q, userAns, qIdx, contextId);
+    container.insertAdjacentHTML('beforeend', cardHtml);
   });
   
   renderMath(container);
+}
+
+async function askAiAboutCbtQuestion(contextId) {
+  const apiKey = safeGetLocalStorage('gemini_api_key');
+  if (!apiKey) {
+    alert("Please configure your Gemini API Key in the Settings or AI CBT tab first!");
+    return;
+  }
+
+  const registered = window.cbtReviewQuestionMap ? window.cbtReviewQuestionMap[contextId] : null;
+  if (!registered || !registered.questionObj) return;
+
+  const q = registered.questionObj;
+  const responseBox = document.getElementById(`cbt-ai-response-${contextId}`);
+  if (!responseBox) return;
+
+  responseBox.style.display = 'block';
+  responseBox.innerHTML = '🤖 <em>AI is analyzing the question and deriving the step-by-step solution...</em>';
+
+  const optionPrefixes = ['A', 'B', 'C', 'D'];
+  const optionsText = (q.options || []).map((opt, i) => `${optionPrefixes[i]}) ${opt}`).join('\n');
+  const correctPrefix = optionPrefixes[q.correct_option_idx] || 'A';
+  const correctText = q.options ? (q.options[q.correct_option_idx] || '') : '';
+
+  const prompt = `You are a world-class NEET preparation mentor and subject expert in ${q.subject || 'NEET'}.
+A student is solving a CBT question on the topic "${q.concept || 'General Concept'}".
+They need a simple, step-by-step, intuitive explanation for this question.
+
+[Question]:
+${q.question}
+
+[Options]:
+${optionsText}
+
+[Correct Option]:
+Option ${correctPrefix}: ${correctText}
+
+[Standard Explanation]:
+${q.explanation}
+
+Please explain the underlying concepts clearly, list any formulas used, provide the logical reasoning, and do a clear step-by-step mathematical/conceptual derivation in simple language suitable for a NEET aspirant. CRITICAL: Use KaTeX inline math notation ($ ... $ or $$ ... $$) for all formulas, chemical symbols, and math expressions.`;
+
+  const requestPayload = {
+    contents: [
+      {
+        parts: [
+          { text: prompt }
+        ]
+      }
+    ]
+  };
+
+  try {
+    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
+    if (!response.ok) {
+      throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+    }
+
+    const responseData = await response.json();
+    const responseText = responseData.candidates[0].content.parts[0].text;
+
+    responseBox.textContent = responseText;
+    renderMath(responseBox);
+  } catch (error) {
+    console.error("AI Doubt Solver Error:", error);
+    responseBox.innerHTML = `❌ <span style="color:var(--tertiary);">Error explaining question: ${error.message}</span>`;
+  }
+}
+
+function addCbtQuestionToErrorBook(contextId) {
+  const registered = window.cbtReviewQuestionMap ? window.cbtReviewQuestionMap[contextId] : null;
+  if (!registered || !registered.questionObj) return;
+
+  const q = registered.questionObj;
+
+  let subject = q.subject || 'Biology';
+  let chapter = q.concept || 'General Concept';
+
+  if (!q.subject && chapter && typeof PLAN !== 'undefined') {
+    const chNameClean = chapter.trim().toLowerCase();
+    for (const sub in PLAN) {
+      if (PLAN[sub].some(c => c.ch.trim().toLowerCase() === chNameClean)) {
+        subject = sub === 'phy' ? 'Physics' : (sub === 'che' ? 'Chemistry' : 'Biology');
+        break;
+      }
+    }
+  }
+
+  const optionPrefixes = ['A', 'B', 'C', 'D'];
+  const optionsText = (q.options || []).map((opt, i) => `${optionPrefixes[i]}) ${opt}`).join('\n');
+  const correctPrefix = optionPrefixes[q.correct_option_idx] || 'A';
+  const correctText = q.options ? (q.options[q.correct_option_idx] || '') : '';
+
+  const item = {
+    id: 'err_' + Date.now(),
+    subject: subject,
+    chapter: chapter,
+    category: 'Conceptual Loophole',
+    description: `${q.question}\n\nOptions:\n${optionsText}\n\nExplanation:\n${q.explanation || ''}`,
+    correct: `Correct Option: ${correctPrefix}) ${correctText}`,
+    done: false,
+    date: new Date().toLocaleDateString('en-IN')
+  };
+
+  errorBookItems.unshift(item);
+  safeSetLocalStorage('neet_v3_errorbook_items', JSON.stringify(errorBookItems));
+
+  if (typeof populateErrorChapters === 'function') populateErrorChapters();
+  if (typeof renderErrorBookList === 'function') renderErrorBookList();
+  if (typeof updateErrorBookDeckLabel === 'function') updateErrorBookDeckLabel();
+
+  alert(`Successfully saved question to your Error Book under: ${subject} -> ${chapter}!`);
+}
+
+function retestCbtWrongAnswers(questionsArray, answersMapOrArray) {
+  if (!questionsArray || questionsArray.length === 0) {
+    alert("No questions found in this test to retest.");
+    return;
+  }
+
+  const wrongQuestions = questionsArray.filter((q, idx) => {
+    let userAns = null;
+    if (Array.isArray(answersMapOrArray)) {
+      userAns = answersMapOrArray[idx];
+    } else if (answersMapOrArray && typeof answersMapOrArray === 'object') {
+      userAns = answersMapOrArray[idx];
+    }
+    return userAns === null || userAns === undefined || userAns !== q.correct_option_idx;
+  });
+
+  if (wrongQuestions.length === 0) {
+    alert("Great job! All questions in this test were answered correctly — nothing to retest!");
+    return;
+  }
+
+  const computedDuration = Math.max(5, Math.round(wrongQuestions.length * 1.5));
+  window.cbtCurrentSource = `Retest Wrong (${wrongQuestions.length} Qs)`;
+  initCbt(wrongQuestions, computedDuration);
+}
+
+async function generateConceptFocusedTest(conceptName, subjectHint) {
+  const apiKey = safeGetLocalStorage('gemini_api_key');
+  if (!apiKey) {
+    alert("Please configure your Gemini API Key first in the '🤖 AI CBT' tab or Settings.");
+    showTab('ai-test');
+    return;
+  }
+
+  showTab('ai-test');
+  document.getElementById('ai-setup-view').style.display = 'none';
+  document.getElementById('ai-exam-view').style.display = 'none';
+  document.getElementById('ai-results-view').style.display = 'none';
+  document.getElementById('ai-loading-view').style.display = 'flex';
+  document.getElementById('ai-loading-title').textContent = `Generating Focus Practice: ${conceptName}`;
+  document.getElementById('ai-loading-desc').textContent = `AI is drafting 10 target NEET MCQs strictly on '${conceptName}' (${subjectHint || 'NEET'}). Please wait.`;
+
+  try {
+    const prompt = `You are a premium NEET question bank generator and subject expert in ${subjectHint || 'NEET'}. Generate exactly 10 high-quality, NEET-level MCQs strictly testing the concept: '${conceptName}'. The questions should match the standard and difficulty of the NEET exam. Keep questions, options, and explanations extremely concise and brief (1-2 short sentences). Each question must have:
+- question (text)
+- options (array of 4 strings)
+- correct_option_idx (0-based integer)
+- explanation (short string)
+- concept (set strictly to '${conceptName}')
+- subject (must be one of: "Physics", "Chemistry", "Biology" — set to '${subjectHint || 'Biology'}')
+
+CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$.`;
+
+    const requestPayload = {
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: prompt }
+          ]
+        }
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            questions: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  question: { type: "STRING" },
+                  options: {
+                    type: "ARRAY",
+                    items: { type: "STRING" }
+                  },
+                  correct_option_idx: { type: "INTEGER" },
+                  explanation: { type: "STRING" },
+                  concept: { type: "STRING" },
+                  subject: {
+                    type: "STRING",
+                    enum: ["Physics", "Chemistry", "Biology"]
+                  }
+                },
+                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject"]
+              }
+            }
+          },
+          required: ["questions"]
+        }
+      }
+    };
+
+    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
+    const responseData = await response.json();
+    const responseText = responseData.candidates[0].content.parts[0].text;
+    const parsedData = JSON.parse(responseText);
+
+    if (!parsedData.questions || parsedData.questions.length === 0) {
+      throw new Error("Failed to generate questions for the requested concept. Please try again.");
+    }
+
+    window.cbtCurrentSource = `${conceptName} - Focus Test`;
+    initCbt(parsedData.questions, 15);
+
+  } catch (error) {
+    console.error("Focus Test Generation Error:", error);
+    alert(`Failed to generate focus test: ${error.message}`);
+    document.getElementById('ai-loading-view').style.display = 'none';
+    document.getElementById('ai-setup-view').style.display = 'grid';
+  }
+}
+
+function populateCustomTestChapters() {
+  const container = document.getElementById('custom-cbt-chapters-container');
+  if (!container || typeof PLAN === 'undefined') return;
+
+  const subjects = [
+    { key: 'phy', title: '⚡ Physics', color: 'var(--phy)' },
+    { key: 'che', title: '🧪 Chemistry', color: 'var(--che)' },
+    { key: 'bio', title: '🧬 Biology', color: 'var(--bio)' }
+  ];
+
+  let html = '';
+
+  subjects.forEach(sub => {
+    const list = PLAN[sub.key] || [];
+    if (list.length === 0) return;
+
+    html += `
+      <div style="border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-weight:700; font-size:12px; color:${sub.color};">${sub.title} (${list.length})</span>
+          <label style="font-size:11px; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:4px;">
+            <input type="checkbox" onchange="toggleSelectAllSubjectChapters('${sub.key}', this.checked)"> Select All
+          </label>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:6px;">
+    `;
+
+    list.forEach((item) => {
+      html += `
+        <label style="font-size:11px; color:#d1d5db; display:flex; align-items:center; gap:6px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.ch}">
+          <input type="checkbox" class="custom-cbt-ch-checkbox custom-cbt-ch-${sub.key}" value="${item.ch}">
+          <span>${item.ch}</span>
+        </label>
+      `;
+    });
+
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleSelectAllSubjectChapters(subKey, isChecked) {
+  const checkboxes = document.querySelectorAll(`.custom-cbt-ch-${subKey}`);
+  checkboxes.forEach(cb => { cb.checked = isChecked; });
+}
+
+async function generateCustomAiTest() {
+  const apiKey = safeGetLocalStorage('gemini_api_key');
+  if (!apiKey) {
+    alert("Please configure your Gemini API Key first in the '⚙️ Settings' tab or above.");
+    showTab('settings');
+    return;
+  }
+
+  const selectedBoxes = document.querySelectorAll('.custom-cbt-ch-checkbox:checked');
+  if (selectedBoxes.length === 0) {
+    alert("Please select at least one chapter from the list to generate your custom test.");
+    return;
+  }
+
+  const selectedChapters = Array.from(selectedBoxes).map(cb => cb.value);
+  const diffSelect = document.getElementById('custom-cbt-difficulty');
+  const difficulty = diffSelect ? diffSelect.value : "Mixed";
+
+  const qCountInput = document.getElementById('custom-cbt-qcount');
+  const questionCount = qCountInput ? parseInt(qCountInput.value) || 20 : 20;
+
+  showTab('ai-test');
+  document.getElementById('ai-setup-view').style.display = 'none';
+  document.getElementById('ai-exam-view').style.display = 'none';
+  document.getElementById('ai-results-view').style.display = 'none';
+  document.getElementById('ai-loading-view').style.display = 'flex';
+  document.getElementById('ai-loading-title').textContent = `Generating Custom ${difficulty} Test (${questionCount} Qs)`;
+  document.getElementById('ai-loading-desc').textContent = `AI is drafting ${questionCount} questions across ${selectedChapters.length} selected chapters. Please wait.`;
+
+  try {
+    let diffInstruction = `Target difficulty level: ${difficulty}.`;
+    if (difficulty === "PYQ-Style") {
+      diffInstruction = "Instruct questions to match the exact difficulty, trickiness, and style of real NEET previous-year questions.";
+    } else if (difficulty === "Mixed") {
+      diffInstruction = "Spread question difficulty evenly across Easy (30%), Medium (50%), and Hard (20%) questions.";
+    }
+
+    const prompt = `You are a premium NEET question bank generator. Generate exactly ${questionCount} high-quality, NEET-level MCQs distributed across the following chapters:
+${selectedChapters.join(', ')}
+
+${diffInstruction}
+
+Ensure questions cover key concepts, formulas, and numericals matching the NEET syllabus. Keep questions, options, and explanations concise (1-2 sentences). Each question must have:
+- question (text)
+- options (array of 4 strings)
+- correct_option_idx (0-based integer)
+- explanation (short string)
+- concept (short string tag naming the specific chapter/concept tested from the selected list)
+- subject (must be one of: "Physics", "Chemistry", "Biology")
+
+CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$.`;
+
+    const requestPayload = {
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: prompt }
+          ]
+        }
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            questions: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  question: { type: "STRING" },
+                  options: {
+                    type: "ARRAY",
+                    items: { type: "STRING" }
+                  },
+                  correct_option_idx: { type: "INTEGER" },
+                  explanation: { type: "STRING" },
+                  concept: { type: "STRING" },
+                  subject: {
+                    type: "STRING",
+                    enum: ["Physics", "Chemistry", "Biology"]
+                  }
+                },
+                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject"]
+              }
+            }
+          },
+          required: ["questions"]
+        }
+      }
+    };
+
+    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
+    const responseData = await response.json();
+    const responseText = responseData.candidates[0].content.parts[0].text;
+    const parsedData = JSON.parse(responseText);
+
+    if (!parsedData.questions || parsedData.questions.length === 0) {
+      throw new Error("Failed to generate questions for the custom test. Please try again.");
+    }
+
+    const durationMinutes = Math.max(5, Math.round(questionCount * 1.5));
+    window.cbtCurrentSource = `Custom Test (${difficulty}, ${questionCount} Qs)`;
+    initCbt(parsedData.questions, durationMinutes);
+
+  } catch (error) {
+    console.error("Custom Test Generation Error:", error);
+    alert(`Failed to generate custom test: ${error.message}`);
+    document.getElementById('ai-loading-view').style.display = 'none';
+    document.getElementById('ai-setup-view').style.display = 'grid';
+  }
 }
 
 function renderCbtResultsSection() {
@@ -10349,6 +10817,7 @@ function renderCbtWeakTopicsAnalytics(cbtResults) {
       if (!conceptMap[tag]) {
         conceptMap[tag] = {
           concept: tag,
+          subject: q.subject || 'Biology',
           attempted: 0,
           wrong: 0,
           correct: 0,
@@ -10399,6 +10868,9 @@ function renderCbtWeakTopicsAnalytics(cbtResults) {
       textColor = '#FFD700';
     }
 
+    const safeConceptName = item.concept.replace(/'/g, "\\'");
+    const safeSubjectHint = (item.subject || 'Biology').replace(/'/g, "\\'");
+
     tableRowsHtml += `
       <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
         <td style="padding:10px 12px; font-weight:600; color:#fff;">
@@ -10407,8 +10879,13 @@ function renderCbtWeakTopicsAnalytics(cbtResults) {
         </td>
         <td style="padding:10px 12px; text-align:center; font-weight:700; color:var(--tertiary);">${item.wrong}</td>
         <td style="padding:10px 12px; text-align:center; color:var(--text-muted);">${item.attempted}</td>
-        <td style="padding:10px 12px; text-align:right;">
+        <td style="padding:10px 12px; text-align:center;">
           <span style="background:${badgeColor}; color:${textColor}; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:700;">${acc}%</span>
+        </td>
+        <td style="padding:10px 12px; text-align:right;">
+          <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px; border-color:var(--primary); color:var(--primary);" onclick="generateConceptFocusedTest('${safeConceptName}', '${safeSubjectHint}')">
+            🎯 Practice 10 More
+          </button>
         </td>
       </tr>
     `;
@@ -10429,7 +10906,8 @@ function renderCbtWeakTopicsAnalytics(cbtResults) {
             <th style="padding:8px 12px;">Concept Tag</th>
             <th style="padding:8px 12px; text-align:center;">Times Wrong</th>
             <th style="padding:8px 12px; text-align:center;">Attempted</th>
-            <th style="padding:8px 12px; text-align:right;">Accuracy</th>
+            <th style="padding:8px 12px; text-align:center;">Accuracy</th>
+            <th style="padding:8px 12px; text-align:right;">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -10441,6 +10919,8 @@ function renderCbtWeakTopicsAnalytics(cbtResults) {
 
   renderMath(container);
 }
+
+window.cbtHistoryMap = window.cbtHistoryMap || {};
 
 function renderCbtHistoryList(cbtResults) {
   const container = document.getElementById('cbt-history-container');
@@ -10457,9 +10937,9 @@ function renderCbtHistoryList(cbtResults) {
 
   container.innerHTML = `<h2 style="margin:0 0 16px 0; font-size:16px; color:#fff; font-family:'Share Tech',sans-serif;">📋 Saved Test Reports (${cbtResults.length})</h2>`;
 
-  const optionPrefixes = ['A', 'B', 'C', 'D'];
-
   cbtResults.forEach((res) => {
+    window.cbtHistoryMap[res.id] = res;
+
     const card = document.createElement('div');
     card.className = 'glass-card cbt-report-card';
     card.style.marginBottom = '16px';
@@ -10481,13 +10961,14 @@ function renderCbtHistoryList(cbtResults) {
           </div>
         </div>
 
-        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
           <span style="font-family:'Share Tech',sans-serif; font-size:15px; font-weight:700; color:#FFD700;">${res.score} / ${res.maxScore || (res.totalQuestions * 4)}</span>
           <span style="background:rgba(255,255,255,0.05); color:${accColor}; border:1px solid ${accColor}44; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700;">${res.accuracy}% Acc</span>
           <span style="font-size:11px; color:var(--text-muted);">
             <strong style="color:var(--primary);">✓ ${res.correct}</strong> • <strong style="color:var(--tertiary);">✗ ${res.incorrect}</strong> • <strong style="color:#9ca3af;">- ${res.unanswered}</strong>
           </span>
-          <button class="btn btn-secondary" onclick="event.stopPropagation(); deleteCbtResult('${res.id}')" style="padding:4px 10px; font-size:12px; border-color:rgba(255,107,107,0.3); color:var(--tertiary);" title="Delete Record">🗑️ Delete</button>
+          <button class="btn btn-secondary" onclick="event.stopPropagation(); retestCbtWrongAnswers(window.cbtHistoryMap['${res.id}'].questions, window.cbtHistoryMap['${res.id}'].questions.map(q=>q.user_answer_idx))" style="padding:4px 10px; font-size:11px; border-color:#FFD700; color:#FFD700;" title="Retest Wrong Answers">🔁 Retest Wrong</button>
+          <button class="btn btn-secondary" onclick="event.stopPropagation(); deleteCbtResult('${res.id}')" style="padding:4px 10px; font-size:11px; border-color:rgba(255,107,107,0.3); color:var(--tertiary);" title="Delete Record">🗑️ Delete</button>
         </div>
       </div>
     `;
@@ -10495,59 +10976,10 @@ function renderCbtHistoryList(cbtResults) {
     let questionsReviewHtml = '';
     if (res.questions && Array.isArray(res.questions)) {
       res.questions.forEach((q, qIdx) => {
-        let statusBadgeHtml = '';
+        const contextId = `hist_${res.id}_${qIdx}`;
         const userAns = q.user_answer_idx;
-        if (userAns === null || userAns === undefined) {
-          statusBadgeHtml = `<span style="background:rgba(156,163,175,0.1); color:#9ca3af; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Unanswered</span>`;
-        } else if (userAns === q.correct_option_idx) {
-          statusBadgeHtml = `<span style="background:rgba(0,212,170,0.1); color:var(--primary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Correct (+4)</span>`;
-        } else {
-          statusBadgeHtml = `<span style="background:rgba(255,107,107,0.1); color:var(--tertiary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Incorrect (-1)</span>`;
-        }
-
-        const conceptBadgeHtml = q.concept ? `<span style="background:rgba(255,215,0,0.1); color:#FFD700; border:1px solid rgba(255,215,0,0.25); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">📌 ${q.concept}</span>` : '';
-
-        let optionsHtml = '';
-        if (q.options && Array.isArray(q.options)) {
-          q.options.forEach((opt, optIdx) => {
-            let optStyle = 'border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.01); color:#d1d5db;';
-            let badge = '';
-            
-            if (optIdx === q.correct_option_idx) {
-              optStyle = 'border:1px solid var(--primary); background:rgba(0,212,170,0.08); color:var(--primary); font-weight:600;';
-              badge = ' <span style="font-size:11px; margin-left:auto; color:var(--primary); font-weight:700;">✓ Correct</span>';
-            } else if (userAns === optIdx) {
-              optStyle = 'border:1px solid var(--tertiary); background:rgba(255,107,107,0.08); color:var(--tertiary); font-weight:600;';
-              badge = ' <span style="font-size:11px; margin-left:auto; color:var(--tertiary); font-weight:700;">✗ Your Answer</span>';
-            }
-            
-            optionsHtml += `
-              <div style="display:flex; align-items:center; padding:10px 14px; border-radius:6px; margin-top:8px; font-size:13px; ${optStyle}">
-                <span style="font-weight:700; margin-right:10px;">${optionPrefixes[optIdx]}.</span>
-                <span>${opt}</span>
-                ${badge}
-              </div>
-            `;
-          });
-        }
-
-        questionsReviewHtml += `
-          <div class="review-question-card" style="background:rgba(255, 255, 255, 0.02); border:1px solid rgba(255, 255, 255, 0.06); border-radius:12px; padding:16px; margin-bottom:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <span style="font-weight:700; font-family:'Share Tech',sans-serif; color:#FFD700;">Question ${qIdx + 1}</span>
-                ${conceptBadgeHtml}
-              </div>
-              ${statusBadgeHtml}
-            </div>
-            <div style="font-size:14px; font-weight:600; margin-bottom:12px; line-height:1.5; color:#fff;">${q.question}</div>
-            <div style="margin-bottom:14px;">${optionsHtml}</div>
-            <div style="background:rgba(255,215,0,0.03); border-left:3px solid #FFD700; padding:10px 14px; border-radius:0 8px 8px 0; font-size:12px; line-height:1.5;">
-              <strong style="color:#FFD700; display:block; margin-bottom:4px; font-family:'Share Tech',sans-serif;">Explanation:</strong>
-              <span style="color:#e5e7eb;">${q.explanation}</span>
-            </div>
-          </div>
-        `;
+        const cardHtml = renderCbtQuestionReviewCard(q, userAns, qIdx, contextId);
+        questionsReviewHtml += cardHtml;
       });
     }
 
@@ -10587,6 +11019,14 @@ function deleteCbtResult(resId) {
   renderCbtResultsSection();
 }
 
+window.renderCbtQuestionReviewCard = renderCbtQuestionReviewCard;
+window.askAiAboutCbtQuestion = askAiAboutCbtQuestion;
+window.addCbtQuestionToErrorBook = addCbtQuestionToErrorBook;
+window.retestCbtWrongAnswers = retestCbtWrongAnswers;
+window.generateConceptFocusedTest = generateConceptFocusedTest;
+window.populateCustomTestChapters = populateCustomTestChapters;
+window.toggleSelectAllSubjectChapters = toggleSelectAllSubjectChapters;
+window.generateCustomAiTest = generateCustomAiTest;
 window.renderCbtResultsSection = renderCbtResultsSection;
 window.toggleCbtCardExpand = toggleCbtCardExpand;
 window.deleteCbtResult = deleteCbtResult;
