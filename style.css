@@ -1497,6 +1497,9 @@ table tr.done-row td div, table tr.done-row td span {
 body.exam-mode-active .topbar {
   display: none !important;
 }
+body.exam-mode-active .sidebar {
+  display: none !important;
+}
 body.exam-mode-active .nav-drawer {
   display: none !important;
 }
