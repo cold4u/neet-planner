@@ -3427,6 +3427,88 @@ function cleanupCanvases(canvases) {
   });
 }
 
+function safeParseAiJson(rawText) {
+  if (!rawText || typeof rawText !== 'string') return null;
+
+  let cleaned = rawText.trim();
+  
+  // 1. Strip markdown code fences if present
+  cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+
+  // 2. Attempt direct JSON.parse first
+  try {
+    return JSON.parse(cleaned);
+  } catch (e1) {}
+
+  // 3. Fix unescaped control characters
+  cleaned = cleaned.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]+/g, '');
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (e2) {}
+
+  // 4. Fix trailing commas before closing braces/brackets
+  cleaned = cleaned.replace(/,\s*([\]}])/g, '$1');
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (e3) {}
+
+  // 5. Repair truncated JSON array (if cut off mid-stream due to token limits)
+  let repaired = cleaned;
+  
+  // If an unclosed quote exists, close it
+  const quoteMatches = repaired.match(/(?<!\\)"/g) || [];
+  if (quoteMatches.length % 2 !== 0) {
+    repaired += '"';
+  }
+
+  // Remove trailing orphan keys or commas
+  repaired = repaired.replace(/,\s*"[^"]*"?\s*:?\s*$/g, '');
+  repaired = repaired.replace(/,\s*$/g, '');
+
+  // Balance open braces and brackets
+  const stack = [];
+  let inString = false;
+  let isEscaped = false;
+
+  for (let i = 0; i < repaired.length; i++) {
+    const char = repaired[i];
+    if (isEscaped) {
+      isEscaped = false;
+      continue;
+    }
+    if (char === '\\') {
+      isEscaped = true;
+      continue;
+    }
+    if (char === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (!inString) {
+      if (char === '{' || char === '[') {
+        stack.push(char);
+      } else if (char === '}' || char === ']') {
+        if (stack.length > 0) stack.pop();
+      }
+    }
+  }
+
+  while (stack.length > 0) {
+    const last = stack.pop();
+    if (last === '{') repaired += '}';
+    else if (last === '[') repaired += ']';
+  }
+
+  try {
+    return JSON.parse(repaired);
+  } catch (e4) {
+    console.error("safeParseAiJson Repair Error:", e4, "Raw snippet:", rawText.slice(0, 300));
+    throw new Error(`AI generated response that could not be parsed: ${e4.message}`);
+  }
+}
+
 async function startAiParse() {
   const apiKey = safeGetLocalStorage('gemini_api_key');
   
@@ -3487,6 +3569,7 @@ async function startAiParse() {
       ],
       generationConfig: {
         responseMimeType: "application/json",
+        maxOutputTokens: 8192,
         responseSchema: {
           type: "OBJECT",
           properties: {
@@ -3526,9 +3609,9 @@ async function startAiParse() {
     
     const responseData = await response.json();
     const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = JSON.parse(responseText);
+    const parsedData = safeParseAiJson(responseText);
     
-    if (!parsedData.questions || parsedData.questions.length === 0) {
+    if (!parsedData || !parsedData.questions || parsedData.questions.length === 0) {
       throw new Error("No questions could be extracted from the uploaded document. Please check the document quality and try again.");
     }
 
@@ -3583,6 +3666,7 @@ async function generateAiChapterTest(chapterName) {
       ],
       generationConfig: {
         responseMimeType: "application/json",
+        maxOutputTokens: 8192,
         responseSchema: {
           type: "OBJECT",
           properties: {
@@ -3617,9 +3701,9 @@ async function generateAiChapterTest(chapterName) {
     
     const responseData = await response.json();
     const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = JSON.parse(responseText);
+    const parsedData = safeParseAiJson(responseText);
     
-    if (!parsedData.questions || parsedData.questions.length === 0) {
+    if (!parsedData || !parsedData.questions || parsedData.questions.length === 0) {
       throw new Error("Failed to generate questions for the chapter. Please try again.");
     }
     
@@ -4432,6 +4516,7 @@ CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics expo
       ],
       generationConfig: {
         responseMimeType: "application/json",
+        maxOutputTokens: 8192,
         responseSchema: {
           type: "OBJECT",
           properties: {
@@ -4465,9 +4550,9 @@ CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics expo
     const response = await fetchGeminiWithRetry(apiKey, requestPayload);
     const responseData = await response.json();
     const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = JSON.parse(responseText);
+    const parsedData = safeParseAiJson(responseText);
 
-    if (!parsedData.questions || parsedData.questions.length === 0) {
+    if (!parsedData || !parsedData.questions || parsedData.questions.length === 0) {
       throw new Error("Failed to generate questions for the custom test. Please try again.");
     }
 
