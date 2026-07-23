@@ -4208,38 +4208,91 @@ CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics expo
   }
 }
 
+function getSubjectChapterLists() {
+  const phySet = new Set();
+  const cheSet = new Set();
+  const bioSet = new Set();
+
+  if (typeof PLAN !== 'undefined' && Array.isArray(PLAN)) {
+    PLAN.forEach(item => {
+      if (item.phyChap && typeof item.phyChap === 'string') {
+        const ch = item.phyChap.trim();
+        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) {
+          phySet.add(ch);
+        }
+      }
+      if (item.cheChap && typeof item.cheChap === 'string') {
+        const ch = item.cheChap.trim();
+        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) {
+          cheSet.add(ch);
+        }
+      }
+      if (item.bioChap && typeof item.bioChap === 'string') {
+        const ch = item.bioChap.trim();
+        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) {
+          bioSet.add(ch);
+        }
+      }
+    });
+  }
+
+  if (typeof PYQ_BANK !== 'undefined' && PYQ_BANK) {
+    Object.keys(PYQ_BANK).forEach(ch => {
+      const chClean = ch.trim().toLowerCase();
+      let found = false;
+      for (const p of phySet) { if (p.trim().toLowerCase() === chClean) { found = true; break; } }
+      if (!found) {
+        for (const c of cheSet) { if (c.trim().toLowerCase() === chClean) { found = true; break; } }
+      }
+      if (!found) {
+        for (const b of bioSet) { if (b.trim().toLowerCase() === chClean) { found = true; break; } }
+      }
+      if (!found) {
+        bioSet.add(ch);
+      }
+    });
+  }
+
+  return {
+    phy: Array.from(phySet).sort(),
+    che: Array.from(cheSet).sort(),
+    bio: Array.from(bioSet).sort()
+  };
+}
+
 function populateCustomTestChapters() {
   const container = document.getElementById('custom-cbt-chapters-container');
-  if (!container || typeof PLAN === 'undefined') return;
+  if (!container) return;
+
+  const chapLists = getSubjectChapterLists();
 
   const subjects = [
-    { key: 'phy', title: '⚡ Physics', color: 'var(--phy)' },
-    { key: 'che', title: '🧪 Chemistry', color: 'var(--che)' },
-    { key: 'bio', title: '🧬 Biology', color: 'var(--bio)' }
+    { key: 'phy', title: '⚡ Physics', color: 'var(--phy)', list: chapLists.phy },
+    { key: 'che', title: '🧪 Chemistry', color: 'var(--che)', list: chapLists.che },
+    { key: 'bio', title: '🧬 Biology', color: 'var(--bio)', list: chapLists.bio }
   ];
 
   let html = '';
 
   subjects.forEach(sub => {
-    const list = PLAN[sub.key] || [];
-    if (list.length === 0) return;
+    if (!sub.list || sub.list.length === 0) return;
 
     html += `
-      <div style="border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px;">
+      <div style="border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px; margin-bottom:8px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <span style="font-weight:700; font-size:12px; color:${sub.color};">${sub.title} (${list.length})</span>
+          <span style="font-weight:700; font-size:12px; color:${sub.color};">${sub.title} (${sub.list.length} Chapters)</span>
           <label style="font-size:11px; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:4px;">
             <input type="checkbox" onchange="toggleSelectAllSubjectChapters('${sub.key}', this.checked)"> Select All
           </label>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:6px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap:6px;">
     `;
 
-    list.forEach((item) => {
+    sub.list.forEach((chName) => {
       html += `
-        <label style="font-size:11px; color:#d1d5db; display:flex; align-items:center; gap:6px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.ch}">
-          <input type="checkbox" class="custom-cbt-ch-checkbox custom-cbt-ch-${sub.key}" value="${item.ch}">
-          <span>${item.ch}</span>
+        <label style="font-size:11px; color:#d1d5db; display:flex; align-items:center; gap:6px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${chName}">
+          <input type="checkbox" class="custom-cbt-ch-checkbox custom-cbt-ch-${sub.key}" value="${chName}">
+          <span>${chName}</span>
         </label>
       `;
     });
@@ -4249,6 +4302,11 @@ function populateCustomTestChapters() {
       </div>
     `;
   });
+
+  if (!html) {
+    container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); margin:0;">No chapters found in planner database.</p>`;
+    return;
+  }
 
   container.innerHTML = html;
 }
@@ -5042,6 +5100,9 @@ window.applyTheme = applyTheme;
 
 function initOnLoad() {
   initAiDragAndDrop();
+  if (typeof populateCustomTestChapters === 'function') {
+    populateCustomTestChapters();
+  }
   const storedKey = safeGetLocalStorage('gemini_api_key');
   const keyInput = document.getElementById('gemini-key');
   if (storedKey && keyInput) {
