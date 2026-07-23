@@ -17,7 +17,7 @@
   <title>SHUBxCOLD — 309-Day Ultimate Planner</title>
   <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap' rel='stylesheet'>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.3.2">
+  <link rel="stylesheet" href="style.css?v=3.3.3">
   <!-- KaTeX for beautiful math equation rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
@@ -79,6 +79,10 @@
       <button class="nav-item" data-tab="ai-test" onclick="showTab('ai-test')">
         <span class="nav-icon">🤖</span>
         <span class="nav-label">AI CBT</span>
+      </button>
+      <button class="nav-item" data-tab="cbt-results" onclick="showTab('cbt-results')">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">CBT Results</span>
       </button>
       <button class="nav-item" data-tab="emotional-support" onclick="showTab('emotional-support')">
         <span class="nav-icon">❤️</span>
@@ -1384,6 +1388,24 @@
       </div>
     </section>
 
+    <!-- 10b. AI CBT RESULTS & WEAK TOPIC ANALYTICS -->
+    <section id="cbt-results" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">📊 AI CBT Results & Weak Topic Analytics</h1>
+        <p class="page-desc">Review your past AI CBT test performances, inspect question explanations, and target your weakest concepts.</p>
+      </div>
+
+      <!-- Weak Topics Analytics Container -->
+      <div id="cbt-analytics-container" class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+        <!-- Populated dynamically via JS -->
+      </div>
+
+      <!-- Past Test Reports History Container -->
+      <div id="cbt-history-container">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </section>
+
     <!-- 11. CONFIGURATION & SETTINGS TAB -->
     <section id="settings" class="tab-content">
       <div class="page-header">
@@ -2257,6 +2279,7 @@
       <button class="drawer-item" data-tab="analytics" onclick="navigateTab('analytics')">📈 Analytics</button>
 
       <button class="drawer-item" data-tab="ai-test" onclick="navigateTab('ai-test')">🤖 AI CBT</button>
+      <button class="drawer-item" data-tab="cbt-results" onclick="navigateTab('cbt-results')">📊 CBT Results</button>
       <button class="drawer-item" data-tab="emotional-support" onclick="navigateTab('emotional-support')">❤️ Emotional Support</button>
       <button class="drawer-item" data-tab="support" onclick="navigateTab('support')">💛 Support</button>
       <button class="drawer-item" data-tab="errorbook" onclick="navigateTab('errorbook')">📕 Error Book</button>
@@ -2285,6 +2308,6 @@
     </div>
   </aside>
 
-  <script defer src="app.js?v=3.3.2"></script>
+  <script defer src="app.js?v=3.3.3"></script>
 </body>
 </html>
