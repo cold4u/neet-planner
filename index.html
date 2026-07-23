@@ -1313,8 +1313,14 @@
 
           <!-- Multi-Select Chapters Container -->
           <div style="margin-bottom:16px;">
-            <label style="font-size:12px; font-weight:700; margin-bottom:8px; display:block; color:#fff;">Select Syllabus Chapters</label>
-            <div id="custom-cbt-chapters-container" style="max-height:280px; overflow-y:auto; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; background:rgba(0,0,0,0.2); display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+              <label style="font-size:12px; font-weight:700; margin:0; color:#fff;">Select Syllabus Chapters</label>
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="btn btn-secondary" style="padding:3px 10px; font-size:11px; border-color:var(--primary); color:var(--primary);" onclick="selectAllCustomTestChapters(true)">Select All</button>
+                <button type="button" class="btn btn-secondary" style="padding:3px 10px; font-size:11px; border-color:rgba(255,255,255,0.2); color:#9ca3af;" onclick="selectAllCustomTestChapters(false)">Deselect All</button>
+              </div>
+            </div>
+            <div id="custom-cbt-chapters-container" style="max-height:300px; overflow-y:auto; border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:12px; background:rgba(0,0,0,0.3); display:flex; flex-direction:column; gap:12px;">
               <!-- Dynamic Checkbox groups for Phy, Chem, Bio -->
             </div>
           </div>

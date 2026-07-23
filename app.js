@@ -533,11 +533,13 @@ function safeSetSessionStorage(key, value) {
       })
       .then(pyqData => {
         PYQ_BANK = pyqData;
+        window.PYQ_BANK = PYQ_BANK;
         REAL_YEARLY_PAPERS = {};
         console.log('Successfully loaded PYQ database.');
         // Re-render components once data is available
         if (typeof renderPlan === 'function') renderPlan();
         if (typeof loadSelectedFlashcardDeck === 'function') loadSelectedFlashcardDeck();
+        if (typeof populateCustomTestChapters === 'function') populateCustomTestChapters();
       })
       .catch(err => {
         console.error('Error loading database JSON files:', err);
@@ -752,6 +754,7 @@ function safeSetSessionStorage(key, value) {
     }
     
     const PLAN = buildPlan();
+    window.PLAN = PLAN;
     
     // LocalStorage states
     let done = {};
@@ -4208,50 +4211,78 @@ CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics expo
   }
 }
 
+const MASTER_NEET_CHAPTERS = {
+  phy: [
+    "Units & Measurement", "Kinematics 1D", "Kinematics 2D", "Laws of Motion",
+    "Work, Energy & Power", "Rotational Motion", "Gravitation", "Properties of Matter",
+    "Thermal Properties", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves",
+    "Electrostatics", "Current Electricity", "Moving Charges & Magnetism", "Magnetism & Matter",
+    "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves",
+    "Ray Optics & Optical Instruments", "Wave Optics", "Dual Nature of Radiation & Matter",
+    "Atoms", "Nuclei", "Semiconductor Electronics", "Experimental Skills"
+  ],
+  che: [
+    "Basic Concepts of Chemistry", "Atomic Structure", "Periodic Table & Periodicity",
+    "Chemical Bonding & Molecular Structure", "Thermodynamics (Chem)", "Chemical Equilibrium",
+    "Ionic Equilibrium", "Redox Reactions", "Solutions", "Electrochemistry",
+    "Chemical Kinetics", "Surface Chemistry", "p-Block Elements", "d- and f-Block Elements",
+    "Coordination Compounds", "Haloalkanes & Haloarenes", "Alcohols, Phenols & Ethers",
+    "Aldehydes, Ketones & Carboxylic Acids", "Amines", "Biomolecules (Chem)",
+    "Organic Basics & GOC", "Hydrocarbons", "Practical Chemistry"
+  ],
+  bio: [
+    "Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom",
+    "Morphology of Plants", "Anatomy of Plants", "Structural Org Animals", "Cell: Unit of Life",
+    "Biomolecules", "Cell Cycle & Division", "Photosynthesis", "Respiration in Plants",
+    "Plant Growth & Dev", "Breathing & Gas Exchange", "Body Fluids & Circulation",
+    "Excretion", "Locomotion & Movement", "Neural Control", "Chemical Coordination",
+    "Sexual Repro in Plants", "Human Reproduction", "Reproductive Health",
+    "Principles of Inheritance & Variation", "Molecular Basis of Inheritance", "Evolution",
+    "Human Health & Disease", "Microbes in Human Welfare", "Biotechnology: Principles & Processes",
+    "Biotechnology & Its Applications", "Organisms & Populations", "Ecosystem", "Biodiversity & Conservation"
+  ]
+};
+
 function getSubjectChapterLists() {
   const phySet = new Set();
   const cheSet = new Set();
   const bioSet = new Set();
 
-  if (typeof PLAN !== 'undefined' && Array.isArray(PLAN)) {
-    PLAN.forEach(item => {
+  const planRef = (typeof window.PLAN !== 'undefined' ? window.PLAN : (typeof PLAN !== 'undefined' ? PLAN : null));
+
+  if (planRef && Array.isArray(planRef)) {
+    planRef.forEach(item => {
       if (item.phyChap && typeof item.phyChap === 'string') {
         const ch = item.phyChap.trim();
-        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) {
-          phySet.add(ch);
-        }
+        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) phySet.add(ch);
       }
       if (item.cheChap && typeof item.cheChap === 'string') {
         const ch = item.cheChap.trim();
-        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) {
-          cheSet.add(ch);
-        }
+        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) cheSet.add(ch);
       }
       if (item.bioChap && typeof item.bioChap === 'string') {
         const ch = item.bioChap.trim();
-        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) {
-          bioSet.add(ch);
-        }
+        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) bioSet.add(ch);
       }
     });
   }
 
-  if (typeof PYQ_BANK !== 'undefined' && PYQ_BANK) {
-    Object.keys(PYQ_BANK).forEach(ch => {
+  const pyqRef = (typeof window.PYQ_BANK !== 'undefined' ? window.PYQ_BANK : (typeof PYQ_BANK !== 'undefined' ? PYQ_BANK : null));
+  if (pyqRef) {
+    Object.keys(pyqRef).forEach(ch => {
       const chClean = ch.trim().toLowerCase();
       let found = false;
       for (const p of phySet) { if (p.trim().toLowerCase() === chClean) { found = true; break; } }
-      if (!found) {
-        for (const c of cheSet) { if (c.trim().toLowerCase() === chClean) { found = true; break; } }
-      }
-      if (!found) {
-        for (const b of bioSet) { if (b.trim().toLowerCase() === chClean) { found = true; break; } }
-      }
-      if (!found) {
-        bioSet.add(ch);
-      }
+      if (!found) { for (const c of cheSet) { if (c.trim().toLowerCase() === chClean) { found = true; break; } } }
+      if (!found) { for (const b of bioSet) { if (b.trim().toLowerCase() === chClean) { found = true; break; } } }
+      if (!found) bioSet.add(ch);
     });
   }
+
+  // Fallback to MASTER_NEET_CHAPTERS if sets are empty or small
+  if (phySet.size < 5) MASTER_NEET_CHAPTERS.phy.forEach(c => phySet.add(c));
+  if (cheSet.size < 5) MASTER_NEET_CHAPTERS.che.forEach(c => cheSet.add(c));
+  if (bioSet.size < 5) MASTER_NEET_CHAPTERS.bio.forEach(c => bioSet.add(c));
 
   return {
     phy: Array.from(phySet).sort(),
@@ -4278,21 +4309,21 @@ function populateCustomTestChapters() {
     if (!sub.list || sub.list.length === 0) return;
 
     html += `
-      <div style="border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px; margin-bottom:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <span style="font-weight:700; font-size:12px; color:${sub.color};">${sub.title} (${sub.list.length} Chapters)</span>
-          <label style="font-size:11px; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:4px;">
-            <input type="checkbox" onchange="toggleSelectAllSubjectChapters('${sub.key}', this.checked)"> Select All
+      <div style="border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:10px; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-weight:700; font-size:13px; color:${sub.color};">${sub.title} (${sub.list.length} Chapters)</span>
+          <label style="font-size:11px; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:5px; user-select:none;">
+            <input type="checkbox" onchange="toggleSelectAllSubjectChapters('${sub.key}', this.checked)" style="accent-color:var(--primary); cursor:pointer;"> Select All
           </label>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap:6px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:6px;">
     `;
 
     sub.list.forEach((chName) => {
       html += `
-        <label style="font-size:11px; color:#d1d5db; display:flex; align-items:center; gap:6px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${chName}">
-          <input type="checkbox" class="custom-cbt-ch-checkbox custom-cbt-ch-${sub.key}" value="${chName}">
-          <span>${chName}</span>
+        <label style="font-size:11px; color:#e5e7eb; display:flex; align-items:center; gap:8px; cursor:pointer; padding:5px 8px; background:rgba(255,255,255,0.03); border-radius:6px; border:1px solid rgba(255,255,255,0.06); user-select:none; transition:background 0.2s;" title="${chName}" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+          <input type="checkbox" class="custom-cbt-ch-checkbox custom-cbt-ch-${sub.key}" value="${chName}" style="accent-color:var(--primary); cursor:pointer; width:14px; height:14px; flex-shrink:0;">
+          <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${chName}</span>
         </label>
       `;
     });
@@ -4303,17 +4334,17 @@ function populateCustomTestChapters() {
     `;
   });
 
-  if (!html) {
-    container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); margin:0;">No chapters found in planner database.</p>`;
-    return;
-  }
-
   container.innerHTML = html;
 }
 
 function toggleSelectAllSubjectChapters(subKey, isChecked) {
   const checkboxes = document.querySelectorAll(`.custom-cbt-ch-${subKey}`);
   checkboxes.forEach(cb => { cb.checked = isChecked; });
+}
+
+function selectAllCustomTestChapters(selectAll) {
+  const checkboxes = document.querySelectorAll('.custom-cbt-ch-checkbox');
+  checkboxes.forEach(cb => { cb.checked = selectAll; });
 }
 
 async function generateCustomAiTest() {
@@ -10001,6 +10032,7 @@ window.hideMockChartTooltip = hideMockChartTooltip;
 window.renderOverviewMockLineChart = renderOverviewMockLineChart;
 window.showOverviewMockTooltip = showOverviewMockTooltip;
 window.hideOverviewMockTooltip = hideOverviewMockTooltip;
+window.selectAllCustomTestChapters = selectAllCustomTestChapters;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
