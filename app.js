@@ -3405,19 +3405,12 @@ async function startAiParse() {
     }
 
     const requestPayload = {
-      systemInstruction: {
-        parts: [
-          {
-            text: "You are an expert NEET Question Paper Document Parser. Your sole task is to extract EVERY SINGLE Multiple-Choice Question (MCQ) from Question 1 to the final question across ALL pages of the user's document. Do NOT stop after 2 or 3 questions. Extract ALL 30, 40, 49, 50+ questions present in the file into a JSON object with key 'questions'."
-          }
-        ]
-      },
       contents: [
         {
           role: "user",
           parts: [
             {
-              text: "Extract ALL Multiple-Choice Questions (MCQs) from this question paper into a JSON object with key 'questions'. Each question item in the array must contain: 'question' (full question text, format chemical/math formulas with KaTeX $...$), 'options' (array of 4 option strings), 'correct_option_idx' (0-based integer 0-3), 'explanation' (1 short sentence), 'concept' (short topic tag), and 'subject' ('Physics', 'Chemistry', or 'Biology'). Ensure ALL questions from Question 1 to the end of the document are extracted."
+              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper into a JSON object with key 'questions'. Ensure each question has exactly 4 options. Identify the correct option (0-based index 0-3), provide a concise 1-2 sentence explanation, classify the subject as exactly one of: 'Physics', 'Chemistry', or 'Biology', and assign a short concept tag (e.g. 'Newton's Laws - Friction', 'Photosynthesis - Light Reaction'). CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$."
             },
             {
               inlineData: {
