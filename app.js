@@ -4658,6 +4658,32 @@ function cbtShowReview() {
   }
 }
 
+function cbtExitTestPrompt() {
+  const confirmExit = confirm("Are you sure you want to exit the exam?\n\nYour current test progress will be cancelled and you will return to the setup page.");
+  if (confirmExit) {
+    cbtExitTest();
+  }
+}
+
+function cbtExitTest() {
+  if (cbtTimer) {
+    clearInterval(cbtTimer);
+    cbtTimer = null;
+  }
+  
+  // Turn off distraction-free focus mode
+  document.body.classList.remove('exam-mode-active');
+  
+  // Hide exam view & return to setup view
+  document.getElementById('ai-exam-view').style.display = 'none';
+  document.getElementById('ai-results-view').style.display = 'none';
+  document.getElementById('ai-loading-view').style.display = 'none';
+  document.getElementById('ai-setup-view').style.display = 'grid';
+
+  // Reset current source tracker
+  window.cbtCurrentSource = null;
+}
+
 function cbtExitResults() {
   document.body.classList.remove('exam-mode-active');
   document.getElementById('ai-results-view').style.display = 'none';
@@ -5263,6 +5289,8 @@ window.cbtSelectOption = cbtSelectOption;
 window.cbtSubmitTest = cbtSubmitTest;
 window.cbtShowReview = cbtShowReview;
 window.cbtExitResults = cbtExitResults;
+window.cbtExitTestPrompt = cbtExitTestPrompt;
+window.cbtExitTest = cbtExitTest;
 window.cbtJumpToQuestion = cbtJumpToQuestion;
 window.openQuickLog = openQuickLog;
 window.closeQuickLog = closeQuickLog;
