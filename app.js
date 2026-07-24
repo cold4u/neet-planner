@@ -3267,19 +3267,26 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
     }
   }
   
+  const cleanKey = apiKey.trim();
+  const isAqToken = cleanKey.startsWith("AQ") || cleanKey.startsWith("ya29");
+  
   const headers = {
-    "Content-Type": "application/json",
-    "x-goog-api-key": apiKey.trim()
+    "Content-Type": "application/json"
   };
   
-  // If token starts with AQ or ya29, attach Authorization Bearer header
-  if (apiKey.trim().startsWith("AQ") || apiKey.trim().startsWith("ya29")) {
-    headers["Authorization"] = `Bearer ${apiKey.trim()}`;
+  if (isAqToken) {
+    headers["Authorization"] = `Bearer ${cleanKey}`;
+  } else {
+    headers["x-goog-api-key"] = cleanKey;
   }
   
   while (attempt <= retries) {
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey.trim())}`, {
+      const fetchUrl = isAqToken 
+        ? `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
+        : `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(cleanKey)}`;
+
+      const response = await fetch(fetchUrl, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(requestPayload)
