@@ -755,8 +755,20 @@
           </div>
         </div>
 
-        <h4 style="margin-top:0; margin-bottom:12px; font-size:13px; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Target College Eligibility Cutoffs (General Category):</h4>
-        <div id="college-cutoffs-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:10px; max-height: 240px; overflow-y: auto; padding-right:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+          <h4 style="margin:0; font-size:13px; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Government Medical Colleges Cutoffs & Eligibility:</h4>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label for="rank-predictor-category" style="font-size:12px; font-weight:600; color:#FFD700;">Category:</label>
+            <select id="rank-predictor-category" class="form-control" style="font-size:12px; padding:4px 10px; width:auto; background:rgba(255,255,255,0.06); border:1px solid rgba(255,215,0,0.3); color:#fff; border-radius:6px; cursor:pointer;" onchange="updateNeetRankPredictor()">
+              <option value="OBC" selected>OBC-NCL (Other Backward Classes)</option>
+              <option value="GEN">General / Unreserved (UR)</option>
+              <option value="EWS">EWS (Economically Weaker Section)</option>
+              <option value="SC">SC (Scheduled Caste)</option>
+              <option value="ST">ST (Scheduled Tribe)</option>
+            </select>
+          </div>
+        </div>
+        <div id="college-cutoffs-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap:10px; max-height: 320px; overflow-y: auto; padding-right:6px;">
           <!-- Rendered dynamically via JS -->
         </div>
       </div>
