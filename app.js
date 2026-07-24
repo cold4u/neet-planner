@@ -3262,7 +3262,7 @@ function fileToBase64(file) {
 }
 
 async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs = 1500) {
-  let model = "gemini-2.5-flash";
+  let model = "gemini-1.5-flash";
   let attempt = 0;
   
   // Guarantee max output token capacity (8192) on all Gemini requests
@@ -3294,8 +3294,8 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
         if (attempt <= retries) {
           console.warn(`Gemini API returned ${response.status}. Retrying in ${delayMs}ms with alternative model...`);
           await new Promise(resolve => setTimeout(resolve, delayMs));
-          if (model === "gemini-2.5-flash") {
-            model = "gemini-1.5-flash";
+          if (model === "gemini-1.5-flash") {
+            model = "gemini-1.5-pro";
           }
           continue;
         }
@@ -3311,8 +3311,8 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
       attempt++;
       console.warn(`Fetch error: ${err.message}. Retrying in ${delayMs}ms...`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
-      if (model === "gemini-2.5-flash") {
-        model = "gemini-1.5-flash";
+      if (model === "gemini-1.5-flash") {
+        model = "gemini-1.5-pro";
       }
     }
   }
@@ -3427,18 +3427,31 @@ async function startAiParse() {
     window.cbtCurrentSource = (selectedFile && selectedFile.name) ? selectedFile.name : "Uploaded Paper";
 
     const base64Data = await fileToBase64(selectedFile);
-    const mimeType = selectedFile.type || "application/pdf";
+    let mimeType = selectedFile.type;
+    if (selectedFile.name && selectedFile.name.toLowerCase().endsWith('.pdf')) {
+      mimeType = "application/pdf";
+    } else if (!mimeType) {
+      mimeType = "application/pdf";
+    }
     
-    const prompt = `You are a high-speed NEET Question Paper Extractor.
-Extract EVERY SINGLE Multiple-Choice Question (MCQ) from this uploaded document from start to end (extract ALL 30, 40, 50+ questions present in the PDF). Do NOT omit, skip, summarize, or truncate any question.
+    const prompt = `CRITICAL DOCUMENT EXTRACTION INSTRUCTION:
+You are an expert NEET Question Paper Document Parser.
+This uploaded document is a multi-page question paper containing ALL 40, 49, 50 or more Multiple-Choice Questions (MCQs).
 
-Extraction Directives:
-1. Extract ALL MCQs present in the entire document from Question 1 to the final question. Ensure each question has 4 options.
-2. Identify the correct option index (0-based: 0 for A, 1 for B, 2 for C, 3 for D).
-3. Provide a short 1-sentence explanation and brief concept tag.
-4. Classify subject strictly as: "Physics", "Chemistry", or "Biology".
-5. Use KaTeX inline math delimiters $ ... $ for all chemical formulas (e.g. $H_2O$), math symbols, and exponents ($v^2$).
-6. Keep texts concise so that ALL 50+ questions fit completely into the output JSON payload.`;
+YOU MUST SCAN AND READ ALL PAGES OF THIS PDF FROM PAGE 1 TO THE VERY LAST PAGE.
+DO NOT STOP AFTER PAGE 1. DO NOT STOP AFTER EXTRACTING 2 OR 3 QUESTIONS.
+
+Strict Instructions:
+1. Scan EVERY SINGLE page of the PDF document from Question 1 through to the final question (e.g. Q1, Q2, Q3 ... Q48, Q49, Q50).
+2. Extract ALL MCQs present in the entire document without skipping or stopping.
+3. For each question, extract:
+   - "question": the full text of the question (use KaTeX $ ... $ for inline math/chemistry formulas like $H_2O$, $v^2$, $10^{-3}$)
+   - "options": array of 4 option strings
+   - "correct_option_idx": 0-based index of correct option (0 for A, 1 for B, 2 for C, 3 for D)
+   - "explanation": 1 concise sentence explanation
+   - "concept": short concept tag
+   - "subject": "Physics" | "Chemistry" | "Biology"
+4. Output the result in JSON object format containing the "questions" array. Ensure ALL 40-50+ questions from all pages of the document are present.`;
 
     const requestPayload = {
       contents: [
