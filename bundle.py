@@ -48,12 +48,9 @@ def inline_diagrams(data, base_dir):
                                     svg_content = svg_content[idx+1:].strip()
                             item["diagram"] = svg_content
                         elif ext in (".png", ".jpg", ".jpeg", ".webp"):
-                            with open(file_path, "rb") as img_f:
-                                binary_data = img_f.read()
-                            base64_data = base64.b64encode(binary_data).decode("utf-8")
-                            mime_type = "image/png" if ext == ".png" else "image/jpeg"
-                            item["diagram"] = f"data:{mime_type};base64,{base64_data}"
-                        print(f"Inlined diagram image: {diag}")
+                            # Keep relative path for PNG/JPG to prevent multi-megabyte JS script memory crashes
+                            item["diagram"] = diag
+                        print(f"Processed diagram image: {diag}")
                     else:
                         print(f"Warning: local diagram file not found: {file_path}")
             elif isinstance(item, (dict, list)):
