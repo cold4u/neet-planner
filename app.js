@@ -3255,7 +3255,8 @@ function fileToBase64(file) {
 }
 
 async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs = 1500) {
-  let model = "gemini-1.5-flash";
+  const models = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3.1-flash-lite"];
+  let modelIndex = 0;
   let attempt = 0;
   
   if (requestPayload && typeof requestPayload === 'object') {
@@ -3281,6 +3282,7 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
   }
   
   while (attempt <= retries) {
+    const model = models[modelIndex % models.length];
     try {
       const fetchUrl = isAqToken 
         ? `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
@@ -3296,20 +3298,20 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
         return response;
       }
       
-      if (response.status === 503 || response.status === 429 || response.status >= 500) {
+      if (response.status === 404 || response.status === 503 || response.status === 429 || response.status >= 500) {
         attempt++;
         if (attempt <= retries) {
-          console.warn(`Gemini API returned ${response.status}. Retrying in ${delayMs}ms with alternative model...`);
-          await new Promise(resolve => setTimeout(resolve, delayMs));
-          if (model === "gemini-1.5-flash") {
-            model = "gemini-2.0-flash";
+          console.warn(`Gemini API returned ${response.status} for model ${model}.`);
+          if (response.status !== 404) {
+            await new Promise(resolve => setTimeout(resolve, delayMs));
           }
+          modelIndex++;
           continue;
         }
       }
       
       const errorText = await response.text();
-      if (response.status === 400 || response.status === 401 || response.status === 403 || response.status === 404) {
+      if (response.status === 400 || response.status === 401 || response.status === 403) {
         throw new Error(`Google API Authentication Error (${response.status}): ${errorText}\n\nPlease generate a free API key at https://aistudio.google.com/app/apikey and save it in ⚙️ Settings.`);
       }
       throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
@@ -3321,9 +3323,7 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
       attempt++;
       console.warn(`Fetch error: ${err.message}. Retrying in ${delayMs}ms...`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
-      if (model === "gemini-1.5-flash") {
-        model = "gemini-2.0-flash";
-      }
+      modelIndex++;
     }
   }
 }
