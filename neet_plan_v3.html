@@ -10021,7 +10021,7 @@ async function startAiParse() {
   document.getElementById('ai-setup-view').style.display = 'none';
   document.getElementById('ai-loading-view').style.display = 'flex';
   document.getElementById('ai-loading-title').textContent = "AI is parsing your Question Paper...";
-  document.getElementById('ai-loading-desc').textContent = "Extracting MCQs, options, subject tags, and explanations directly from your document. Please wait...";
+  document.getElementById('ai-loading-desc').textContent = "Extracting ALL MCQs, options, and explanations from your document page by page. Please wait...";
   
   try {
     window.cbtCurrentSource = (selectedFile && selectedFile.name) ? selectedFile.name : "Uploaded Paper";
@@ -10029,14 +10029,23 @@ async function startAiParse() {
     const base64Data = await fileToBase64(selectedFile);
     const mimeType = selectedFile.type || "application/pdf";
     
+    const prompt = `You are a high-speed NEET Question Paper Extractor.
+Extract EVERY SINGLE Multiple-Choice Question (MCQ) from this uploaded document from start to end (extract ALL 30, 40, 50+ questions present in the PDF). Do NOT omit, skip, summarize, or truncate any question.
+
+Extraction Directives:
+1. Extract ALL MCQs present in the entire document from Question 1 to the final question. Ensure each question has 4 options.
+2. Identify the correct option index (0-based: 0 for A, 1 for B, 2 for C, 3 for D).
+3. Provide a short 1-sentence explanation and brief concept tag.
+4. Classify subject strictly as: "Physics", "Chemistry", or "Biology".
+5. Use KaTeX inline math delimiters $ ... $ for all chemical formulas (e.g. $H_2O$), math symbols, and exponents ($v^2$).
+6. Keep texts concise so that ALL 50+ questions fit completely into the output JSON payload.`;
+
     const requestPayload = {
       contents: [
         {
           role: "user",
           parts: [
-            {
-              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper. Ensure each question has exactly 4 options. Identify the correct option, provide a concise 1-2 sentence explanation, classify the subject as exactly one of: \"Physics\", \"Chemistry\", or \"Biology\", and assign a short concept tag (e.g. \"Newton's Laws - Friction\", \"Photosynthesis - Light Reaction\"). CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$. Return the results in the required JSON schema format."
-            },
+            { text: prompt },
             {
               inlineData: {
                 mimeType: mimeType,
