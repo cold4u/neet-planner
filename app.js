@@ -3400,6 +3400,28 @@ function safeParseAiJson(rawText) {
   }
 }
 
+async function extractPdfText(file) {
+  try {
+    if (typeof pdfjsLib === 'undefined') return null;
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+    let fullText = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items.map(item => item.str).join(' ');
+      if (pageText.trim()) {
+        fullText += `\n--- Page ${i} ---\n` + pageText.trim();
+      }
+    }
+    return fullText.trim().length > 100 ? fullText.trim() : null;
+  } catch (err) {
+    console.warn("Client PDF text extraction notice:", err);
+    return null;
+  }
+}
+
 async function startAiParse() {
   const apiKey = safeGetLocalStorage('gemini_api_key');
   
@@ -3426,32 +3448,46 @@ async function startAiParse() {
   try {
     window.cbtCurrentSource = (selectedFile && selectedFile.name) ? selectedFile.name : "Uploaded Paper";
 
-    const base64Data = await fileToBase64(selectedFile);
-    let mimeType = selectedFile.type;
-    if (selectedFile.name && selectedFile.name.toLowerCase().endsWith('.pdf')) {
-      mimeType = "application/pdf";
-    } else if (!mimeType) {
-      mimeType = "application/pdf";
+    // Tier 1: Fast client-side PDF text extraction if available
+    let extractedText = null;
+    if (selectedFile.type === 'application/pdf' || (selectedFile.name && selectedFile.name.toLowerCase().endsWith('.pdf'))) {
+      extractedText = await extractPdfText(selectedFile);
     }
-    
+
+    let userParts = [];
+    if (extractedText) {
+      console.log(`Extracted ${extractedText.length} characters of PDF text on client side.`);
+      userParts.push({
+        text: `Below is the FULL extracted text of ALL pages from the user's uploaded question paper PDF:\n\n${extractedText}\n\nTask: Extract EVERY SINGLE Multiple-Choice Question (MCQ) present in the text above from Question 1 to the very last question (e.g. Q1, Q2, Q3 ... Q49, Q50). Return a JSON object with key 'questions' containing an array of objects. Each object must have: 'question' (full question text, format chemical/math formulas with KaTeX $...$), 'options' (array of 4 option strings), 'correct_option_idx' (0-based integer 0-3), 'explanation' (1 short sentence), 'concept' (topic tag), and 'subject' ('Physics'|'Chemistry'|'Biology'). Extract ALL questions without omitting any.`
+      });
+    } else {
+      const base64Data = await fileToBase64(selectedFile);
+      let mimeType = selectedFile.type;
+      if (selectedFile.name && selectedFile.name.toLowerCase().endsWith('.pdf')) {
+        mimeType = "application/pdf";
+      } else if (!mimeType) {
+        mimeType = "application/pdf";
+      }
+      userParts.push({ text: "Extract ALL Multiple-Choice Questions (MCQs) from this question paper into a JSON object with key 'questions'. Each question item in the array must contain: 'question' (full question text, formatting chemical formulas and math like $H_2O$, $v^2$), 'options' (array of 4 option strings), 'correct_option_idx' (0-based integer: 0 for A, 1 for B, 2 for C, 3 for D), 'explanation' (1 short sentence), 'concept' (short topic tag), and 'subject' ('Physics', 'Chemistry', or 'Biology'). Ensure ALL questions from Question 1 to the end of the document are extracted." });
+      userParts.push({
+        inlineData: {
+          mimeType: mimeType,
+          data: base64Data
+        }
+      });
+    }
+
     const requestPayload = {
       systemInstruction: {
         parts: [
           {
-            text: "You are an expert NEET Question Paper PDF Extractor. Your sole mission is to extract EVERY SINGLE Multiple-Choice Question (MCQ) from the user's uploaded document from Question 1 through to the final question (extract ALL 30, 40, 49, 50+ questions). Do NOT stop after 2 or 3 questions. Do NOT extract a sample. Scan all pages from top to bottom and extract 100% of all MCQs present in the file."
+            text: "You are an expert NEET Question Paper PDF Extractor. Your sole mission is to extract EVERY SINGLE Multiple-Choice Question (MCQ) from the user's document from Question 1 through to the final question (extract ALL 30, 40, 49, 50+ questions). Do NOT stop after 2 or 3 questions. Do NOT extract a sample. Process all pages from top to bottom and extract 100% of all MCQs present in the document."
           }
         ]
       },
       contents: [
         {
           role: "user",
-          parts: [
-            { text: "Extract ALL Multiple-Choice Questions (MCQs) from this question paper into a JSON object with key 'questions'. Each question item in the array must contain: 'question' (full question text, formatting chemical formulas and math like $H_2O$, $v^2$), 'options' (array of 4 option strings), 'correct_option_idx' (0-based integer: 0 for A, 1 for B, 2 for C, 3 for D), 'explanation' (1 short sentence), 'concept' (short topic tag), and 'subject' ('Physics', 'Chemistry', or 'Biology'). Ensure ALL questions from Question 1 to the end of the document are extracted." },
-            {
-              inlineData: {
-                mimeType: mimeType,
-                data: base64Data
-              }
             }
           ]
         }
