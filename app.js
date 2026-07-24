@@ -1918,12 +1918,6 @@ function safeSetSessionStorage(key, value) {
             <div style="display:flex; gap:8px; margin-top:12px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px; flex-wrap:wrap;">
               <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px; display:flex; align-items:center; gap:4px; border-color:var(--tertiary); color:var(--tertiary);" onclick="addPyqToErrorBook(currentChForPyq, ${qIdx})">
                 <span>📕</span> Add to Error Book
-              </button>
-              <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px; display:flex; align-items:center; gap:4px; border-color:var(--primary); color:var(--primary);" onclick="askAiAboutPyq(currentChForPyq, ${qIdx})">
-                <span>🤖</span> Explain with AI
-              </button>
-            </div>
-            <div id="ai-response-${qIdx}" style="margin-top:10px; padding:12px; border-radius:6px; background:rgba(0, 212, 170, 0.05); border:1px solid rgba(0, 212, 170, 0.1); font-size:12.5px; line-height:1.5; color:var(--text-secondary); display:none; white-space:pre-wrap; max-height:220px; overflow-y:auto; padding-right:8px;">
             </div>
           </div>
         </div>
@@ -3164,607 +3158,12 @@ window.selectPaperOption = selectPaperOption;
 window.openPyqModal = openPyqModal;
 window.initYearlyPaper = initYearlyPaper;
 
-/* ==========================================
-   AI CBT & CHAPTER TEST ENGINE
-   ========================================== */
 
-var selectedFile = null;
-var cbtQuestions = [];
-var cbtAnswers = {};
-var cbtFlagged = new Set();
-var cbtCurrentIdx = 0;
-var cbtTimer = null;
-var cbtTimeRemaining = 0;
-var cbtTotalQuestions = 0;
 
-function initAiDragAndDrop() {
-  const dragZone = document.getElementById('drag-zone');
-  const fileInput = document.getElementById('ai-file-input');
-  const fileInfo = document.getElementById('file-info');
 
-  if (!dragZone || !fileInput) return;
 
-  // Prevent default drag behaviors
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dragZone.addEventListener(eventName, preventDefaults, false);
-    document.body.addEventListener(eventName, preventDefaults, false);
-  });
 
-  // Highlight drop zone when item is dragged over it
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dragZone.addEventListener(eventName, highlight, false);
-  });
 
-  ['dragleave', 'drop'].forEach(eventName => {
-    dragZone.addEventListener(eventName, unhighlight, false);
-  });
-
-  // Handle dropped files
-  dragZone.addEventListener('drop', handleDrop, false);
-
-  // Handle selected files
-  fileInput.addEventListener('change', handleFileSelect, false);
-
-  function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  function highlight() {
-    dragZone.classList.add('drag-over');
-  }
-
-  function unhighlight() {
-    dragZone.classList.remove('drag-over');
-  }
-
-  function handleDrop(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    if (files.length > 0) {
-      handleFile(files[0]);
-    }
-  }
-
-  function handleFileSelect(e) {
-    const files = e.target.files;
-    if (files.length > 0) {
-      handleFile(files[0]);
-    }
-  }
-
-  function handleFile(file) {
-    selectedFile = file;
-    if (fileInfo) {
-      fileInfo.textContent = `Selected File: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
-      fileInfo.style.display = 'block';
-    }
-  }
-}
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const base64String = reader.result.split(',')[1];
-      resolve(base64String);
-    };
-    reader.onerror = error => reject(error);
-  });
-}
-
-async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs = 1500) {
-  const models = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3.1-flash-lite"];
-  let modelIndex = 0;
-  let attempt = 0;
-  
-  if (requestPayload && typeof requestPayload === 'object') {
-    if (!requestPayload.generationConfig) {
-      requestPayload.generationConfig = {};
-    }
-    if (!requestPayload.generationConfig.maxOutputTokens) {
-      requestPayload.generationConfig.maxOutputTokens = 8192;
-    }
-  }
-  
-  const cleanKey = apiKey.trim();
-
-  const headers = {
-    "Content-Type": "application/json",
-    "x-goog-api-key": cleanKey
-  };
-
-  while (attempt <= retries) {
-    const model = models[modelIndex % models.length];
-    try {
-      const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-
-      const response = await fetch(fetchUrl, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(requestPayload)
-      });
-      
-      if (response.ok) {
-        return response;
-      }
-      
-      if (response.status === 404 || response.status === 503 || response.status === 429 || response.status >= 500) {
-        attempt++;
-        if (attempt <= retries) {
-          console.warn(`Gemini API returned ${response.status} for model ${model}.`);
-          if (response.status !== 404) {
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-          }
-          modelIndex++;
-          continue;
-        }
-      }
-      
-      const errorText = await response.text();
-      if (response.status === 400 || response.status === 401 || response.status === 403) {
-        throw new Error(`Google API Authentication Error (${response.status}): Your API key may be an old unrestricted "Standard" key, which Google now blocks. Go to https://aistudio.google.com/apikey, either restrict it to "Gemini API only" or generate a fresh key (new keys are Auth keys by default), then save it in ⚙️ Settings.\n\n${errorText}`);
-      }
-      throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
-      
-    } catch (err) {
-      if (attempt >= retries) {
-        throw err;
-      }
-      attempt++;
-      console.warn(`Fetch error: ${err.message}. Retrying in ${delayMs}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delayMs));
-      modelIndex++;
-    }
-  }
-}
-
-async function startAiParse() {
-  const apiKey = safeGetLocalStorage('gemini_api_key');
-  
-  if (!apiKey) {
-    alert("Please configure your Gemini API Key first in the '⚙️ Settings' tab.");
-    showTab('settings');
-    return;
-  }
-  
-  if (!selectedFile) {
-    alert("Please drag & drop or select a question paper PDF or Image.");
-    return;
-  }
-  
-  const durationInput = document.getElementById('ai-test-duration');
-  const durationMinutes = durationInput ? parseInt(durationInput.value) || 30 : 30;
-  
-  // Show loading
-  document.getElementById('ai-setup-view').style.display = 'none';
-  document.getElementById('ai-loading-view').style.display = 'flex';
-  document.getElementById('ai-loading-title').textContent = "AI is parsing your Question Paper...";
-  document.getElementById('ai-loading-desc').textContent = "Extracting MCQs, validating options, and generating detailed explanations. This might take 15-30 seconds.";
-  
-  try {
-    const base64Data = await fileToBase64(selectedFile);
-    const mimeType = selectedFile.type || "application/pdf";
-    
-    const requestPayload = {
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper. Ensure each question has exactly 4 options. Identify the correct option and provide a very concise, 1-2 sentence explanation for each. Return the results in the required JSON schema format."
-            },
-            {
-              inlineData: {
-                mimeType: mimeType,
-                data: base64Data
-              }
-            }
-          ]
-        }
-      ],
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            questions: {
-              type: "ARRAY",
-              items: {
-                type: "OBJECT",
-                properties: {
-                  question: { type: "STRING" },
-                  options: {
-                    type: "ARRAY",
-                    items: { type: "STRING" }
-                  },
-                  correct_option_idx: { type: "INTEGER" },
-                  explanation: { type: "STRING" }
-                },
-                required: ["question", "options", "correct_option_idx", "explanation"]
-              }
-            }
-          },
-          required: ["questions"]
-        }
-      }
-    };
-    
-    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
-    
-    const responseData = await response.json();
-    const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = JSON.parse(responseText);
-    
-    if (!parsedData.questions || parsedData.questions.length === 0) {
-      throw new Error("No questions could be extracted from the uploaded document. Please check the document quality and try again.");
-    }
-    
-    initCbt(parsedData.questions, durationMinutes);
-    
-  } catch (error) {
-    console.error("AI CBT Parser Error:", error);
-    alert(`Failed to generate CBT: ${error.message}`);
-    document.getElementById('ai-loading-view').style.display = 'none';
-    document.getElementById('ai-setup-view').style.display = 'block';
-  }
-}
-
-async function generateAiChapterTest(chapterName) {
-  const apiKey = safeGetLocalStorage('gemini_api_key');
-  if (!apiKey) {
-    alert("Please configure your Gemini API Key first in the '🤖 AI CBT' tab.");
-    showTab('ai-test');
-    return;
-  }
-  
-  showTab('ai-test');
-  document.getElementById('ai-setup-view').style.display = 'none';
-  document.getElementById('ai-exam-view').style.display = 'none';
-  document.getElementById('ai-results-view').style.display = 'none';
-  document.getElementById('ai-loading-view').style.display = 'flex';
-  document.getElementById('ai-loading-title').textContent = `Generating Test for: ${chapterName}`;
-  document.getElementById('ai-loading-desc').textContent = "AI is drafting 30 high-quality, NEET-level MCQs with detailed explanations for this chapter. Please wait.";
-  
-  try {
-    const prompt = `You are a premium NEET question bank generator. Generate exactly 30 high-quality, NEET-level MCQs for the chapter: '${chapterName}'. The questions should cover key concepts, theories, and numericals from this chapter, matching the standard and style of the NEET exam. Keep questions, options, and explanations extremely concise and brief (explanations must be at most 1-2 short sentences) to ensure super fast response generation. Each question must have exactly 4 plausible options, a single correct option (0-based index), and a concise explanation.`;
-    
-    const requestPayload = {
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: prompt
-            }
-          ]
-        }
-      ],
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            questions: {
-              type: "ARRAY",
-              items: {
-                type: "OBJECT",
-                properties: {
-                  question: { type: "STRING" },
-                  options: {
-                    type: "ARRAY",
-                    items: { type: "STRING" }
-                  },
-                  correct_option_idx: { type: "INTEGER" },
-                  explanation: { type: "STRING" }
-                },
-                required: ["question", "options", "correct_option_idx", "explanation"]
-              }
-            }
-          },
-          required: ["questions"]
-        }
-      }
-    };
-    
-    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
-    
-    const responseData = await response.json();
-    const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = JSON.parse(responseText);
-    
-    if (!parsedData.questions || parsedData.questions.length === 0) {
-      throw new Error("Failed to generate questions for the chapter. Please try again.");
-    }
-    
-    initCbt(parsedData.questions, 45);
-    
-  } catch (error) {
-    console.error("AI Chapter Test Generation Error:", error);
-    alert(`Failed to generate chapter test: ${error.message}`);
-    document.getElementById('ai-loading-view').style.display = 'none';
-    document.getElementById('ai-setup-view').style.display = 'block';
-  }
-}
-
-function initCbt(questions, durationMinutes) {
-  cbtQuestions = questions;
-  cbtAnswers = {};
-  cbtFlagged = new Set();
-  cbtCurrentIdx = 0;
-  cbtTotalQuestions = questions.length;
-  cbtTimeRemaining = durationMinutes * 60;
-
-  document.getElementById('ai-setup-view').style.display = 'none';
-  document.getElementById('ai-loading-view').style.display = 'none';
-  document.getElementById('ai-results-view').style.display = 'none';
-  document.getElementById('ai-exam-view').style.display = 'block';
-
-  showTab('ai-test');
-
-  if (cbtTimer) clearInterval(cbtTimer);
-  cbtTimer = setInterval(() => {
-    cbtTimeRemaining--;
-    if (cbtTimeRemaining <= 0) {
-      clearInterval(cbtTimer);
-      cbtSubmitTest();
-    } else {
-      updateCbtTimerDisplay();
-    }
-  }, 1000);
-  updateCbtTimerDisplay();
-
-  cbtRenderQuestion();
-  cbtRenderGrid();
-}
-
-function updateCbtTimerDisplay() {
-  const display = document.getElementById('cbt-timer-display');
-  if (!display) return;
-  
-  const minutes = Math.floor(cbtTimeRemaining / 60);
-  const seconds = cbtTimeRemaining % 60;
-  
-  display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  if (cbtTimeRemaining <= 60) {
-    display.style.color = '#ff6b6b';
-  } else {
-    display.style.color = '#FFD700';
-  }
-}
-
-function cbtRenderQuestion() {
-  const qNum = document.getElementById('cbt-q-number');
-  const qText = document.getElementById('cbt-question-text');
-  const optContainer = document.getElementById('cbt-options-container');
-  const flagBtn = document.getElementById('cbt-btn-flag');
-  
-  if (!qNum || !qText || !optContainer) return;
-  
-  const question = cbtQuestions[cbtCurrentIdx];
-  if (!question) return;
-  
-  qNum.textContent = `Question ${cbtCurrentIdx + 1} of ${cbtTotalQuestions}`;
-  qText.innerHTML = question.question;
-  
-  optContainer.innerHTML = '';
-  
-  const optionPrefixes = ['A', 'B', 'C', 'D'];
-  question.options.forEach((opt, idx) => {
-    const div = document.createElement('div');
-    div.className = 'cbt-option';
-    if (cbtAnswers[cbtCurrentIdx] === idx) {
-      div.classList.add('selected');
-    }
-    
-    div.innerHTML = `
-      <span class="option-prefix">${optionPrefixes[idx]}</span>
-      <span class="option-text">${opt}</span>
-      <input type="radio" name="cbt-option-radio" value="${idx}" ${cbtAnswers[cbtCurrentIdx] === idx ? 'checked' : ''}>
-    `;
-    
-    div.onclick = () => cbtSelectOption(idx);
-    optContainer.appendChild(div);
-  });
-  renderMath(document.getElementById('cbt-question-text'));
-  renderMath(optContainer);
-  
-  if (flagBtn) {
-    if (cbtFlagged.has(cbtCurrentIdx)) {
-      flagBtn.textContent = 'Unflag Question';
-      flagBtn.style.background = 'rgba(255, 165, 0, 0.15)';
-      flagBtn.style.color = '#ffa500';
-    } else {
-      flagBtn.textContent = 'Flag Question';
-      flagBtn.style.background = 'transparent';
-      flagBtn.style.color = '#ffa500';
-    }
-  }
-}
-
-function cbtRenderGrid() {
-  const container = document.getElementById('cbt-grid-container');
-  if (!container) return;
-  container.innerHTML = '';
-  
-  for (let i = 0; i < cbtTotalQuestions; i++) {
-    const node = document.createElement('button');
-    node.className = 'q-node';
-    node.textContent = i + 1;
-    
-    if (i === cbtCurrentIdx) {
-      node.classList.add('active');
-    }
-    if (cbtFlagged.has(i)) {
-      node.classList.add('flagged');
-    } else if (cbtAnswers[i] !== undefined) {
-      node.classList.add('answered');
-    }
-    
-    node.onclick = () => cbtJumpToQuestion(i);
-    container.appendChild(node);
-  }
-}
-
-function cbtSelectOption(optionIdx) {
-  cbtAnswers[cbtCurrentIdx] = optionIdx;
-  cbtRenderQuestion();
-  cbtRenderGrid();
-}
-
-function cbtJumpToQuestion(idx) {
-  cbtCurrentIdx = idx;
-  cbtRenderQuestion();
-  cbtRenderGrid();
-}
-
-function cbtPrev() {
-  if (cbtCurrentIdx > 0) {
-    cbtCurrentIdx--;
-    cbtRenderQuestion();
-    cbtRenderGrid();
-  }
-}
-
-function cbtNext() {
-  if (cbtCurrentIdx < cbtTotalQuestions - 1) {
-    cbtCurrentIdx++;
-    cbtRenderQuestion();
-    cbtRenderGrid();
-  }
-}
-
-function cbtToggleFlag() {
-  if (cbtFlagged.has(cbtCurrentIdx)) {
-    cbtFlagged.delete(cbtCurrentIdx);
-  } else {
-    cbtFlagged.add(cbtCurrentIdx);
-  }
-  cbtRenderGrid();
-  cbtRenderQuestion();
-}
-
-function cbtSubmitTest() {
-  if (cbtTimer) clearInterval(cbtTimer);
-  
-  let correct = 0;
-  let incorrect = 0;
-  let unanswered = 0;
-  
-  for (let i = 0; i < cbtTotalQuestions; i++) {
-    const ans = cbtAnswers[i];
-    if (ans === undefined) {
-      unanswered++;
-    } else if (ans === cbtQuestions[i].correct_option_idx) {
-      correct++;
-    } else {
-      incorrect++;
-    }
-  }
-  
-  const score = (correct * 4) - (incorrect * 1);
-  const maxScore = cbtTotalQuestions * 4;
-  const accuracy = (correct + incorrect) > 0 ? Math.round((correct / (correct + incorrect)) * 100) : 0;
-  
-  document.getElementById('cbt-score-total').textContent = `${score} / ${maxScore}`;
-  document.getElementById('cbt-score-correct').textContent = correct;
-  document.getElementById('cbt-score-incorrect').textContent = incorrect;
-  document.getElementById('cbt-score-unanswered').textContent = unanswered;
-  document.getElementById('cbt-score-accuracy').textContent = `${accuracy}%`;
-  
-  document.getElementById('ai-exam-view').style.display = 'none';
-  document.getElementById('ai-results-view').style.display = 'block';
-  document.getElementById('cbt-review-section').style.display = 'none';
-  
-  buildCbtReview();
-}
-
-function buildCbtReview() {
-  const container = document.getElementById('cbt-review-container');
-  if (!container) return;
-  container.innerHTML = '';
-  
-  const optionPrefixes = ['A', 'B', 'C', 'D'];
-  
-  cbtQuestions.forEach((q, qIdx) => {
-    const card = document.createElement('div');
-    card.className = 'review-question-card';
-    card.style.background = 'rgba(255, 255, 255, 0.02)';
-    card.style.border = '1px solid rgba(255, 255, 255, 0.06)';
-    card.style.borderRadius = '12px';
-    card.style.padding = '20px';
-    card.style.marginBottom = '16px';
-    
-    let statusBadgeHtml = '';
-    const userAns = cbtAnswers[qIdx];
-    if (userAns === undefined) {
-      statusBadgeHtml = `<span style="background:rgba(156,163,175,0.1); color:#9ca3af; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Unanswered</span>`;
-    } else if (userAns === q.correct_option_idx) {
-      statusBadgeHtml = `<span style="background:rgba(0,212,170,0.1); color:var(--primary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Correct (+4)</span>`;
-    } else {
-      statusBadgeHtml = `<span style="background:rgba(255,107,107,0.1); color:var(--tertiary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Incorrect (-1)</span>`;
-    }
-    
-    let optionsHtml = '';
-    q.options.forEach((opt, optIdx) => {
-      let optStyle = 'border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.01); color:#d1d5db;';
-      let badge = '';
-      
-      if (optIdx === q.correct_option_idx) {
-        optStyle = 'border:1px solid var(--primary); background:rgba(0,212,170,0.08); color:var(--primary); font-weight:600;';
-        badge = ' <span style="font-size:11px; margin-left:auto; color:var(--primary); font-weight:700;">✓ Correct</span>';
-      } else if (userAns === optIdx) {
-        optStyle = 'border:1px solid var(--tertiary); background:rgba(255,107,107,0.08); color:var(--tertiary); font-weight:600;';
-        badge = ' <span style="font-size:11px; margin-left:auto; color:var(--tertiary); font-weight:700;">✗ Your Answer</span>';
-      }
-      
-      optionsHtml += `
-        <div style="display:flex; align-items:center; padding:10px 14px; border-radius:6px; margin-top:8px; font-size:13px; ${optStyle}">
-          <span style="font-weight:700; margin-right:10px;">${optionPrefixes[optIdx]}.</span>
-          <span>${opt}</span>
-          ${badge}
-        </div>
-      `;
-    });
-    
-    card.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-        <span style="font-weight:700; font-family:'Share Tech',sans-serif; color:#FFD700;">Question ${qIdx + 1}</span>
-        ${statusBadgeHtml}
-      </div>
-      <div style="font-size:15px; font-weight:600; margin-bottom:14px; line-height:1.5; color:#fff;">${q.question}</div>
-      <div style="margin-bottom:16px;">${optionsHtml}</div>
-      <div style="background:rgba(255,215,0,0.03); border-left:3px solid #FFD700; padding:12px 16px; border-radius:0 8px 8px 0; font-size:13px; line-height:1.5;">
-        <strong style="color:#FFD700; display:block; margin-bottom:4px; font-family:'Share Tech',sans-serif;">Explanation:</strong>
-        <span style="color:#e5e7eb;">${q.explanation}</span>
-      </div>
-    `;
-    
-    container.appendChild(card);
-  });
-}
-
-function cbtShowReview() {
-  const reviewSec = document.getElementById('cbt-review-section');
-  if (reviewSec) {
-    reviewSec.style.display = 'block';
-    reviewSec.scrollIntoView({ behavior: 'smooth' });
-  }
-}
-
-function cbtExitResults() {
-  document.getElementById('ai-results-view').style.display = 'none';
-  document.getElementById('ai-setup-view').style.display = 'block';
-  
-  selectedFile = null;
-  const fileInfo = document.getElementById('file-info');
-  if (fileInfo) fileInfo.style.display = 'none';
-  const fileInput = document.getElementById('ai-file-input');
-  if (fileInput) fileInput.value = '';
-  
-  showTab('calendar');
-}
 
 // ==========================================
 // UI/UX UPGRADE HELPER FUNCTIONS
@@ -4164,13 +3563,6 @@ function loadTheme() {
 window.applyTheme = applyTheme;
 
 function initOnLoad() {
-  initAiDragAndDrop();
-  const storedKey = safeGetLocalStorage('gemini_api_key');
-  const keyInput = document.getElementById('gemini-key');
-  if (storedKey && keyInput) {
-    keyInput.value = storedKey;
-  }
-  
   // Initialize planStart date if not already set or if it's not the target start date
   const storedPlanStart = safeGetLocalStorage("planStart");
   if (storedPlanStart !== "2026-06-29T00:00:00") {
@@ -4345,16 +3737,6 @@ function closeWelcomeSummary() {
 
 
 
-window.startAiParse = startAiParse;
-window.generateAiChapterTest = generateAiChapterTest;
-window.cbtPrev = cbtPrev;
-window.cbtNext = cbtNext;
-window.cbtToggleFlag = cbtToggleFlag;
-window.cbtSelectOption = cbtSelectOption;
-window.cbtSubmitTest = cbtSubmitTest;
-window.cbtShowReview = cbtShowReview;
-window.cbtExitResults = cbtExitResults;
-window.cbtJumpToQuestion = cbtJumpToQuestion;
 window.openQuickLog = openQuickLog;
 window.closeQuickLog = closeQuickLog;
 window.logQuickStudy = logQuickStudy;
@@ -4363,35 +3745,7 @@ window.toggleTheme = toggleTheme;
 window.closeWelcomeSummary = closeWelcomeSummary;
 window.showToast = showToast;
 
-function saveApiKey() {
-  const keyInput = document.getElementById('gemini-key');
-  const statusEl = document.getElementById('settings-status');
-  const key = keyInput ? keyInput.value.trim() : '';
-  
-  if (!statusEl) return;
-  
-  statusEl.style.display = 'block';
-  
-  if (key) {
-    safeSetLocalStorage('gemini_api_key', key);
-    statusEl.style.background = 'rgba(0, 212, 170, 0.1)';
-    statusEl.style.color = 'var(--primary)';
-    statusEl.style.border = '1px solid var(--primary)';
-    statusEl.textContent = '✓ API Key saved successfully!';
-  } else {
-    safeRemoveLocalStorage('gemini_api_key');
-    statusEl.style.background = 'rgba(255, 165, 0, 0.1)';
-    statusEl.style.color = '#ffa500';
-    statusEl.style.border = '1px solid #ffa500';
-    statusEl.textContent = '✓ API Key cleared successfully.';
-  }
-  
-  setTimeout(() => {
-    statusEl.style.display = 'none';
-  }, 4000);
-}
 
-window.saveApiKey = saveApiKey;
 
 
 /* ==========================================================================
@@ -5133,68 +4487,7 @@ function addPyqToErrorBook(chName, qIdx) {
   alert(`Successfully saved to your Error Book under: ${subject} -> ${chName}!`);
 }
 
-async function askAiAboutPyq(chName, qIdx) {
-  const apiKey = safeGetLocalStorage('gemini_api_key');
-  if (!apiKey) {
-    alert("Please configure your Gemini API Key in the Settings or AI CBT tab first!");
-    return;
-  }
-  
-  const q = PYQ_BANK[chName][qIdx];
-  if (!q) return;
-  
-  const responseBox = document.getElementById(`ai-response-${qIdx}`);
-  if (!responseBox) return;
-  
-  responseBox.style.display = 'block';
-  responseBox.innerHTML = '🤖 <em>AI is thinking... explaining the concept and steps step-by-step...</em>';
-  
-  const optionsText = q.opts.map((opt, i) => `${String.fromCharCode(65+i)}) ${opt}`).join('\n');
-  
-  const prompt = `You are a world-class NEET preparation mentor and subject expert. 
-A student is solving past year questions for the chapter "${chName}". 
-They need a simple, step-by-step, intuitive explanation for this question.
 
-[Question]:
-${q.q}
-
-[Options]:
-${optionsText}
-
-[Correct Option]:
-Option ${String.fromCharCode(65 + q.ans)}: ${q.opts[q.ans]}
-
-[Standard Explanation]:
-${q.exp}
-
-Please explain the underlying concepts clearly, list any formulas used, provide the logical reasoning, and do a clear step-by-step mathematical/conceptual derivation in simple language suitable for a NEET aspirant. Use KaTeX notation (e.g. $formula$ or $$formula$$) for mathematical terms if needed.`;
-
-  const requestPayload = {
-    contents: [
-      {
-        parts: [
-          { text: prompt }
-        ]
-      }
-    ]
-  };
-  
-  try {
-    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
-    }
-    
-    const responseData = await response.json();
-    const responseText = responseData.candidates[0].content.parts[0].text;
-    
-    responseBox.textContent = responseText;
-    renderMath(responseBox);
-  } catch (error) {
-    console.error("AI Doubt Solver Error:", error);
-    responseBox.innerHTML = `❌ <span style="color:var(--tertiary);">Error explaining doubt: ${error.message}</span>`;
-  }
-}
 
 function updateErrorBookDeckLabel() {
   const select = document.getElementById('flashcard-deck-select');
@@ -5266,7 +4559,7 @@ function renderOverviewCounselorAlert() {
 }
 
 window.addPyqToErrorBook = addPyqToErrorBook;
-window.askAiAboutPyq = askAiAboutPyq;
+
 window.updateErrorBookDeckLabel = updateErrorBookDeckLabel;
 window.renderOverviewCounselorAlert = renderOverviewCounselorAlert;
 
@@ -5945,7 +5238,6 @@ function exportAllPlannerData() {
       done_days: safeGetLocalStorage('neet_v3_done'),
       custom_scheds: safeGetLocalStorage('neet_v3_custom_scheds'),
       chapter_progress: safeGetLocalStorage('neet_v3_chapter_progress'),
-      gemini_key: safeGetLocalStorage('gemini_api_key'),
       theme: safeGetLocalStorage('theme'),
       plan_start: safeGetLocalStorage('planStart'),
       test_analysis: safeGetLocalStorage('neet_v3_test_analysis'),
@@ -5995,7 +5287,6 @@ function importAllPlannerData(event) {
       if (data.done_days) safeSetLocalStorage('neet_v3_done', data.done_days);
       if (data.custom_scheds) safeSetLocalStorage('neet_v3_custom_scheds', data.custom_scheds);
       if (data.chapter_progress) safeSetLocalStorage('neet_v3_chapter_progress', data.chapter_progress);
-      if (data.gemini_key) safeSetLocalStorage('gemini_api_key', data.gemini_key);
       if (data.theme) safeSetLocalStorage('theme', data.theme);
       if (data.plan_start) safeSetLocalStorage('planStart', data.plan_start);
       if (data.test_analysis) safeSetLocalStorage('neet_v3_test_analysis', data.test_analysis);
@@ -6035,7 +5326,6 @@ function resetAllPlannerData() {
     'neet_v3_done',
     'neet_v3_custom_scheds',
     'neet_v3_chapter_progress',
-    'gemini_api_key',
     'theme',
     'planStart',
     'neet_v3_test_analysis',
@@ -7517,38 +6807,6 @@ function handleStudySearch(event) {
   fetchWikiSummary(query);
 }
 
-async function fetchGeminiExplanation(query) {
-  const apiKey = safeGetLocalStorage('gemini_api_key');
-  if (!apiKey) {
-    throw new Error("No API key configured");
-  }
-
-  const payload = {
-    contents: [
-      {
-        parts: [
-          {
-            text: `You are an expert AI tutor and doubt solver. Explain this concept or resolve this doubt/question clearly, concisely, and accurately (whether it is study-related or general/any other topic). If it is a science or math topic, include key formulas or definitions where appropriate. Format your response beautifully using HTML tags like <h3>, <p>, <ul>, <li>, <strong> (do not use markdown like asterisks or hashtags, write raw HTML content directly): "${query}"`
-          }
-        ]
-      }
-    ],
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 800
-    }
-  };
-
-  const response = await fetchGeminiWithRetry(apiKey, payload);
-  const data = await response.json();
-  
-  if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
-    return data.candidates[0].content.parts[0].text;
-  } else {
-    throw new Error("Invalid response format from Gemini");
-  }
-}
-
 function fetchWikiSummary(query) {
   const resultsPanel = document.getElementById('sh-search-results-panel');
   const resultsContent = document.getElementById('sh-search-results-content');
@@ -7562,45 +6820,12 @@ function fetchWikiSummary(query) {
   if (googleBtn) googleBtn.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
   if (wikiBtn) wikiBtn.href = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}`;
 
-  const apiKey = safeGetLocalStorage('gemini_api_key');
-  if (apiKey) {
-    resultsContent.innerHTML = `<span class="active-pulse-dot" style="animation: pulse 1.5s infinite; color:var(--primary); font-weight:700;">🤖 AI Doubt Solver is thinking...</span>`;
-    
-    fetchGeminiExplanation(query)
-      .then(html => {
-        resultsContent.innerHTML = `
-          <div style="border-left: 3px solid var(--primary); padding-left: 10px; margin-bottom: 8px;">
-            <span style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">🤖 AI Doubt Explanation</span>
-          </div>
-          <div style="font-size:12px; line-height:1.5; color:var(--text-secondary);">
-            ${html}
-          </div>
-        `;
-        fetchRealDiagram(query);
-      })
-      .catch(err => {
-        console.error("AI Doubt Solver failed:", err);
-        resultsContent.innerHTML = `
-          <div style="background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); border-radius:10px; padding:16px; text-align:center; font-size:12px; line-height:1.6;">
-            <div style="font-size:24px; margin-bottom:8px;">⚠️</div>
-            <div style="font-weight:700; color:var(--tertiary); font-size:13px; margin-bottom:6px;">AI Explanation Failed</div>
-            <p style="color:var(--text-secondary); margin:0 0 12px 0;">We couldn't connect to Google Gemini. Please check your internet connection or verify your API key in the **Settings tab (⚙️)**.</p>
-            <button onclick="navigateTab('settings')" class="btn btn-secondary" style="padding:6px 14px; font-size:11px; font-weight:700; border-radius:6px; cursor:pointer; background:transparent; border:1px solid var(--border-color); color:var(--text-secondary);">Verify Settings ⚙️</button>
-          </div>
-        `;
-        fetchRealDiagram(query);
-      });
-  } else {
-    resultsContent.innerHTML = `
-      <div style="background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); border-radius:10px; padding:16px; text-align:center; font-size:12px; line-height:1.6;">
-        <div style="font-size:24px; margin-bottom:8px;">🔑</div>
-        <div style="font-weight:700; color:var(--tertiary); font-size:13px; margin-bottom:6px;">AI Doubt Solver is Locked</div>
-        <p style="color:var(--text-secondary); margin:0 0 12px 0;">Please save your Gemini API Key in the **Settings tab (⚙️)** to get instant AI explanation cards for any doubts or questions.</p>
-        <button onclick="navigateTab('settings')" class="btn btn-primary" style="padding:6px 14px; font-size:11px; font-weight:700; border-radius:6px; cursor:pointer;">Go to Settings ⚙️</button>
-      </div>
-    `;
-    fetchRealDiagram(query);
-  }
+  resultsContent.innerHTML = `
+    <div style="font-size:12px; line-height:1.5; color:var(--text-secondary); margin-bottom:8px;">
+      Showing web & diagram search shortcuts for: <strong>${query}</strong>
+    </div>
+  `;
+  fetchRealDiagram(query);
 }
 
 function fetchRealDiagram(query) {
