@@ -533,13 +533,11 @@ function safeSetSessionStorage(key, value) {
       })
       .then(pyqData => {
         PYQ_BANK = pyqData;
-        window.PYQ_BANK = PYQ_BANK;
         REAL_YEARLY_PAPERS = {};
         console.log('Successfully loaded PYQ database.');
         // Re-render components once data is available
         if (typeof renderPlan === 'function') renderPlan();
         if (typeof loadSelectedFlashcardDeck === 'function') loadSelectedFlashcardDeck();
-        if (typeof populateCustomTestChapters === 'function') populateCustomTestChapters();
       })
       .catch(err => {
         console.error('Error loading database JSON files:', err);
@@ -754,7 +752,6 @@ function safeSetSessionStorage(key, value) {
     }
     
     const PLAN = buildPlan();
-    window.PLAN = PLAN;
     
     // LocalStorage states
     let done = {};
@@ -1085,10 +1082,6 @@ function safeSetSessionStorage(key, value) {
         if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
       } else if (tabId === 'formulas') {
         if (typeof renderTabFormulas === 'function') renderTabFormulas();
-      } else if (tabId === 'ai-test') {
-        if (typeof populateCustomTestChapters === 'function') populateCustomTestChapters();
-      } else if (tabId === 'cbt-results') {
-        renderCbtResultsSection();
       }
     }
 
@@ -3261,21 +3254,11 @@ function fileToBase64(file) {
   });
 }
 
-async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 3, delayMs = 1500) {
-  const models = ["gemini-1.5-flash-8b", "gemini-1.5-flash", "gemini-2.0-flash"];
-  let lastError = null;
-
-  if (requestPayload && typeof requestPayload === 'object') {
-    if (!requestPayload.generationConfig) {
-      requestPayload.generationConfig = {};
-    }
-    if (!requestPayload.generationConfig.maxOutputTokens) {
-      requestPayload.generationConfig.maxOutputTokens = 8192;
-    }
-  }
-
-  for (let attempt = 0; attempt < models.length; attempt++) {
-    const model = models[attempt];
+async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs = 1500) {
+  let model = "gemini-2.5-flash";
+  let attempt = 0;
+  
+  while (attempt <= retries) {
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
         method: "POST",
@@ -3284,131 +3267,74 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 3, delayMs
         },
         body: JSON.stringify(requestPayload)
       });
-
+      
       if (response.ok) {
         return response;
       }
-
-      const errorText = await response.text();
-      lastError = new Error(`Gemini API Error (${model}): ${response.status} - ${errorText}`);
-
-      // If HTTP 429 (rate limit) or 503 (service unavailable), immediately rotate to next model endpoint
-      if (response.status === 429 || response.status === 503 || response.status >= 500) {
-        if (attempt < models.length - 1) {
-          console.warn(`Model ${model} returned HTTP ${response.status}. Automatically rotating to next model endpoint ${models[attempt + 1]}...`);
+      
+      if (response.status === 503 || response.status === 429 || response.status >= 500) {
+        attempt++;
+        if (attempt <= retries) {
+          console.warn(`Gemini API returned ${response.status}. Retrying in ${delayMs}ms with alternative model...`);
           await new Promise(resolve => setTimeout(resolve, delayMs));
+          if (model === "gemini-2.5-flash") {
+            model = "gemini-1.5-flash";
+          }
           continue;
         }
       }
-
-      throw lastError;
-
+      
+      const errorText = await response.text();
+      throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
+      
     } catch (err) {
-      lastError = err;
-      if (attempt < models.length - 1) {
-        console.warn(`Fetch error for ${model}: ${err.message}. Rotating to next model endpoint ${models[attempt + 1]}...`);
-        await new Promise(resolve => setTimeout(resolve, delayMs));
-        continue;
+      if (attempt >= retries) {
+        throw err;
       }
-      throw lastError;
+      attempt++;
+      console.warn(`Fetch error: ${err.message}. Retrying in ${delayMs}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+      if (model === "gemini-2.5-flash") {
+        model = "gemini-1.5-flash";
+      }
     }
-  }
-}
-
-function safeParseAiJson(rawText) {
-  if (!rawText || typeof rawText !== 'string') return null;
-
-  let cleaned = rawText.trim();
-  
-  // 1. Strip markdown code fences if present
-  cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-
-  // 2. Attempt direct JSON.parse first
-  try {
-    return JSON.parse(cleaned);
-  } catch (e1) {
-    // Continue to regex repair
-  }
-
-  // 3. Extract JSON object substring using regex
-  const firstBrace = cleaned.indexOf('{');
-  const lastBrace = cleaned.lastIndexOf('}');
-  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-    const jsonSub = cleaned.substring(firstBrace, lastBrace + 1);
-    try {
-      return JSON.parse(jsonSub);
-    } catch (e2) {
-      // Continue to bracket repair
-    }
-  }
-
-  // 4. Truncated JSON array repair (auto-close array/object)
-  try {
-    let repaired = cleaned;
-    if (firstBrace !== -1) {
-      repaired = repaired.substring(firstBrace);
-    }
-    // Balance open brackets
-    const openBraces = (repaired.match(/\{/g) || []).length;
-    const closeBraces = (repaired.match(/\}/g) || []).length;
-    const openBrackets = (repaired.match(/\[/g) || []).length;
-    const closeBrackets = (repaired.match(/\]/g) || []).length;
-
-    // Trim trailing comma if present
-    repaired = repaired.replace(/,\s*$/, '');
-
-    // Auto-close missing brackets/braces
-    for (let i = 0; i < (openBrackets - closeBrackets); i++) repaired += ']';
-    for (let i = 0; i < (openBraces - closeBraces); i++) repaired += '}';
-
-    return JSON.parse(repaired);
-  } catch (e3) {
-    console.error("Failed to repair AI JSON response:", e3, rawText);
-    return null;
   }
 }
 
 async function startAiParse() {
   const apiKey = safeGetLocalStorage('gemini_api_key');
-
+  
   if (!apiKey) {
     alert("Please configure your Gemini API Key first in the '⚙️ Settings' tab.");
     showTab('settings');
     return;
   }
-
+  
   if (!selectedFile) {
     alert("Please drag & drop or select a question paper PDF or Image.");
     return;
   }
-
+  
   const durationInput = document.getElementById('ai-test-duration');
   const durationMinutes = durationInput ? parseInt(durationInput.value) || 30 : 30;
-
+  
   // Show loading
   document.getElementById('ai-setup-view').style.display = 'none';
   document.getElementById('ai-loading-view').style.display = 'flex';
   document.getElementById('ai-loading-title').textContent = "AI is parsing your Question Paper...";
-  document.getElementById('ai-loading-desc').textContent = "Extracting MCQs, options, subject tags, and explanations directly from your document. Please wait...";
-
+  document.getElementById('ai-loading-desc').textContent = "Extracting MCQs, validating options, and generating detailed explanations. This might take 15-30 seconds.";
+  
   try {
-    window.cbtCurrentSource = (selectedFile && selectedFile.name) ? selectedFile.name : "Uploaded Paper";
-
     const base64Data = await fileToBase64(selectedFile);
-    let mimeType = selectedFile.type;
-    if (selectedFile.name && selectedFile.name.toLowerCase().endsWith('.pdf')) {
-      mimeType = "application/pdf";
-    } else if (!mimeType) {
-      mimeType = "application/pdf";
-    }
-
+    const mimeType = selectedFile.type || "application/pdf";
+    
     const requestPayload = {
       contents: [
         {
           role: "user",
           parts: [
             {
-              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper into a JSON object with key 'questions'. Ensure each question has exactly 4 options. Identify the correct option (0-based index 0-3), provide a concise 1-2 sentence explanation, classify the subject as exactly one of: 'Physics', 'Chemistry', or 'Biology', and assign a short concept tag (e.g. 'Newton's Laws - Friction', 'Photosynthesis - Light Reaction'). CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$."
+              text: "Extract all Multiple-Choice Questions (MCQs) from this question paper. Ensure each question has exactly 4 options. Identify the correct option and provide a very concise, 1-2 sentence explanation for each. Return the results in the required JSON schema format."
             },
             {
               inlineData: {
@@ -3420,9 +3346,29 @@ async function startAiParse() {
         }
       ],
       generationConfig: {
-        temperature: 0.1,
-        maxOutputTokens: 8192,
-        responseMimeType: "application/json"
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            questions: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  question: { type: "STRING" },
+                  options: {
+                    type: "ARRAY",
+                    items: { type: "STRING" }
+                  },
+                  correct_option_idx: { type: "INTEGER" },
+                  explanation: { type: "STRING" }
+                },
+                required: ["question", "options", "correct_option_idx", "explanation"]
+              }
+            }
+          },
+          required: ["questions"]
+        }
       }
     };
     
@@ -3430,30 +3376,19 @@ async function startAiParse() {
     
     const responseData = await response.json();
     const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = safeParseAiJson(responseText);
+    const parsedData = JSON.parse(responseText);
     
-    if (!parsedData || !parsedData.questions || parsedData.questions.length === 0) {
+    if (!parsedData.questions || parsedData.questions.length === 0) {
       throw new Error("No questions could be extracted from the uploaded document. Please check the document quality and try again.");
     }
-
-    // Populate fallbacks for optional fields
-    parsedData.questions.forEach((q, i) => {
-      if (!q.explanation) q.explanation = 'Refer to standard textbook solution.';
-      if (!q.concept) q.concept = `Question ${i+1}`;
-      if (!q.subject) q.subject = 'Biology';
-      if (!Array.isArray(q.options) || q.options.length < 4) {
-        q.options = q.options || [];
-        while (q.options.length < 4) q.options.push(`Option ${String.fromCharCode(65 + q.options.length)}`);
-      }
-    });
-
+    
     initCbt(parsedData.questions, durationMinutes);
     
   } catch (error) {
     console.error("AI CBT Parser Error:", error);
     alert(`Failed to generate CBT: ${error.message}`);
     document.getElementById('ai-loading-view').style.display = 'none';
-    document.getElementById('ai-setup-view').style.display = 'grid';
+    document.getElementById('ai-setup-view').style.display = 'block';
   }
 }
 
@@ -3474,8 +3409,7 @@ async function generateAiChapterTest(chapterName) {
   document.getElementById('ai-loading-desc').textContent = "AI is drafting 30 high-quality, NEET-level MCQs with detailed explanations for this chapter. Please wait.";
   
   try {
-    window.cbtCurrentSource = `${chapterName} - Chapter Test`;
-    const prompt = `You are a premium NEET question bank generator. Generate exactly 30 high-quality, NEET-level MCQs for the chapter: '${chapterName}'. The questions should cover key concepts, theories, and numericals from this chapter, matching the standard and style of the NEET exam. Keep questions, options, and explanations extremely concise and brief (explanations must be at most 1-2 short sentences) to ensure super fast response generation. Each question must have exactly 4 plausible options, a single correct option (0-based index), a concise explanation, a short concept tag (e.g. "${chapterName} - Friction"), and subject classified as exactly one of: "Physics", "Chemistry", or "Biology". CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$.`;
+    const prompt = `You are a premium NEET question bank generator. Generate exactly 30 high-quality, NEET-level MCQs for the chapter: '${chapterName}'. The questions should cover key concepts, theories, and numericals from this chapter, matching the standard and style of the NEET exam. Keep questions, options, and explanations extremely concise and brief (explanations must be at most 1-2 short sentences) to ensure super fast response generation. Each question must have exactly 4 plausible options, a single correct option (0-based index), and a concise explanation.`;
     
     const requestPayload = {
       contents: [
@@ -3490,7 +3424,6 @@ async function generateAiChapterTest(chapterName) {
       ],
       generationConfig: {
         responseMimeType: "application/json",
-        maxOutputTokens: 8192,
         responseSchema: {
           type: "OBJECT",
           properties: {
@@ -3505,14 +3438,9 @@ async function generateAiChapterTest(chapterName) {
                     items: { type: "STRING" }
                   },
                   correct_option_idx: { type: "INTEGER" },
-                  explanation: { type: "STRING" },
-                  concept: { type: "STRING" },
-                  subject: {
-                    type: "STRING",
-                    enum: ["Physics", "Chemistry", "Biology"]
-                  }
+                  explanation: { type: "STRING" }
                 },
-                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject"]
+                required: ["question", "options", "correct_option_idx", "explanation"]
               }
             }
           },
@@ -3525,9 +3453,9 @@ async function generateAiChapterTest(chapterName) {
     
     const responseData = await response.json();
     const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = safeParseAiJson(responseText);
+    const parsedData = JSON.parse(responseText);
     
-    if (!parsedData || !parsedData.questions || parsedData.questions.length === 0) {
+    if (!parsedData.questions || parsedData.questions.length === 0) {
       throw new Error("Failed to generate questions for the chapter. Please try again.");
     }
     
@@ -3548,9 +3476,6 @@ function initCbt(questions, durationMinutes) {
   cbtCurrentIdx = 0;
   cbtTotalQuestions = questions.length;
   cbtTimeRemaining = durationMinutes * 60;
-
-  // Activate distraction-free focus mode
-  document.body.classList.add('exam-mode-active');
 
   document.getElementById('ai-setup-view').style.display = 'none';
   document.getElementById('ai-loading-view').style.display = 'none';
@@ -3703,9 +3628,6 @@ function cbtToggleFlag() {
 
 function cbtSubmitTest() {
   if (cbtTimer) clearInterval(cbtTimer);
-
-  // Deactivate distraction-free focus mode when test completes
-  document.body.classList.remove('exam-mode-active');
   
   let correct = 0;
   let incorrect = 0;
@@ -3732,96 +3654,52 @@ function cbtSubmitTest() {
   document.getElementById('cbt-score-unanswered').textContent = unanswered;
   document.getElementById('cbt-score-accuracy').textContent = `${accuracy}%`;
   
-  // Retest button state in live results
-  const retestBtn = document.getElementById('cbt-retest-wrong-btn');
-  if (retestBtn) {
-    if (incorrect + unanswered === 0) {
-      retestBtn.style.display = 'none';
-    } else {
-      retestBtn.style.display = 'inline-block';
-    }
-  }
-
   document.getElementById('ai-exam-view').style.display = 'none';
   document.getElementById('ai-results-view').style.display = 'block';
   document.getElementById('cbt-review-section').style.display = 'none';
   
-  // --- PERSIST TO CBT RESULTS HISTORY ---
-  let testSource = window.cbtCurrentSource || "AI CBT Exam";
-  if (!window.cbtCurrentSource && typeof selectedFile !== 'undefined' && selectedFile && selectedFile.name) {
-    testSource = selectedFile.name;
-  }
-  
-  const now = new Date();
-  const dateStr = now.toISOString().split('T')[0] + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  
-  const reportCard = {
-    id: 'cbt_res_' + Date.now(),
-    date: dateStr,
-    source: testSource,
-    durationMinutes: Math.round((cbtTotalQuestions * 45) / 60) || 30,
-    totalQuestions: cbtTotalQuestions,
-    score: score,
-    maxScore: maxScore,
-    correct: correct,
-    incorrect: incorrect,
-    unanswered: unanswered,
-    accuracy: accuracy,
-    questions: cbtQuestions.map((q, idx) => ({
-      question: q.question,
-      options: q.options,
-      correct_option_idx: q.correct_option_idx,
-      user_answer_idx: cbtAnswers[idx] !== undefined ? cbtAnswers[idx] : null,
-      explanation: q.explanation || '',
-      concept: q.concept || 'General',
-      subject: q.subject || 'Biology'
-    }))
-  };
-  
-  let cbtResults = [];
-  try {
-    cbtResults = JSON.parse(safeGetLocalStorage('neet_v3_cbt_results') || '[]');
-  } catch(e) {}
-  cbtResults.unshift(reportCard);
-
-  safeSetLocalStorage('neet_v3_cbt_results', JSON.stringify(cbtResults));
-  
   buildCbtReview();
 }
 
-window.cbtReviewQuestionMap = window.cbtReviewQuestionMap || {};
-
-function renderCbtQuestionReviewCard(questionObj, userAnswerIdx, cardIndex, contextId) {
-  window.cbtReviewQuestionMap[contextId] = { questionObj, userAnswerIdx };
-
+function buildCbtReview() {
+  const container = document.getElementById('cbt-review-container');
+  if (!container) return;
+  container.innerHTML = '';
+  
   const optionPrefixes = ['A', 'B', 'C', 'D'];
-  let statusBadgeHtml = '';
-
-  if (userAnswerIdx === null || userAnswerIdx === undefined) {
-    statusBadgeHtml = `<span style="background:rgba(156,163,175,0.1); color:#9ca3af; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Unanswered</span>`;
-  } else if (userAnswerIdx === questionObj.correct_option_idx) {
-    statusBadgeHtml = `<span style="background:rgba(0,212,170,0.1); color:var(--primary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Correct (+4)</span>`;
-  } else {
-    statusBadgeHtml = `<span style="background:rgba(255,107,107,0.1); color:var(--tertiary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Incorrect (-1)</span>`;
-  }
-
-  const subjectBadgeHtml = questionObj.subject ? `<span style="background:rgba(0,212,170,0.1); color:var(--primary); border:1px solid rgba(0,212,170,0.25); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">⚡ ${questionObj.subject}</span>` : '';
-  const conceptBadgeHtml = questionObj.concept ? `<span style="background:rgba(255,215,0,0.1); color:#FFD700; border:1px solid rgba(255,215,0,0.25); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">📌 ${questionObj.concept}</span>` : '';
-
-  let optionsHtml = '';
-  if (questionObj.options && Array.isArray(questionObj.options)) {
-    questionObj.options.forEach((opt, optIdx) => {
+  
+  cbtQuestions.forEach((q, qIdx) => {
+    const card = document.createElement('div');
+    card.className = 'review-question-card';
+    card.style.background = 'rgba(255, 255, 255, 0.02)';
+    card.style.border = '1px solid rgba(255, 255, 255, 0.06)';
+    card.style.borderRadius = '12px';
+    card.style.padding = '20px';
+    card.style.marginBottom = '16px';
+    
+    let statusBadgeHtml = '';
+    const userAns = cbtAnswers[qIdx];
+    if (userAns === undefined) {
+      statusBadgeHtml = `<span style="background:rgba(156,163,175,0.1); color:#9ca3af; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Unanswered</span>`;
+    } else if (userAns === q.correct_option_idx) {
+      statusBadgeHtml = `<span style="background:rgba(0,212,170,0.1); color:var(--primary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Correct (+4)</span>`;
+    } else {
+      statusBadgeHtml = `<span style="background:rgba(255,107,107,0.1); color:var(--tertiary); padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">Incorrect (-1)</span>`;
+    }
+    
+    let optionsHtml = '';
+    q.options.forEach((opt, optIdx) => {
       let optStyle = 'border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.01); color:#d1d5db;';
       let badge = '';
-
-      if (optIdx === questionObj.correct_option_idx) {
+      
+      if (optIdx === q.correct_option_idx) {
         optStyle = 'border:1px solid var(--primary); background:rgba(0,212,170,0.08); color:var(--primary); font-weight:600;';
         badge = ' <span style="font-size:11px; margin-left:auto; color:var(--primary); font-weight:700;">✓ Correct</span>';
-      } else if (userAnswerIdx === optIdx) {
+      } else if (userAns === optIdx) {
         optStyle = 'border:1px solid var(--tertiary); background:rgba(255,107,107,0.08); color:var(--tertiary); font-weight:600;';
         badge = ' <span style="font-size:11px; margin-left:auto; color:var(--tertiary); font-weight:700;">✗ Your Answer</span>';
       }
-
+      
       optionsHtml += `
         <div style="display:flex; align-items:center; padding:10px 14px; border-radius:6px; margin-top:8px; font-size:13px; ${optStyle}">
           <span style="font-weight:700; margin-right:10px;">${optionPrefixes[optIdx]}.</span>
@@ -3830,783 +3708,23 @@ function renderCbtQuestionReviewCard(questionObj, userAnswerIdx, cardIndex, cont
         </div>
       `;
     });
-  }
-
-  return `
-    <div class="review-question-card" style="background:rgba(255, 255, 255, 0.02); border:1px solid rgba(255, 255, 255, 0.06); border-radius:12px; padding:20px; margin-bottom:16px;">
+    
+    card.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-          <span style="font-weight:700; font-family:'Share Tech',sans-serif; color:#FFD700;">Question ${cardIndex + 1}</span>
-          ${subjectBadgeHtml}
-          ${conceptBadgeHtml}
-        </div>
+        <span style="font-weight:700; font-family:'Share Tech',sans-serif; color:#FFD700;">Question ${qIdx + 1}</span>
         ${statusBadgeHtml}
       </div>
-      <div style="font-size:15px; font-weight:600; margin-bottom:14px; line-height:1.5; color:#fff;">${questionObj.question}</div>
+      <div style="font-size:15px; font-weight:600; margin-bottom:14px; line-height:1.5; color:#fff;">${q.question}</div>
       <div style="margin-bottom:16px;">${optionsHtml}</div>
       <div style="background:rgba(255,215,0,0.03); border-left:3px solid #FFD700; padding:12px 16px; border-radius:0 8px 8px 0; font-size:13px; line-height:1.5;">
         <strong style="color:#FFD700; display:block; margin-bottom:4px; font-family:'Share Tech',sans-serif;">Explanation:</strong>
-        <span style="color:#e5e7eb;">${questionObj.explanation || ''}</span>
-      </div>
-
-      <!-- Action Buttons -->
-      <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:11px; display:flex; align-items:center; gap:6px; border-color:var(--primary); color:var(--primary);" onclick="askAiAboutCbtQuestion('${contextId}')">
-          🤖 Explain with AI
-        </button>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:11px; display:flex; align-items:center; gap:6px; border-color:var(--tertiary); color:var(--tertiary);" onclick="addCbtQuestionToErrorBook('${contextId}')">
-          📕 Add to Error Book
-        </button>
-      </div>
-
-      <!-- Dynamic AI Explanation Box -->
-      <div id="cbt-ai-response-${contextId}" style="display:none; margin-top:12px; padding:12px 14px; background:rgba(0,212,170,0.03); border:1px solid rgba(0,212,170,0.15); border-radius:8px; font-size:12px; line-height:1.5; color:#e5e7eb;">
-      </div>
-    </div>
-  `;
-}
-
-function buildCbtReview() {
-  const container = document.getElementById('cbt-review-container');
-  if (!container) return;
-  container.innerHTML = '';
-  
-  cbtQuestions.forEach((q, qIdx) => {
-    const contextId = `live_${qIdx}`;
-    const userAns = cbtAnswers[qIdx];
-    const cardHtml = renderCbtQuestionReviewCard(q, userAns, qIdx, contextId);
-    container.insertAdjacentHTML('beforeend', cardHtml);
-  });
-  
-  renderMath(container);
-}
-
-async function askAiAboutCbtQuestion(contextId) {
-  const apiKey = safeGetLocalStorage('gemini_api_key');
-  if (!apiKey) {
-    alert("Please configure your Gemini API Key in the Settings or AI CBT tab first!");
-    return;
-  }
-
-  const registered = window.cbtReviewQuestionMap ? window.cbtReviewQuestionMap[contextId] : null;
-  if (!registered || !registered.questionObj) return;
-
-  const q = registered.questionObj;
-  const responseBox = document.getElementById(`cbt-ai-response-${contextId}`);
-  if (!responseBox) return;
-
-  responseBox.style.display = 'block';
-  responseBox.innerHTML = '🤖 <em>AI is analyzing the question and deriving the step-by-step solution...</em>';
-
-  const optionPrefixes = ['A', 'B', 'C', 'D'];
-  const optionsText = (q.options || []).map((opt, i) => `${optionPrefixes[i]}) ${opt}`).join('\n');
-  const correctPrefix = optionPrefixes[q.correct_option_idx] || 'A';
-  const correctText = q.options ? (q.options[q.correct_option_idx] || '') : '';
-
-  const prompt = `You are a world-class NEET preparation mentor and subject expert in ${q.subject || 'NEET'}.
-A student is solving a CBT question on the topic "${q.concept || 'General Concept'}".
-They need a simple, step-by-step, intuitive explanation for this question.
-
-[Question]:
-${q.question}
-
-[Options]:
-${optionsText}
-
-[Correct Option]:
-Option ${correctPrefix}: ${correctText}
-
-[Standard Explanation]:
-${q.explanation}
-
-Please explain the underlying concepts clearly, list any formulas used, provide the logical reasoning, and do a clear step-by-step mathematical/conceptual derivation in simple language suitable for a NEET aspirant. CRITICAL: Use KaTeX inline math notation ($ ... $ or $$ ... $$) for all formulas, chemical symbols, and math expressions.`;
-
-  const requestPayload = {
-    contents: [
-      {
-        parts: [
-          { text: prompt }
-        ]
-      }
-    ]
-  };
-
-  try {
-    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
-    }
-
-    const responseData = await response.json();
-    const responseText = responseData.candidates[0].content.parts[0].text;
-
-    responseBox.textContent = responseText;
-    renderMath(responseBox);
-  } catch (error) {
-    console.error("AI Doubt Solver Error:", error);
-    responseBox.innerHTML = `❌ <span style="color:var(--tertiary);">Error explaining question: ${error.message}</span>`;
-  }
-}
-
-function addCbtQuestionToErrorBook(contextId) {
-  const registered = window.cbtReviewQuestionMap ? window.cbtReviewQuestionMap[contextId] : null;
-  if (!registered || !registered.questionObj) return;
-
-  const q = registered.questionObj;
-
-  let subject = q.subject || 'Biology';
-  let chapter = q.concept || 'General Concept';
-
-  if (!q.subject && chapter && typeof PLAN !== 'undefined') {
-    const chNameClean = chapter.trim().toLowerCase();
-    for (const sub in PLAN) {
-      if (PLAN[sub].some(c => c.ch.trim().toLowerCase() === chNameClean)) {
-        subject = sub === 'phy' ? 'Physics' : (sub === 'che' ? 'Chemistry' : 'Biology');
-        break;
-      }
-    }
-  }
-
-  const optionPrefixes = ['A', 'B', 'C', 'D'];
-  const optionsText = (q.options || []).map((opt, i) => `${optionPrefixes[i]}) ${opt}`).join('\n');
-  const correctPrefix = optionPrefixes[q.correct_option_idx] || 'A';
-  const correctText = q.options ? (q.options[q.correct_option_idx] || '') : '';
-
-  const item = {
-    id: 'err_' + Date.now(),
-    subject: subject,
-    chapter: chapter,
-    category: 'Conceptual Loophole',
-    description: `${q.question}\n\nOptions:\n${optionsText}\n\nExplanation:\n${q.explanation || ''}`,
-    correct: `Correct Option: ${correctPrefix}) ${correctText}`,
-    done: false,
-    date: new Date().toLocaleDateString('en-IN')
-  };
-
-  errorBookItems.unshift(item);
-  safeSetLocalStorage('neet_v3_errorbook_items', JSON.stringify(errorBookItems));
-
-  if (typeof populateErrorChapters === 'function') populateErrorChapters();
-  if (typeof renderErrorBookList === 'function') renderErrorBookList();
-  if (typeof updateErrorBookDeckLabel === 'function') updateErrorBookDeckLabel();
-
-  alert(`Successfully saved question to your Error Book under: ${subject} -> ${chapter}!`);
-}
-
-function retestCbtWrongAnswers(questionsArray, answersMapOrArray) {
-  if (!questionsArray || questionsArray.length === 0) {
-    alert("No questions found in this test to retest.");
-    return;
-  }
-
-  const wrongQuestions = questionsArray.filter((q, idx) => {
-    let userAns = null;
-    if (Array.isArray(answersMapOrArray)) {
-      userAns = answersMapOrArray[idx];
-    } else if (answersMapOrArray && typeof answersMapOrArray === 'object') {
-      userAns = answersMapOrArray[idx];
-    }
-    return userAns === null || userAns === undefined || userAns !== q.correct_option_idx;
-  });
-
-  if (wrongQuestions.length === 0) {
-    alert("Great job! All questions in this test were answered correctly — nothing to retest!");
-    return;
-  }
-
-  const computedDuration = Math.max(5, Math.round(wrongQuestions.length * 1.5));
-  window.cbtCurrentSource = `Retest Wrong (${wrongQuestions.length} Qs)`;
-  initCbt(wrongQuestions, computedDuration);
-}
-
-async function generateConceptFocusedTest(conceptName, subjectHint) {
-  const apiKey = safeGetLocalStorage('gemini_api_key');
-  if (!apiKey) {
-    alert("Please configure your Gemini API Key first in the '🤖 AI CBT' tab or Settings.");
-    showTab('ai-test');
-    return;
-  }
-
-  showTab('ai-test');
-  document.getElementById('ai-setup-view').style.display = 'none';
-  document.getElementById('ai-exam-view').style.display = 'none';
-  document.getElementById('ai-results-view').style.display = 'none';
-  document.getElementById('ai-loading-view').style.display = 'flex';
-  document.getElementById('ai-loading-title').textContent = `Generating Focus Practice: ${conceptName}`;
-  document.getElementById('ai-loading-desc').textContent = `AI is drafting 10 target NEET MCQs strictly on '${conceptName}' (${subjectHint || 'NEET'}). Please wait.`;
-
-  try {
-    const prompt = `You are a premium NEET question bank generator and subject expert in ${subjectHint || 'NEET'}. Generate exactly 10 high-quality, NEET-level MCQs strictly testing the concept: '${conceptName}'. The questions should match the standard and difficulty of the NEET exam. Keep questions, options, and explanations extremely concise and brief (1-2 short sentences). Each question must have:
-- question (text)
-- options (array of 4 strings)
-- correct_option_idx (0-based integer)
-- explanation (short string)
-- concept (set strictly to '${conceptName}')
-- subject (must be one of: "Physics", "Chemistry", "Biology" — set to '${subjectHint || 'Biology'}')
-
-CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$.`;
-
-    const requestPayload = {
-      contents: [
-        {
-          role: "user",
-          parts: [
-            { text: prompt }
-          ]
-        }
-      ],
-      generationConfig: {
-        responseMimeType: "application/json",
-        maxOutputTokens: 8192,
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            questions: {
-              type: "ARRAY",
-              items: {
-                type: "OBJECT",
-                properties: {
-                  question: { type: "STRING" },
-                  options: {
-                    type: "ARRAY",
-                    items: { type: "STRING" }
-                  },
-                  correct_option_idx: { type: "INTEGER" },
-                  explanation: { type: "STRING" },
-                  concept: { type: "STRING" },
-                  subject: {
-                    type: "STRING",
-                    enum: ["Physics", "Chemistry", "Biology"]
-                  }
-                },
-                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject"]
-              }
-            }
-          },
-          required: ["questions"]
-        }
-      }
-    };
-
-    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
-    const responseData = await response.json();
-    const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = safeParseAiJson(responseText);
-
-    if (!parsedData.questions || parsedData.questions.length === 0) {
-      throw new Error("Failed to generate questions for the requested concept. Please try again.");
-    }
-
-    window.cbtCurrentSource = `${conceptName} - Focus Test`;
-    initCbt(parsedData.questions, 15);
-
-  } catch (error) {
-    console.error("Focus Test Generation Error:", error);
-    alert(`Failed to generate focus test: ${error.message}`);
-    document.getElementById('ai-loading-view').style.display = 'none';
-    document.getElementById('ai-setup-view').style.display = 'grid';
-  }
-}
-
-const MASTER_NEET_CHAPTERS = {
-  phy: [
-    "Units & Measurement", "Kinematics 1D", "Kinematics 2D", "Laws of Motion",
-    "Work, Energy & Power", "Rotational Motion", "Gravitation", "Properties of Matter",
-    "Thermal Properties", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves",
-    "Electrostatics", "Current Electricity", "Moving Charges & Magnetism", "Magnetism & Matter",
-    "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves",
-    "Ray Optics & Optical Instruments", "Wave Optics", "Dual Nature of Radiation & Matter",
-    "Atoms", "Nuclei", "Semiconductor Electronics", "Experimental Skills"
-  ],
-  che: [
-    "Basic Concepts of Chemistry", "Atomic Structure", "Periodic Table & Periodicity",
-    "Chemical Bonding & Molecular Structure", "Thermodynamics (Chem)", "Chemical Equilibrium",
-    "Ionic Equilibrium", "Redox Reactions", "Solutions", "Electrochemistry",
-    "Chemical Kinetics", "Surface Chemistry", "p-Block Elements", "d- and f-Block Elements",
-    "Coordination Compounds", "Haloalkanes & Haloarenes", "Alcohols, Phenols & Ethers",
-    "Aldehydes, Ketones & Carboxylic Acids", "Amines", "Biomolecules (Chem)",
-    "Organic Basics & GOC", "Hydrocarbons", "Practical Chemistry"
-  ],
-  bio: [
-    "Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom",
-    "Morphology of Plants", "Anatomy of Plants", "Structural Org Animals", "Cell: Unit of Life",
-    "Biomolecules", "Cell Cycle & Division", "Photosynthesis", "Respiration in Plants",
-    "Plant Growth & Dev", "Breathing & Gas Exchange", "Body Fluids & Circulation",
-    "Excretion", "Locomotion & Movement", "Neural Control", "Chemical Coordination",
-    "Sexual Repro in Plants", "Human Reproduction", "Reproductive Health",
-    "Principles of Inheritance & Variation", "Molecular Basis of Inheritance", "Evolution",
-    "Human Health & Disease", "Microbes in Human Welfare", "Biotechnology: Principles & Processes",
-    "Biotechnology & Its Applications", "Organisms & Populations", "Ecosystem", "Biodiversity & Conservation"
-  ]
-};
-
-function getSubjectChapterLists() {
-  const phySet = new Set();
-  const cheSet = new Set();
-  const bioSet = new Set();
-
-  const planRef = (typeof window.PLAN !== 'undefined' ? window.PLAN : (typeof PLAN !== 'undefined' ? PLAN : null));
-
-  if (planRef && Array.isArray(planRef)) {
-    planRef.forEach(item => {
-      if (item.phyChap && typeof item.phyChap === 'string') {
-        const ch = item.phyChap.trim();
-        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) phySet.add(ch);
-      }
-      if (item.cheChap && typeof item.cheChap === 'string') {
-        const ch = item.cheChap.trim();
-        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) cheSet.add(ch);
-      }
-      if (item.bioChap && typeof item.bioChap === 'string') {
-        const ch = item.bioChap.trim();
-        if (ch && !['Revision', 'Test', 'Rest', 'Full Syllabus Revision'].some(skip => ch.includes(skip))) bioSet.add(ch);
-      }
-    });
-  }
-
-  const pyqRef = (typeof window.PYQ_BANK !== 'undefined' ? window.PYQ_BANK : (typeof PYQ_BANK !== 'undefined' ? PYQ_BANK : null));
-  if (pyqRef) {
-    Object.keys(pyqRef).forEach(ch => {
-      const chClean = ch.trim().toLowerCase();
-      let found = false;
-      for (const p of phySet) { if (p.trim().toLowerCase() === chClean) { found = true; break; } }
-      if (!found) { for (const c of cheSet) { if (c.trim().toLowerCase() === chClean) { found = true; break; } } }
-      if (!found) { for (const b of bioSet) { if (b.trim().toLowerCase() === chClean) { found = true; break; } } }
-      if (!found) bioSet.add(ch);
-    });
-  }
-
-  // Fallback to MASTER_NEET_CHAPTERS if sets are empty or small
-  if (phySet.size < 5) MASTER_NEET_CHAPTERS.phy.forEach(c => phySet.add(c));
-  if (cheSet.size < 5) MASTER_NEET_CHAPTERS.che.forEach(c => cheSet.add(c));
-  if (bioSet.size < 5) MASTER_NEET_CHAPTERS.bio.forEach(c => bioSet.add(c));
-
-  return {
-    phy: Array.from(phySet).sort(),
-    che: Array.from(cheSet).sort(),
-    bio: Array.from(bioSet).sort()
-  };
-}
-
-function populateCustomTestChapters() {
-  const container = document.getElementById('custom-cbt-chapters-container');
-  if (!container) return;
-
-  const chapLists = getSubjectChapterLists();
-
-  const subjects = [
-    { key: 'phy', title: '⚡ Physics', color: 'var(--phy)', list: chapLists.phy },
-    { key: 'che', title: '🧪 Chemistry', color: 'var(--che)', list: chapLists.che },
-    { key: 'bio', title: '🧬 Biology', color: 'var(--bio)', list: chapLists.bio }
-  ];
-
-  let html = '';
-
-  subjects.forEach(sub => {
-    if (!sub.list || sub.list.length === 0) return;
-
-    html += `
-      <div style="border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:10px; margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-weight:700; font-size:13px; color:${sub.color};">${sub.title} (${sub.list.length} Chapters)</span>
-          <label style="font-size:11px; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:5px; user-select:none;">
-            <input type="checkbox" onchange="toggleSelectAllSubjectChapters('${sub.key}', this.checked)" style="accent-color:var(--primary); cursor:pointer;"> Select All
-          </label>
-        </div>
-        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:6px;">
-    `;
-
-    sub.list.forEach((chName) => {
-      html += `
-        <label style="font-size:11px; color:#e5e7eb; display:flex; align-items:center; gap:8px; cursor:pointer; padding:5px 8px; background:rgba(255,255,255,0.03); border-radius:6px; border:1px solid rgba(255,255,255,0.06); user-select:none; transition:background 0.2s;" title="${chName}" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-          <input type="checkbox" class="custom-cbt-ch-checkbox custom-cbt-ch-${sub.key}" value="${chName}" style="accent-color:var(--primary); cursor:pointer; width:14px; height:14px; flex-shrink:0;">
-          <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${chName}</span>
-        </label>
-      `;
-    });
-
-    html += `
-        </div>
+        <span style="color:#e5e7eb;">${q.explanation}</span>
       </div>
     `;
-  });
-
-  container.innerHTML = html;
-}
-
-function toggleSelectAllSubjectChapters(subKey, isChecked) {
-  const checkboxes = document.querySelectorAll(`.custom-cbt-ch-${subKey}`);
-  checkboxes.forEach(cb => { cb.checked = isChecked; });
-}
-
-function selectAllCustomTestChapters(selectAll) {
-  const checkboxes = document.querySelectorAll('.custom-cbt-ch-checkbox');
-  checkboxes.forEach(cb => { cb.checked = selectAll; });
-}
-
-async function generateCustomAiTest() {
-  const apiKey = safeGetLocalStorage('gemini_api_key');
-  if (!apiKey) {
-    alert("Please configure your Gemini API Key first in the '⚙️ Settings' tab or above.");
-    showTab('settings');
-    return;
-  }
-
-  const selectedBoxes = document.querySelectorAll('.custom-cbt-ch-checkbox:checked');
-  if (selectedBoxes.length === 0) {
-    alert("Please select at least one chapter from the list to generate your custom test.");
-    return;
-  }
-
-  const selectedChapters = Array.from(selectedBoxes).map(cb => cb.value);
-  const diffSelect = document.getElementById('custom-cbt-difficulty');
-  const difficulty = diffSelect ? diffSelect.value : "Mixed";
-
-  const qCountInput = document.getElementById('custom-cbt-qcount');
-  const questionCount = qCountInput ? parseInt(qCountInput.value) || 20 : 20;
-
-  showTab('ai-test');
-  document.getElementById('ai-setup-view').style.display = 'none';
-  document.getElementById('ai-exam-view').style.display = 'none';
-  document.getElementById('ai-results-view').style.display = 'none';
-  document.getElementById('ai-loading-view').style.display = 'flex';
-  document.getElementById('ai-loading-title').textContent = `Generating Custom ${difficulty} Test (${questionCount} Qs)`;
-  document.getElementById('ai-loading-desc').textContent = `AI is drafting ${questionCount} questions across ${selectedChapters.length} selected chapters. Please wait.`;
-
-  try {
-    let diffInstruction = `Target difficulty level: ${difficulty}.`;
-    if (difficulty === "PYQ-Style") {
-      diffInstruction = "Instruct questions to match the exact difficulty, trickiness, and style of real NEET previous-year questions.";
-    } else if (difficulty === "Mixed") {
-      diffInstruction = "Spread question difficulty evenly across Easy (30%), Medium (50%), and Hard (20%) questions.";
-    }
-
-    const prompt = `You are a premium NEET question bank generator. Generate exactly ${questionCount} high-quality, NEET-level MCQs distributed across the following chapters:
-${selectedChapters.join(', ')}
-
-${diffInstruction}
-
-Ensure questions cover key concepts, formulas, and numericals matching the NEET syllabus. Keep questions, options, and explanations concise (1-2 sentences). Each question must have:
-- question (text)
-- options (array of 4 strings)
-- correct_option_idx (0-based integer)
-- explanation (short string)
-- concept (short string tag naming the specific chapter/concept tested from the selected list)
-- subject (must be one of: "Physics", "Chemistry", "Biology")
-
-CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics exponents or subscripts in question, options, explanation, and concept MUST be formatted using KaTeX inline math delimiters $ ... $ with standard LaTeX syntax — underscore for subscript, caret for superscript, curly braces for multi-character sub/superscripts. Examples: water as $H_2O$, sulfate ion as $SO_4^{2-}$, ferric ion as $Fe^{3+}$, glucose as $C_6H_{12}O_6$, velocity squared as $v^2$, scientific notation as $10^{-3}$.`;
-
-    const requestPayload = {
-      contents: [
-        {
-          role: "user",
-          parts: [
-            { text: prompt }
-          ]
-        }
-      ],
-      generationConfig: {
-        responseMimeType: "application/json",
-        maxOutputTokens: 8192,
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            questions: {
-              type: "ARRAY",
-              items: {
-                type: "OBJECT",
-                properties: {
-                  question: { type: "STRING" },
-                  options: {
-                    type: "ARRAY",
-                    items: { type: "STRING" }
-                  },
-                  correct_option_idx: { type: "INTEGER" },
-                  explanation: { type: "STRING" },
-                  concept: { type: "STRING" },
-                  subject: {
-                    type: "STRING",
-                    enum: ["Physics", "Chemistry", "Biology"]
-                  }
-                },
-                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject"]
-              }
-            }
-          },
-          required: ["questions"]
-        }
-      }
-    };
-
-    const response = await fetchGeminiWithRetry(apiKey, requestPayload);
-    const responseData = await response.json();
-    const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = safeParseAiJson(responseText);
-
-    if (!parsedData || !parsedData.questions || parsedData.questions.length === 0) {
-      throw new Error("Failed to generate questions for the custom test. Please try again.");
-    }
-
-    const durationMinutes = Math.max(5, Math.round(questionCount * 1.5));
-    window.cbtCurrentSource = `Custom Test (${difficulty}, ${questionCount} Qs)`;
-    initCbt(parsedData.questions, durationMinutes);
-
-  } catch (error) {
-    console.error("Custom Test Generation Error:", error);
-    alert(`Failed to generate custom test: ${error.message}`);
-    document.getElementById('ai-loading-view').style.display = 'none';
-    document.getElementById('ai-setup-view').style.display = 'grid';
-  }
-}
-
-function renderCbtResultsSection() {
-  let cbtResults = [];
-  try {
-    cbtResults = JSON.parse(safeGetLocalStorage('neet_v3_cbt_results') || '[]');
-  } catch(e) {}
-
-  renderCbtWeakTopicsAnalytics(cbtResults);
-  renderCbtHistoryList(cbtResults);
-}
-
-function renderCbtWeakTopicsAnalytics(cbtResults) {
-  const container = document.getElementById('cbt-analytics-container');
-  if (!container) return;
-
-  if (!cbtResults || cbtResults.length === 0) {
-    container.innerHTML = `
-      <div style="text-align:center; padding:16px; color:var(--text-muted);">
-        <span style="font-size:32px; display:block; margin-bottom:8px;">🎯</span>
-        <h3 style="margin:0 0 4px 0; color:#fff; font-size:15px;">No AI CBT Tests Recorded Yet</h3>
-        <p style="font-size:12px; margin:0;">Complete an AI CBT test or chapter test to generate weak topic analytics.</p>
-      </div>
-    `;
-    return;
-  }
-
-  const conceptMap = {};
-
-  cbtResults.forEach(res => {
-    if (!res.questions || !Array.isArray(res.questions)) return;
-
-    res.questions.forEach(q => {
-      const tag = (q.concept && q.concept.trim()) ? q.concept.trim() : 'General Concept';
-      if (!conceptMap[tag]) {
-        conceptMap[tag] = {
-          concept: tag,
-          subject: q.subject || 'Biology',
-          attempted: 0,
-          wrong: 0,
-          correct: 0,
-          unanswered: 0
-        };
-      }
-
-      conceptMap[tag].attempted++;
-      if (q.user_answer_idx === null || q.user_answer_idx === undefined) {
-        conceptMap[tag].unanswered++;
-      } else if (q.user_answer_idx === q.correct_option_idx) {
-        conceptMap[tag].correct++;
-      } else {
-        conceptMap[tag].wrong++;
-      }
-    });
-  });
-
-  const weakList = Object.values(conceptMap)
-    .filter(item => item.wrong > 0 || item.attempted > 0)
-    .sort((a, b) => {
-      if (b.wrong !== a.wrong) {
-        return b.wrong - a.wrong;
-      }
-      const accA = a.attempted > 0 ? (a.correct / a.attempted) : 0;
-      const accB = b.attempted > 0 ? (b.correct / b.attempted) : 0;
-      return accA - accB;
-    });
-
-  if (weakList.length === 0) {
-    container.innerHTML = `
-      <h2 style="margin:0 0 12px 0; font-size:16px; color:#FFD700; font-family:'Share Tech',sans-serif;">🎯 Weak Topics & Focus Areas</h2>
-      <p style="font-size:13px; color:var(--text-muted); margin:0;">All questions attempted so far are correct!</p>
-    `;
-    return;
-  }
-
-  let tableRowsHtml = '';
-  weakList.forEach((item, idx) => {
-    const acc = item.attempted > 0 ? Math.round((item.correct / item.attempted) * 100) : 0;
-    let badgeColor = 'rgba(255,107,107,0.15)';
-    let textColor = 'var(--tertiary)';
-    if (acc >= 75) {
-      badgeColor = 'rgba(0,212,170,0.15)';
-      textColor = 'var(--primary)';
-    } else if (acc >= 50) {
-      badgeColor = 'rgba(255,215,0,0.15)';
-      textColor = '#FFD700';
-    }
-
-    const safeConceptName = item.concept.replace(/'/g, "\\'");
-    const safeSubjectHint = (item.subject || 'Biology').replace(/'/g, "\\'");
-
-    tableRowsHtml += `
-      <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
-        <td style="padding:10px 12px; font-weight:600; color:#fff;">
-          <span style="color:#FFD700; font-family:'Share Tech',sans-serif; margin-right:8px;">#${idx + 1}</span>
-          <span>${item.concept}</span>
-        </td>
-        <td style="padding:10px 12px; text-align:center; font-weight:700; color:var(--tertiary);">${item.wrong}</td>
-        <td style="padding:10px 12px; text-align:center; color:var(--text-muted);">${item.attempted}</td>
-        <td style="padding:10px 12px; text-align:center;">
-          <span style="background:${badgeColor}; color:${textColor}; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:700;">${acc}%</span>
-        </td>
-        <td style="padding:10px 12px; text-align:right;">
-          <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px; border-color:var(--primary); color:var(--primary);" onclick="generateConceptFocusedTest('${safeConceptName}', '${safeSubjectHint}')">
-            🎯 Practice 10 More
-          </button>
-        </td>
-      </tr>
-    `;
-  });
-
-  container.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
-      <h2 style="margin:0; font-size:16px; color:#FFD700; font-family:'Share Tech',sans-serif; display:flex; align-items:center; gap:8px;">
-        🎯 Weak Topics & Concept Analytics
-      </h2>
-      <span style="font-size:11px; color:var(--text-muted);">Ranked worst-first across ${cbtResults.length} test ${cbtResults.length === 1 ? 'result' : 'results'}</span>
-    </div>
-
-    <div style="overflow-x:auto;">
-      <table style="width:100%; border-collapse:collapse; font-size:13px;">
-        <thead>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:var(--text-muted); text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">
-            <th style="padding:8px 12px;">Concept Tag</th>
-            <th style="padding:8px 12px; text-align:center;">Times Wrong</th>
-            <th style="padding:8px 12px; text-align:center;">Attempted</th>
-            <th style="padding:8px 12px; text-align:center;">Accuracy</th>
-            <th style="padding:8px 12px; text-align:right;">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${tableRowsHtml}
-        </tbody>
-      </table>
-    </div>
-  `;
-
-  renderMath(container);
-}
-
-window.cbtHistoryMap = window.cbtHistoryMap || {};
-
-function renderCbtHistoryList(cbtResults) {
-  const container = document.getElementById('cbt-history-container');
-  if (!container) return;
-
-  if (!cbtResults || cbtResults.length === 0) {
-    container.innerHTML = `
-      <div class="glass-card" style="padding:32px; text-align:center; color:var(--text-muted);">
-        <p style="font-size:14px; margin:0;">No saved test reports found in history.</p>
-      </div>
-    `;
-    return;
-  }
-
-  container.innerHTML = `<h2 style="margin:0 0 16px 0; font-size:16px; color:#fff; font-family:'Share Tech',sans-serif;">📋 Saved Test Reports (${cbtResults.length})</h2>`;
-
-  cbtResults.forEach((res) => {
-    window.cbtHistoryMap[res.id] = res;
-
-    const card = document.createElement('div');
-    card.className = 'glass-card cbt-report-card';
-    card.style.marginBottom = '16px';
-    card.style.padding = '0';
-    card.style.overflow = 'hidden';
-
-    let accColor = '#00d4aa';
-    if (res.accuracy < 50) accColor = '#ff6b6b';
-    else if (res.accuracy < 75) accColor = '#FFD700';
-
-    const headerHtml = `
-      <div style="padding:16px 20px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; flex-wrap:wrap; gap:12px; background:rgba(255,255,255,0.01);" onclick="toggleCbtCardExpand('${res.id}')">
-        <div>
-          <div style="font-size:15px; font-weight:700; color:#fff; display:flex; align-items:center; gap:8px;">
-            <span>📄 ${res.source}</span>
-          </div>
-          <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
-            📅 ${res.date} • ${res.totalQuestions} Questions
-          </div>
-        </div>
-
-        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <span style="font-family:'Share Tech',sans-serif; font-size:15px; font-weight:700; color:#FFD700;">${res.score} / ${res.maxScore || (res.totalQuestions * 4)}</span>
-          <span style="background:rgba(255,255,255,0.05); color:${accColor}; border:1px solid ${accColor}44; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700;">${res.accuracy}% Acc</span>
-          <span style="font-size:11px; color:var(--text-muted);">
-            <strong style="color:var(--primary);">✓ ${res.correct}</strong> • <strong style="color:var(--tertiary);">✗ ${res.incorrect}</strong> • <strong style="color:#9ca3af;">- ${res.unanswered}</strong>
-          </span>
-          <button class="btn btn-secondary" onclick="event.stopPropagation(); retestCbtWrongAnswers(window.cbtHistoryMap['${res.id}'].questions, window.cbtHistoryMap['${res.id}'].questions.map(q=>q.user_answer_idx))" style="padding:4px 10px; font-size:11px; border-color:#FFD700; color:#FFD700;" title="Retest Wrong Answers">🔁 Retest Wrong</button>
-          <button class="btn btn-secondary" onclick="event.stopPropagation(); deleteCbtResult('${res.id}')" style="padding:4px 10px; font-size:11px; border-color:rgba(255,107,107,0.3); color:var(--tertiary);" title="Delete Record">🗑️ Delete</button>
-        </div>
-      </div>
-    `;
-
-    let questionsReviewHtml = '';
-    if (res.questions && Array.isArray(res.questions)) {
-      res.questions.forEach((q, qIdx) => {
-        const contextId = `hist_${res.id}_${qIdx}`;
-        const userAns = q.user_answer_idx;
-        const cardHtml = renderCbtQuestionReviewCard(q, userAns, qIdx, contextId);
-        questionsReviewHtml += cardHtml;
-      });
-    }
-
-    const bodyHtml = `
-      <div id="cbt-card-body-${res.id}" style="display:none; padding:20px; border-top:1px solid rgba(255,255,255,0.06); background:rgba(0,0,0,0.2);">
-        ${questionsReviewHtml}
-      </div>
-    `;
-
-    card.innerHTML = headerHtml + bodyHtml;
+    
     container.appendChild(card);
   });
 }
-
-function toggleCbtCardExpand(resId) {
-  const body = document.getElementById(`cbt-card-body-${resId}`);
-  if (!body) return;
-
-  if (body.style.display === 'none') {
-    body.style.display = 'block';
-    renderMath(body);
-  } else {
-    body.style.display = 'none';
-  }
-}
-
-function deleteCbtResult(resId) {
-  if (!confirm("Are you sure you want to delete this test result? This will also update your Weak Topic Analytics.")) return;
-
-  let cbtResults = [];
-  try {
-    cbtResults = JSON.parse(safeGetLocalStorage('neet_v3_cbt_results') || '[]');
-  } catch(e) {}
-
-  cbtResults = cbtResults.filter(r => r.id !== resId);
-  safeSetLocalStorage('neet_v3_cbt_results', JSON.stringify(cbtResults));
-  renderCbtResultsSection();
-}
-
-window.renderCbtQuestionReviewCard = renderCbtQuestionReviewCard;
-window.askAiAboutCbtQuestion = askAiAboutCbtQuestion;
-window.addCbtQuestionToErrorBook = addCbtQuestionToErrorBook;
-window.retestCbtWrongAnswers = retestCbtWrongAnswers;
-window.generateConceptFocusedTest = generateConceptFocusedTest;
-window.populateCustomTestChapters = populateCustomTestChapters;
-window.toggleSelectAllSubjectChapters = toggleSelectAllSubjectChapters;
-window.generateCustomAiTest = generateCustomAiTest;
-window.renderCbtResultsSection = renderCbtResultsSection;
-window.toggleCbtCardExpand = toggleCbtCardExpand;
-window.deleteCbtResult = deleteCbtResult;
 
 function cbtShowReview() {
   const reviewSec = document.getElementById('cbt-review-section');
@@ -4616,36 +3734,9 @@ function cbtShowReview() {
   }
 }
 
-function cbtExitTestPrompt() {
-  const confirmExit = confirm("Are you sure you want to exit the exam?\n\nYour current test progress will be cancelled and you will return to the setup page.");
-  if (confirmExit) {
-    cbtExitTest();
-  }
-}
-
-function cbtExitTest() {
-  if (cbtTimer) {
-    clearInterval(cbtTimer);
-    cbtTimer = null;
-  }
-  
-  // Turn off distraction-free focus mode
-  document.body.classList.remove('exam-mode-active');
-  
-  // Hide exam view & return to setup view
-  document.getElementById('ai-exam-view').style.display = 'none';
-  document.getElementById('ai-results-view').style.display = 'none';
-  document.getElementById('ai-loading-view').style.display = 'none';
-  document.getElementById('ai-setup-view').style.display = 'grid';
-
-  // Reset current source tracker
-  window.cbtCurrentSource = null;
-}
-
 function cbtExitResults() {
-  document.body.classList.remove('exam-mode-active');
   document.getElementById('ai-results-view').style.display = 'none';
-  document.getElementById('ai-setup-view').style.display = 'grid';
+  document.getElementById('ai-setup-view').style.display = 'block';
   
   selectedFile = null;
   const fileInfo = document.getElementById('file-info');
@@ -5055,9 +4146,6 @@ window.applyTheme = applyTheme;
 
 function initOnLoad() {
   initAiDragAndDrop();
-  if (typeof populateCustomTestChapters === 'function') {
-    populateCustomTestChapters();
-  }
   const storedKey = safeGetLocalStorage('gemini_api_key');
   const keyInput = document.getElementById('gemini-key');
   if (storedKey && keyInput) {
@@ -5093,51 +4181,69 @@ function initOnLoad() {
     }
   }
 
-  // Stage 1: Critical UI Setup & Home Dashboard (Renders Instantly)
-  try { loadTheme(); } catch(e) {}
-  try { if (typeof loadAccentTheme === 'function') loadAccentTheme(); } catch(e) {}
-  try { renderOverviewStats(); } catch(e) {}
-  try { renderPlan(); } catch(e) {}
+  // Render initial components and data tables safely
+  try { renderPlan(); } catch(e) { console.error("Error in renderPlan:", e); }
+  try { renderChapters(); } catch(e) { console.error("Error in renderChapters:", e); }
+  try {
+    if (typeof renderSyllabusCoverageHeatmap === 'function') {
+      renderSyllabusCoverageHeatmap();
+    }
+  } catch(e) { console.error("Error in renderSyllabusCoverageHeatmap:", e); }
+  try { renderTestList(); } catch(e) { console.error("Error in renderTestList:", e); }
+  try { renderTrackerTable(); } catch(e) { console.error("Error in renderTrackerTable:", e); }
+  try { renderAnalytics(); } catch(e) { console.error("Error in renderAnalytics:", e); }
+  try {
+    if (typeof renderHeatmap === 'function') {
+      renderHeatmap();
+    }
+  } catch(e) { console.error("Error in renderHeatmap:", e); }
 
-  // Stage 2: Staggered Chapter & Target render (50ms delay)
-  setTimeout(() => {
-    try { renderChapters(); } catch(e) {}
-    try { if (typeof initDailyTargets === 'function') initDailyTargets(); } catch(e) {}
-    try { updateLoginStats(); } catch(e) {}
-  }, 50);
+  // Render login statistics
+  try { updateLoginStats(); } catch(e) { console.error("Error in updateLoginStats:", e); }
+  
+  // Load dark/light mode preference
+  try { loadTheme(); } catch(e) { console.error("Error in loadTheme:", e); }
+  try {
+    if (typeof loadAccentTheme === 'function') {
+      loadAccentTheme();
+    }
+  } catch(e) { console.error("Error in loadAccentTheme:", e); }
 
-  // Stage 3: Staggered Test List & Tracker Tables (120ms delay)
-  setTimeout(() => {
-    try { renderTestList(); } catch(e) {}
-    try { renderTrackerTable(); } catch(e) {}
-    try { if (typeof updateNeetRankPredictor === 'function') updateNeetRankPredictor(); } catch(e) {}
-    try { if (typeof populateCustomTestChapters === 'function') populateCustomTestChapters(); } catch(e) {}
-  }, 120);
-
-  // Stage 4: Idle Background Components (250ms delay)
-  setTimeout(() => {
-    try { if (typeof renderSyllabusCoverageHeatmap === 'function') renderSyllabusCoverageHeatmap(); } catch(e) {}
-    try { renderAnalytics(); } catch(e) {}
-    try { if (typeof renderHeatmap === 'function') renderHeatmap(); } catch(e) {}
-    try { if (typeof renderStudyHubReports === 'function') renderStudyHubReports(); } catch(e) {}
-    try { if (typeof initNotificationsUI === 'function') initNotificationsUI(); } catch(e) {}
-    try { if (typeof renderTabFormulas === 'function') renderTabFormulas(); } catch(e) {}
-    try { if (typeof renderWeeklyReport === 'function') renderWeeklyReport(); } catch(e) {}
-    try { if (typeof resetDailyQuiz === 'function') resetDailyQuiz(); } catch(e) {}
-    try { renderErrorBookList(); } catch(e) {}
-    try { loadSelectedFlashcardDeck(); } catch(e) {}
-    try { renderMockTestsDashboard(); setDefaultMockDate(); } catch(e) {}
-    try { updateErrorBookDeckLabel(); } catch(e) {}
-    try { renderOverviewCounselorAlert(); } catch(e) {}
-  }, 250);
-
+  // Initial stats updates & start countdown timer
+  try { updateOverviewStats(); } catch(e) { console.error("Error in updateOverviewStats:", e); }
+  
+  // Initialize new 9-features components
+  try { if (typeof renderStudyHubReports === 'function') renderStudyHubReports(); } catch(e) { console.error("Error in renderStudyHubReports:", e); }
+  try { if (typeof initDailyTargets === 'function') initDailyTargets(); } catch(e) { console.error("Error in initDailyTargets:", e); }
+  try { if (typeof initNotificationsUI === 'function') initNotificationsUI(); } catch(e) { console.error("Error in initNotificationsUI:", e); }
+  try { if (typeof renderTabFormulas === 'function') renderTabFormulas(); } catch(e) { console.error("Error in renderTabFormulas:", e); }
+  try {
+    if (typeof renderWeeklyReport === 'function') {
+      renderWeeklyReport();
+    }
+  } catch(e) { console.error("Error in renderWeeklyReport:", e); }
+  try {
+    if (typeof resetDailyQuiz === 'function') {
+      resetDailyQuiz();
+    }
+  } catch(e) { console.error("Error in resetDailyQuiz:", e); }
   try {
     setInterval(() => {
       try {
         updateCountdown();
-      } catch(e) {}
+      } catch(e) {
+        console.error("Error in countdown interval:", e);
+      }
     }, 1000);
-  } catch(e) {}
+  } catch(e) {
+    console.error("Error setting countdown interval:", e);
+  }
+
+  try { renderErrorBookList(); } catch(e) { console.error("Error in renderErrorBookList:", e); }
+  try { loadSelectedFlashcardDeck(); } catch(e) { console.error("Error in loadSelectedFlashcardDeck:", e); }
+  try { renderMockTestsDashboard(); setDefaultMockDate(); } catch(e) { console.error("Error in renderMockTestsDashboard init:", e); }
+  try { updateErrorBookDeckLabel(); } catch(e) { console.error("Error in updateErrorBookDeckLabel init:", e); }
+  try { renderOverviewCounselorAlert(); } catch(e) { console.error("Error in renderOverviewCounselorAlert init:", e); }
 
   try {
     const hideWelcome = safeGetLocalStorage('neet_hide_welcome_modal');
@@ -5229,8 +4335,6 @@ window.cbtSelectOption = cbtSelectOption;
 window.cbtSubmitTest = cbtSubmitTest;
 window.cbtShowReview = cbtShowReview;
 window.cbtExitResults = cbtExitResults;
-window.cbtExitTestPrompt = cbtExitTestPrompt;
-window.cbtExitTest = cbtExitTest;
 window.cbtJumpToQuestion = cbtJumpToQuestion;
 window.openQuickLog = openQuickLog;
 window.closeQuickLog = closeQuickLog;
@@ -5239,7 +4343,6 @@ window.sortTable = sortTable;
 window.toggleTheme = toggleTheme;
 window.closeWelcomeSummary = closeWelcomeSummary;
 window.showToast = showToast;
-window.updateNeetRankPredictor = updateNeetRankPredictor;
 
 function saveApiKey() {
   const keyInput = document.getElementById('gemini-key');
@@ -6827,8 +5930,7 @@ function exportAllPlannerData() {
       theme: safeGetLocalStorage('theme'),
       plan_start: safeGetLocalStorage('planStart'),
       test_analysis: safeGetLocalStorage('neet_v3_test_analysis'),
-      rescued_days: safeGetLocalStorage('neet_v3_rescued_backlog_days'),
-      cbt_results: safeGetLocalStorage('neet_v3_cbt_results')
+      rescued_days: safeGetLocalStorage('neet_v3_rescued_backlog_days')
     };
     
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
@@ -6879,7 +5981,6 @@ function importAllPlannerData(event) {
       if (data.plan_start) safeSetLocalStorage('planStart', data.plan_start);
       if (data.test_analysis) safeSetLocalStorage('neet_v3_test_analysis', data.test_analysis);
       if (data.rescued_days) safeSetLocalStorage('neet_v3_rescued_backlog_days', data.rescued_days);
-      if (data.cbt_results) safeSetLocalStorage('neet_v3_cbt_results', data.cbt_results);
       
       const status = document.getElementById('backup-status');
       if (status) {
@@ -6920,7 +6021,6 @@ function resetAllPlannerData() {
     'planStart',
     'neet_v3_test_analysis',
     'neet_v3_rescued_backlog_days',
-    'neet_v3_cbt_results',
     'neet_hide_welcome_modal'
   ];
   
@@ -7730,41 +6830,22 @@ window.loadAccentTheme = loadAccentTheme;
 // ==========================================
 
 const COLLEGE_CUTOFFS = [
-  { rank: 1, name: "AIIMS New Delhi", genCutoff: 712, obcCutoff: 705, ewsCutoff: 703, scCutoff: 675, stCutoff: 655, air: 50 },
-  { rank: 2, name: "JIPMER Puducherry", genCutoff: 698, obcCutoff: 690, ewsCutoff: 688, scCutoff: 645, stCutoff: 625, air: 300 },
-  { rank: 3, name: "MAMC (Maulana Azad MC), New Delhi", genCutoff: 698, obcCutoff: 688, ewsCutoff: 685, scCutoff: 640, stCutoff: 620, air: 400 },
-  { rank: 4, name: "VMMC & Safdarjung Hospital, New Delhi", genCutoff: 695, obcCutoff: 685, ewsCutoff: 682, scCutoff: 635, stCutoff: 615, air: 600 },
-  { rank: 5, name: "AIIMS Jodhpur", genCutoff: 688, obcCutoff: 678, ewsCutoff: 675, scCutoff: 625, stCutoff: 605, air: 1000 },
-  { rank: 6, name: "AIIMS Bhubaneswar", genCutoff: 685, obcCutoff: 675, ewsCutoff: 672, scCutoff: 620, stCutoff: 600, air: 1200 },
-  { rank: 7, name: "IMS BHU (Banaras Hindu Univ), Varanasi", genCutoff: 682, obcCutoff: 672, ewsCutoff: 670, scCutoff: 615, stCutoff: 595, air: 1500 },
-  { rank: 8, name: "GSMC (KEM Hospital), Mumbai", genCutoff: 680, obcCutoff: 670, ewsCutoff: 668, scCutoff: 610, stCutoff: 590, air: 1800 },
-  { rank: 9, name: "AIIMS Rishikesh", genCutoff: 680, obcCutoff: 670, ewsCutoff: 668, scCutoff: 610, stCutoff: 590, air: 1900 },
-  { rank: 10, name: "AIIMS Bhopal", genCutoff: 678, obcCutoff: 668, ewsCutoff: 665, scCutoff: 608, stCutoff: 588, air: 2100 },
-  { rank: 11, name: "BJMC (B.J. Medical College), Ahmedabad", genCutoff: 675, obcCutoff: 665, ewsCutoff: 662, scCutoff: 605, stCutoff: 585, air: 2400 },
-  { rank: 12, name: "AIIMS Raipur", genCutoff: 672, obcCutoff: 662, ewsCutoff: 660, scCutoff: 600, stCutoff: 580, air: 2800 },
-  { rank: 13, name: "AIIMS Patna", genCutoff: 670, obcCutoff: 660, ewsCutoff: 658, scCutoff: 595, stCutoff: 575, air: 3200 },
-  { rank: 14, name: "SMS (Sawai Man Singh) MC, Jaipur", genCutoff: 668, obcCutoff: 658, ewsCutoff: 655, scCutoff: 590, stCutoff: 570, air: 3600 },
-  { rank: 15, name: "KGMU (King George's Medical Univ), Lucknow", genCutoff: 665, obcCutoff: 655, ewsCutoff: 652, scCutoff: 588, stCutoff: 568, air: 4000 },
-  { rank: 16, name: "GMCH (GMC Chandigarh 32)", genCutoff: 665, obcCutoff: 652, ewsCutoff: 650, scCutoff: 585, stCutoff: 565, air: 4500 },
-  { rank: 17, name: "Madras Medical College (MMC), Chennai", genCutoff: 660, obcCutoff: 650, ewsCutoff: 648, scCutoff: 580, stCutoff: 560, air: 5200 },
-  { rank: 18, name: "Grant Government Medical College, Mumbai", genCutoff: 658, obcCutoff: 648, ewsCutoff: 645, scCutoff: 578, stCutoff: 558, air: 6000 },
-  { rank: 19, name: "BMCRI (Bangalore Medical College), Bengaluru", genCutoff: 655, obcCutoff: 645, ewsCutoff: 642, scCutoff: 575, stCutoff: 555, air: 6800 },
-  { rank: 20, name: "AIIMS Nagpur", genCutoff: 655, obcCutoff: 645, ewsCutoff: 642, scCutoff: 575, stCutoff: 555, air: 7000 },
-  { rank: 21, name: "Medical College Kolkata (MCK)", genCutoff: 652, obcCutoff: 642, ewsCutoff: 640, scCutoff: 570, stCutoff: 550, air: 7800 },
-  { rank: 22, name: "RG Kar Medical College, Kolkata", genCutoff: 650, obcCutoff: 640, ewsCutoff: 638, scCutoff: 568, stCutoff: 548, air: 8500 },
-  { rank: 23, name: "AIIMS Kalyani", genCutoff: 648, obcCutoff: 638, ewsCutoff: 635, scCutoff: 565, stCutoff: 545, air: 9200 },
-  { rank: 24, name: "AIIMS Gorakhpur", genCutoff: 645, obcCutoff: 635, ewsCutoff: 632, scCutoff: 560, stCutoff: 540, air: 10500 },
-  { rank: 25, name: "BJMC Pune", genCutoff: 645, obcCutoff: 635, ewsCutoff: 632, scCutoff: 560, stCutoff: 540, air: 11000 },
-  { rank: 26, name: "GMC Kozhikode, Kerala", genCutoff: 642, obcCutoff: 632, ewsCutoff: 630, scCutoff: 555, stCutoff: 535, air: 12500 },
-  { rank: 27, name: "AIIMS Mangalagiri", genCutoff: 640, obcCutoff: 630, ewsCutoff: 628, scCutoff: 550, stCutoff: 530, air: 13500 },
-  { rank: 28, name: "Dr. RMLIMS, Lucknow", genCutoff: 638, obcCutoff: 628, ewsCutoff: 625, scCutoff: 548, stCutoff: 528, air: 15000 },
-  { rank: 29, name: "GMC Patiala", genCutoff: 635, obcCutoff: 625, ewsCutoff: 622, scCutoff: 545, stCutoff: 525, air: 16500 },
-  { rank: 30, name: "GMC Amritsar", genCutoff: 630, obcCutoff: 620, ewsCutoff: 618, scCutoff: 540, stCutoff: 520, air: 18500 },
-  { rank: 31, name: "SCB Medical College, Cuttack", genCutoff: 630, obcCutoff: 620, ewsCutoff: 618, scCutoff: 540, stCutoff: 520, air: 19000 },
-  { rank: 32, name: "GMC Kota", genCutoff: 625, obcCutoff: 615, ewsCutoff: 612, scCutoff: 535, stCutoff: 515, air: 21000 },
-  { rank: 33, name: "Assam Medical College, Dibrugarh", genCutoff: 620, obcCutoff: 610, ewsCutoff: 608, scCutoff: 530, stCutoff: 510, air: 24000 },
-  { rank: 34, name: "State Govt GMCs (AIQ 15% Safe Zone)", genCutoff: 615, obcCutoff: 605, ewsCutoff: 602, scCutoff: 510, stCutoff: 490, air: 28000 },
-  { rank: 35, name: "State Govt GMCs (State Quota 85% Safe Zone)", genCutoff: 605, obcCutoff: 590, ewsCutoff: 585, scCutoff: 480, stCutoff: 460, air: 35000 }
+  { name: "AIIMS New Delhi", cutoff: 710, air: 50 },
+  { name: "MAMC New Delhi", cutoff: 700, air: 150 },
+  { name: "VMMC New Delhi", cutoff: 695, air: 250 },
+  { name: "AIIMS Bhubaneswar", cutoff: 685, air: 600 },
+  { name: "AIIMS Rishikesh", cutoff: 680, air: 800 },
+  { name: "JIPMER Puducherry", cutoff: 680, air: 800 },
+  { name: "GSMC Mumbai (KEM)", cutoff: 675, air: 1200 },
+  { name: "AIIMS Jodhpur", cutoff: 675, air: 1200 },
+  { name: "IMS BHU Varanasi", cutoff: 670, air: 1800 },
+  { name: "BJMC Ahmedabad", cutoff: 670, air: 1800 },
+  { name: "CMC Vellore", cutoff: 660, air: 3000 },
+  { name: "KGMU Lucknow", cutoff: 655, air: 3800 },
+  { name: "SMS Jaipur", cutoff: 650, air: 4800 },
+  { name: "RG Kar GMC Kolkata", cutoff: 640, air: 9000 },
+  { name: "GMC Chandigarh", cutoff: 635, air: 12000 },
+  { name: "State Govt GMC (General Safe Zone)", cutoff: 615, air: 25000 }
 ];
 
 function updateNeetRankPredictor() {
@@ -7772,69 +6853,73 @@ function updateNeetRankPredictor() {
   const percentileValEl = document.getElementById('predicted-percentile');
   const scoreBadgeEl = document.getElementById('rank-predictor-score');
   const cutoffsListEl = document.getElementById('college-cutoffs-list');
-  const categorySelectEl = document.getElementById('rank-predictor-category');
   
   if (!rankValEl || !percentileValEl || !scoreBadgeEl || !cutoffsListEl) return;
-
-  const category = categorySelectEl ? categorySelectEl.value : 'OBC';
   
-  let avgScore = 0;
-  if (mockTests && mockTests.length > 0) {
-    let sumTotal = 0;
-    mockTests.forEach(t => sumTotal += t.total);
-    avgScore = Math.round(sumTotal / mockTests.length);
-    scoreBadgeEl.textContent = `Average Score: ${avgScore}/720`;
-  } else {
+  if (!mockTests || mockTests.length === 0) {
     rankValEl.textContent = '-';
     percentileValEl.textContent = '-';
     scoreBadgeEl.textContent = 'Average Score: 0/720';
-  }
-  
-  if (avgScore > 0) {
-    // Predict Rank
-    let predictedRank = 250000;
-    if (avgScore === 720) predictedRank = 1;
-    else if (avgScore >= 710) predictedRank = Math.round(80 - ((avgScore - 710) / 10) * 79);
-    else if (avgScore >= 700) predictedRank = Math.round(300 - ((avgScore - 700) / 10) * 220);
-    else if (avgScore >= 690) predictedRank = Math.round(800 - ((avgScore - 690) / 10) * 500);
-    else if (avgScore >= 680) predictedRank = Math.round(1500 - ((avgScore - 680) / 10) * 700);
-    else if (avgScore >= 670) predictedRank = Math.round(3000 - ((avgScore - 670) / 10) * 1500);
-    else if (avgScore >= 660) predictedRank = Math.round(5500 - ((avgScore - 660) / 10) * 2500);
-    else if (avgScore >= 650) predictedRank = Math.round(9000 - ((avgScore - 650) / 10) * 3500);
-    else if (avgScore >= 640) predictedRank = Math.round(14000 - ((avgScore - 640) / 10) * 5000);
-    else if (avgScore >= 630) predictedRank = Math.round(20000 - ((avgScore - 630) / 10) * 6000);
-    else if (avgScore >= 620) predictedRank = Math.round(28000 - ((avgScore - 620) / 10) * 8000);
-    else if (avgScore >= 610) predictedRank = Math.round(38000 - ((avgScore - 610) / 10) * 10000);
-    else if (avgScore >= 600) predictedRank = Math.round(50000 - ((avgScore - 600) / 10) * 12000);
-    else if (avgScore >= 580) predictedRank = Math.round(80000 - ((avgScore - 580) / 20) * 30000);
-    else if (avgScore >= 550) predictedRank = Math.round(130000 - ((avgScore - 550) / 30) * 50000);
-    else if (avgScore >= 500) predictedRank = Math.round(220000 - ((avgScore - 500) / 50) * 90000);
-    else predictedRank = Math.round(220000 + ((500 - avgScore) / 500) * 2000000);
     
-    rankValEl.textContent = `AIR ~${predictedRank.toLocaleString()}`;
-    const percentile = ((1 - (predictedRank / 2500000)) * 100).toFixed(4);
-    percentileValEl.textContent = `${percentile}%`;
+    // Draw all as low probability initially
+    let html = '';
+    COLLEGE_CUTOFFS.forEach(c => {
+      html += `
+        <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+          <div>
+            <div style="font-weight:600; color:var(--text-primary);">${c.name}</div>
+            <div style="font-size:10px; color:var(--text-muted);">Cutoff: ${c.cutoff} | AIR < ${c.air}</div>
+          </div>
+          <span style="font-size:10px; font-weight:700; color:var(--text-muted); background:rgba(255,255,255,0.03); padding:2px 6px; border-radius:4px;">No Score Logged</span>
+        </div>
+      `;
+    });
+    cutoffsListEl.innerHTML = html;
+    return;
   }
   
-  // Render college list
+  // Calculate average of mock test scores
+  let sumTotal = 0;
+  mockTests.forEach(t => sumTotal += t.total);
+  const avgScore = Math.round(sumTotal / mockTests.length);
+  scoreBadgeEl.textContent = `Average Score: ${avgScore}/720`;
+  
+  // Predict Rank
+  let predictedRank = 250000;
+  if (avgScore === 720) predictedRank = 1;
+  else if (avgScore >= 710) predictedRank = Math.round(80 - ((avgScore - 710) / 10) * 79);
+  else if (avgScore >= 700) predictedRank = Math.round(300 - ((avgScore - 700) / 10) * 220);
+  else if (avgScore >= 690) predictedRank = Math.round(800 - ((avgScore - 690) / 10) * 500);
+  else if (avgScore >= 680) predictedRank = Math.round(1500 - ((avgScore - 680) / 10) * 700);
+  else if (avgScore >= 670) predictedRank = Math.round(3000 - ((avgScore - 670) / 10) * 1500);
+  else if (avgScore >= 660) predictedRank = Math.round(5500 - ((avgScore - 660) / 10) * 2500);
+  else if (avgScore >= 650) predictedRank = Math.round(9000 - ((avgScore - 650) / 10) * 3500);
+  else if (avgScore >= 640) predictedRank = Math.round(14000 - ((avgScore - 640) / 10) * 5000);
+  else if (avgScore >= 630) predictedRank = Math.round(20000 - ((avgScore - 630) / 10) * 6000);
+  else if (avgScore >= 620) predictedRank = Math.round(28000 - ((avgScore - 620) / 10) * 8000);
+  else if (avgScore >= 610) predictedRank = Math.round(38000 - ((avgScore - 610) / 10) * 10000);
+  else if (avgScore >= 600) predictedRank = Math.round(50000 - ((avgScore - 600) / 10) * 12000);
+  else if (avgScore >= 580) predictedRank = Math.round(80000 - ((avgScore - 580) / 20) * 30000);
+  else if (avgScore >= 550) predictedRank = Math.round(130000 - ((avgScore - 550) / 30) * 50000);
+  else if (avgScore >= 500) predictedRank = Math.round(220000 - ((avgScore - 500) / 50) * 90000);
+  else predictedRank = Math.round(220000 + ((500 - avgScore) / 500) * 2000000);
+  
+  rankValEl.textContent = `AIR ~${predictedRank.toLocaleString()}`;
+  
+  // Percentile
+  const percentile = ((1 - (predictedRank / 2500000)) * 100).toFixed(4);
+  percentileValEl.textContent = `${percentile}%`;
+  
+  // Draw college cutoff eligibility list
   let html = '';
   COLLEGE_CUTOFFS.forEach(c => {
-    let cutoff = c.genCutoff;
-    if (category === 'OBC') cutoff = c.obcCutoff;
-    else if (category === 'EWS') cutoff = c.ewsCutoff;
-    else if (category === 'SC') cutoff = c.scCutoff;
-    else if (category === 'ST') cutoff = c.stCutoff;
-
     let badgeText = '';
     let badgeStyle = '';
     
-    if (avgScore === 0) {
-      badgeText = 'Target Cutoff';
-      badgeStyle = 'background:rgba(255,255,255,0.03); color:var(--text-muted); border:1px solid rgba(255,255,255,0.06);';
-    } else if (avgScore >= cutoff) {
-      badgeText = '🟢 Safe Target';
+    if (avgScore >= c.cutoff) {
+      badgeText = '🟢 Safe';
       badgeStyle = 'background:rgba(16,185,129,0.1); color:var(--accent-success); border:1px solid rgba(16,185,129,0.2);';
-    } else if (avgScore >= cutoff - 15) {
+    } else if (avgScore >= c.cutoff - 15) {
       badgeText = '🟡 Borderline';
       badgeStyle = 'background:rgba(251,191,36,0.1); color:#fbbf24; border:1px solid rgba(251,191,36,0.2);';
     } else {
@@ -7843,12 +6928,12 @@ function updateNeetRankPredictor() {
     }
     
     html += `
-      <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.04); padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
-        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:8px;">
-          <div style="font-weight:600; color:var(--text-primary);"><span style="color:#FFD700; font-size:11px; font-weight:700;">#${c.rank}</span> ${c.name}</div>
-          <div style="font-size:10px; color:var(--text-muted);">${category} Cutoff: <strong style="color:#fff;">${cutoff}</strong> | AIR &lt; ${c.air.toLocaleString()}</div>
+      <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <div>
+          <div style="font-weight:600; color:var(--text-primary);">${c.name}</div>
+          <div style="font-size:10px; color:var(--text-muted);">Cutoff: ${c.cutoff} | AIR < ${c.air}</div>
         </div>
-        <span style="font-size:10px; font-weight:700; padding:3px 8px; border-radius:6px; flex-shrink:0; ${badgeStyle}">${badgeText}</span>
+        <span style="font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; ${badgeStyle}">${badgeText}</span>
       </div>
     `;
   });
@@ -9956,7 +9041,6 @@ window.hideMockChartTooltip = hideMockChartTooltip;
 window.renderOverviewMockLineChart = renderOverviewMockLineChart;
 window.showOverviewMockTooltip = showOverviewMockTooltip;
 window.hideOverviewMockTooltip = hideOverviewMockTooltip;
-window.selectAllCustomTestChapters = selectAllCustomTestChapters;
 
 // Initialize app after all globals and variables have been fully declared
 if (document.readyState === 'loading') {
