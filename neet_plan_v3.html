@@ -9905,6 +9905,9 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
       }
 
       const errorText = await response.text();
+      if (response.status === 429) {
+        throw new Error(`API Key Quota Exceeded (HTTP 429). Your free Gemini API key has temporarily reached Google's rate limit. Please get a new free key at https://aistudio.google.com and update it in ⚙️ Settings.`);
+      }
       throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
 
     } catch (err) {
