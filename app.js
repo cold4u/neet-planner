@@ -3415,7 +3415,17 @@ async function startAiParse() {
       contents: [
         {
           role: "user",
-          parts: userParts
+          parts: [
+            {
+              text: "Extract ALL Multiple-Choice Questions (MCQs) from this question paper into a JSON object with key 'questions'. Each question item in the array must contain: 'question' (full question text, format chemical/math formulas with KaTeX $...$), 'options' (array of 4 option strings), 'correct_option_idx' (0-based integer 0-3), 'explanation' (1 short sentence), 'concept' (short topic tag), and 'subject' ('Physics', 'Chemistry', or 'Biology'). Ensure ALL questions from Question 1 to the end of the document are extracted."
+            },
+            {
+              inlineData: {
+                mimeType: mimeType,
+                data: base64Data
+              }
+            }
+          ]
         }
       ],
       generationConfig: {
