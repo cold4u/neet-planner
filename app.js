@@ -3261,10 +3261,10 @@ function fileToBase64(file) {
   });
 }
 
-async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 3, delayMs = 1500) {
-  const models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-2.5-flash"];
-  let lastError = null;
-  
+async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs = 1500) {
+  let model = "gemini-1.5-flash";
+  let attempt = 0;
+
   if (requestPayload && typeof requestPayload === 'object') {
     if (!requestPayload.generationConfig) {
       requestPayload.generationConfig = {};
@@ -3273,9 +3273,8 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 3, delayMs
       requestPayload.generationConfig.maxOutputTokens = 8192;
     }
   }
-  
-  for (let attempt = 0; attempt < models.length; attempt++) {
-    const model = models[attempt];
+
+  while (attempt <= retries) {
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
         method: "POST",
@@ -3284,30 +3283,36 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 3, delayMs
         },
         body: JSON.stringify(requestPayload)
       });
-      
+
       if (response.ok) {
         return response;
       }
-      
+
+      if (response.status === 503 || response.status === 429 || response.status >= 500) {
+        attempt++;
+        if (attempt <= retries) {
+          console.warn(`Gemini API returned ${response.status}. Retrying in ${delayMs}ms with alternative model...`);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+          if (model === "gemini-1.5-flash") {
+            model = "gemini-2.0-flash";
+          }
+          continue;
+        }
+      }
+
       const errorText = await response.text();
-      lastError = new Error(`Gemini API Error: ${response.status} - ${errorText}`);
-      
-      if (attempt < models.length - 1) {
-        console.warn(`Model ${model} returned ${response.status}. Retrying with fallback model ${models[attempt + 1]}...`);
-        await new Promise(resolve => setTimeout(resolve, delayMs));
-        continue;
-      }
-      
-      throw lastError;
-      
+      throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
+
     } catch (err) {
-      lastError = err;
-      if (attempt < models.length - 1) {
-        console.warn(`Fetch error for ${model}: ${err.message}. Retrying with fallback model ${models[attempt + 1]}...`);
-        await new Promise(resolve => setTimeout(resolve, delayMs));
-        continue;
+      if (attempt >= retries) {
+        throw err;
       }
-      throw lastError;
+      attempt++;
+      console.warn(`Fetch error: ${err.message}. Retrying in ${delayMs}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+      if (model === "gemini-1.5-flash") {
+        model = "gemini-2.0-flash";
+      }
     }
   }
 }
@@ -3323,176 +3328,87 @@ function safeParseAiJson(rawText) {
   // 2. Attempt direct JSON.parse first
   try {
     return JSON.parse(cleaned);
-  } catch (e1) {}
-
-  // 3. Fix unescaped control characters
-  cleaned = cleaned.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]+/g, '');
-
-  try {
-    return JSON.parse(cleaned);
-  } catch (e2) {}
-
-  // 4. Fix trailing commas before closing braces/brackets
-  cleaned = cleaned.replace(/,\s*([\]}])/g, '$1');
-
-  try {
-    return JSON.parse(cleaned);
-  } catch (e3) {}
-
-  // 5. Repair truncated JSON array (if cut off mid-stream due to token limits)
-  let repaired = cleaned;
-  
-  // If an unclosed quote exists, close it
-  const quoteMatches = repaired.match(/(?<!\\)"/g) || [];
-  if (quoteMatches.length % 2 !== 0) {
-    repaired += '"';
+  } catch (e1) {
+    // Continue to regex repair
   }
 
-  // Remove trailing orphan keys or commas
-  repaired = repaired.replace(/,\s*"[^"]*"?\s*:?\s*$/g, '');
-  repaired = repaired.replace(/,\s*$/g, '');
-
-  // Balance open braces and brackets
-  const stack = [];
-  let inString = false;
-  let isEscaped = false;
-
-  for (let i = 0; i < repaired.length; i++) {
-    const char = repaired[i];
-    if (isEscaped) {
-      isEscaped = false;
-      continue;
-    }
-    if (char === '\\') {
-      isEscaped = true;
-      continue;
-    }
-    if (char === '"') {
-      inString = !inString;
-      continue;
-    }
-    if (!inString) {
-      if (char === '{' || char === '[') {
-        stack.push(char);
-      } else if (char === '}' || char === ']') {
-        if (stack.length > 0) stack.pop();
-      }
+  // 3. Extract JSON object substring using regex
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    const jsonSub = cleaned.substring(firstBrace, lastBrace + 1);
+    try {
+      return JSON.parse(jsonSub);
+    } catch (e2) {
+      // Continue to bracket repair
     }
   }
 
-  while (stack.length > 0) {
-    const last = stack.pop();
-    if (last === '{') repaired += '}';
-    else if (last === '[') repaired += ']';
-  }
-
+  // 4. Truncated JSON array repair (auto-close array/object)
   try {
+    let repaired = cleaned;
+    if (firstBrace !== -1) {
+      repaired = repaired.substring(firstBrace);
+    }
+    // Balance open brackets
+    const openBraces = (repaired.match(/\{/g) || []).length;
+    const closeBraces = (repaired.match(/\}/g) || []).length;
+    const openBrackets = (repaired.match(/\[/g) || []).length;
+    const closeBrackets = (repaired.match(/\]/g) || []).length;
+
+    // Trim trailing comma if present
+    repaired = repaired.replace(/,\s*$/, '');
+
+    // Auto-close missing brackets/braces
+    for (let i = 0; i < (openBrackets - closeBrackets); i++) repaired += ']';
+    for (let i = 0; i < (openBraces - closeBraces); i++) repaired += '}';
+
     return JSON.parse(repaired);
-  } catch (e4) {
-    console.error("safeParseAiJson Repair Error:", e4, "Raw snippet:", rawText.slice(0, 300));
-    throw new Error(`AI generated response that could not be parsed: ${e4.message}`);
-  }
-}
-
-async function loadPdfJsLibrary() {
-  if (typeof pdfjsLib !== 'undefined') return true;
-  return new Promise((resolve) => {
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-    script.onload = () => {
-      if (typeof pdfjsLib !== 'undefined') {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      }
-      resolve(true);
-    };
-    script.onerror = () => resolve(false);
-    document.head.appendChild(script);
-  });
-}
-
-async function extractPdfText(file) {
-  try {
-    const loaded = await loadPdfJsLibrary();
-    if (!loaded || typeof pdfjsLib === 'undefined') return null;
-    const arrayBuffer = await file.arrayBuffer();
-    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-    const pdf = await loadingTask.promise;
-    let fullText = '';
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const textContent = await page.getTextContent();
-      const pageText = textContent.items.map(item => item.str).join(' ');
-      if (pageText.trim()) {
-        fullText += `\n--- Page ${i} ---\n` + pageText.trim();
-      }
-    }
-    return fullText.trim().length > 100 ? fullText.trim() : null;
-  } catch (err) {
-    console.warn("Client PDF text extraction notice:", err);
+  } catch (e3) {
+    console.error("Failed to repair AI JSON response:", e3, rawText);
     return null;
   }
 }
 
 async function startAiParse() {
   const apiKey = safeGetLocalStorage('gemini_api_key');
-  
+
   if (!apiKey) {
     alert("Please configure your Gemini API Key first in the '⚙️ Settings' tab.");
     showTab('settings');
     return;
   }
-  
+
   if (!selectedFile) {
     alert("Please drag & drop or select a question paper PDF or Image.");
     return;
   }
-  
+
   const durationInput = document.getElementById('ai-test-duration');
   const durationMinutes = durationInput ? parseInt(durationInput.value) || 30 : 30;
-  
+
   // Show loading
   document.getElementById('ai-setup-view').style.display = 'none';
   document.getElementById('ai-loading-view').style.display = 'flex';
   document.getElementById('ai-loading-title').textContent = "AI is parsing your Question Paper...";
-  document.getElementById('ai-loading-desc').textContent = "Extracting ALL MCQs, options, and explanations from your document page by page. Please wait...";
-  
+  document.getElementById('ai-loading-desc').textContent = "Extracting MCQs, options, subject tags, and explanations directly from your document. Please wait...";
+
   try {
     window.cbtCurrentSource = (selectedFile && selectedFile.name) ? selectedFile.name : "Uploaded Paper";
 
-    // Tier 1: Fast client-side PDF text extraction if available
-    let extractedText = null;
-    if (selectedFile.type === 'application/pdf' || (selectedFile.name && selectedFile.name.toLowerCase().endsWith('.pdf'))) {
-      extractedText = await extractPdfText(selectedFile);
-    }
-
-    let userParts = [];
-    if (extractedText) {
-      console.log(`Extracted ${extractedText.length} characters of PDF text on client side.`);
-      userParts.push({
-        text: `Below is the FULL extracted text of ALL pages from the user's uploaded question paper PDF:\n\n${extractedText}\n\nTask: Extract EVERY SINGLE Multiple-Choice Question (MCQ) present in the text above from Question 1 to the very last question (e.g. Q1, Q2, Q3 ... Q49, Q50). Return a JSON object with key 'questions' containing an array of objects. Each object must have: 'question' (full question text, format chemical/math formulas with KaTeX $...$), 'options' (array of 4 option strings), 'correct_option_idx' (0-based integer 0-3), 'explanation' (1 short sentence), 'concept' (topic tag), and 'subject' ('Physics'|'Chemistry'|'Biology'). Extract ALL questions without omitting any.`
-      });
-    } else {
-      const base64Data = await fileToBase64(selectedFile);
-      let mimeType = selectedFile.type;
-      if (selectedFile.name && selectedFile.name.toLowerCase().endsWith('.pdf')) {
-        mimeType = "application/pdf";
-      } else if (!mimeType) {
-        mimeType = "application/pdf";
-      }
-      userParts.push({ text: "Extract ALL Multiple-Choice Questions (MCQs) from this question paper into a JSON object with key 'questions'. Each question item in the array must contain: 'question' (full question text, formatting chemical formulas and math like $H_2O$, $v^2$), 'options' (array of 4 option strings), 'correct_option_idx' (0-based integer: 0 for A, 1 for B, 2 for C, 3 for D), 'explanation' (1 short sentence), 'concept' (short topic tag), and 'subject' ('Physics', 'Chemistry', or 'Biology'). Ensure ALL questions from Question 1 to the end of the document are extracted." });
-      userParts.push({
-        inlineData: {
-          mimeType: mimeType,
-          data: base64Data
-        }
-      });
+    const base64Data = await fileToBase64(selectedFile);
+    let mimeType = selectedFile.type;
+    if (selectedFile.name && selectedFile.name.toLowerCase().endsWith('.pdf')) {
+      mimeType = "application/pdf";
+    } else if (!mimeType) {
+      mimeType = "application/pdf";
     }
 
     const requestPayload = {
       systemInstruction: {
         parts: [
           {
-            text: "You are an expert NEET Question Paper PDF Extractor. Your sole mission is to extract EVERY SINGLE Multiple-Choice Question (MCQ) from the user's document from Question 1 through to the final question (extract ALL 30, 40, 49, 50+ questions). Do NOT stop after 2 or 3 questions. Do NOT extract a sample. Process all pages from top to bottom and extract 100% of all MCQs present in the document. Do NOT return any bounding boxes, images, or image crops."
+            text: "You are an expert NEET Question Paper Document Parser. Your sole task is to extract EVERY SINGLE Multiple-Choice Question (MCQ) from Question 1 to the final question across ALL pages of the user's document. Do NOT stop after 2 or 3 questions. Extract ALL 30, 40, 49, 50+ questions present in the file into a JSON object with key 'questions'."
           }
         ]
       },
