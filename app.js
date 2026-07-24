@@ -3265,6 +3265,16 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
   let model = "gemini-2.5-flash";
   let attempt = 0;
   
+  // Guarantee max output token capacity (8192) on all Gemini requests
+  if (requestPayload && typeof requestPayload === 'object') {
+    if (!requestPayload.generationConfig) {
+      requestPayload.generationConfig = {};
+    }
+    if (!requestPayload.generationConfig.maxOutputTokens) {
+      requestPayload.generationConfig.maxOutputTokens = 8192;
+    }
+  }
+  
   while (attempt <= retries) {
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
@@ -4089,6 +4099,7 @@ CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics expo
       ],
       generationConfig: {
         responseMimeType: "application/json",
+        maxOutputTokens: 8192,
         responseSchema: {
           type: "OBJECT",
           properties: {
@@ -4122,7 +4133,7 @@ CRITICAL: ALL chemical formulas, ions, chemical equations, and math/physics expo
     const response = await fetchGeminiWithRetry(apiKey, requestPayload);
     const responseData = await response.json();
     const responseText = responseData.candidates[0].content.parts[0].text;
-    const parsedData = JSON.parse(responseText);
+    const parsedData = safeParseAiJson(responseText);
 
     if (!parsedData.questions || parsedData.questions.length === 0) {
       throw new Error("Failed to generate questions for the requested concept. Please try again.");
