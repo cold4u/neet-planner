@@ -9769,8 +9769,17 @@ function fileToBase64(file) {
 }
 
 async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs = 1500) {
-  let model = "gemini-2.5-flash";
+  let model = "gemini-1.5-flash";
   let attempt = 0;
+  
+  if (requestPayload && typeof requestPayload === 'object') {
+    if (!requestPayload.generationConfig) {
+      requestPayload.generationConfig = {};
+    }
+    if (!requestPayload.generationConfig.maxOutputTokens) {
+      requestPayload.generationConfig.maxOutputTokens = 8192;
+    }
+  }
   
   while (attempt <= retries) {
     try {
@@ -9791,8 +9800,8 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
         if (attempt <= retries) {
           console.warn(`Gemini API returned ${response.status}. Retrying in ${delayMs}ms with alternative model...`);
           await new Promise(resolve => setTimeout(resolve, delayMs));
-          if (model === "gemini-2.5-flash") {
-            model = "gemini-1.5-flash";
+          if (model === "gemini-1.5-flash") {
+            model = "gemini-2.0-flash";
           }
           continue;
         }
@@ -9808,8 +9817,8 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
       attempt++;
       console.warn(`Fetch error: ${err.message}. Retrying in ${delayMs}ms...`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
-      if (model === "gemini-2.5-flash") {
-        model = "gemini-1.5-flash";
+      if (model === "gemini-1.5-flash") {
+        model = "gemini-2.0-flash";
       }
     }
   }
