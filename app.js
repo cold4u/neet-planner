@@ -3302,8 +3302,8 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
       }
       
       const errorText = await response.text();
-      if (response.status === 401 || response.status === 403 || response.status === 404) {
-        throw new Error(`Google API Authentication Error (${response.status}): The key/token provided was rejected by Google's API server. Details: ${errorText}`);
+      if (response.status === 400 || response.status === 401 || response.status === 403 || response.status === 404) {
+        throw new Error(`Google API Authentication Error (${response.status}): ${errorText}\n\nPlease generate a free API key at https://aistudio.google.com/app/apikey and save it in ⚙️ Settings.`);
       }
       throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
       
