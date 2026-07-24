@@ -11735,69 +11735,51 @@ function initOnLoad() {
     }
   }
 
-  // Render initial components and data tables safely
-  try { renderPlan(); } catch(e) { console.error("Error in renderPlan:", e); }
-  try { renderChapters(); } catch(e) { console.error("Error in renderChapters:", e); }
-  try {
-    if (typeof renderSyllabusCoverageHeatmap === 'function') {
-      renderSyllabusCoverageHeatmap();
-    }
-  } catch(e) { console.error("Error in renderSyllabusCoverageHeatmap:", e); }
-  try { renderTestList(); } catch(e) { console.error("Error in renderTestList:", e); }
-  try { renderTrackerTable(); } catch(e) { console.error("Error in renderTrackerTable:", e); }
-  try { renderAnalytics(); } catch(e) { console.error("Error in renderAnalytics:", e); }
-  try {
-    if (typeof renderHeatmap === 'function') {
-      renderHeatmap();
-    }
-  } catch(e) { console.error("Error in renderHeatmap:", e); }
+  // Stage 1: Critical UI Setup & Home Dashboard (Renders Instantly)
+  try { loadTheme(); } catch(e) {}
+  try { if (typeof loadAccentTheme === 'function') loadAccentTheme(); } catch(e) {}
+  try { renderOverviewStats(); } catch(e) {}
+  try { renderPlan(); } catch(e) {}
 
-  // Render login statistics
-  try { updateLoginStats(); } catch(e) { console.error("Error in updateLoginStats:", e); }
-  
-  // Load dark/light mode preference
-  try { loadTheme(); } catch(e) { console.error("Error in loadTheme:", e); }
-  try {
-    if (typeof loadAccentTheme === 'function') {
-      loadAccentTheme();
-    }
-  } catch(e) { console.error("Error in loadAccentTheme:", e); }
+  // Stage 2: Staggered Chapter & Target render (50ms delay)
+  setTimeout(() => {
+    try { renderChapters(); } catch(e) {}
+    try { if (typeof initDailyTargets === 'function') initDailyTargets(); } catch(e) {}
+    try { updateLoginStats(); } catch(e) {}
+  }, 50);
 
-  // Initial stats updates & start countdown timer
-  try { updateOverviewStats(); } catch(e) { console.error("Error in updateOverviewStats:", e); }
-  
-  // Initialize new 9-features components
-  try { if (typeof renderStudyHubReports === 'function') renderStudyHubReports(); } catch(e) { console.error("Error in renderStudyHubReports:", e); }
-  try { if (typeof initDailyTargets === 'function') initDailyTargets(); } catch(e) { console.error("Error in initDailyTargets:", e); }
-  try { if (typeof initNotificationsUI === 'function') initNotificationsUI(); } catch(e) { console.error("Error in initNotificationsUI:", e); }
-  try { if (typeof renderTabFormulas === 'function') renderTabFormulas(); } catch(e) { console.error("Error in renderTabFormulas:", e); }
-  try {
-    if (typeof renderWeeklyReport === 'function') {
-      renderWeeklyReport();
-    }
-  } catch(e) { console.error("Error in renderWeeklyReport:", e); }
-  try {
-    if (typeof resetDailyQuiz === 'function') {
-      resetDailyQuiz();
-    }
-  } catch(e) { console.error("Error in resetDailyQuiz:", e); }
+  // Stage 3: Staggered Test List & Tracker Tables (120ms delay)
+  setTimeout(() => {
+    try { renderTestList(); } catch(e) {}
+    try { renderTrackerTable(); } catch(e) {}
+    try { if (typeof updateNeetRankPredictor === 'function') updateNeetRankPredictor(); } catch(e) {}
+    try { if (typeof populateCustomTestChapters === 'function') populateCustomTestChapters(); } catch(e) {}
+  }, 120);
+
+  // Stage 4: Idle Background Components (250ms delay)
+  setTimeout(() => {
+    try { if (typeof renderSyllabusCoverageHeatmap === 'function') renderSyllabusCoverageHeatmap(); } catch(e) {}
+    try { renderAnalytics(); } catch(e) {}
+    try { if (typeof renderHeatmap === 'function') renderHeatmap(); } catch(e) {}
+    try { if (typeof renderStudyHubReports === 'function') renderStudyHubReports(); } catch(e) {}
+    try { if (typeof initNotificationsUI === 'function') initNotificationsUI(); } catch(e) {}
+    try { if (typeof renderTabFormulas === 'function') renderTabFormulas(); } catch(e) {}
+    try { if (typeof renderWeeklyReport === 'function') renderWeeklyReport(); } catch(e) {}
+    try { if (typeof resetDailyQuiz === 'function') resetDailyQuiz(); } catch(e) {}
+    try { renderErrorBookList(); } catch(e) {}
+    try { loadSelectedFlashcardDeck(); } catch(e) {}
+    try { renderMockTestsDashboard(); setDefaultMockDate(); } catch(e) {}
+    try { updateErrorBookDeckLabel(); } catch(e) {}
+    try { renderOverviewCounselorAlert(); } catch(e) {}
+  }, 250);
+
   try {
     setInterval(() => {
       try {
         updateCountdown();
-      } catch(e) {
-        console.error("Error in countdown interval:", e);
-      }
+      } catch(e) {}
     }, 1000);
-  } catch(e) {
-    console.error("Error setting countdown interval:", e);
-  }
-
-  try { renderErrorBookList(); } catch(e) { console.error("Error in renderErrorBookList:", e); }
-  try { loadSelectedFlashcardDeck(); } catch(e) { console.error("Error in loadSelectedFlashcardDeck:", e); }
-  try { renderMockTestsDashboard(); setDefaultMockDate(); } catch(e) { console.error("Error in renderMockTestsDashboard init:", e); }
-  try { updateErrorBookDeckLabel(); } catch(e) { console.error("Error in updateErrorBookDeckLabel init:", e); }
-  try { renderOverviewCounselorAlert(); } catch(e) { console.error("Error in renderOverviewCounselorAlert init:", e); }
+  } catch(e) {}
 
   try {
     const hideWelcome = safeGetLocalStorage('neet_hide_welcome_modal');
