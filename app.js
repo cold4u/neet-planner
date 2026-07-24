@@ -3269,24 +3269,16 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
   }
   
   const cleanKey = apiKey.trim();
-  const isAqToken = cleanKey.startsWith("AQ") || cleanKey.startsWith("ya29");
-  
+
   const headers = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "x-goog-api-key": cleanKey
   };
-  
-  if (isAqToken) {
-    headers["Authorization"] = `Bearer ${cleanKey}`;
-  } else {
-    headers["x-goog-api-key"] = cleanKey;
-  }
-  
+
   while (attempt <= retries) {
     const model = models[modelIndex % models.length];
     try {
-      const fetchUrl = isAqToken 
-        ? `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
-        : `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(cleanKey)}`;
+      const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
       const response = await fetch(fetchUrl, {
         method: "POST",
@@ -3312,7 +3304,7 @@ async function fetchGeminiWithRetry(apiKey, requestPayload, retries = 2, delayMs
       
       const errorText = await response.text();
       if (response.status === 400 || response.status === 401 || response.status === 403) {
-        throw new Error(`Google API Authentication Error (${response.status}): ${errorText}\n\nPlease generate a free API key at https://aistudio.google.com/app/apikey and save it in ⚙️ Settings.`);
+        throw new Error(`Google API Authentication Error (${response.status}): Your API key may be an old unrestricted "Standard" key, which Google now blocks. Go to https://aistudio.google.com/apikey, either restrict it to "Gemini API only" or generate a fresh key (new keys are Auth keys by default), then save it in ⚙️ Settings.\n\n${errorText}`);
       }
       throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
       
