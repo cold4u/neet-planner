@@ -10079,7 +10079,7 @@ Extraction Directives:
                     enum: ["Physics", "Chemistry", "Biology"]
                   }
                 },
-                required: ["question", "options", "correct_option_idx", "explanation", "concept", "subject"]
+                required: ["question", "options", "correct_option_idx"]
               }
             }
           },
@@ -10097,6 +10097,17 @@ Extraction Directives:
     if (!parsedData || !parsedData.questions || parsedData.questions.length === 0) {
       throw new Error("No questions could be extracted from the uploaded document. Please check the document quality and try again.");
     }
+
+    // Populate fallbacks for optional fields
+    parsedData.questions.forEach((q, i) => {
+      if (!q.explanation) q.explanation = 'Refer to standard textbook solution.';
+      if (!q.concept) q.concept = `Question ${i+1}`;
+      if (!q.subject) q.subject = 'Biology';
+      if (!Array.isArray(q.options) || q.options.length < 4) {
+        q.options = q.options || [];
+        while (q.options.length < 4) q.options.push(`Option ${String.fromCharCode(65 + q.options.length)}`);
+      }
+    });
 
     initCbt(parsedData.questions, durationMinutes);
     
