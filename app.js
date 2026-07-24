@@ -3400,9 +3400,26 @@ function safeParseAiJson(rawText) {
   }
 }
 
+async function loadPdfJsLibrary() {
+  if (typeof pdfjsLib !== 'undefined') return true;
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    script.onload = () => {
+      if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+      resolve(true);
+    };
+    script.onerror = () => resolve(false);
+    document.head.appendChild(script);
+  });
+}
+
 async function extractPdfText(file) {
   try {
-    if (typeof pdfjsLib === 'undefined') return null;
+    const loaded = await loadPdfJsLibrary();
+    if (!loaded || typeof pdfjsLib === 'undefined') return null;
     const arrayBuffer = await file.arrayBuffer();
     const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
     const pdf = await loadingTask.promise;
@@ -3481,15 +3498,14 @@ async function startAiParse() {
       systemInstruction: {
         parts: [
           {
-            text: "You are an expert NEET Question Paper PDF Extractor. Your sole mission is to extract EVERY SINGLE Multiple-Choice Question (MCQ) from the user's document from Question 1 through to the final question (extract ALL 30, 40, 49, 50+ questions). Do NOT stop after 2 or 3 questions. Do NOT extract a sample. Process all pages from top to bottom and extract 100% of all MCQs present in the document."
+            text: "You are an expert NEET Question Paper PDF Extractor. Your sole mission is to extract EVERY SINGLE Multiple-Choice Question (MCQ) from the user's document from Question 1 through to the final question (extract ALL 30, 40, 49, 50+ questions). Do NOT stop after 2 or 3 questions. Do NOT extract a sample. Process all pages from top to bottom and extract 100% of all MCQs present in the document. Do NOT return any bounding boxes, images, or image crops."
           }
         ]
       },
       contents: [
         {
           role: "user",
-            }
-          ]
+          parts: userParts
         }
       ],
       generationConfig: {
