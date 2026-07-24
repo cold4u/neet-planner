@@ -10034,31 +10034,19 @@ async function startAiParse() {
       mimeType = "application/pdf";
     }
     
-    const prompt = `CRITICAL DOCUMENT EXTRACTION INSTRUCTION:
-You are an expert NEET Question Paper Document Parser.
-This uploaded document is a multi-page question paper containing ALL 40, 49, 50 or more Multiple-Choice Questions (MCQs).
-
-YOU MUST SCAN AND READ ALL PAGES OF THIS PDF FROM PAGE 1 TO THE VERY LAST PAGE.
-DO NOT STOP AFTER PAGE 1. DO NOT STOP AFTER EXTRACTING 2 OR 3 QUESTIONS.
-
-Strict Instructions:
-1. Scan EVERY SINGLE page of the PDF document from Question 1 through to the final question (e.g. Q1, Q2, Q3 ... Q48, Q49, Q50).
-2. Extract ALL MCQs present in the entire document without skipping or stopping.
-3. For each question, extract:
-   - "question": the full text of the question (use KaTeX $ ... $ for inline math/chemistry formulas like $H_2O$, $v^2$, $10^{-3}$)
-   - "options": array of 4 option strings
-   - "correct_option_idx": 0-based index of correct option (0 for A, 1 for B, 2 for C, 3 for D)
-   - "explanation": 1 concise sentence explanation
-   - "concept": short concept tag
-   - "subject": "Physics" | "Chemistry" | "Biology"
-4. Output the result in JSON object format containing the "questions" array. Ensure ALL 40-50+ questions from all pages of the document are present.`;
-
     const requestPayload = {
+      systemInstruction: {
+        parts: [
+          {
+            text: "You are an expert NEET Question Paper PDF Extractor. Your sole mission is to extract EVERY SINGLE Multiple-Choice Question (MCQ) from the user's uploaded document from Question 1 through to the final question (extract ALL 30, 40, 49, 50+ questions). Do NOT stop after 2 or 3 questions. Do NOT extract a sample. Scan all pages from top to bottom and extract 100% of all MCQs present in the file."
+          }
+        ]
+      },
       contents: [
         {
           role: "user",
           parts: [
-            { text: prompt },
+            { text: "Extract ALL Multiple-Choice Questions (MCQs) from this question paper into a JSON object with key 'questions'. Each question item in the array must contain: 'question' (full question text, formatting chemical formulas and math like $H_2O$, $v^2$), 'options' (array of 4 option strings), 'correct_option_idx' (0-based integer: 0 for A, 1 for B, 2 for C, 3 for D), 'explanation' (1 short sentence), 'concept' (short topic tag), and 'subject' ('Physics', 'Chemistry', or 'Biology'). Ensure ALL questions from Question 1 to the end of the document are extracted." },
             {
               inlineData: {
                 mimeType: mimeType,
@@ -10069,35 +10057,9 @@ Strict Instructions:
         }
       ],
       generationConfig: {
-        responseMimeType: "application/json",
+        temperature: 0.1,
         maxOutputTokens: 8192,
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            questions: {
-              type: "ARRAY",
-              items: {
-                type: "OBJECT",
-                properties: {
-                  question: { type: "STRING" },
-                  options: {
-                    type: "ARRAY",
-                    items: { type: "STRING" }
-                  },
-                  correct_option_idx: { type: "INTEGER" },
-                  explanation: { type: "STRING" },
-                  concept: { type: "STRING" },
-                  subject: {
-                    type: "STRING",
-                    enum: ["Physics", "Chemistry", "Biology"]
-                  }
-                },
-                required: ["question", "options", "correct_option_idx"]
-              }
-            }
-          },
-          required: ["questions"]
-        }
+        responseMimeType: "application/json"
       }
     };
     
