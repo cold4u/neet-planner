@@ -9832,6 +9832,12 @@ async function startAiParse() {
     showTab('settings');
     return;
   }
+
+  if (!apiKey.trim().startsWith('AIzaSy')) {
+    alert("Invalid Gemini API Key format! Your Gemini API Key must start with 'AIzaSy...'.\n\nPlease get a free API key at https://aistudio.google.com and paste it in ⚙️ Settings.");
+    showTab('settings');
+    return;
+  }
   
   if (!selectedFile) {
     alert("Please drag & drop or select a question paper PDF or Image.");
