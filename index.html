@@ -1448,9 +1448,10 @@
           </div>
           
           <div style="display:flex; gap:8px;">
-            <input type="password" id="setting-gemini-key" class="form-control" placeholder="Paste your AIzaSy... key here" style="flex:1;">
+            <input type="password" id="setting-gemini-key" class="form-control" placeholder="Paste your AIzaSy... key here" style="flex:1;" oninput="onKeyInputTyped()">
             <button class="btn btn-secondary" onclick="toggleKeyVisibility()">👁️</button>
           </div>
+          <div id="api-key-inline-msg" style="font-size:12px; margin-top:2px;"></div>
 
           <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
             <button class="btn btn-primary" onclick="saveApiKey()">💾 Save Key</button>

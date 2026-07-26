@@ -5943,9 +5943,10 @@ sup {
           </div>
           
           <div style="display:flex; gap:8px;">
-            <input type="password" id="setting-gemini-key" class="form-control" placeholder="Paste your AIzaSy... key here" style="flex:1;">
+            <input type="password" id="setting-gemini-key" class="form-control" placeholder="Paste your AIzaSy... key here" style="flex:1;" oninput="onKeyInputTyped()">
             <button class="btn btn-secondary" onclick="toggleKeyVisibility()">👁️</button>
           </div>
+          <div id="api-key-inline-msg" style="font-size:12px; margin-top:2px;"></div>
 
           <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
             <button class="btn btn-primary" onclick="saveApiKey()">💾 Save Key</button>
@@ -15367,31 +15368,44 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
    ========================================================================== */
 
 function getApiKey() {
-  return localStorage.getItem("gemini_api_key") || "";
+  return (localStorage.getItem("gemini_api_key") || "").trim();
+}
+
+function onKeyInputTyped() {
+  const msgArea = document.getElementById("api-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = "";
 }
 
 function saveApiKey() {
   const keyInput = document.getElementById("setting-gemini-key");
+  const msgArea = document.getElementById("api-key-inline-msg");
   if (!keyInput) return;
+
   const val = keyInput.value.trim();
   if (!val) {
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Please paste a valid API key first!</span>`;
     alert("Please enter a valid Gemini API key!");
     return;
   }
+
   localStorage.setItem("gemini_api_key", val);
-  updateApiKeyStatusUI();
-  alert("✅ Gemini API Key saved successfully in your browser!");
+  updateApiKeyStatusUI(true);
+  
+  if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">✅ API Key saved successfully!</span>`;
   renderSetupRequiredCards();
+  alert("✅ Gemini API Key saved successfully!");
 }
 
 function removeApiKey() {
-  if (confirm("Are you sure you want to remove your saved Gemini API Key?")) {
-    localStorage.removeItem("gemini_api_key");
-    const keyInput = document.getElementById("setting-gemini-key");
-    if (keyInput) keyInput.value = "";
-    updateApiKeyStatusUI();
-    renderSetupRequiredCards();
-  }
+  localStorage.removeItem("gemini_api_key");
+  const keyInput = document.getElementById("setting-gemini-key");
+  if (keyInput) keyInput.value = "";
+  
+  const msgArea = document.getElementById("api-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">🗑️ API Key removed.</span>`;
+  
+  updateApiKeyStatusUI(true);
+  renderSetupRequiredCards();
 }
 
 function toggleKeyVisibility() {
@@ -15402,44 +15416,67 @@ function toggleKeyVisibility() {
 }
 
 async function testApiKeyConnection() {
+  const keyInput = document.getElementById("setting-gemini-key");
   const statusBadge = document.getElementById("api-key-status-badge");
-  if (statusBadge) {
-    statusBadge.innerHTML = `<span style="color:#fbbf24;">🟡 Testing Connection...</span>`;
+  const msgArea = document.getElementById("api-key-inline-msg");
+
+  if (keyInput && keyInput.value.trim()) {
+    // Auto-save key first so user doesn't have to click save manually!
+    localStorage.setItem("gemini_api_key", keyInput.value.trim());
+    renderSetupRequiredCards();
   }
+
+  const currentKey = getApiKey();
+  if (!currentKey) {
+    if (statusBadge) statusBadge.innerHTML = `<span style="color:#ef4444; font-weight:bold;">🔴 No Key Configured</span>`;
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Please paste your API key in the box first!</span>`;
+    alert("Please paste your Gemini API key in the box first!");
+    return;
+  }
+
+  if (statusBadge) statusBadge.innerHTML = `<span style="color:#fbbf24;">🟡 Testing Connection...</span>`;
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">⚡ Connecting to Gemini AI...</span>`;
+
   try {
     const reply = await callGeminiAPI("Respond with only the word: CONNECTED", "", (msg) => {
       if (statusBadge) statusBadge.innerHTML = `<span style="color:#fbbf24; font-size:11px;">${msg}</span>`;
     }, { maxTokens: 64 });
+
     if (reply && reply.includes("CONNECTED")) {
-      if (statusBadge) {
-        statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected (Multi-Model Fallback Active)</span>`;
-      }
-      alert("🎉 Connection Successful! Gemini AI with Multi-Model Fallback is ready.");
+      if (statusBadge) statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected</span>`;
+      if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🎉 Connection Successful! Gemini AI is ready.</span>`;
+      alert("🎉 Connection Successful! Gemini AI is ready to use.");
     } else {
-      if (statusBadge) {
-        statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected</span>`;
-      }
+      if (statusBadge) statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected</span>`;
+      if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected to Gemini AI</span>`;
     }
   } catch (err) {
     if (err.message === "INVALID_API_KEY") {
-      if (statusBadge) statusBadge.innerHTML = `<span style="color:#ef4444; font-weight:bold;">🔴 Invalid API Key</span>`;
+      if (statusBadge) statusBadge.innerHTML = `<span style="color:#ef4444; font-weight:bold;">🔴 Invalid Key</span>`;
+      if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Invalid API Key. Check key at aistudio.google.com/apikey</span>`;
       alert("❌ Invalid API Key. Please check your key at https://aistudio.google.com/apikey");
     } else if (err.message === "HTTP_429_EXCEEDED") {
-      if (statusBadge) statusBadge.innerHTML = `<span style="color:#fbbf24; font-weight:bold;">🟡 Rate Limit Hit (Retry in 60s)</span>`;
+      if (statusBadge) statusBadge.innerHTML = `<span style="color:#fbbf24; font-weight:bold;">🟡 Rate Limit Hit</span>`;
+      if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24; font-weight:bold;">⚠️ Rate limit reached on free tier. Retry in 60s.</span>`;
       alert("⚠️ Free Tier Rate Limit Reached! Please wait 60 seconds or generate a new free key at https://aistudio.google.com/apikey");
     } else {
       if (statusBadge) statusBadge.innerHTML = `<span style="color:#ef4444; font-weight:bold;">🔴 Connection Failed</span>`;
+      if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Connection test failed: ${err.message}</span>`;
       alert(`❌ Connection Test Failed: ${err.message}`);
     }
   }
 }
 
-function updateApiKeyStatusUI() {
+function updateApiKeyStatusUI(forceSyncInput = false) {
   const key = getApiKey();
   const statusBadge = document.getElementById("api-key-status-badge");
   const keyInput = document.getElementById("setting-gemini-key");
-  
-  if (keyInput) keyInput.value = key;
+
+  // Only sync input value if forced or empty, to preserve whatever the user is typing
+  if (keyInput && (forceSyncInput || !keyInput.value.trim())) {
+    keyInput.value = key;
+  }
+
   if (statusBadge) {
     if (key) {
       statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Key Saved (Ready)</span>`;
