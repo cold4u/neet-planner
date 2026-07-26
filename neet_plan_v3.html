@@ -5861,6 +5861,154 @@ tag in <head>
   word-break: break-word;
 }
 
+/* ==========================================================================
+   UNIVERSAL MOBILE RESPONSIVENESS (MOBILE OPTIMIZATION - 768px & 480px)
+   ========================================================================== */
+
+/* 1. Global Bounds & Overflow Prevention */
+html, body, .app-layout, .content-area, .main-wrapper {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* 2. Responsive Table Wrappers */
+.table-container, .table-responsive, div[style*="overflow-x:auto"], table {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.table-container {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+/* 3. KaTeX Equations & Formula Overflow Prevention */
+.katex-display, .katex {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* 4. Touch Targets & Form Inputs on Mobile */
+@media (max-width: 768px) {
+  .btn, .form-control, .form-input, select.form-input, select.form-control, input[type="text"], input[type="number"], input[type="date"], select {
+    min-height: 38px !important;
+    font-size: 13px !important;
+    box-sizing: border-box !important;
+  }
+
+  #overview .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  #overview .hero-card {
+    padding: 16px !important;
+  }
+
+  #overview .hero-card > div {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .countdown-timer-container, div[id^="cd-"] {
+    font-size: 1.1rem !important;
+  }
+
+  .cd-box, .cd-num {
+    font-size: 1.2rem !important;
+    line-height: 1.2 !important;
+  }
+
+  #calendar .calendar-filters, #calendar div[style*="display:flex; gap:10px"] {
+    flex-direction: column !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  #calendar select, #calendar input, #calendar button {
+    width: 100% !important;
+  }
+
+  #tests .score-logger-form, #tests div[style*="grid-template-columns:1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  #tests .silly-mistakes-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  #tests .rank-predictor-container {
+    flex-direction: column !important;
+  }
+
+  .syllabus-heatmap-grid, div[id*="heatmap"] {
+    grid-template-columns: repeat(auto-fill, minmax(14px, 1fr)) !important;
+    gap: 4px !important;
+  }
+
+  #neet-news .news-grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  #neet-news .news-filter-bar, #neet-news div[style*="display:flex; gap:8px"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  #neet-news .news-card {
+    padding: 14px !important;
+    word-break: break-word !important;
+  }
+
+  .exam-question-panel, .exam-palette-panel {
+    width: 100% !important;
+  }
+
+  #mocktest-exam .split-container {
+    flex-direction: column !important;
+  }
+
+  .modal-content {
+    width: 92% !important;
+    max-width: 92% !important;
+    padding: 20px 16px !important;
+    margin: 10px auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #overview .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #tests .silly-mistakes-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .cd-box, .cd-num {
+    font-size: 1rem !important;
+  }
+
+  .page-title {
+    font-size: 18px !important;
+  }
+
+  .page-desc {
+    font-size: 12px !important;
+  }
+}
+
+
 
 
 </style>
