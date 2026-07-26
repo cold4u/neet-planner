@@ -9524,33 +9524,46 @@ function safeSetSessionStorage(key, value) {
       const drawerItem = document.querySelector(`.drawer-item[data-tab="${tabId}"]`);
       if (drawerItem) drawerItem.classList.add('active');
       
-      if (tabId === 'calendar') {
-        renderPlan();
-      } else if (tabId === 'timing') {
-        showSched('p1', document.querySelector('.sched-btn'));
-      } else if (tabId === 'chapters') {
-        renderChapters();
-        if (typeof renderSyllabusCoverageHeatmap === 'function') {
-          renderSyllabusCoverageHeatmap();
+      try {
+        if (tabId === 'calendar') {
+          renderPlan();
+        } else if (tabId === 'timing') {
+          showSched('p1', document.querySelector('.sched-btn'));
+        } else if (tabId === 'chapters') {
+          renderChapters();
+          if (typeof renderSyllabusCoverageHeatmap === 'function') {
+            renderSyllabusCoverageHeatmap();
+          }
+        } else if (tabId === 'papers') {
+          renderPapersPicker();
+        } else if (tabId === 'tests') {
+          renderTestList();
+          renderMockTestsDashboard();
+          setDefaultMockDate();
+        } else if (tabId === 'tracker') {
+          renderTrackerTable();
+        } else if (tabId === 'analytics') {
+          renderAnalytics();
+        } else if (tabId === 'overview') {
+          renderOverviewStats();
+        } else if (tabId === 'study-timer') {
+          initStudyTimerTab();
+        } else if (tabId === 'pomodoro') {
+          if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
+        } else if (tabId === 'formulas') {
+          if (typeof renderTabFormulas === 'function') renderTabFormulas();
+        } else if (tabId === 'errorbook') {
+          if (typeof renderErrorBookList === 'function') renderErrorBookList();
+          if (typeof updateErrorBookDeckLabel === 'function') updateErrorBookDeckLabel();
+        } else if (tabId === 'flashcards') {
+          if (typeof loadSelectedFlashcardDeck === 'function') loadSelectedFlashcardDeck();
+        } else if (tabId === 'studyhub') {
+          if (typeof renderStudyHubReports === 'function') renderStudyHubReports();
+        } else if (tabId === 'emotional-support') {
+          if (typeof rotateMotivationalQuote === 'function') rotateMotivationalQuote();
         }
-      } else if (tabId === 'papers') {
-        renderPapersPicker();
-      } else if (tabId === 'tests') {
-        renderTestList();
-        renderMockTestsDashboard();
-        setDefaultMockDate();
-      } else if (tabId === 'tracker') {
-        renderTrackerTable();
-      } else if (tabId === 'analytics') {
-        renderAnalytics();
-      } else if (tabId === 'overview') {
-        renderOverviewStats();
-      } else if (tabId === 'study-timer') {
-        initStudyTimerTab();
-      } else if (tabId === 'pomodoro') {
-        if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
-      } else if (tabId === 'formulas') {
-        if (typeof renderTabFormulas === 'function') renderTabFormulas();
+      } catch (err) {
+        console.error(`Error activating tab "${tabId}":`, err);
       }
     }
 
@@ -18809,16 +18822,24 @@ function handleAiTabSwitch(tabId) {
 }
 window.handleAiTabSwitch = handleAiTabSwitch;
 
-// Hook showTab safely
+// Hook showTab safely with bulletproof try-catch error guards
 const originalShowTab = window.showTab;
 window.showTab = function(tabId) {
   if (typeof originalShowTab === 'function') {
-    originalShowTab(tabId);
+    try {
+      originalShowTab(tabId);
+    } catch (e) {
+      console.error(`Error in core showTab for "${tabId}":`, e);
+    }
   }
-  handleAiTabSwitch(tabId);
-  if (tabId === 'overview') initStudyOptimizer();
-  if (tabId === 'errorbook') initErrorAnalyzer();
-  if (tabId === 'settings') renderApiKeySetup();
+  try {
+    handleAiTabSwitch(tabId);
+    if (tabId === 'overview' && typeof initStudyOptimizer === 'function') initStudyOptimizer();
+    if (tabId === 'errorbook' && typeof initErrorAnalyzer === 'function') initErrorAnalyzer();
+    if (tabId === 'settings' && typeof renderApiKeySetup === 'function') renderApiKeySetup();
+  } catch (e) {
+    console.error(`Error in AI tab switch for "${tabId}":`, e);
+  }
 };
 
 console.log('✅ NEET Planner AI Features Module Loaded Successfully (Gemini 2.0 Flash BYOK)');

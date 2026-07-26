@@ -2041,16 +2041,24 @@ function handleAiTabSwitch(tabId) {
 }
 window.handleAiTabSwitch = handleAiTabSwitch;
 
-// Hook showTab safely
+// Hook showTab safely with bulletproof try-catch error guards
 const originalShowTab = window.showTab;
 window.showTab = function(tabId) {
   if (typeof originalShowTab === 'function') {
-    originalShowTab(tabId);
+    try {
+      originalShowTab(tabId);
+    } catch (e) {
+      console.error(`Error in core showTab for "${tabId}":`, e);
+    }
   }
-  handleAiTabSwitch(tabId);
-  if (tabId === 'overview') initStudyOptimizer();
-  if (tabId === 'errorbook') initErrorAnalyzer();
-  if (tabId === 'settings') renderApiKeySetup();
+  try {
+    handleAiTabSwitch(tabId);
+    if (tabId === 'overview' && typeof initStudyOptimizer === 'function') initStudyOptimizer();
+    if (tabId === 'errorbook' && typeof initErrorAnalyzer === 'function') initErrorAnalyzer();
+    if (tabId === 'settings' && typeof renderApiKeySetup === 'function') renderApiKeySetup();
+  } catch (e) {
+    console.error(`Error in AI tab switch for "${tabId}":`, e);
+  }
 };
 
 console.log('✅ NEET Planner AI Features Module Loaded Successfully (Gemini 2.0 Flash BYOK)');
