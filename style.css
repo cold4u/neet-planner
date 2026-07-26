@@ -4234,3 +4234,149 @@ tag in <head>
 
 
 
+
+
+/* ==========================================================================
+   AI FEATURES & CBT EXAM STYLES
+   ========================================================================== */
+
+/* Chat Interface */
+.ai-chat-container {
+  background: rgba(10, 15, 29, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  animation: fadeIn 0.3s ease;
+}
+
+.chat-bubble-user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.3));
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+
+.chat-bubble-ai {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border-bottom-left-radius: 2px;
+}
+
+.chat-bubble .bubble-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ai-badge {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fbbf24;
+}
+
+.copy-btn {
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 11px;
+  cursor: pointer;
+}
+.copy-btn:hover { color: #fff; }
+
+/* Typing Indicator Animation */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.typing-indicator .dot {
+  width: 6px;
+  height: 6px;
+  background: #fbbf24;
+  border-radius: 50%;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+.typing-indicator .dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator .dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
+
+/* CBT Exam Styling */
+.cbt-option-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cbt-option-item:hover, .cbt-option-item.selected {
+  background: rgba(251, 191, 36, 0.12);
+  border-color: rgba(251, 191, 36, 0.5);
+}
+
+.opt-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Question Palette Buttons */
+.palette-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.palette-btn.unvisited { background: rgba(255, 255, 255, 0.05); color: #ccc; }
+.palette-btn.answered { background: #00d4aa; color: #000; border-color: #00d4aa; }
+.palette-btn.not-answered { background: #ef4444; color: #fff; border-color: #ef4444; }
+.palette-btn.marked { background: #7c5cfc; color: #fff; border-color: #7c5cfc; }
+.palette-btn.ans-marked { background: #fbbf24; color: #000; border-color: #fbbf24; }
+.palette-btn.current { outline: 2px solid #fff; outline-offset: 1px; }
+
+/* News Grid */
+.news-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* Universal Mobile Optimizations */
+@media (max-width: 768px) {
+  .chat-bubble { max-width: 95%; }
+  .split-container { flex-direction: column !important; }
+  .exam-palette-panel { width: 100% !important; }
+  .news-grid-container { grid-template-columns: 1fr !important; }
+}

@@ -3,7 +3,7 @@ import json
 import re
 import base64
 
-base_dir = "/home/shubhamkumarpatel9911/.gemini/antigravity/scratch/neet-server"
+base_dir = os.path.dirname(os.path.abspath(__file__))
 output_path_home = "/home/shubhamkumarpatel9911/neet_plan_v3.html"
 output_path_local = os.path.join(base_dir, "neet_plan_v3.html")
 
@@ -98,6 +98,13 @@ if match:
     print("Successfully inlined JS.")
 else:
     print("Warning: Could not find script tag for app.js in HTML.")
+
+
+# 4b. Inline ai-features.js in HTML content
+ai_script_pattern = r'<script defer src="ai-features\.js[^"]*"></script>'
+with open(os.path.join(base_dir, "ai-features.js"), "r", encoding="utf-8") as f:
+    ai_js_content = f.read()
+html_content = re.sub(ai_script_pattern, f"<script>\n{ai_js_content}\n</script>", html_content)
 
 # 5. Save bundled HTML to both paths
 for out_path in [output_path_home, output_path_local]:
