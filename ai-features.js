@@ -980,28 +980,119 @@ function submitMockTest(skipConfirm = false) {
   renderMockTestResults(resultObj);
 }
 
+/**
+ * Compiles a comprehensive snapshot of all user website progress data:
+ * - 309-day study plan progress & today's assigned chapters
+ * - Completed vs pending chapters per subject
+ * - Error Book logged mistakes & weak categories
+ * - Past mock test scores & trend
+ * - Study timer & daily tracker stats
+ */
+function getCompleteWebsiteContext() {
+  try {
+    const planStartStr = localStorage.getItem('planStart') || '2026-06-29';
+    const planStart = new Date(planStartStr);
+    const today = new Date();
+    const currentDayNum = Math.max(1, Math.floor((today - planStart) / (1000 * 60 * 60 * 24)) + 1);
+
+    // Completed days
+    const doneDays = JSON.parse(localStorage.getItem('neet_v3_done') || '[]');
+
+    // Chapter progress
+    const chapProgress = JSON.parse(localStorage.getItem('neet_v3_chapter_progress') || '{}');
+    let completedChapsCount = 0;
+    Object.values(chapProgress).forEach(status => {
+      if (status === true || status === 'completed') completedChapsCount++;
+    });
+
+    // Error book
+    const errorItems = JSON.parse(localStorage.getItem('neet_v3_errorbook_items') || '[]');
+    const errorsBySubject = {};
+    const errorsByChapter = {};
+    errorItems.forEach(item => {
+      const sub = item.subject || 'General';
+      const chap = item.chapter || 'General';
+      errorsBySubject[sub] = (errorsBySubject[sub] || 0) + 1;
+      errorsByChapter[chap] = (errorsByChapter[chap] || 0) + 1;
+    });
+
+    // Top weak chapters from error book
+    const weakChaps = Object.entries(errorsByChapter)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([c, count]) => `${c} (${count} errors)`)
+      .join(', ');
+
+    // Mock tests history
+    const mockTests = JSON.parse(localStorage.getItem('neet_v3_mock_tests') || '[]');
+    const pastScores = mockTests.slice(0, 5).map(m => `${m.date}: ${m.total || m.totalScore || 0} pts`).join(', ');
+
+    // Today's plan from window.PLAN
+    let todaysPlan = `Day ${currentDayNum}`;
+    if (window.PLAN && Array.isArray(window.PLAN) && window.PLAN[currentDayNum - 1]) {
+      const dayData = window.PLAN[currentDayNum - 1];
+      todaysPlan = `Day ${currentDayNum} — Physics: ${dayData.phyChap || dayData.phy || 'N/A'} | Chemistry: ${dayData.cheChap || dayData.che || 'N/A'} | Biology: ${dayData.bioChap || dayData.bio || 'N/A'}`;
+    }
+
+    return `
+=== NEET PLANNER 2027 WEBSITE CONTEXT ===
+• Current Study Plan Progress: Day ${currentDayNum} of 309 (${doneDays.length} days marked complete)
+• Today's Scheduled Assignment: ${todaysPlan}
+• Chapter Coverage: ${completedChapsCount} chapters completed in tracker
+• Error Book Log: ${errorItems.length} total mistakes logged (Subject Breakdown: ${JSON.stringify(errorsBySubject)})
+• Top Weak Chapters: ${weakChaps || 'None logged yet'}
+• Past Mock Tests History (${mockTests.length} tests): ${pastScores || 'No previous tests'}
+==========================================`;
+  } catch (e) {
+    return 'Website Context: 309-Day NEET 2027 Study Plan Active.';
+  }
+}
+
 function renderMockTestResults(results) {
   document.getElementById('mocktest-exam').style.display = 'none';
   document.getElementById('mocktest-results').style.display = 'block';
 
-  const scoreEl = document.getElementById('mocktest-total-score');
-  const maxEl = document.getElementById('mocktest-max-score');
-  const percentEl = document.getElementById('mocktest-score-percent');
+  // Populate main metrics in index.html
+  const totalScoreEl = document.getElementById('result-total-score');
+  const maxScoreEl = document.getElementById('result-max-score');
+  const accuracyEl = document.getElementById('result-accuracy');
+  const timeTakenEl = document.getElementById('result-time-taken');
+  const avgPaceEl = document.getElementById('result-avg-pace');
+  const correctEl = document.getElementById('result-correct-count');
+  const incorrectEl = document.getElementById('result-incorrect-count');
+  const unansweredEl = document.getElementById('result-unanswered-count');
 
-  if (scoreEl) scoreEl.textContent = results.totalScore;
-  if (maxEl) maxEl.textContent = `/ ${results.maxPossible}`;
-  if (percentEl) percentEl.textContent = `${results.accuracy}% Accuracy`;
+  if (totalScoreEl) totalScoreEl.textContent = results.totalScore;
+  if (maxScoreEl) maxScoreEl.textContent = results.maxPossible;
+  if (accuracyEl) accuracyEl.textContent = results.accuracy;
 
-  // Render subject stats
-  const subContainer = document.getElementById('mocktest-subject-results');
+  const totalSecs = results.timeTakenSeconds || 0;
+  const mins = Math.floor(totalSecs / 60);
+  const secs = totalSecs % 60;
+  if (timeTakenEl) timeTakenEl.textContent = `${mins}m ${secs}s`;
+
+  const totalQ = mockTestQuestions.length || 1;
+  const avgSecs = Math.round(totalSecs / totalQ);
+  if (avgPaceEl) avgPaceEl.textContent = `${avgSecs}s / question`;
+
+  if (correctEl) correctEl.textContent = results.correctCount;
+  if (incorrectEl) incorrectEl.textContent = results.incorrectCount;
+  if (unansweredEl) unansweredEl.textContent = results.unansweredCount;
+
+  // Render subject breakdown
+  const subContainer = document.getElementById('result-subject-breakdown');
   if (subContainer) {
     let subHtml = '';
     Object.entries(results.subjectStats).forEach(([name, data]) => {
       subHtml += `
-        <div class="results-subject-card">
-          <div class="subject-name">${name}</div>
-          <div class="subject-score" style="color:var(--primary)">${data.score}</div>
-          <div class="subject-accuracy">✅ ${data.correct} | ❌ ${data.incorrect} | ⚪ ${data.unanswered}</div>
+        <div class="results-subject-card" style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:10px; padding:16px; text-align:center;">
+          <div class="subject-name" style="font-size:13px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">${name}</div>
+          <div class="subject-score" style="font-size:28px; font-weight:800; font-family:var(--font-mono); color:var(--primary);">${data.score} pts</div>
+          <div class="subject-accuracy" style="font-size:12px; color:var(--text-secondary); margin-top:6px;">
+            <span style="color:var(--accent-success);">✅ ${data.correct} Right (+${data.correct * 4})</span> • 
+            <span style="color:var(--accent-danger);">❌ ${data.incorrect} Wrong (-${data.incorrect})</span> • 
+            <span style="color:var(--text-muted);">⚪ ${data.unanswered} Left</span>
+          </div>
         </div>
       `;
     });
@@ -1037,7 +1128,7 @@ function renderMockTestResults(results) {
     renderKaTeX(reviewContainer);
   }
 
-  // Request AI Feedback
+  // Request AI Feedback with Full Website Context
   generateMockTestAiFeedback(results);
 }
 
@@ -1045,26 +1136,35 @@ async function generateMockTestAiFeedback(results) {
   const fbContainer = document.getElementById('mocktest-ai-feedback');
   if (!fbContainer) return;
 
-  fbContainer.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">🤖 Analyzing performance with Gemini...</div>';
+  fbContainer.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">🤖 Analyzing performance with Gemini & Full Website Context...</div>';
 
   try {
-    const prompt = `Analyze this NEET mock test performance:
-Total Score: ${results.totalScore}/${results.maxPossible}
-Accuracy: ${results.accuracy}%
+    const siteContext = getCompleteWebsiteContext();
+    const prompt = `Analyze this NEET mock test performance in relation to the student's complete 309-day study plan progress:
+
+${siteContext}
+
+RECENT MOCK TEST PERFORMANCE:
+- Total Score: ${results.totalScore} / ${results.maxPossible} (Accuracy: ${results.accuracy}%)
+- Total Time Taken: ${Math.floor((results.timeTakenSeconds || 0)/60)}m ${(results.timeTakenSeconds || 0)%60}s (Avg Pace: ${Math.round((results.timeTakenSeconds || 0)/mockTestQuestions.length)}s/question)
+- Correct Answers (+4): ${results.correctCount}
+- Incorrect Answers (-1): ${results.incorrectCount}
+- Unattempted (0): ${results.unansweredCount}
+
 Subject Breakdown:
-- Physics: ${results.subjectStats.Physics.score} pts (${results.subjectStats.Physics.correct} right, ${results.subjectStats.Physics.incorrect} wrong)
-- Chemistry: ${results.subjectStats.Chemistry.score} pts (${results.subjectStats.Chemistry.correct} right, ${results.subjectStats.Chemistry.incorrect} wrong)
-- Biology: ${results.subjectStats.Biology.score} pts (${results.subjectStats.Biology.correct} right, ${results.subjectStats.Biology.incorrect} wrong)
+- Physics: ${results.subjectStats.Physics.score} pts (✅ ${results.subjectStats.Physics.correct} right, ❌ ${results.subjectStats.Physics.incorrect} wrong, ⚪ ${results.subjectStats.Physics.unanswered} left)
+- Chemistry: ${results.subjectStats.Chemistry.score} pts (✅ ${results.subjectStats.Chemistry.correct} right, ❌ ${results.subjectStats.Chemistry.incorrect} wrong, ⚪ ${results.subjectStats.Chemistry.unanswered} left)
+- Biology: ${results.subjectStats.Biology.score} pts (✅ ${results.subjectStats.Biology.correct} right, ❌ ${results.subjectStats.Biology.incorrect} wrong, ⚪ ${results.subjectStats.Biology.unanswered} left)
 
 Provide:
-1. Strengths & Weaknesses summary
-2. Recommended chapter focus for the next 7 days
-3. Strategy to minimize negative marking (-1 penalties)`;
+1. 📈 Comprehensive Performance & Time Management Evaluation (is the student rushing or over-analyzing?)
+2. 🎯 Subject-by-Subject Deep Dive
+3. 🗓️ Strategic Alignment with 309-Day Plan & Immediate 7-Day Action Plan`;
 
-    const feedbackText = await callGeminiAPI(prompt, 'You are an expert NEET performance analyst.', { temperature: 0.6 });
+    const feedbackText = await callGeminiAPI(prompt, 'You are an elite NEET performance analyst with access to the student\'s complete study planner data.', { temperature: 0.6 });
     fbContainer.innerHTML = `
       <div class="glass-card" style="border-color:var(--primary)">
-        <h4 style="color:var(--primary); margin-bottom:8px;">🤖 AI Performance Coach Analysis</h4>
+        <h4 style="color:var(--primary); margin-bottom:8px;">🤖 AI Performance Coach Analysis (Full Planner Context)</h4>
         <div style="font-size:13px; line-height:1.6;">${renderMarkdown(feedbackText)}</div>
       </div>
     `;
@@ -1694,6 +1794,7 @@ window.deleteQuestionBank = deleteQuestionBank;
 window.generateStudyRecommendation = generateStudyRecommendation;
 window.analyzeErrorPatterns = analyzeErrorPatterns;
 window.generateRecoveryQuiz = generateRecoveryQuiz;
+window.getCompleteWebsiteContext = getCompleteWebsiteContext;
 window.handleAiTabSwitch = handleAiTabSwitch;
 
 // Hook showTab safely

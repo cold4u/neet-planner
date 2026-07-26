@@ -1481,17 +1481,36 @@
           <h2 style="font-size:24px; margin-bottom:8px;">Test Completed! 🎉</h2>
         </div>
         
-        <div style="display:flex; justify-content:center; gap:32px; flex-wrap:wrap;">
-          <div style="text-align:center;">
-            <div style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">Total Score</div>
-            <div style="font-size:48px; font-weight:900; font-family:var(--font-mono); color:var(--primary); line-height:1;"><span id="result-total-score">0</span><span style="font-size:24px; color:var(--text-muted);">/<span id="result-max-score">0</span></span></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:16px; margin-bottom:8px;">
+          <div style="text-align:center; padding:16px; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:10px;">
+            <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:6px;">Total Score</div>
+            <div style="font-size:36px; font-weight:900; font-family:var(--font-mono); color:var(--primary); line-height:1;"><span id="result-total-score">0</span><span style="font-size:18px; color:var(--text-muted);">/<span id="result-max-score">0</span></span></div>
           </div>
-          
-          <div style="width:1px; background:var(--border-color);"></div>
-          
-          <div style="text-align:center;">
-            <div style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">Accuracy</div>
-            <div style="font-size:48px; font-weight:900; font-family:var(--font-mono); color:var(--accent-success); line-height:1;"><span id="result-accuracy">0</span><span style="font-size:24px;">%</span></div>
+
+          <div style="text-align:center; padding:16px; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:10px;">
+            <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:6px;">Accuracy</div>
+            <div style="font-size:36px; font-weight:900; font-family:var(--font-mono); color:var(--accent-success); line-height:1;"><span id="result-accuracy">0</span><span style="font-size:20px;">%</span></div>
+          </div>
+
+          <div style="text-align:center; padding:16px; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:10px;">
+            <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:6px;">⏱️ Time Taken</div>
+            <div style="font-size:24px; font-weight:800; font-family:var(--font-mono); color:var(--secondary); line-height:1.2;" id="result-time-taken">0m 0s</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;" id="result-avg-pace">0s / q</div>
+          </div>
+
+          <div style="text-align:center; padding:16px; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:10px;">
+            <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--accent-success); margin-bottom:6px;">✅ Correct (+4)</div>
+            <div style="font-size:32px; font-weight:800; font-family:var(--font-mono); color:var(--accent-success); line-height:1;" id="result-correct-count">0</div>
+          </div>
+
+          <div style="text-align:center; padding:16px; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:10px;">
+            <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--accent-danger); margin-bottom:6px;">❌ Incorrect (-1)</div>
+            <div style="font-size:32px; font-weight:800; font-family:var(--font-mono); color:var(--accent-danger); line-height:1;" id="result-incorrect-count">0</div>
+          </div>
+
+          <div style="text-align:center; padding:16px; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:10px;">
+            <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:6px;">⚪ Unattempted</div>
+            <div style="font-size:32px; font-weight:800; font-family:var(--font-mono); color:var(--text-muted); line-height:1;" id="result-unanswered-count">0</div>
           </div>
         </div>
         
