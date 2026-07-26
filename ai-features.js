@@ -419,10 +419,14 @@ async function generateCbtTest() {
 Subject: ${subject}
 Difficulty: ${difficulty}
 
-You MUST return ONLY a valid JSON array of question objects without markdown block formatting.
-Each object must have:
+CRITICAL FORMATTING RULES:
+1. Return ONLY a valid, raw JSON array of question objects.
+2. Escape all backslashes in formulas (use \\frac, \\alpha, \\text, etc.).
+3. Do NOT include conversational text.
+
+Each object format:
 {
-  "question": "Question text with LaTeX if applicable",
+  "question": "Question text with LaTeX formulas using double backslashes",
   "options": ["Option A", "Option B", "Option C", "Option D"],
   "correct": 0,
   "explanation": "2-line detailed explanation",
@@ -432,18 +436,12 @@ Each object must have:
 `;
 
   try {
-    const rawText = await callGeminiAPI(prompt, "You are a professional NTA NEET exam question paper setter. Output valid JSON array only.", (msg) => {
+    const rawText = await callGeminiAPI(prompt, "You are an NTA NEET exam setter. Output ONLY a valid JSON array.", (msg) => {
       const sub = document.getElementById("cbt-status-subtext");
       if (sub) sub.textContent = msg;
     });
 
-    let cleanJson = rawText.trim();
-    if (cleanJson.startsWith("```json")) cleanJson = cleanJson.substring(7);
-    if (cleanJson.startsWith("```")) cleanJson = cleanJson.substring(3);
-    if (cleanJson.endsWith("```")) cleanJson = cleanJson.substring(0, cleanJson.length - 3);
-    cleanJson = cleanJson.trim();
-
-    const parsedQuestions = JSON.parse(cleanJson);
+    const parsedQuestions = robustParseJSON(rawText);
 
     if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) {
       throw new Error("Invalid question format received from AI.");
@@ -464,6 +462,49 @@ Each object must have:
         </div>
       `;
     }
+  }
+}
+
+// Robust JSON Parser that handles unescaped LaTeX backslashes, markdown code fences & control chars
+function robustParseJSON(rawText) {
+  if (!rawText) throw new Error("Empty text received from AI.");
+
+  let text = rawText.trim();
+
+  // Strip markdown code fences if present
+  text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+
+  // Find array bounds [ ... ]
+  const firstSquare = text.indexOf('[');
+  const lastSquare = text.lastIndexOf(']');
+  
+  if (firstSquare !== -1 && lastSquare > firstSquare) {
+    text = text.substring(firstSquare, lastSquare + 1);
+  }
+
+  // Attempt 1: Direct JSON.parse
+  try {
+    return JSON.parse(text);
+  } catch (e1) {}
+
+  // Attempt 2: Sanitize unescaped LaTeX backslashes & control characters
+  try {
+    let sanitized = text
+      .replace(/\\(?!["\\/bfnrtu])/g, "\\\\")
+      .replace(/[\u0000-\u001F]+/g, " ");
+
+    return JSON.parse(sanitized);
+  } catch (e2) {}
+
+  // Attempt 3: Clean up trailing commas
+  try {
+    let cleaned = text
+      .replace(/\\(?!["\\/bfnrtu])/g, "\\\\")
+      .replace(/,\s*([\]}])/g, "$1");
+
+    return JSON.parse(cleaned);
+  } catch (e3) {
+    throw new Error(`AI generated invalid JSON structure: ${e3.message}`);
   }
 }
 
@@ -768,12 +809,7 @@ ${pdfText.substring(0, 8000)}`;
       if (sub) sub.textContent = msg;
     });
     
-    let cleanJson = rawResult.trim();
-    if (cleanJson.startsWith("```json")) cleanJson = cleanJson.substring(7);
-    if (cleanJson.startsWith("```")) cleanJson = cleanJson.substring(3);
-    if (cleanJson.endsWith("```")) cleanJson = cleanJson.substring(0, cleanJson.length - 3);
-
-    extractedQuestionsList = JSON.parse(cleanJson.trim());
+    extractedQuestionsList = robustParseJSON(rawResult);
 
     if (statusCard) statusCard.style.display = "none";
     renderPdfExtractedQuestions();

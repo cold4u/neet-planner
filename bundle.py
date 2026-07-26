@@ -104,7 +104,7 @@ else:
 ai_script_pattern = r'<script defer src="ai-features\.js[^"]*"></script>'
 with open(os.path.join(base_dir, "ai-features.js"), "r", encoding="utf-8") as f:
     ai_js_content = f.read()
-html_content = re.sub(ai_script_pattern, f"<script>\n{ai_js_content}\n</script>", html_content)
+html_content = re.sub(ai_script_pattern, lambda m: f"<script>\n{ai_js_content}\n</script>", html_content)
 
 # 5. Save bundled HTML to both paths
 for out_path in [output_path_home, output_path_local]:
