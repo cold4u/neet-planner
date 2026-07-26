@@ -995,6 +995,25 @@ table tr.done-row td div, table tr.done-row td span {
   transform: translateY(-1px);
 }
 
+/* AI Tutor Subject Mode Toggle Buttons */
+.subject-mode-btn {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.subject-mode-btn.active {
+  background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(124,92,252,0.2)) !important;
+  border: 2px solid #fbbf24 !important;
+  color: #fbbf24 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 12px rgba(251,191,36,0.3), inset 0 0 8px rgba(251,191,36,0.1);
+  transform: scale(1.05);
+}
+.subject-mode-btn:not(.active):hover {
+  border-color: rgba(251,191,36,0.4);
+  color: #fbbf24;
+}
+
 /* MODALS */
 @keyframes modalZoomIn {
   from {
