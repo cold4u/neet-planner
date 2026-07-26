@@ -512,19 +512,34 @@ async function generateCbtTest() {
   const difficulty = document.getElementById("cbt-difficulty-select").value;
   
   const statusCard = document.getElementById("cbt-generation-status");
-  if (statusCard) {
-    statusCard.style.display = "block";
-    statusCard.innerHTML = `
-      <div class="glass-card" style="text-align:center; padding:20px;">
-        <div class="spinner" style="margin:0 auto 10px auto;"></div>
-        <h4>Generating ${numQuestions} NEET-pattern MCQs with Multi-Model AI...</h4>
-        <p id="cbt-status-subtext" style="font-size:12px; color:#aaa;">Drafting questions with options, explanations, and NCERT references...</p>
-      </div>
-    `;
-  }
+  if (statusCard) statusCard.style.display = "block";
 
-  const prompt = `Generate ${numQuestions} high-quality NEET-pattern multiple choice questions.
-Subject: ${subject}
+  const BATCH_SIZE = 10;
+  const allQuestions = [];
+  const subjectsToUse = (subject === 'all') ? ['Physics', 'Chemistry', 'Biology'] : [subject];
+
+  let generatedCount = 0;
+  let batchAttempts = 0;
+  const maxTotalAttempts = Math.ceil(numQuestions / BATCH_SIZE) * 2 + 2;
+
+  try {
+    while (generatedCount < numQuestions && batchAttempts < maxTotalAttempts) {
+      batchAttempts++;
+      const currentBatchSize = Math.min(BATCH_SIZE, numQuestions - generatedCount);
+      const currentSubject = subjectsToUse[generatedCount % subjectsToUse.length];
+
+      if (statusCard) {
+        statusCard.innerHTML = `
+          <div class="glass-card" style="text-align:center; padding:20px;">
+            <div class="spinner" style="margin:0 auto 10px auto;"></div>
+            <h4>Generating NEET MCQs (${generatedCount + 1} to ${generatedCount + currentBatchSize} of ${numQuestions})...</h4>
+            <p id="cbt-status-subtext" style="font-size:12px; color:#fbbf24;">Drafting ${currentSubject} questions (${difficulty} difficulty)...</p>
+          </div>
+        `;
+      }
+
+      const prompt = `Generate exactly ${currentBatchSize} high-quality NEET-pattern multiple choice questions.
+Subject: ${currentSubject}
 Difficulty: ${difficulty}
 
 CRITICAL FORMATTING RULES:
@@ -539,24 +554,32 @@ Each object format:
   "correct": 0,
   "explanation": "2-line detailed explanation",
   "reference": "NCERT Chapter reference",
-  "subject": "${subject === 'all' ? 'Physics' : subject}"
+  "subject": "${currentSubject}"
 }
 `;
 
-  try {
-    const rawText = await callGeminiAPI(prompt, "You are an NTA NEET exam setter. Output ONLY a valid JSON array.", (msg) => {
-      const sub = document.getElementById("cbt-status-subtext");
-      if (sub) sub.textContent = msg;
-    }, { maxTokens: 4096 });
+      const rawText = await callGeminiAPI(prompt, "You are an NTA NEET exam setter. Output ONLY a valid JSON array.", (msg) => {
+        const sub = document.getElementById("cbt-status-subtext");
+        if (sub) sub.textContent = msg;
+      }, { maxTokens: 3000 });
 
-    const parsedQuestions = robustParseJSON(rawText);
+      const batchQuestions = robustParseJSON(rawText);
 
-    if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) {
-      throw new Error("Invalid question format received from AI.");
+      if (Array.isArray(batchQuestions) && batchQuestions.length > 0) {
+        allQuestions.push(...batchQuestions);
+        generatedCount += batchQuestions.length;
+      } else {
+        console.warn(`Batch attempt ${batchAttempts} produced invalid questions, retrying...`);
+        await sleep(2000);
+      }
+    }
+
+    if (allQuestions.length === 0) {
+      throw new Error("Could not generate test questions. Please check your API key and try again.");
     }
 
     if (statusCard) statusCard.style.display = "none";
-    startCbtExam(parsedQuestions, numQuestions * 120);
+    startCbtExam(allQuestions, numQuestions * 120);
 
   } catch (err) {
     if (statusCard) {
@@ -568,6 +591,10 @@ Each object format:
         <div class="glass-card" style="border: 1px solid #ef4444; color:#ef4444; padding:15px;">
           ❌ Generation Failed: ${errMsg}
         </div>
+      `;
+    }
+  }
+}
       `;
     }
   }
@@ -915,30 +942,69 @@ async function handlePdfDrop(e) {
   }
 
   try {
-    const pdfText = await extractTextFromPdf(file);
-    if (!pdfText || pdfText.length < 50) {
+    const pageTexts = await extractTextFromPdf(file);
+    if (!pageTexts || pageTexts.length === 0) {
       throw new Error("Could not extract readable text from PDF.");
     }
 
-    const prompt = `Extract all multiple choice questions from this text.
+    // Chunk text into blocks of ~3500 characters (~5-10 questions per chunk)
+    const textChunks = [];
+    let currentChunk = "";
+    for (const pText of pageTexts) {
+      if ((currentChunk + pText).length > 3500) {
+        if (currentChunk.trim().length > 0) textChunks.push(currentChunk);
+        currentChunk = pText;
+      } else {
+        currentChunk += "\n" + pText;
+      }
+    }
+    if (currentChunk.trim().length > 0) textChunks.push(currentChunk);
+
+    extractedQuestionsList = [];
+
+    for (let cIdx = 0; cIdx < textChunks.length; cIdx++) {
+      const chunkText = textChunks[cIdx];
+      if (statusCard) {
+        statusCard.innerHTML = `
+          <div class="glass-card" style="text-align:center; padding:20px;">
+            <div class="spinner" style="margin:0 auto 10px auto;"></div>
+            <h4>Extracting NEET MCQs from PDF (Part ${cIdx + 1} of ${textChunks.length})...</h4>
+            <p id="pdf-status-subtext" style="font-size:12px; color:#fbbf24;">Found ${extractedQuestionsList.length} questions so far...</p>
+          </div>
+        `;
+      }
+
+      const prompt = `Extract all multiple choice questions from this text chunk.
 Return ONLY a valid JSON array of objects without markdown headers:
 [{
-  "question": "Question text",
-  "options": ["A", "B", "C", "D"],
+  "question": "Question text with LaTeX formulas using double backslashes",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
   "correct": 0,
-  "explanation": "Brief explanation",
+  "explanation": "Brief 1-2 sentence explanation",
   "subject": "Physics"
 }]
 
-Text:
-${pdfText.substring(0, 8000)}`;
+Text Chunk:
+${chunkText}`;
 
-    const rawResult = await callGeminiAPI(prompt, "You are a PDF question extractor. Output JSON array only.", (msg) => {
-      const sub = document.getElementById("pdf-status-subtext");
-      if (sub) sub.textContent = msg;
-    }, { maxTokens: 4096 });
-    
-    extractedQuestionsList = robustParseJSON(rawResult);
+      try {
+        const rawResult = await callGeminiAPI(prompt, "You are a PDF question extractor. Output JSON array only.", (msg) => {
+          const sub = document.getElementById("pdf-status-subtext");
+          if (sub) sub.textContent = msg;
+        }, { maxTokens: 3000 });
+        
+        const batch = robustParseJSON(rawResult);
+        if (Array.isArray(batch) && batch.length > 0) {
+          extractedQuestionsList.push(...batch);
+        }
+      } catch (chunkErr) {
+        console.warn(`Chunk ${cIdx + 1} failed: ${chunkErr.message}`);
+      }
+    }
+
+    if (extractedQuestionsList.length === 0) {
+      throw new Error("No valid MCQs could be extracted from this PDF.");
+    }
 
     if (statusCard) statusCard.style.display = "none";
     renderPdfExtractedQuestions();
@@ -961,16 +1027,21 @@ async function extractTextFromPdf(file) {
 
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  let fullText = "";
+  const pageTexts = [];
 
-  for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+  // Extract up to 30 pages
+  const totalPages = Math.min(pdf.numPages, 30);
+  for (let i = 1; i <= totalPages; i++) {
     const page = await pdf.getPage(i);
     const textContent = await page.getTextContent();
     const pageStrings = textContent.items.map(item => item.str);
-    fullText += pageStrings.join(" ") + "\n";
+    const pText = pageStrings.join(" ");
+    if (pText.trim().length > 20) {
+      pageTexts.push(pText);
+    }
   }
 
-  return fullText;
+  return pageTexts;
 }
 
 function renderPdfExtractedQuestions() {
