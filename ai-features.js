@@ -25,39 +25,102 @@ const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models
 // Helper: Sleep for delay
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Central BYOK Gemini API Caller with Multi-Model Fallback Ring & Exponential Backoff
+// ═══════════════════════════════════════════════════════════════════════
+// GLOBAL RATE LIMITER — Prevents burning through free tier quota
+// ═══════════════════════════════════════════════════════════════════════
+const _modelCooldowns = {};       // model -> timestamp when cooldown expires
+let _lastRequestTime = 0;         // timestamp of last successful/attempted API call
+const MIN_REQUEST_GAP_MS = 5000;  // minimum 5 seconds between ANY API request
+const MODEL_COOLDOWN_MS = 65000;  // 65-second cooldown when a model returns 429
+let _apiCallInProgress = false;   // prevent concurrent API calls
+
+function _getAvailableModel() {
+  const now = Date.now();
+  for (const model of GEMINI_MODELS) {
+    const cooldownUntil = _modelCooldowns[model] || 0;
+    if (now >= cooldownUntil) {
+      return model;
+    }
+  }
+  return null; // all models are cooling down
+}
+
+function _getNextCooldownExpiry() {
+  let earliest = Infinity;
+  for (const model of GEMINI_MODELS) {
+    const cd = _modelCooldowns[model] || 0;
+    if (cd < earliest) earliest = cd;
+  }
+  return earliest;
+}
+
+// Central BYOK Gemini API Caller with Rate Limiter + Per-Model Cooldown
 async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null) {
   const apiKey = localStorage.getItem("gemini_api_key");
   if (!apiKey || !apiKey.trim()) {
     throw new Error("NO_API_KEY");
   }
 
-  const contents = [];
-  if (systemInstruction) {
-    contents.push({ role: "user", parts: [{ text: `[System Instruction]: ${systemInstruction}` }] });
-    contents.push({ role: "model", parts: [{ text: "Understood. I will strictly follow these instructions for all responses." }] });
-  }
-  contents.push({ role: "user", parts: [{ text: prompt }] });
-
-  const payload = {
-    contents: contents,
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 8192
+  // Block concurrent API calls — queue them
+  if (_apiCallInProgress) {
+    if (onStatus) onStatus("⏳ Another AI request is in progress. Waiting...");
+    let waited = 0;
+    while (_apiCallInProgress && waited < 30000) {
+      await sleep(500);
+      waited += 500;
     }
-  };
+  }
+  _apiCallInProgress = true;
 
-  const maxPasses = 2;
+  try {
+    // Enforce minimum gap between requests
+    const now = Date.now();
+    const elapsed = now - _lastRequestTime;
+    if (_lastRequestTime > 0 && elapsed < MIN_REQUEST_GAP_MS) {
+      const waitMs = MIN_REQUEST_GAP_MS - elapsed;
+      if (onStatus) onStatus(`⏳ Rate-limit safety: waiting ${Math.ceil(waitMs / 1000)}s...`);
+      await sleep(waitMs);
+    }
 
-  for (let pass = 1; pass <= maxPasses; pass++) {
-    for (let i = 0; i < GEMINI_MODELS.length; i++) {
-      const model = GEMINI_MODELS[i];
+    const contents = [];
+    if (systemInstruction) {
+      contents.push({ role: "user", parts: [{ text: `[System Instruction]: ${systemInstruction}` }] });
+      contents.push({ role: "model", parts: [{ text: "Understood. I will strictly follow these instructions for all responses." }] });
+    }
+    contents.push({ role: "user", parts: [{ text: prompt }] });
+
+    const payload = {
+      contents: contents,
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 8192
+      }
+    };
+
+    // Try available models (skip models on cooldown)
+    for (let attempt = 0; attempt < GEMINI_MODELS.length + 1; attempt++) {
+      const model = _getAvailableModel();
+
+      if (!model) {
+        // All models on cooldown — wait for the earliest one to expire
+        const nextExpiry = _getNextCooldownExpiry();
+        const waitSec = Math.ceil((nextExpiry - Date.now()) / 1000);
+        if (waitSec > 0 && waitSec <= 120) {
+          if (onStatus) onStatus(`⏳ All AI models cooling down. Resuming in ${waitSec}s...`);
+          await sleep(Math.min(waitSec * 1000, 65000));
+          continue; // Retry after cooldown
+        }
+        throw new Error("HTTP_429_EXCEEDED");
+      }
+
       const endpoint = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey.trim()}`;
 
       try {
-        if (onStatus && (i > 0 || pass > 1)) {
-          onStatus(`⚡ Connecting to AI server (${model})...`);
+        if (onStatus && attempt > 0) {
+          onStatus(`⚡ Trying ${model}...`);
         }
+
+        _lastRequestTime = Date.now();
 
         const response = await fetch(endpoint, {
           method: "POST",
@@ -66,25 +129,29 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null) {
         });
 
         if (response.status === 429) {
-          console.warn(`Model ${model} hit 429 rate limit. Rotating to next model...`);
-          if (onStatus) {
-            onStatus(`⚠️ Rate limit on ${model}. Switching to backup AI engine...`);
-          }
-          await sleep(1500);
-          continue; // Try next model in ring immediately
+          // Put this specific model on 65-second cooldown
+          _modelCooldowns[model] = Date.now() + MODEL_COOLDOWN_MS;
+          console.warn(`Model ${model} hit 429 — cooling down for 65s`);
+          if (onStatus) onStatus(`⚠️ ${model} rate limited. Trying backup...`);
+          continue; // Try next available model (don't sleep, just skip)
         }
 
         if (response.status === 404) {
-          console.warn(`Model ${model} not available (404). Skipping...`);
+          // Model doesn't exist — permanent skip for this session
+          _modelCooldowns[model] = Date.now() + 3600000; // 1 hour
           continue;
         }
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           const msg = errorData.error?.message || `API error (${response.status})`;
-          
           if (msg.includes("API key not valid") || msg.includes("API_KEY_INVALID")) {
             throw new Error("INVALID_API_KEY");
+          }
+          if (msg.includes("quota") || msg.includes("rate") || msg.includes("Resource has been exhausted")) {
+            _modelCooldowns[model] = Date.now() + MODEL_COOLDOWN_MS;
+            if (onStatus) onStatus(`⚠️ ${model} quota exhausted. Trying backup...`);
+            continue;
           }
           throw new Error(msg);
         }
@@ -98,20 +165,19 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null) {
         return text;
 
       } catch (err) {
-        if (err.message === "NO_API_KEY" || err.message === "INVALID_API_KEY") {
+        if (err.message === "NO_API_KEY" || err.message === "INVALID_API_KEY" || err.message === "HTTP_429_EXCEEDED") {
           throw err;
         }
-        console.warn(`Attempt on ${model} failed: ${err.message}. Trying next model...`);
+        console.warn(`${model} failed: ${err.message}`);
+        // Don't cooldown on network errors — just try next model
       }
     }
 
-    if (pass < maxPasses) {
-      if (onStatus) onStatus("⏳ Free Tier rate limit reached across models. Pausing 3s before retry...");
-      await sleep(3000);
-    }
-  }
+    throw new Error("HTTP_429_EXCEEDED");
 
-  throw new Error("HTTP_429_EXCEEDED");
+  } finally {
+    _apiCallInProgress = false;
+  }
 }
 
 /* ==========================================================================
