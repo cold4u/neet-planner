@@ -1055,46 +1055,33 @@ function safeSetSessionStorage(key, value) {
       const drawerItem = document.querySelector(`.drawer-item[data-tab="${tabId}"]`);
       if (drawerItem) drawerItem.classList.add('active');
       
-      try {
-        if (tabId === 'calendar') {
-          renderPlan();
-        } else if (tabId === 'timing') {
-          showSched('p1', document.querySelector('.sched-btn'));
-        } else if (tabId === 'chapters') {
-          renderChapters();
-          if (typeof renderSyllabusCoverageHeatmap === 'function') {
-            renderSyllabusCoverageHeatmap();
-          }
-        } else if (tabId === 'papers') {
-          renderPapersPicker();
-        } else if (tabId === 'tests') {
-          renderTestList();
-          renderMockTestsDashboard();
-          setDefaultMockDate();
-        } else if (tabId === 'tracker') {
-          renderTrackerTable();
-        } else if (tabId === 'analytics') {
-          renderAnalytics();
-        } else if (tabId === 'overview') {
-          renderOverviewStats();
-        } else if (tabId === 'study-timer') {
-          initStudyTimerTab();
-        } else if (tabId === 'pomodoro') {
-          if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
-        } else if (tabId === 'formulas') {
-          if (typeof renderTabFormulas === 'function') renderTabFormulas();
-        } else if (tabId === 'errorbook') {
-          if (typeof renderErrorBookList === 'function') renderErrorBookList();
-          if (typeof updateErrorBookDeckLabel === 'function') updateErrorBookDeckLabel();
-        } else if (tabId === 'flashcards') {
-          if (typeof loadSelectedFlashcardDeck === 'function') loadSelectedFlashcardDeck();
-        } else if (tabId === 'studyhub') {
-          if (typeof renderStudyHubReports === 'function') renderStudyHubReports();
-        } else if (tabId === 'emotional-support') {
-          if (typeof rotateMotivationalQuote === 'function') rotateMotivationalQuote();
+      if (tabId === 'calendar') {
+        renderPlan();
+      } else if (tabId === 'timing') {
+        showSched('p1', document.querySelector('.sched-btn'));
+      } else if (tabId === 'chapters') {
+        renderChapters();
+        if (typeof renderSyllabusCoverageHeatmap === 'function') {
+          renderSyllabusCoverageHeatmap();
         }
-      } catch (err) {
-        console.error(`Error activating tab "${tabId}":`, err);
+      } else if (tabId === 'papers') {
+        renderPapersPicker();
+      } else if (tabId === 'tests') {
+        renderTestList();
+        renderMockTestsDashboard();
+        setDefaultMockDate();
+      } else if (tabId === 'tracker') {
+        renderTrackerTable();
+      } else if (tabId === 'analytics') {
+        renderAnalytics();
+      } else if (tabId === 'overview') {
+        renderOverviewStats();
+      } else if (tabId === 'study-timer') {
+        initStudyTimerTab();
+      } else if (tabId === 'pomodoro') {
+        if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
+      } else if (tabId === 'formulas') {
+        if (typeof renderTabFormulas === 'function') renderTabFormulas();
       }
     }
 
