@@ -83,8 +83,21 @@ function setAiPreference(key, value) {
   } catch (e) {}
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function debounce(func, delay = 800) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
 /**
- * Core Gemini API Caller using gemini-2.0-flash with x-goog-api-key header.
+ * Core Gemini API Caller using gemini-2.0-flash with exponential backoff on HTTP 429.
+ * Retries on 429 with 2s -> 4s -> 8s -> 16s delays up to 4 retries.
  */
 async function callGeminiAPI(userPrompt, systemPrompt = '', options = {}) {
   const apiKey = getGeminiApiKey();
@@ -136,38 +149,58 @@ async function callGeminiAPI(userPrompt, systemPrompt = '', options = {}) {
 
   payload.generationConfig = generationConfig;
 
-  try {
-    const response = await fetch(GEMINI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey
-      },
-      body: JSON.stringify(payload)
-    });
+  // Exponential backoff configuration for 429 rate limits
+  const maxRetries = 4;
+  const backoffDelays = [2000, 4000, 8000, 16000];
 
-    if (!response.ok) {
-      const errJson = await response.json().catch(() => ({}));
-      const msg = errJson.error?.message || response.statusText;
-      if (response.status === 401 || response.status === 403) {
-        throw new Error(`Authentication Error (401/403): Invalid API Key. Please verify your key in Settings. Details: ${msg}`);
-      } else if (response.status === 429) {
-        throw new Error(`Rate Limit Exceeded (429): Google AI Studio quota exceeded. Please wait a minute before retrying.`);
-      } else {
-        throw new Error(`Gemini API Error (${response.status}): ${msg}`);
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(GEMINI_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errJson = await response.json().catch(() => ({}));
+        const msg = errJson.error?.message || response.statusText;
+
+        if (response.status === 429) {
+          if (attempt < maxRetries) {
+            const delaySec = backoffDelays[attempt] / 1000;
+            const statusMsg = `Google Free Tier rate limit reached. Retrying in ${delaySec}s... (Attempt ${attempt + 1}/${maxRetries})`;
+            console.warn(`[Gemini API 429 Rate Limit] ${statusMsg}`);
+            if (typeof showToast === 'function') {
+              showToast(`⏳ ${statusMsg}`);
+            }
+            await sleep(backoffDelays[attempt]);
+            continue; // Retry loop
+          } else {
+            throw new Error(`Rate Limit Exceeded (429): Google AI Studio quota exceeded after ${maxRetries} retries. Please wait a minute before retrying.`);
+          }
+        } else if (response.status === 401 || response.status === 403) {
+          throw new Error(`Authentication Error (${response.status}): Invalid API Key. Please verify your key in Settings tab. Details: ${msg}`);
+        } else {
+          throw new Error(`Gemini API Error (${response.status}): ${msg}`);
+        }
+      }
+
+      const data = await response.json();
+      const candidate = data.candidates?.[0];
+      if (!candidate || !candidate.content?.parts?.[0]?.text) {
+        throw new Error('Invalid response structure received from Gemini API.');
+      }
+
+      return candidate.content.parts[0].text;
+    } catch (err) {
+      if (attempt === maxRetries || !err.message.includes('429')) {
+        console.error('Gemini Call Failure:', err);
+        throw err;
       }
     }
-
-    const data = await response.json();
-    const candidate = data.candidates?.[0];
-    if (!candidate || !candidate.content?.parts?.[0]?.text) {
-      throw new Error('Invalid response structure received from Gemini API.');
-    }
-
-    return candidate.content.parts[0].text;
-  } catch (err) {
-    console.error('Gemini Call Failure:', err);
-    throw err;
   }
 }
 
@@ -1755,27 +1788,27 @@ const NEET_NEWS_DATA = [
   {
     id: 'news_1',
     category: 'nta',
-    badgeText: '🏛️ NTA Official',
+    badgeText: '🔴 NTA Alert',
     badgeClass: 'badge-nta',
     date: 'Official NTA Release',
-    title: 'NTA Exam Advisory: Biometric Verification & Dress Code Regulations',
+    title: 'NTA Exam Advisory: Biometric Verification & Mandatory Dress Code Regulations',
     desc: 'National Testing Agency (NTA) mandates biometric attendance, strict dress code guidelines (light clothes, short sleeves, no large buttons), and mandatory government ID verification at exam centers.',
     link: 'https://neet.nta.nic.in'
   },
   {
     id: 'news_2',
-    category: 'nmc',
-    badgeText: '🩺 NMC Policy',
-    badgeClass: 'badge-nmc',
+    category: 'syllabus',
+    badgeText: '🔵 Syllabus & Pattern',
+    badgeClass: 'badge-syllabus',
     date: 'Ministry of Health / NMC',
-    title: 'NMC Revises NEET UG Eligibility & Subject Passing Guidelines',
+    title: 'NMC Revises NEET UG Eligibility & Additional Biology Guidelines',
     desc: 'National Medical Commission confirms candidates with Physics, Chemistry, Biology/Biotechnology as core/additional subjects in 10+2 are eligible for NEET-UG examination.',
     link: 'https://nmc.org.in'
   },
   {
     id: 'news_3',
     category: 'syllabus',
-    badgeText: '📘 Syllabus Update',
+    badgeText: '🔵 Syllabus & Pattern',
     badgeClass: 'badge-syllabus',
     date: 'NCERT & NTA Framework',
     title: 'NEET UG Rationalized NCERT Syllabus Alignment',
@@ -1785,17 +1818,17 @@ const NEET_NEWS_DATA = [
   {
     id: 'news_4',
     category: 'nta',
-    badgeText: '🏛️ NTA Official',
+    badgeText: '🔴 NTA Alert',
     badgeClass: 'badge-nta',
     date: 'NTA Public Notice',
-    title: 'NEET Tie-Breaking Criteria Standardized',
+    title: 'NEET Tie-Breaking Ranking Criteria Standardized',
     desc: 'NTA updates tie-breaking order for NEET UG ranking: 1. Higher marks in Biology, 2. Higher marks in Chemistry, 3. Higher marks in Physics, 4. Lower proportion of incorrect answers.',
     link: 'https://neet.nta.nic.in'
   },
   {
     id: 'news_5',
     category: 'mcc',
-    badgeText: '🎓 MCC Counselling',
+    badgeText: '🟢 MCC Counseling',
     badgeClass: 'badge-mcc',
     date: 'MCC Govt Portal',
     title: 'MCC All-India Quota (AIQ) 15% Seat Matrix & Reservation Guidelines',
@@ -1804,12 +1837,12 @@ const NEET_NEWS_DATA = [
   },
   {
     id: 'news_6',
-    category: 'nmc',
-    badgeText: '🩺 Govt Regulation',
-    badgeClass: 'badge-nmc',
-    date: 'NMC Advisory Notice',
-    title: 'NMC Advisory on Anti-Malpractice & Strict Audit of Exam Centers',
-    desc: 'Ministry of Health & NMC issue strict anti-malpractice directives, including AI video surveillance, dual invigilation, and electronic jamming at all NEET UG exam venues.',
+    category: 'strategy',
+    badgeText: '🟣 Strategy',
+    badgeClass: 'badge-strategy',
+    date: 'NMC & NTA Advisory',
+    title: 'Anti-Malpractice & High-Yield Revision Strategy Framework',
+    desc: 'Official advisory on maintaining academic integrity, avoiding misleading social media rumors, and adopting NCERT line-by-line active recall testing strategies.',
     link: 'https://nmc.org.in'
   }
 ];
@@ -1834,14 +1867,16 @@ function renderNeetNewsFeed(items) {
     html += `
       <div class="news-card">
         <div>
-          <div style="display:flex; justify-space-between; align-items:center; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
             <span class="news-card-badge ${item.badgeClass}">${item.badgeText}</span>
             <span class="news-card-date">${item.date}</span>
           </div>
           <h3 class="news-card-title">${item.title}</h3>
           <p class="news-card-desc" style="margin-top:8px;">${item.desc}</p>
+          <div id="news-summary-${item.id}" style="display:none; margin-top:12px; background:rgba(251, 191, 36, 0.08); border:1px solid rgba(251, 191, 36, 0.2); border-radius:8px; padding:12px; font-size:12px; line-height:1.5;"></div>
         </div>
-        <div style="margin-top:12px; border-top:1px solid var(--border-color); padding-top:12px; display:flex; justify-content:flex-end;">
+        <div style="margin-top:14px; border-top:1px solid var(--border-color); padding-top:12px; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="summarizeNewsItem('${item.id}')" style="font-size:11px; padding:4px 10px;">⚡ Summarize with AI</button>
           <a href="${item.link}" target="_blank" class="btn btn-secondary" style="font-size:11px; padding:4px 10px; text-decoration:none;">Read Official Notice 🔗</a>
         </div>
       </div>
@@ -1849,6 +1884,34 @@ function renderNeetNewsFeed(items) {
   });
 
   feedContainer.innerHTML = html;
+}
+
+async function summarizeNewsItem(newsId) {
+  const summaryBox = document.getElementById(`news-summary-${newsId}`);
+  if (!summaryBox) return;
+
+  const item = NEET_NEWS_DATA.find(n => n.id === newsId);
+  if (!item) return;
+
+  summaryBox.style.display = 'block';
+  summaryBox.innerHTML = '<div style="color:var(--text-muted);">⚡ Gemini is analyzing & summarizing this official notice...</div>';
+
+  try {
+    const prompt = `Synthesize a clear 3-bullet point executive summary of this official NEET notification for an aspirant:
+Title: ${item.title}
+Details: ${item.desc}
+Category: ${item.badgeText}`;
+
+    const summaryText = await callGeminiAPI(prompt, 'You are an expert NEET exam and regulatory analyst.', { temperature: 0.5 });
+    summaryBox.innerHTML = `
+      <div style="color:var(--primary); font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:4px;">
+        <span>⚡</span> AI 3-Bullet Executive Summary:
+      </div>
+      <div style="color:var(--text-secondary); line-height:1.5;">${renderMarkdown(summaryText)}</div>
+    `;
+  } catch (err) {
+    summaryBox.innerHTML = `<div style="color:var(--accent-danger);">Could not generate summary: ${err.message}</div>`;
+  }
 }
 
 function filterNeetNews(category) {
@@ -1918,6 +1981,7 @@ async function fetchAiNeetNewsAnalysis() {
 window.initNeetNewsTab = initNeetNewsTab;
 window.filterNeetNews = filterNeetNews;
 window.searchNeetNews = searchNeetNews;
+window.summarizeNewsItem = summarizeNewsItem;
 window.fetchAiNeetNewsAnalysis = fetchAiNeetNewsAnalysis;
 
 window.renderApiKeySetup = renderApiKeySetup;

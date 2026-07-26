@@ -1618,6 +1618,16 @@
         <p class="page-desc">Official NTA circulars, NMC guidelines, Ministry of Health policy updates & advisory notices for NEET UG</p>
       </div>
 
+      <!-- Official NTA Announcement Ticker Marquee -->
+      <div class="news-ticker-container" style="margin-bottom:20px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:10px; padding:10px 16px; display:flex; align-items:center; gap:12px; overflow:hidden;">
+        <span style="background:var(--accent-danger); color:#fff; font-weight:800; font-size:11px; padding:3px 8px; border-radius:4px; text-transform:uppercase; white-space:nowrap; display:flex; align-items:center; gap:4px;">
+          <span>🚨</span> LIVE NTA TICKER
+        </span>
+        <marquee style="color:var(--text-primary); font-size:13px; font-weight:600; vertical-align:middle;" scrollamount="6" onmouseover="this.stop()" onmouseout="this.start()">
+          📢 NTA Urgent Advisory: Biometric attendance and strict dress code mandatory for NEET UG • 🩺 NMC Circular: Class 12 candidates with Biology as additional subject eligible for NEET • 📘 NCERT Rationalized Syllabus alignment updated for Class 11 & 12 • 🎓 MCC 15% AIQ Reservation Certificate dates released
+        </marquee>
+      </div>
+
       <!-- Live AI News Briefing Widget -->
       <div class="glass-card" style="margin-bottom: 24px; border-left: 4px solid var(--primary); background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(139, 92, 246, 0.08));">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
@@ -1636,23 +1646,23 @@
       <div class="glass-card" style="margin-bottom: 24px; padding: 16px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <!-- Category Pills -->
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;" id="news-filter-pills">
             <button class="news-filter-btn active" data-cat="all" onclick="filterNeetNews('all')">All News</button>
-            <button class="news-filter-btn" data-cat="nta" onclick="filterNeetNews('nta')">🏛️ NTA Circulars</button>
-            <button class="news-filter-btn" data-cat="nmc" onclick="filterNeetNews('nmc')">🩺 NMC Guidelines</button>
-            <button class="news-filter-btn" data-cat="syllabus" onclick="filterNeetNews('syllabus')">📘 Syllabus & Pattern</button>
-            <button class="news-filter-btn" data-cat="mcc" onclick="filterNeetNews('mcc')">🎓 MCC Counselling</button>
+            <button class="news-filter-btn" data-cat="nta" onclick="filterNeetNews('nta')">🔴 NTA Alerts</button>
+            <button class="news-filter-btn" data-cat="syllabus" onclick="filterNeetNews('syllabus')">🔵 Syllabus & Pattern</button>
+            <button class="news-filter-btn" data-cat="mcc" onclick="filterNeetNews('mcc')">🟢 MCC Counseling</button>
+            <button class="news-filter-btn" data-cat="strategy" onclick="filterNeetNews('strategy')">🟣 Strategy</button>
           </div>
 
           <!-- Search Input -->
-          <div style="min-width:240px; flex:1; max-width:320px;">
+          <div style="min-width:220px; flex:1; max-width:320px;">
             <input type="text" id="news-search-input" class="form-input" placeholder="🔍 Search official notices..." oninput="searchNeetNews(this.value)" style="width:100%; padding:8px 12px; font-size:13px;">
           </div>
         </div>
       </div>
 
       <!-- Official News Cards Feed -->
-      <div id="neet-news-feed" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+      <div id="neet-news-feed" class="news-grid-container">
       </div>
     </section>
 
