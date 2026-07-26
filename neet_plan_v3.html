@@ -17833,6 +17833,7 @@ function getCompleteWebsiteContext() {
 }
 
 function renderMockTestResults(results) {
+  lastMockTestResults = results;
   document.getElementById('mocktest-exam').style.display = 'none';
   document.getElementById('mocktest-results').style.display = 'block';
 
@@ -17958,21 +17959,40 @@ Provide:
   }
 }
 
+let lastMockTestResults = null;
+
 function saveMockTestToTracker() {
   try {
     const existing = JSON.parse(localStorage.getItem('neet_v3_mock_tests') || '[]');
-    const latestScore = document.getElementById('mocktest-total-score')?.textContent || '0';
-    const record = {
-      id: `ai_mock_${Date.now()}`,
-      name: `AI CBT Test (${new Date().toLocaleDateString('en-IN')})`,
-      date: new Date().toISOString().split('T')[0],
-      total: parseInt(latestScore, 10),
-      phy: 0, che: 0, bio: 0
-    };
+    let record;
+    if (lastMockTestResults) {
+      record = {
+        id: `ai_mock_${Date.now()}`,
+        name: `AI CBT Test (${new Date().toLocaleDateString('en-IN')})`,
+        date: new Date().toISOString().split('T')[0],
+        total: lastMockTestResults.totalScore || 0,
+        phy: lastMockTestResults.subjectStats?.Physics?.score || 0,
+        che: lastMockTestResults.subjectStats?.Chemistry?.score || 0,
+        bio: lastMockTestResults.subjectStats?.Biology?.score || 0
+      };
+    } else {
+      const latestScore = document.getElementById('result-total-score')?.textContent || '0';
+      record = {
+        id: `ai_mock_${Date.now()}`,
+        name: `AI CBT Test (${new Date().toLocaleDateString('en-IN')})`,
+        date: new Date().toISOString().split('T')[0],
+        total: parseInt(latestScore, 10) || 0,
+        phy: 0, che: 0, bio: 0
+      };
+    }
     existing.unshift(record);
     localStorage.setItem('neet_v3_mock_tests', JSON.stringify(existing));
+    if (typeof renderTestList === 'function') renderTestList();
+    if (typeof renderMockTestsDashboard === 'function') renderMockTestsDashboard();
     if (typeof showToast === 'function') showToast('✅ Saved to Mock Test Tracker!');
+    else alert('✅ Saved to Mock Test Tracker!');
   } catch (e) {
+    console.error("Error saving mock test to tracker:", e);
     alert('Failed to save result to tracker.');
   }
 }
