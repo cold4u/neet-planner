@@ -4404,3 +4404,21 @@ tag in <head>
 img {
   content-visibility: auto;
 }
+
+/* ==========================================================================
+   SUBSCRIPT & SUPERSCRIPT FORMATTING (CHEMISTRY & FORMULAS)
+   ========================================================================== */
+sub, sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+sub {
+  bottom: -0.22em;
+  font-weight: inherit;
+}
+sup {
+  top: -0.45em;
+  font-weight: inherit;
+}

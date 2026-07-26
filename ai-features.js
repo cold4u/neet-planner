@@ -222,7 +222,7 @@ let currentSubjectMode = "physics";
 
 const SYSTEM_PROMPTS = {
   physics: `You are an expert NEET Physics tutor. Focus on step-by-step mathematical solutions, Free Body Diagrams (FBD descriptions), vector analysis, unit checks, and NCERT formulas. Use LaTeX ($...$ and $$...$$). End with a "Quick Recall Point".`,
-  chemistry: `You are an expert NEET Chemistry tutor (Physical, Organic, Inorganic). Focus on reaction mechanisms, electron displacement concepts, balanced equations, and NCERT exception points. Use LaTeX for equations. End with a "Quick Recall Point".`,
+  chemistry: `You are an expert NEET Chemistry tutor (Physical, Organic, Inorganic). Always format chemical formulas with proper subscripts and superscripts (e.g., H₂O, H~2~O, Fe^3+^, SO₄²⁻, or LaTeX $CH_3COOH$, $Fe^{3+}$). Focus on reaction mechanisms, electron displacement concepts, balanced equations, and NCERT exception points. Use LaTeX for equations. End with a "Quick Recall Point".`,
   biology: `You are an expert NEET Biology tutor. Focus strictly on NCERT Class 11 & 12 textbook facts, diagrams, classification tables, mnemonics, and bold terms. Use bullet points and bold headers. End with a "Quick Recall Point".`
 };
 
@@ -1003,6 +1003,21 @@ function escapeHTML(str) {
 function parseMarkdownAndKaTeX(text) {
   if (!text) return "";
   let html = escapeHTML(text);
+
+  // Restore allowed sub and sup HTML tags from AI or user input
+  html = html.replace(/&lt;sub&gt;(.*?)&lt;\/sub&gt;/gi, '<sub>$1</sub>');
+  html = html.replace(/&lt;sup&gt;(.*?)&lt;\/sup&gt;/gi, '<sup>$1</sup>');
+
+  // Support ~subscript~ syntax (e.g. H~2~O -> H<sub>2</sub>O)
+  html = html.replace(/~([^~]+)~/g, '<sub>$1</sub>');
+
+  // Support ^superscript^ syntax (e.g. Fe^3+^ -> Fe<sup>3+</sup>)
+  html = html.replace(/\^([^\^]+)\^/g, '<sup>$1</sup>');
+
+  // Support chemical formula subscript shorthand (e.g. H_2O -> H<sub>2</sub>O, CO_2 -> CO<sub>2</sub>)
+  html = html.replace(/\b([A-Z][a-z]?)_([0-9]+)\b/g, '$1<sub>$2</sub>');
+
+  // Formatting: Bold, Italics, Line breaks
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
   html = html.replace(/\n/g, '<br>');
