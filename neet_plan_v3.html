@@ -15048,34 +15048,39 @@ if (document.readyState === 'loading') {
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
 /**
- * SHUBxCOLD NEET 2027 Planner — AI Features Engine (BYOK + Gemini 2.0 Flash)
+ * SHUBxCOLD NEET 2027 Planner — AI Features Engine (BYOK + Multi-Model Fallback Ring)
  * 
  * Features:
- * 1. BYOK Gemini 2.0 Flash API wrapper with Exponential Backoff on 429
- * 2. AI Tutor (Doubt Solver with Subject Modes & KaTeX)
- * 3. AI CBT Mock Test Generator & NTA-Style Exam Simulator
- * 4. PDF Question Extractor → NEET Test Builder (using PDF.js)
- * 5. AI Study Optimizer Widget ("What Should I Study?")
- * 6. AI Error Pattern Analyzer ("Analyze My Mistakes" & Recovery Quiz)
- * 7. NEET News & NTA Official Updates Hub + AI Summarizer
+ * 1. BYOK Multi-Model Fallback Ring (gemini-2.0-flash -> gemini-2.5-flash -> gemini-2.5-flash-lite -> gemini-1.5-flash)
+ * 2. Exponential Backoff & Automatic Endpoint Failover for HTTP 429
+ * 3. AI Tutor (Doubt Solver with Subject Modes & KaTeX)
+ * 4. AI CBT Mock Test Generator & NTA-Style Exam Simulator
+ * 5. PDF Question Extractor → NEET Test Builder (using PDF.js)
+ * 6. AI Study Optimizer Widget ("What Should I Study?")
+ * 7. AI Error Pattern Analyzer ("Analyze My Mistakes" & Recovery Quiz)
+ * 8. NEET News & NTA Official Updates Hub + AI Summarizer
  */
 
-// Model Configuration — STRICTLY gemini-2.0-flash
-const GEMINI_MODEL = "gemini-2.0-flash";
+// Model Fallback Ring — Automatically rotates if any model hits 429 rate limits
+const GEMINI_MODELS = [
+  "gemini-2.0-flash",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-1.5-flash"
+];
+
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
 // Helper: Sleep for delay
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Central BYOK Gemini API Caller with Exponential Backoff on HTTP 429
+// Central BYOK Gemini API Caller with Multi-Model Fallback Ring & Exponential Backoff
 async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null) {
   const apiKey = localStorage.getItem("gemini_api_key");
   if (!apiKey || !apiKey.trim()) {
     throw new Error("NO_API_KEY");
   }
 
-  const endpoint = `${GEMINI_API_BASE}/${GEMINI_MODEL}:generateContent?key=${apiKey.trim()}`;
-  
   const contents = [];
   if (systemInstruction) {
     contents.push({ role: "user", parts: [{ text: `[System Instruction]: ${systemInstruction}` }] });
@@ -15091,59 +15096,72 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null) {
     }
   };
 
-  const backoffDelays = [2000, 4000, 8000, 16000];
-  let attempt = 0;
+  const maxPasses = 2;
 
-  while (attempt <= backoffDelays.length) {
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+  for (let pass = 1; pass <= maxPasses; pass++) {
+    for (let i = 0; i < GEMINI_MODELS.length; i++) {
+      const model = GEMINI_MODELS[i];
+      const endpoint = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey.trim()}`;
 
-      if (response.status === 429) {
-        attempt++;
-        if (attempt <= backoffDelays.length) {
-          const delaySec = backoffDelays[attempt - 1] / 1000;
-          if (onStatus) onStatus(`Google Free Tier rate limit reached. Auto-retrying in ${delaySec}s...`);
-          await sleep(backoffDelays[attempt - 1]);
-          continue;
-        } else {
-          throw new Error("HTTP_429_EXCEEDED");
+      try {
+        if (onStatus && (i > 0 || pass > 1)) {
+          onStatus(`⚡ Connecting to AI server (${model})...`);
         }
-      }
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const msg = errorData.error?.message || `API error (${response.status})`;
-        throw new Error(msg);
-      }
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
 
-      const data = await response.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!text) {
-        throw new Error("Empty response received from Gemini AI.");
-      }
+        if (response.status === 429) {
+          console.warn(`Model ${model} hit 429 rate limit. Rotating to next model...`);
+          if (onStatus) {
+            onStatus(`⚠️ Rate limit on ${model}. Switching to backup AI engine...`);
+          }
+          await sleep(1500);
+          continue; // Try next model in ring immediately
+        }
 
-      return text;
+        if (response.status === 404) {
+          console.warn(`Model ${model} not available (404). Skipping...`);
+          continue;
+        }
 
-    } catch (err) {
-      if (err.message === "NO_API_KEY" || err.message === "HTTP_429_EXCEEDED") {
-        throw err;
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          const msg = errorData.error?.message || `API error (${response.status})`;
+          
+          if (msg.includes("API key not valid") || msg.includes("API_KEY_INVALID")) {
+            throw new Error("INVALID_API_KEY");
+          }
+          throw new Error(msg);
+        }
+
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) {
+          throw new Error("Empty response received from Gemini AI.");
+        }
+
+        return text;
+
+      } catch (err) {
+        if (err.message === "NO_API_KEY" || err.message === "INVALID_API_KEY") {
+          throw err;
+        }
+        // If it's a network error or fetch failure, continue to next fallback model
+        console.warn(`Attempt on ${model} failed: ${err.message}. Trying next model...`);
       }
-      if (attempt < backoffDelays.length && err.message.includes("429")) {
-        attempt++;
-        const delaySec = backoffDelays[attempt - 1] / 1000;
-        if (onStatus) onStatus(`Rate limit hit. Retrying in ${delaySec}s...`);
-        await sleep(backoffDelays[attempt - 1]);
-      } else {
-        throw err;
-      }
+    }
+
+    if (pass < maxPasses) {
+      if (onStatus) onStatus("⏳ Free Tier rate limit reached across models. Pausing 3s before retry...");
+      await sleep(3000);
     }
   }
 
-  throw new Error("Failed to get response from Gemini API.");
+  throw new Error("HTTP_429_EXCEEDED");
 }
 
 /* ==========================================================================
@@ -15191,22 +15209,30 @@ async function testApiKeyConnection() {
     statusBadge.innerHTML = `<span style="color:#fbbf24;">🟡 Testing Connection...</span>`;
   }
   try {
-    const reply = await callGeminiAPI("Respond with only the word: CONNECTED");
+    const reply = await callGeminiAPI("Respond with only the word: CONNECTED", "", (msg) => {
+      if (statusBadge) statusBadge.innerHTML = `<span style="color:#fbbf24; font-size:11px;">${msg}</span>`;
+    });
     if (reply && reply.includes("CONNECTED")) {
       if (statusBadge) {
-        statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected (Gemini 2.0 Flash Ready)</span>`;
+        statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected (Multi-Model Fallback Active)</span>`;
       }
-      alert("🎉 Connection Successful! Gemini 2.0 Flash is ready for all AI features.");
+      alert("🎉 Connection Successful! Gemini AI with Multi-Model Fallback is ready.");
     } else {
       if (statusBadge) {
         statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected</span>`;
       }
     }
   } catch (err) {
-    if (statusBadge) {
-      statusBadge.innerHTML = `<span style="color:#ef4444; font-weight:bold;">🔴 Connection Failed: ${err.message}</span>`;
+    if (err.message === "INVALID_API_KEY") {
+      if (statusBadge) statusBadge.innerHTML = `<span style="color:#ef4444; font-weight:bold;">🔴 Invalid API Key</span>`;
+      alert("❌ Invalid API Key. Please check your key at https://aistudio.google.com/apikey");
+    } else if (err.message === "HTTP_429_EXCEEDED") {
+      if (statusBadge) statusBadge.innerHTML = `<span style="color:#fbbf24; font-weight:bold;">🟡 Rate Limit Hit (Retry in 60s)</span>`;
+      alert("⚠️ Free Tier Rate Limit Reached! Please wait 60 seconds or generate a new free key at https://aistudio.google.com/apikey");
+    } else {
+      if (statusBadge) statusBadge.innerHTML = `<span style="color:#ef4444; font-weight:bold;">🔴 Connection Failed</span>`;
+      alert(`❌ Connection Test Failed: ${err.message}`);
     }
-    alert(`❌ Connection Test Failed: ${err.message}`);
   }
 }
 
@@ -15294,14 +15320,10 @@ async function sendTutorMessage() {
     return;
   }
 
-  // Clear input
   input.value = "";
   updateCharCount();
 
-  // Append user message
   appendChatMessage("user", userText);
-
-  // Show typing indicator
   const typingId = appendTypingIndicator();
 
   try {
@@ -15317,6 +15339,8 @@ async function sendTutorMessage() {
     removeChatMessage(typingId);
     if (err.message === "NO_API_KEY") {
       appendChatMessage("ai", "⚠️ **Setup Required**: Please configure your Gemini API Key in the Settings tab.");
+    } else if (err.message === "HTTP_429_EXCEEDED") {
+      appendChatMessage("ai", "⚠️ **Rate Limit Exceeded**: Google Free Tier limit reached across all model endpoints. Please wait 60 seconds or create a new free API key at [Google AI Studio](https://aistudio.google.com/apikey).");
     } else {
       appendChatMessage("ai", `❌ **Error**: ${err.message}`);
     }
@@ -15333,7 +15357,6 @@ function appendChatMessage(sender, text) {
   if (sender === "user") {
     msgDiv.innerHTML = `<div class="bubble-content">${escapeHTML(text)}</div>`;
   } else {
-    // Render Markdown + KaTeX
     const parsedText = parseMarkdownAndKaTeX(text);
     msgDiv.innerHTML = `
       <div class="bubble-header">
@@ -15347,7 +15370,6 @@ function appendChatMessage(sender, text) {
   chatBody.appendChild(msgDiv);
   chatBody.scrollTop = chatBody.scrollHeight;
 
-  // Render KaTeX if loaded
   if (window.renderMathInElement) {
     try {
       renderMathInElement(msgDiv, {
@@ -15437,7 +15459,7 @@ async function generateCbtTest() {
     statusCard.innerHTML = `
       <div class="glass-card" style="text-align:center; padding:20px;">
         <div class="spinner" style="margin:0 auto 10px auto;"></div>
-        <h4>Generating ${numQuestions} NEET-pattern MCQs using Gemini 2.0 Flash...</h4>
+        <h4>Generating ${numQuestions} NEET-pattern MCQs with Multi-Model AI...</h4>
         <p id="cbt-status-subtext" style="font-size:12px; color:#aaa;">Drafting questions with options, explanations, and NCERT references...</p>
       </div>
     `;
@@ -15482,9 +15504,13 @@ Each object must have:
 
   } catch (err) {
     if (statusCard) {
+      const errMsg = err.message === "HTTP_429_EXCEEDED" 
+        ? "⚠️ Rate limit reached across free models. Please wait 60 seconds or generate a fresh key in Settings."
+        : err.message;
+
       statusCard.innerHTML = `
         <div class="glass-card" style="border: 1px solid #ef4444; color:#ef4444; padding:15px;">
-          ❌ Generation Failed: ${err.message}
+          ❌ Generation Failed: ${errMsg}
         </div>
       `;
     }
@@ -15763,7 +15789,7 @@ async function handlePdfDrop(e) {
       <div class="glass-card" style="text-align:center; padding:20px;">
         <div class="spinner" style="margin:0 auto 10px auto;"></div>
         <h4>Reading PDF text using PDF.js...</h4>
-        <p style="font-size:12px; color:#aaa;">Extracted text will be parsed into NEET MCQs using Gemini 2.0 Flash...</p>
+        <p id="pdf-status-subtext" style="font-size:12px; color:#aaa;">Extracted text will be parsed into NEET MCQs using Gemini AI...</p>
       </div>
     `;
   }
@@ -15787,7 +15813,10 @@ Return ONLY a valid JSON array of objects without markdown headers:
 Text:
 ${pdfText.substring(0, 8000)}`;
 
-    const rawResult = await callGeminiAPI(prompt, "You are a PDF question extractor. Output JSON array only.");
+    const rawResult = await callGeminiAPI(prompt, "You are a PDF question extractor. Output JSON array only.", (msg) => {
+      const sub = document.getElementById("pdf-status-subtext");
+      if (sub) sub.textContent = msg;
+    });
     
     let cleanJson = rawResult.trim();
     if (cleanJson.startsWith("```json")) cleanJson = cleanJson.substring(7);
@@ -15910,7 +15939,7 @@ async function analyzeMistakesWithAI() {
   resultContainer.innerHTML = `
     <div class="glass-card" style="padding:15px; text-align:center;">
       <div class="spinner" style="margin:0 auto 10px auto;"></div>
-      Analyzing your mistake patterns using Gemini 2.0 Flash...
+      Analyzing your mistake patterns using Gemini AI...
     </div>
   `;
 
@@ -15994,7 +16023,7 @@ async function summarizeNews(title) {
     showTab("settings");
     return;
   }
-  alert(`⚡ Summarizing "${title}" using Gemini 2.0 Flash...`);
+  alert(`⚡ Summarizing "${title}" using Gemini AI...`);
   try {
     const summary = await callGeminiAPI(`Provide a 3-bullet summary of the NEET update titled: "${title}"`);
     alert(`📰 AI Summary:
@@ -16027,11 +16056,8 @@ function escapeHTML(str) {
 function parseMarkdownAndKaTeX(text) {
   if (!text) return "";
   let html = escapeHTML(text);
-  // Bold
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  // Italics
   html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-  // Newlines
   html = html.replace(/
 /g, '<br>');
   return html;
@@ -16070,7 +16096,6 @@ function handleAiTabSwitch(tabId) {
   }
 }
 
-// Hook into global showTab
 if (window.showTab) {
   const originalShowTab = window.showTab;
   window.showTab = function(tabId) {
