@@ -7277,14 +7277,14 @@ tag in <head>
             <div style="padding:16px 24px; background:rgba(0,0,0,0.2); border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
               <div style="display:flex; gap:12px; align-items:center;">
                 <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px;">
-                  <input type="checkbox" id="mocktest-mark-review" onchange="toggleMarkForReview()"> Mark for Review
+                  <input type="checkbox" id="mocktest-mark-review" onchange="toggleMockTestMark(mockTestCurrentIdx)"> Mark for Review
                 </label>
-                <button class="btn btn-secondary" onclick="clearCurrentResponse()" style="padding:6px 12px; font-size:12px;">Clear Response</button>
+                <button class="btn btn-secondary" onclick="clearMockTestResponse()" style="padding:6px 12px; font-size:12px;">Clear Response</button>
               </div>
               
               <div style="display:flex; gap:12px;">
-                <button class="btn btn-secondary" onclick="prevMockQuestion()" style="padding:8px 16px;">Previous</button>
-                <button class="btn btn-primary" onclick="saveAndNextMockQuestion()" style="padding:8px 24px; font-weight:700;">Save & Next</button>
+                <button class="btn btn-secondary" onclick="navigateMockTestQuestion('prev')" style="padding:8px 16px;">Previous</button>
+                <button class="btn btn-primary" onclick="navigateMockTestQuestion('next')" style="padding:8px 24px; font-weight:700;">Save & Next</button>
               </div>
             </div>
           </div>
@@ -7357,15 +7357,9 @@ tag in <head>
           <h3 style="margin-top:0; display:flex; align-items:center; gap:8px;">🤖 AI Performance Insights</h3>
         </div>
         
-        <div>
-          <h3 style="margin-bottom:16px;">Detailed Review</h3>
-          <div id="mocktest-review-list" style="display:flex; flex-direction:column; gap:16px;">
-          </div>
-        </div>
-        
         <div style="display:flex; gap:16px; justify-content:center; border-top:1px solid var(--border-color); padding-top:24px; flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="showTab('tests')">Save to Mock Tracker</button>
-          <button class="btn btn-secondary" onclick="startMockExam()">Retake Test</button>
+          <button class="btn btn-secondary" onclick="retakeMockTest()">Retake Test</button>
           <button class="btn btn-secondary" onclick="showTab('ai-mocktest')">Generate New Test</button>
           <button class="btn btn-secondary" onclick="showTab('overview')">Exit</button>
         </div>
@@ -7374,15 +7368,15 @@ tag in <head>
 
     <section id="pdf-to-test" class="tab-content">
       <div class="page-header">
-        <h1 class="page-title">PDF to NEET Test</h1>
-        <p class="page-desc">Extract questions from any PDF and create practice tests</p>
+        <h1 class="page-title">📄 PDF to NEET Test Generator</h1>
+        <p class="page-desc">Extract MCQs from any PDF study material or test series and turn them into an interactive CBT mock test.</p>
       </div>
       
       <!-- Upload View -->
-      <div id="pdf-upload-view" class="glass-card" style="max-width:600px; margin:0 auto; text-align:center;">
-        <div id="pdf-dropzone" class="pdf-dropzone" style="border: 2px dashed var(--border-color); border-radius:12px; padding:60px 20px; cursor:pointer; transition:all 0.2s; background:rgba(0,0,0,0.2);">
-          <div style="font-size:48px; margin-bottom:16px;">📄</div>
-          <h3 style="margin:0 0 8px 0;">Drag & drop your PDF here</h3>
+      <div id="pdf-upload-view">
+        <div id="pdf-dropzone" class="glass-card" style="border:2px dashed var(--primary); text-align:center; padding:50px 20px; cursor:pointer; transition:all 0.3s ease;">
+          <div style="font-size:48px; margin-bottom:12px;">📄</div>
+          <h3 style="margin:0 0 8px 0;">Drag & Drop your PDF here</h3>
           <p style="color:var(--text-muted); margin:0 0 16px 0;">or click to browse</p>
           <div style="font-size:11px; color:var(--text-muted); background:rgba(255,255,255,0.05); display:inline-block; padding:4px 12px; border-radius:12px;">Supports PDF up to 20MB</div>
           <input type="file" id="pdf-file-input" accept="application/pdf" style="display:none;">
@@ -7413,9 +7407,9 @@ tag in <head>
             <h3 style="margin:0 0 4px 0;">Extracted Questions</h3>
           </div>
           <div style="display:flex; gap:8px;">
-            <button class="btn btn-secondary" onclick="pdfSelectAll()" style="padding:6px 12px; font-size:12px;">Select All</button>
-            <button class="btn btn-secondary" onclick="pdfDeselectAll()" style="padding:6px 12px; font-size:12px;">Deselect All</button>
-            <select id="pdf-subject-filter" class="form-input" style="padding:4px 8px; font-size:12px;" onchange="filterPdfQuestions()">
+            <button class="btn btn-secondary" onclick="selectAllQuestions()" style="padding:6px 12px; font-size:12px;">Select All</button>
+            <button class="btn btn-secondary" onclick="deselectAllQuestions()" style="padding:6px 12px; font-size:12px;">Deselect All</button>
+            <select id="pdf-subject-filter" class="form-input" style="padding:4px 8px; font-size:12px;" onchange="filterQuestionsBySubject(this.value)">
               <option value="all">All Subjects</option>
               <option value="physics">Physics</option>
               <option value="chemistry">Chemistry</option>
@@ -18789,6 +18783,35 @@ window.generateStudyRecommendation = generateStudyRecommendation;
 window.analyzeErrorPatterns = analyzeErrorPatterns;
 window.generateRecoveryQuiz = generateRecoveryQuiz;
 window.getCompleteWebsiteContext = getCompleteWebsiteContext;
+
+// Global compatibility aliases
+window.toggleMarkForReview = function() {
+  if (typeof mockTestCurrentIdx !== 'undefined') toggleMockTestMark(mockTestCurrentIdx);
+};
+window.clearCurrentResponse = function() {
+  if (typeof mockTestCurrentIdx !== 'undefined') clearMockTestResponse();
+};
+window.prevMockQuestion = function() {
+  navigateMockTestQuestion('prev');
+};
+window.saveAndNextMockQuestion = function() {
+  navigateMockTestQuestion('next');
+};
+window.startMockExam = function() {
+  retakeMockTest();
+};
+window.pdfSelectAll = selectAllQuestions;
+window.pdfDeselectAll = deselectAllQuestions;
+window.filterPdfQuestions = function() {
+  const select = document.getElementById('pdf-subject-filter');
+  filterQuestionsBySubject(select ? select.value : 'all');
+};
+window.savePdfToQuestionBank = function() {
+  const name = prompt("Enter Question Bank Name:", "Extracted Bank " + new Date().toLocaleDateString());
+  if (name && typeof pdfExtractedQuestions !== 'undefined' && pdfExtractedQuestions.length > 0) {
+    saveQuestionBank(name, pdfExtractedQuestions);
+  }
+};
 
 function handleAiTabSwitch(tabId) {
   if (tabId === 'ai-tutor') initAiTutor();

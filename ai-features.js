@@ -2033,6 +2033,35 @@ window.analyzeErrorPatterns = analyzeErrorPatterns;
 window.generateRecoveryQuiz = generateRecoveryQuiz;
 window.getCompleteWebsiteContext = getCompleteWebsiteContext;
 
+// Global compatibility aliases
+window.toggleMarkForReview = function() {
+  if (typeof mockTestCurrentIdx !== 'undefined') toggleMockTestMark(mockTestCurrentIdx);
+};
+window.clearCurrentResponse = function() {
+  if (typeof mockTestCurrentIdx !== 'undefined') clearMockTestResponse();
+};
+window.prevMockQuestion = function() {
+  navigateMockTestQuestion('prev');
+};
+window.saveAndNextMockQuestion = function() {
+  navigateMockTestQuestion('next');
+};
+window.startMockExam = function() {
+  retakeMockTest();
+};
+window.pdfSelectAll = selectAllQuestions;
+window.pdfDeselectAll = deselectAllQuestions;
+window.filterPdfQuestions = function() {
+  const select = document.getElementById('pdf-subject-filter');
+  filterQuestionsBySubject(select ? select.value : 'all');
+};
+window.savePdfToQuestionBank = function() {
+  const name = prompt("Enter Question Bank Name:", "Extracted Bank " + new Date().toLocaleDateString());
+  if (name && typeof pdfExtractedQuestions !== 'undefined' && pdfExtractedQuestions.length > 0) {
+    saveQuestionBank(name, pdfExtractedQuestions);
+  }
+};
+
 function handleAiTabSwitch(tabId) {
   if (tabId === 'ai-tutor') initAiTutor();
   if (tabId === 'ai-mocktest') initMockTestTab();
