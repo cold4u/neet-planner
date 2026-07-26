@@ -43,7 +43,7 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null) {
     contents: contents,
     generationConfig: {
       temperature: 0.7,
-      maxOutputTokens: 2048
+      maxOutputTokens: 8192
     }
   };
 
@@ -465,7 +465,7 @@ Each object format:
   }
 }
 
-// Robust JSON Parser that handles unescaped LaTeX backslashes, markdown code fences & control chars
+// Robust JSON Parser that handles unescaped LaTeX backslashes, markdown code fences, control chars, and truncated JSON
 function robustParseJSON(rawText) {
   if (!rawText) throw new Error("Empty text received from AI.");
 
@@ -476,8 +476,17 @@ function robustParseJSON(rawText) {
 
   // Find array bounds [ ... ]
   const firstSquare = text.indexOf('[');
-  const lastSquare = text.lastIndexOf(']');
+  let lastSquare = text.lastIndexOf(']');
   
+  // If array is truncated (no closing ]), repair it by finding the last complete object }
+  if (firstSquare !== -1 && (lastSquare === -1 || lastSquare <= firstSquare)) {
+    const lastCurly = text.lastIndexOf('}');
+    if (lastCurly > firstSquare) {
+      text = text.substring(firstSquare, lastCurly + 1) + "\n]";
+      lastSquare = text.lastIndexOf(']');
+    }
+  }
+
   if (firstSquare !== -1 && lastSquare > firstSquare) {
     text = text.substring(firstSquare, lastSquare + 1);
   }
@@ -504,7 +513,19 @@ function robustParseJSON(rawText) {
 
     return JSON.parse(cleaned);
   } catch (e3) {
-    throw new Error(`AI generated invalid JSON structure: ${e3.message}`);
+    // Attempt 4: Truncate to last complete '}' and close array
+    try {
+      const lastCurly = text.lastIndexOf('}');
+      if (lastCurly > 0) {
+        let repaired = text.substring(0, lastCurly + 1) + "\n]";
+        repaired = repaired
+          .replace(/\\(?!["\\/bfnrtu])/g, "\\\\")
+          .replace(/,\s*([\]}])/g, "$1");
+        return JSON.parse(repaired);
+      }
+    } catch(e4) {}
+
+    throw new Error(`AI generated incomplete JSON response. Try generating fewer questions or click Generate again.`);
   }
 }
 
