@@ -4380,3 +4380,27 @@ tag in <head>
   .exam-palette-panel { width: 100% !important; }
   .news-grid-container { grid-template-columns: 1fr !important; }
 }
+
+
+/* ==========================================================================
+   PERFORMANCE & SPEED OPTIMIZATIONS (LIGHTNING LOAD & RE-RENDER)
+   ========================================================================== */
+
+/* Skip rendering for inactive off-screen tabs */
+.tab-content:not(.active) {
+  display: none !important;
+  content-visibility: auto !important;
+  contain-intrinsic-size: 500px !important;
+}
+
+/* GPU Hardware Acceleration for Smooth Transitions */
+.glass-card, .sidebar, .drawer, .modal, .chat-bubble {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Optimize Image & Layout Painting */
+img {
+  content-visibility: auto;
+}
