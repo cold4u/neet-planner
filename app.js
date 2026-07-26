@@ -5312,39 +5312,26 @@ function importAllPlannerData(event) {
 }
 
 function resetAllPlannerData() {
-  if (!confirm("⚠️ DANGER: This will permanently delete all your custom rescheduled dates, completion checkmarks, mock scores, study hours, and Error Book items. This action CANNOT be undone.\n\nAre you absolutely sure you want to reset the app?")) {
-    return;
-  }
-  if (!confirm("Final Confirmation: Please confirm again that you wish to wipe the application data.")) {
+  if (!confirm("⚠️ DANGER: This will permanently wipe EVERY SINGLE SAVED DATA from this application (study logs, custom dates, chapter progress, flashcards, API key, mock test scores & settings).\n\nAre you sure you want to reset everything?")) {
     return;
   }
   
-  const keysToClear = [
-    'neet_v3_tracker',
-    'neet_v3_errorbook_items',
-    'neet_v3_mock_tests',
-    'neet_v3_done',
-    'neet_v3_custom_scheds',
-    'neet_v3_chapter_progress',
-    'theme',
-    'planStart',
-    'neet_v3_test_analysis',
-    'neet_v3_rescued_backlog_days',
-    'neet_hide_welcome_modal'
-  ];
-  
-  keysToClear.forEach(key => localStorage.removeItem(key));
+  try {
+    localStorage.clear();
+    sessionStorage.clear();
+  } catch (e) {
+    console.error("Storage clear error:", e);
+  }
   
   const status = document.getElementById('backup-status');
   if (status) {
     status.style.display = 'block';
-    status.style.color = 'var(--tertiary)';
-    status.textContent = '⚠️ Wiped all planner data. Resetting app...';
+    status.style.color = '#ef4444';
+    status.textContent = '🗑️ Every single saved data removed! Resetting app...';
   }
-  
-  setTimeout(() => {
-    window.location.reload();
-  }, 1500);
+
+  alert("🗑️ All data removed successfully! Resetting workspace...");
+  window.location.reload();
 }
 
 window.exportAllPlannerData = exportAllPlannerData;
@@ -8179,15 +8166,7 @@ function importPlannerData(event) {
 }
 
 function resetPlannerEverything() {
-  const firstConfirm = confirm("⚠️ WARNING: This will permanently wipe all your study logs, progress trackers, targets, and API keys. Are you sure you want to reset EVERYTHING?");
-  if (firstConfirm) {
-    const secondConfirm = confirm("🚨 LAST CHANCE: Do you want to proceed and delete all data permanently?");
-    if (secondConfirm) {
-      localStorage.clear();
-      alert("🗑️ All data cleared. Resetting your workspace...");
-      window.location.reload();
-    }
-  }
+  resetAllPlannerData();
 }
 
 function toggleEditTargetsMode() {
