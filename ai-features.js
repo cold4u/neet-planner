@@ -75,20 +75,34 @@ function _getNextCooldownExpiry() {
   return earliest;
 }
 
+// Token Efficiency Tracker — Monitor and eliminate API wastage
+const _tokenStats = {
+  totalCalls: parseInt(localStorage.getItem("neet_api_calls_count") || "0"),
+  cachedCalls: parseInt(localStorage.getItem("neet_api_cached_count") || "0"),
+  estTokensUsed: parseInt(localStorage.getItem("neet_api_tokens_used") || "0")
+};
+
+function recordTokenUsage(estTokens, wasCached = false) {
+  if (wasCached) {
+    _tokenStats.cachedCalls++;
+    localStorage.setItem("neet_api_cached_count", _tokenStats.cachedCalls);
+  } else {
+    _tokenStats.totalCalls++;
+    _tokenStats.estTokensUsed += estTokens;
+    localStorage.setItem("neet_api_calls_count", _tokenStats.totalCalls);
+    localStorage.setItem("neet_api_tokens_used", _tokenStats.estTokensUsed);
+  }
+}
+
 /**
  * Central Gemini API Caller — Optimized for Free Tier
  * 
  * Key optimizations vs naive implementation:
  * 1. Uses proper API `system_instruction` field (not wasted as conversation turns = ~30% fewer input tokens)
- * 2. Adaptive maxOutputTokens based on task (chat=2048, JSON=4096, heavy=8192)
- * 3. Response caching for identical prompts
+ * 2. Adaptive maxOutputTokens based on task (chat=1024, JSON=2500, quick=300-600)
+ * 3. Response caching for identical prompts (0 token cost)
  * 4. Single-model-first strategy (only fallback on 429)
  * 5. Concurrent call blocking + minimum request gap
- * 
- * @param {string} prompt - The user prompt
- * @param {string} systemInstruction - System instruction text
- * @param {function} onStatus - Status callback
- * @param {object} options - { maxTokens: number } to override output token limit
  */
 async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, options = {}) {
   const apiKey = localStorage.getItem("gemini_api_key");
@@ -101,6 +115,7 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
   const cached = _getCachedResponse(cacheKey);
   if (cached) {
     console.log("[API] Cache hit — saved 1 API call");
+    recordTokenUsage(0, true);
     return cached;
   }
 
@@ -127,16 +142,14 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
     }
 
     // Build optimized payload using PROPER system_instruction field
-    // This saves ~30% input tokens vs sending as fake conversation turns
     const payload = {
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: options.maxTokens || 2048  // Default 2K (was 8K = 4x waste)
+        maxOutputTokens: options.maxTokens || 1024  // Default 1K (strict cap to prevent wastage)
       }
     };
 
-    // Use the proper API field — NOT wasted as conversation tokens
     if (systemInstruction) {
       payload.system_instruction = { parts: [{ text: systemInstruction }] };
     }
@@ -202,6 +215,10 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
         if (!text) {
           throw new Error("Empty response received from Gemini AI.");
         }
+
+        // Calculate and record estimated token usage
+        const estTokens = Math.ceil((prompt.length + (systemInstruction ? systemInstruction.length : 0) + text.length) / 4);
+        recordTokenUsage(estTokens, false);
 
         // Cache successful response
         _setCachedResponse(cacheKey, text);
@@ -1135,7 +1152,7 @@ Bullet 1: Top priority subject & chapter
 Bullet 2: Target study hours & active recall strategy
 Bullet 3: Quick motivational tip`;
 
-    const recText = await callGeminiAPI(prompt, "You are a NEET study counselor.");
+    const recText = await callGeminiAPI(prompt, "You are a NEET study counselor.", null, { maxTokens: 400 });
     recContainer.innerHTML = `<div style="font-size:13px; line-height:1.6;">${parseMarkdownAndKaTeX(recText)}</div>`;
   } catch (err) {
     recContainer.innerHTML = `<p style="font-size:12px; color:#ef4444;">Could not load suggestion: ${err.message}</p>`;
@@ -1168,7 +1185,7 @@ async function analyzeMistakesWithAI() {
     const prompt = `Analyze typical NEET mistake categories (Conceptual Error, Silly Calculation Error, Time Pressure, Formula Misapplication).
 Provide a 3-step action plan to eliminate repeat errors in Physics & Chemistry.`;
 
-    const analysis = await callGeminiAPI(prompt, "You are a NEET performance analyst.");
+    const analysis = await callGeminiAPI(prompt, "You are a NEET performance analyst.", null, { maxTokens: 600 });
     resultContainer.innerHTML = `
       <div class="glass-card" style="padding:16px;">
         <h3>🧬 AI Mistake DNA Analysis</h3>
@@ -1246,7 +1263,7 @@ async function summarizeNews(title) {
   }
   alert(`⚡ Summarizing "${title}" using Gemini AI...`);
   try {
-    const summary = await callGeminiAPI(`Provide a 3-bullet summary of the NEET update titled: "${title}"`);
+    const summary = await callGeminiAPI(`Provide a 3-bullet summary of the NEET update titled: "${title}"`, "Summarize in 3 bullet points", null, { maxTokens: 300 });
     alert(`📰 AI Summary:\n\n${summary}`);
   } catch (err) {
     alert(`❌ Summary failed: ${err.message}`);
