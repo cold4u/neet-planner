@@ -114,6 +114,10 @@
         <span class="nav-icon">📄</span>
         <span class="nav-label">PDF to Test</span>
       </button>
+      <button class="nav-item" data-tab="neet-news" onclick="showTab('neet-news')">
+        <span class="nav-icon">📰</span>
+        <span class="nav-label">NEET News</span>
+      </button>
       <button class="nav-item" data-tab="settings" onclick="showTab('settings')">
         <span class="nav-icon">⚙️</span>
         <span class="nav-label">Settings</span>
@@ -1603,8 +1607,52 @@
       <!-- Question Bank Manager -->
       <div id="pdf-qbank-view" class="glass-card" style="margin-top:32px;">
         <h2 style="margin-top:0;">Saved Question Banks</h2>
-        <div id="qbank-list" style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
         </div>
+      </div>
+    </section>
+
+    <!-- 10. NTA & GOVT NEET NEWS TAB -->
+    <section id="neet-news" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">📰 NTA & Government NEET News Hub</h1>
+        <p class="page-desc">Official NTA circulars, NMC guidelines, Ministry of Health policy updates & advisory notices for NEET UG</p>
+      </div>
+
+      <!-- Live AI News Briefing Widget -->
+      <div class="glass-card" style="margin-bottom: 24px; border-left: 4px solid var(--primary); background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(139, 92, 246, 0.08));">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+          <div>
+            <h3 style="margin:0; color:var(--primary); font-size:16px; display:flex; align-items:center; gap:8px;">🤖 Gemini AI Regulatory & Exam Intelligence Briefing</h3>
+            <p style="margin:4px 0 0 0; font-size:12px; color:var(--text-muted);">Instant AI analysis of NTA exam rules, eligibility norms, tie-breaking criteria, and Ministry notices</p>
+          </div>
+          <button class="btn btn-primary" onclick="fetchAiNeetNewsAnalysis()">
+            <span>✨</span> Generate AI Briefing
+          </button>
+        </div>
+        <div id="ai-news-briefing-content" style="font-size:13px; color:var(--text-secondary); line-height:1.6; display:none;"></div>
+      </div>
+
+      <!-- Filters & Search Bar -->
+      <div class="glass-card" style="margin-bottom: 24px; padding: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <!-- Category Pills -->
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="news-filter-btn active" data-cat="all" onclick="filterNeetNews('all')">All News</button>
+            <button class="news-filter-btn" data-cat="nta" onclick="filterNeetNews('nta')">🏛️ NTA Circulars</button>
+            <button class="news-filter-btn" data-cat="nmc" onclick="filterNeetNews('nmc')">🩺 NMC Guidelines</button>
+            <button class="news-filter-btn" data-cat="syllabus" onclick="filterNeetNews('syllabus')">📘 Syllabus & Pattern</button>
+            <button class="news-filter-btn" data-cat="mcc" onclick="filterNeetNews('mcc')">🎓 MCC Counselling</button>
+          </div>
+
+          <!-- Search Input -->
+          <div style="min-width:240px; flex:1; max-width:320px;">
+            <input type="text" id="news-search-input" class="form-input" placeholder="🔍 Search official notices..." oninput="searchNeetNews(this.value)" style="width:100%; padding:8px 12px; font-size:13px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Official News Cards Feed -->
+      <div id="neet-news-feed" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
       </div>
     </section>
 
@@ -2551,6 +2599,7 @@
       <button class="drawer-item" data-tab="ai-tutor" onclick="navigateTab('ai-tutor')">🧠 AI Tutor</button>
       <button class="drawer-item" data-tab="ai-mocktest" onclick="navigateTab('ai-mocktest')">🖥️ AI Mock Test</button>
       <button class="drawer-item" data-tab="pdf-to-test" onclick="navigateTab('pdf-to-test')">📄 PDF to Test</button>
+      <button class="drawer-item" data-tab="neet-news" onclick="navigateTab('neet-news')">📰 NEET News</button>
       <button class="drawer-item" data-tab="settings" onclick="navigateTab('settings')">⚙️ Settings</button>
     </nav>
   </aside>

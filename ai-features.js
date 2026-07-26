@@ -1747,6 +1747,179 @@ window.setAiPreference = setAiPreference;
 window.callGeminiAPI = callGeminiAPI;
 window.testGeminiConnection = testGeminiConnection;
 window.renderSetupRequired = renderSetupRequired;
+/* ==========================================
+   SECTION 8: NTA & GOVT NEET NEWS HUB
+   ========================================== */
+
+const NEET_NEWS_DATA = [
+  {
+    id: 'news_1',
+    category: 'nta',
+    badgeText: '🏛️ NTA Official',
+    badgeClass: 'badge-nta',
+    date: 'Official NTA Release',
+    title: 'NTA Exam Advisory: Biometric Verification & Dress Code Regulations',
+    desc: 'National Testing Agency (NTA) mandates biometric attendance, strict dress code guidelines (light clothes, short sleeves, no large buttons), and mandatory government ID verification at exam centers.',
+    link: 'https://neet.nta.nic.in'
+  },
+  {
+    id: 'news_2',
+    category: 'nmc',
+    badgeText: '🩺 NMC Policy',
+    badgeClass: 'badge-nmc',
+    date: 'Ministry of Health / NMC',
+    title: 'NMC Revises NEET UG Eligibility & Subject Passing Guidelines',
+    desc: 'National Medical Commission confirms candidates with Physics, Chemistry, Biology/Biotechnology as core/additional subjects in 10+2 are eligible for NEET-UG examination.',
+    link: 'https://nmc.org.in'
+  },
+  {
+    id: 'news_3',
+    category: 'syllabus',
+    badgeText: '📘 Syllabus Update',
+    badgeClass: 'badge-syllabus',
+    date: 'NCERT & NTA Framework',
+    title: 'NEET UG Rationalized NCERT Syllabus Alignment',
+    desc: 'NTA aligns the NEET UG question paper with rationalized NCERT Class 11 & 12 textbooks. Reduced units in Chemistry and Biology excluded from examination weightage.',
+    link: 'https://neet.nta.nic.in'
+  },
+  {
+    id: 'news_4',
+    category: 'nta',
+    badgeText: '🏛️ NTA Official',
+    badgeClass: 'badge-nta',
+    date: 'NTA Public Notice',
+    title: 'NEET Tie-Breaking Criteria Standardized',
+    desc: 'NTA updates tie-breaking order for NEET UG ranking: 1. Higher marks in Biology, 2. Higher marks in Chemistry, 3. Higher marks in Physics, 4. Lower proportion of incorrect answers.',
+    link: 'https://neet.nta.nic.in'
+  },
+  {
+    id: 'news_5',
+    category: 'mcc',
+    badgeText: '🎓 MCC Counselling',
+    badgeClass: 'badge-mcc',
+    date: 'MCC Govt Portal',
+    title: 'MCC All-India Quota (AIQ) 15% Seat Matrix & Reservation Guidelines',
+    desc: 'Medical Counselling Committee (MCC) releases guidelines for 15% AIQ MBBS/BDS seats, 85% state quota rules, and OBC-NCL / EWS category certificate issue date cutoffs.',
+    link: 'https://mcc.nic.in'
+  },
+  {
+    id: 'news_6',
+    category: 'nmc',
+    badgeText: '🩺 Govt Regulation',
+    badgeClass: 'badge-nmc',
+    date: 'NMC Advisory Notice',
+    title: 'NMC Advisory on Anti-Malpractice & Strict Audit of Exam Centers',
+    desc: 'Ministry of Health & NMC issue strict anti-malpractice directives, including AI video surveillance, dual invigilation, and electronic jamming at all NEET UG exam venues.',
+    link: 'https://nmc.org.in'
+  }
+];
+
+let activeNewsCategory = 'all';
+
+function initNeetNewsTab() {
+  renderNeetNewsFeed(NEET_NEWS_DATA);
+}
+
+function renderNeetNewsFeed(items) {
+  const feedContainer = document.getElementById('neet-news-feed');
+  if (!feedContainer) return;
+
+  if (!items || items.length === 0) {
+    feedContainer.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted);">No official notices found matching your filter.</div>';
+    return;
+  }
+
+  let html = '';
+  items.forEach(item => {
+    html += `
+      <div class="news-card">
+        <div>
+          <div style="display:flex; justify-space-between; align-items:center; margin-bottom:10px;">
+            <span class="news-card-badge ${item.badgeClass}">${item.badgeText}</span>
+            <span class="news-card-date">${item.date}</span>
+          </div>
+          <h3 class="news-card-title">${item.title}</h3>
+          <p class="news-card-desc" style="margin-top:8px;">${item.desc}</p>
+        </div>
+        <div style="margin-top:12px; border-top:1px solid var(--border-color); padding-top:12px; display:flex; justify-content:flex-end;">
+          <a href="${item.link}" target="_blank" class="btn btn-secondary" style="font-size:11px; padding:4px 10px; text-decoration:none;">Read Official Notice 🔗</a>
+        </div>
+      </div>
+    `;
+  });
+
+  feedContainer.innerHTML = html;
+}
+
+function filterNeetNews(category) {
+  activeNewsCategory = category;
+
+  const buttons = document.querySelectorAll('.news-filter-btn');
+  buttons.forEach(btn => {
+    if (btn.dataset.cat === category) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  if (category === 'all') {
+    renderNeetNewsFeed(NEET_NEWS_DATA);
+  } else {
+    const filtered = NEET_NEWS_DATA.filter(item => item.category === category);
+    renderNeetNewsFeed(filtered);
+  }
+}
+
+function searchNeetNews(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) {
+    filterNeetNews(activeNewsCategory);
+    return;
+  }
+
+  const matches = NEET_NEWS_DATA.filter(item => {
+    const matchesCat = activeNewsCategory === 'all' || item.category === activeNewsCategory;
+    const matchesQuery = item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q);
+    return matchesCat && matchesQuery;
+  });
+
+  renderNeetNewsFeed(matches);
+}
+
+async function fetchAiNeetNewsAnalysis() {
+  const briefingContainer = document.getElementById('ai-news-briefing-content');
+  if (!briefingContainer) return;
+
+  briefingContainer.style.display = 'block';
+  briefingContainer.innerHTML = '<div style="color:var(--text-muted);">🤖 Gemini is analyzing latest NTA & Government NEET regulations...</div>';
+
+  try {
+    const prompt = `Synthesize a comprehensive official NEET UG exam briefing for a student. Include:
+1. 🏛️ Key NTA Official Guidelines (Biometrics, Admit Card, Dress Code, Exam Hall Rules)
+2. 🩺 NMC & Govt Policy Updates (Syllabus rationalization, subject eligibility, tie-breaking criteria)
+3. 🎓 MCC Counselling & Document Cutoffs (Category certificates, NRI/EWS rules)
+4. 💡 Strategic Advisory for NEET 2027 Aspirants`;
+
+    const aiBriefing = await callGeminiAPI(prompt, 'You are an official NTA and Ministry of Health NEET UG Regulatory Consultant.', { temperature: 0.5 });
+    briefingContainer.innerHTML = `
+      <div style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:8px; padding:16px; margin-top:8px;">
+        <h4 style="color:var(--primary); margin:0 0 10px 0;">📋 Gemini Official NTA & Govt Regulatory Briefing</h4>
+        <div>${renderMarkdown(aiBriefing)}</div>
+      </div>
+    `;
+    renderKaTeX(briefingContainer);
+  } catch (err) {
+    briefingContainer.innerHTML = `<div style="color:var(--accent-danger);">Could not generate briefing: ${err.message}</div>`;
+  }
+}
+
+// Window Exports
+window.initNeetNewsTab = initNeetNewsTab;
+window.filterNeetNews = filterNeetNews;
+window.searchNeetNews = searchNeetNews;
+window.fetchAiNeetNewsAnalysis = fetchAiNeetNewsAnalysis;
+
 window.renderApiKeySetup = renderApiKeySetup;
 window.toggleApiKeyVisibility = toggleApiKeyVisibility;
 window.saveApiKeyFromInput = saveApiKeyFromInput;
@@ -1795,6 +1968,13 @@ window.generateStudyRecommendation = generateStudyRecommendation;
 window.analyzeErrorPatterns = analyzeErrorPatterns;
 window.generateRecoveryQuiz = generateRecoveryQuiz;
 window.getCompleteWebsiteContext = getCompleteWebsiteContext;
+
+function handleAiTabSwitch(tabId) {
+  if (tabId === 'ai-tutor') initAiTutor();
+  if (tabId === 'ai-mocktest') initMockTestTab();
+  if (tabId === 'pdf-to-test') initPdfToTest();
+  if (tabId === 'neet-news') initNeetNewsTab();
+}
 window.handleAiTabSwitch = handleAiTabSwitch;
 
 // Hook showTab safely
