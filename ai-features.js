@@ -1327,10 +1327,28 @@ function copyText(btn) {
    INITIALIZATION & TAB SWITCH HOOKS
    ========================================================================== */
 
+// Explicitly expose BYOK manager functions to window object for global onclick access
+window.saveApiKey = saveApiKey;
+window.removeApiKey = removeApiKey;
+window.testApiKeyConnection = testApiKeyConnection;
+window.toggleKeyVisibility = toggleKeyVisibility;
+window.onKeyInputTyped = onKeyInputTyped;
+window.getApiKey = getApiKey;
+
 document.addEventListener("DOMContentLoaded", () => {
   updateApiKeyStatusUI();
   renderSetupRequiredCards();
   renderNeetNews("all");
+
+  // Attach direct event listeners for bulletproof button clicks across mobile & desktop
+  const saveBtn = document.getElementById("btn-save-api-key");
+  if (saveBtn) saveBtn.onclick = saveApiKey;
+
+  const testBtn = document.getElementById("btn-test-api-key");
+  if (testBtn) testBtn.onclick = testApiKeyConnection;
+
+  const removeBtn = document.getElementById("btn-remove-api-key");
+  if (removeBtn) removeBtn.onclick = removeApiKey;
 });
 
 function handleAiTabSwitch(tabId) {

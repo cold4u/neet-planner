@@ -1454,10 +1454,10 @@
           <div id="api-key-inline-msg" style="font-size:12px; margin-top:2px;"></div>
 
           <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
-            <button class="btn btn-primary" onclick="saveApiKey()">💾 Save Key</button>
-            <button class="btn btn-secondary" onclick="testApiKeyConnection()">🧪 Test Connection</button>
+            <button type="button" id="btn-save-api-key" class="btn btn-primary" onclick="saveApiKey()">💾 Save Key</button>
+            <button type="button" id="btn-test-api-key" class="btn btn-secondary" onclick="testApiKeyConnection()">🧪 Test Connection</button>
             <a href="https://aistudio.google.com/apikey" target="_blank" class="btn btn-secondary" style="text-decoration:none;">🔑 Get Free Key (1-Min) ↗</a>
-            <button class="btn btn-secondary" onclick="removeApiKey()" style="color:#ef4444; margin-left:auto;">🗑️ Remove Key</button>
+            <button type="button" id="btn-remove-api-key" class="btn btn-secondary" onclick="removeApiKey()" style="color:#ef4444; margin-left:auto;">🗑️ Remove Key</button>
           </div>
         </div>
 
