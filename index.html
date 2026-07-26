@@ -77,31 +77,6 @@
         <span class="nav-icon">📈</span>
         <span class="nav-label">Analytics</span>
       </button>
-      <button class="nav-item" data-tab="emotional-support" onclick="showTab('emotional-support')">
-        <span class="nav-icon">❤️</span>
-        <span class="nav-label">Emotional Support</span>
-      </button>
-      <button class="nav-item" data-tab="support" onclick="showTab('support')">
-        <span class="nav-icon">💛</span>
-        <span class="nav-label">Support</span>
-      </button>
-      <button class="nav-item" data-tab="errorbook" onclick="showTab('errorbook')">
-        <span class="nav-icon">📕</span>
-        <span class="nav-label">Error Book</span>
-      </button>
-      <button class="nav-item" data-tab="flashcards" onclick="showTab('flashcards')">
-        <span class="nav-icon">🎴</span>
-        <span class="nav-label">Flashcards</span>
-      </button>
-
-      <button class="nav-item" data-tab="studyhub" onclick="showTab('studyhub')">
-        <span class="nav-icon">📺</span>
-        <span class="nav-label">Study Hub</span>
-      </button>
-      <button class="nav-item" data-tab="formulas" onclick="showTab('formulas')">
-        <span class="nav-icon">📖</span>
-        <span class="nav-label">Formula Book</span>
-      </button>
       <button class="nav-item" data-tab="ai-tutor" onclick="showTab('ai-tutor')">
         <span class="nav-icon">🧠</span>
         <span class="nav-label">AI Tutor</span>
@@ -117,6 +92,30 @@
       <button class="nav-item" data-tab="neet-news" onclick="showTab('neet-news')">
         <span class="nav-icon">📰</span>
         <span class="nav-label">NEET News</span>
+      </button>
+      <button class="nav-item" data-tab="errorbook" onclick="showTab('errorbook')">
+        <span class="nav-icon">📕</span>
+        <span class="nav-label">Error Book</span>
+      </button>
+      <button class="nav-item" data-tab="flashcards" onclick="showTab('flashcards')">
+        <span class="nav-icon">🎴</span>
+        <span class="nav-label">Flashcards</span>
+      </button>
+      <button class="nav-item" data-tab="studyhub" onclick="showTab('studyhub')">
+        <span class="nav-icon">📺</span>
+        <span class="nav-label">Study Hub</span>
+      </button>
+      <button class="nav-item" data-tab="formulas" onclick="showTab('formulas')">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Formula Book</span>
+      </button>
+      <button class="nav-item" data-tab="emotional-support" onclick="showTab('emotional-support')">
+        <span class="nav-icon">❤️</span>
+        <span class="nav-label">Emotional Support</span>
+      </button>
+      <button class="nav-item" data-tab="support" onclick="showTab('support')">
+        <span class="nav-icon">💛</span>
+        <span class="nav-label">Support</span>
       </button>
       <button class="nav-item" data-tab="settings" onclick="showTab('settings')">
         <span class="nav-icon">⚙️</span>
@@ -147,7 +146,6 @@
   <!-- Main Area -->
   <main class="main-wrapper">
 
-    <!-- 1. OVERVIEW TAB -->
     <section id="overview" class="tab-content active">
       <div class="page-header">
         <h1 class="page-title">Preparation Overview</h1>
@@ -460,7 +458,6 @@
       </div>
     </section>
 
-    <!-- 2. DAY BY DAY CALENDAR TAB -->
     <section id="calendar" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">Day-by-Day Plan</h1>
@@ -535,7 +532,6 @@
       <div id="cal-pages" class="pag-btn-container"></div>
     </section>
 
-    <!-- 3. DAILY TIMING TAB -->
     <section id="timing" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">Daily Study Timing</h1>
@@ -559,7 +555,6 @@
       <div class="glass-card" id="sched-out" style="padding:0; overflow:hidden;"></div>
     </section>
 
-    <!-- 4. CHAPTERS GUIDE TAB -->
     <section id="chapters" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">Syllabus & Chapter Guide</h1>
@@ -630,7 +625,6 @@
       </div>
     </section>
 
-    <!-- 5. TESTS & MOCKS TAB -->
     <section id="tests" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">📝 Mock Tests & Performance Tracker</h1>
@@ -817,7 +811,6 @@
       </div>
     </section>
 
-    <!-- 6. STRATEGY HUB TAB -->
     <section id="strategy" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">NEET Crack Strategy</h1>
@@ -853,7 +846,6 @@
       </div>
     </section>
 
-    <!-- 7. DAILY TRACKER TAB -->
     <section id="tracker" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">Daily Study Log</h1>
@@ -997,7 +989,6 @@
       </div>
     </section>
 
-    <!-- 7b. STUDY TIMER & POMODORO TAB -->
     <section id="study-timer" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">⏱️ Study Timer & Pomodoro</h1>
@@ -1126,7 +1117,6 @@
       </div>
     </section>
 
-    <!-- 8. REAL-TIME ANALYTICS TAB -->
     <section id="analytics" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">Syllabus & Study Analytics</h1>
@@ -1272,9 +1262,6 @@
       </div>
     </section>
 
-
-
-    <!-- AI TUTOR TAB -->
     <section id="ai-tutor" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">AI NEET Tutor</h1>
@@ -1330,7 +1317,6 @@
       </div>
     </section>
 
-    <!-- AI MOCK TEST TAB -->
     <section id="ai-mocktest" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">AI Mock Test Generator</h1>
@@ -1540,7 +1526,6 @@
       </div>
     </section>
 
-    <!-- PDF TO TEST TAB -->
     <section id="pdf-to-test" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">PDF to NEET Test</h1>
@@ -1611,7 +1596,6 @@
       </div>
     </section>
 
-    <!-- 10. NTA & GOVT NEET NEWS TAB -->
     <section id="neet-news" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">📰 NTA & Government NEET News Hub</h1>
@@ -1666,138 +1650,6 @@
       </div>
     </section>
 
-    <!-- 11. CONFIGURATION & SETTINGS TAB -->
-    <section id="settings" class="tab-content">
-      <div class="page-header">
-        <h1 class="page-title">Settings & Configuration</h1>
-        <p class="page-desc">Manage your workspace and theme preferences.</p>
-      </div>
-
-      <div class="glass-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px; border-left: 5px solid var(--primary);">
-        <h2 style="margin:0; font-size:18px;">🔑 Gemini AI Setup</h2>
-        <p style="font-size:13px; color:var(--text-muted); margin:0;">Power up AI features with your free Google Gemini API key</p>
-        
-        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px; border:1px solid var(--border-color);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <label style="font-size:12px; font-weight:600;">API Key</label>
-            <a href="https://aistudio.google.com/apikey" target="_blank" style="font-size:11px; color:var(--primary); text-decoration:none;">Get Free API Key ↗</a>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <input type="password" id="ai-api-key-input" class="form-input" placeholder="Paste your Gemini API key..." style="flex:1;">
-            <button class="btn btn-secondary" onclick="toggleApiKeyVisibility()" style="padding:0 12px;">👁️</button>
-          </div>
-          
-          <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="saveApiKeyFromInput()" style="padding:8px 16px;">Save Key</button>
-            <button class="btn btn-secondary" onclick="testGeminiConnection()" style="padding:8px 16px;">Test Connection</button>
-            <button class="btn btn-secondary" onclick="clearApiKey()" style="padding:8px 16px; border-color:var(--accent-danger); color:var(--accent-danger);">Remove Key</button>
-          </div>
-          
-          <div id="ai-connection-status" style="margin-top:12px; font-size:12px; font-weight:600;"></div>
-        </div>
-        
-        <div class="glass-card" style="padding:12px; background:rgba(0,0,0,0.2); display:flex; gap:12px; align-items:center;">
-          <span style="font-size:20px;">🔒</span>
-          <div style="font-size:11px; color:var(--text-muted); line-height:1.4;">
-            <strong>Security Notice:</strong> Your API key is stored <em>only</em> in your browser's local storage.
-          </div>
-        </div>
-
-        <h3 style="margin:8px 0 0 0; font-size:14px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">AI Preferences</h3>
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <div>
-            <label style="font-size:12px; font-weight:600; display:block; margin-bottom:6px;">Language Preference</label>
-            <div style="display:flex; gap:16px;">
-              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
-                <input type="radio" name="ai-language" value="english" onclick="setAiPreference('ai_language', this.value)" checked> English
-              </label>
-              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
-                <input type="radio" name="ai-language" value="hinglish" onclick="setAiPreference('ai_language', this.value)"> Hinglish (English + Hindi)
-              </label>
-            </div>
-          </div>
-          <div>
-            <label style="font-size:12px; font-weight:600; display:block; margin-bottom:6px;">Detail Level</label>
-            <div style="display:flex; gap:16px; flex-wrap:wrap;">
-              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
-                <input type="radio" name="ai-detail" value="concise" onclick="setAiPreference('ai_detail', this.value)"> Concise
-              </label>
-              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
-                <input type="radio" name="ai-detail" value="detailed" onclick="setAiPreference('ai_detail', this.value)"> Detailed
-              </label>
-              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
-                <input type="radio" name="ai-detail" value="exam-focused" onclick="setAiPreference('ai_detail', this.value)" checked> Exam-focused
-              </label>
-            </div>
-          </div>
-          <label style="font-size:13px; display:flex; align-items:center; gap:8px; margin-top:4px;">
-            <input type="checkbox" id="ai-auto-suggest" onclick="setAiPreference('ai_auto_suggest', this.checked)" checked>
-            Enable Auto-suggestions
-          </label>
-        </div>
-      </div>
-
-      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
-        <h2>🎨 Custom Curated Themes</h2>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Choose a color palette that suits your focus space.</p>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-          <button class="btn btn-secondary theme-select-btn" data-theme="default-dark" onclick="applyTheme('default-dark')" style="border-left: 4px solid #fbbf24; text-align:left; padding-left:14px;">✨ Obsidian Amber (Dark)</button>
-          <button class="btn btn-secondary theme-select-btn" data-theme="light" onclick="applyTheme('light')" style="border-left: 4px solid #d97706; text-align:left; padding-left:14px; background:#ffffff; color:#0f172a;">☀️ Amber Classic (Light)</button>
-          <button class="btn btn-secondary theme-select-btn" data-theme="midnight-cyber" onclick="applyTheme('midnight-cyber')" style="border-left: 4px solid #00f2fe; text-align:left; padding-left:14px;">🌌 Midnight Cyber</button>
-          <button class="btn btn-secondary theme-select-btn" data-theme="forest-mint" onclick="applyTheme('forest-mint')" style="border-left: 4px solid #00d4aa; text-align:left; padding-left:14px;">🌿 Forest Mint</button>
-          <button class="btn btn-secondary theme-select-btn" data-theme="deep-cosmos" onclick="applyTheme('deep-cosmos')" style="border-left: 4px solid #ff9f1c; text-align:left; padding-left:14px;">🚀 Deep Cosmos</button>
-          <button class="btn btn-secondary theme-select-btn" data-theme="github-dark" onclick="applyTheme('github-dark')" style="border-left: 4px solid #58a6ff; text-align:left; padding-left:14px;">💻 GitHub Dark (Dev)</button>
-          <button class="btn btn-secondary theme-select-btn" data-theme="matrix-terminal" onclick="applyTheme('matrix-terminal')" style="border-left: 4px solid #00ff41; text-align:left; padding-left:14px;">📟 Matrix Terminal</button>
-        </div>
-      </div>
-
-      <!-- Accent Color customization card -->
-      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
-        <h2>🎨 Custom Accent Colors</h2>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Override the planner's primary accent color across all themes.</p>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap:10px;">
-          <button class="btn btn-secondary accent-select-btn" data-accent="default" onclick="applyAccentTheme('default')" style="border-left: 4px solid #00d4aa; text-align:left; padding-left:12px;">Teal Surge</button>
-          <button class="btn btn-secondary accent-select-btn" data-accent="aiims" onclick="applyAccentTheme('aiims')" style="border-left: 4px solid #378ADD; text-align:left; padding-left:12px;">Astra Blue</button>
-          <button class="btn btn-secondary accent-select-btn" data-accent="rosegold" onclick="applyAccentTheme('rosegold')" style="border-left: 4px solid #f43f5e; text-align:left; padding-left:12px;">Rose Gold</button>
-          <button class="btn btn-secondary accent-select-btn" data-accent="cyberpurple" onclick="applyAccentTheme('cyberpurple')" style="border-left: 4px solid #a855f7; text-align:left; padding-left:12px;">Cyber Purple</button>
-          <button class="btn btn-secondary accent-select-btn" data-accent="crimson" onclick="applyAccentTheme('crimson')" style="border-left: 4px solid #ef4444; text-align:left; padding-left:12px;">Crimson Focus</button>
-          <button class="btn btn-secondary accent-select-btn" data-accent="theme" onclick="applyAccentTheme('theme')" style="border-left: 4px solid #64748b; text-align:left; padding-left:12px;">Theme Default</button>
-        </div>
-      </div>
-
-      <!-- Study Reminders Configuration Card -->
-      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
-        <h2>🔔 Study Reminders & Notifications</h2>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Enable browser alerts to stay on track for scheduled mock tests, pomodoro focus timers, and spaced repetition revisions.</p>
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-          <div>
-            <span style="font-size:13px; font-weight:600; color:var(--text-primary);">Browser Notification Alerts</span>
-            <p style="font-size:11px; color:var(--text-muted); margin:4px 0 0 0;" id="notification-status-text">Status: Disabled</p>
-          </div>
-          <button class="btn btn-secondary" id="notification-toggle-btn" onclick="toggleNotifications()" style="padding:6px 16px; font-size:12px; font-weight:700;">Enable Notifications</button>
-        </div>
-      </div>
-
-      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
-        <h2>💾 Data Backup & Restore Center</h2>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Protect your progress! Export your mock test scores, logs, and Error Book entries, or restore them from a backup file.</p>
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <button class="btn btn-secondary" onclick="exportAllPlannerData()" style="flex:1; min-width:130px; font-weight:700;">📤 Export Backup</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()" style="flex:1; min-width:130px; font-weight:700;">📥 Import Backup</button>
-          <button class="btn btn-secondary" onclick="resetAllPlannerData()" style="flex:1; min-width:130px; border-color:var(--tertiary); color:var(--tertiary); font-weight:700;">⚠️ Reset App</button>
-        </div>
-        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top: 8px;">
-          <button class="btn btn-primary" onclick="exportProgressReportPDF()" style="flex:1; min-width:200px; font-weight:700; background:linear-gradient(135deg, var(--primary), var(--primary-hover)); border:none;">📤 Export Beautiful Progress Report (PDF)</button>
-        </div>
-        <input type="file" id="import-file-input" style="display:none;" onchange="importAllPlannerData(event)" accept=".json">
-        <div id="backup-status" style="margin-top: 8px; font-size: 12px; font-weight: 600; display: none; text-align: center; color:var(--primary);"></div>
-      </div>
-      
-      <!-- Hidden print area for dynamic PDF export -->
-      <div id="print-report-area" style="display:none;"></div>
-    </section>
-
-    <!-- 12. ERROR BOOK TAB -->
     <section id="errorbook" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">📕 Mistake & Error Tracker</h1>
@@ -1882,7 +1734,6 @@
       </div>
     </section>
 
-    <!-- 13. FLASHCARDS TAB -->
     <section id="flashcards" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">🎴 Active Recall Flashcards</h1>
@@ -1955,88 +1806,6 @@
       </div>
     </section>
 
-    <!-- Emotional Support Section -->
-    <section id="emotional-support" class="tab-content">
-      <h1>❤️ Emotional Support</h1>
-      <div class="support-wrapper">
-        <div class="support-card support-emotional-card" style="flex: 1 1 100%;">
-          <div class="support-emotional-badge">❤️ YOUR SAFE SPACE</div>
-          <h2 class="support-heading">You are not alone in this — and it's okay to not be okay. 🤝</h2>
-          <p class="support-para">
-            As a psychologist specializing in academic performance and youth mental health, I want to remind you that the intense cognitive load and emotional strain you are experiencing during your NEET preparation is not a reflection of your capacity or resilience. The sheer volume of the syllabus, the high-stakes nature of mock tests, and the constant, subtle comparison with peers can easily trigger a chronic state of fight-or-flight in your nervous system. Experiencing burnout, test anxiety, or a dip in motivation is a completely <strong>natural and logical response</strong> to an unnatural amount of pressure. Acknowledging your stress is not a sign of weakness; it is the first step toward self-regulation and cognitive recovery.
-          </p>
-          <p class="support-para">
-            In my practice, I often observe that the weight of competitive exams is compounded by silent emotional burdens—be it the unspoken pressure of parental expectations, relationship shifts, financial anxieties, or the isolation of studying for long hours. When these emotional layers go unaddressed, they deplete your working memory, impair your focus, and make active recall incredibly difficult. Under chronic stress, the brain prioritizes survival over studying. If you feel overwhelmed or feel like your progress has stalled, remember: <strong>you are not failing; your system is simply asking for a pause.</strong> Your worth is not defined by a score on a mock test, nor is your future limited to a single exam.
-          </p>
-          <p class="support-para">
-            This platform is a <strong>safe, confidential, and entirely judgment-free space</strong> designed to support you as a complete human being. Whether you are dealing with debilitating imposter syndrome, panic attacks before exams, boundary conflicts at home, or simply need an empathetic ear to unload the silence of your study room—I am here. You do not need to justify your struggles or wait until you hit rock bottom to seek help. A single conversation can lower cortisol levels and help you find clarity. I will not lecture you to "just study harder" or dismiss your feelings. We will focus on emotional resilience, healthy pacing, and self-compassion.
-          </p>
-          <p class="support-para" style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-top: 16px; padding: 14px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 3px solid #fca5a5;">
-            <strong>🧠 A Psychologist's Insight:</strong> Prioritizing your mental health is not a detour from your preparation; it is the core engine of it. Emotional stability directly correlates with better memory consolidation during sleep, higher concentration levels, and improved retrieval performance under exam pressure. To take care of the exam, you must first take care of the person sitting for it. Be kind to yourself today.
-          </p>
-          <a href="https://instagram.com/shubh.m_01" target="_blank" class="support-emotional-insta-btn">
-            💬 Talk to me — DM on Instagram (@shubh.m_01)
-          </a>
-          <p style="text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 12px; opacity: 0.7;">
-            Available for voice notes, text, or call. No question is too small. No feeling is too silly. 🫶
-          </p>
-        </div>
-      </div>
-
-      <!-- Interactive Wellness Widgets Grid -->
-      <div class="support-wrapper" style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; width: 100%; max-width: 1000px; padding: 0 10px; box-sizing: border-box;">
-        
-        <!-- Motivational Quotes Card -->
-        <div class="support-card" style="display:flex; flex-direction:column; justify-content:space-between; gap:16px; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);">
-          <div>
-            <div style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">✨ Daily Spark</div>
-            <p id="motivational-quote-text" style="font-size: 14px; font-style: italic; line-height: 1.6; color: var(--text-primary); margin: 0 0 8px 0;">"The only limit to our realization of tomorrow will be our doubts of today."</p>
-            <span id="motivational-quote-author" style="font-size: 11px; color: var(--text-muted); font-weight: 600;">— Franklin D. Roosevelt</span>
-          </div>
-          <button onclick="rotateMotivationalQuote()" class="btn btn-secondary" style="align-self: flex-start; padding: 6px 14px; font-size: 11px; font-weight: 700; border: 1px solid var(--border-color); border-radius: 6px;">Next Quote 🔄</button>
-        </div>
-
-        <!-- 4-7-8 Breathing Guide Card -->
-        <div class="support-card" style="display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); position: relative;">
-          <div style="align-self: flex-start; font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">🧘 Stress Reliever (4-7-8)</div>
-          
-          <!-- Animated Circle Container -->
-          <div style="width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; position: relative;">
-            <div id="breathing-circle-outer" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: var(--primary); opacity: 0.15; transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease; transform: scale(0.6);"></div>
-            <div id="breathing-circle-inner" style="width: 70px; height: 70px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #080c18; font-weight: 800; font-size: 12px; z-index: 2; transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1); transform: scale(0.6);">
-              Inhale
-            </div>
-          </div>
-          
-          <div id="breathing-phase-info" style="font-size: 11px; color: var(--text-muted); font-weight: 600; min-height: 16px;">Relax and click Start</div>
-          
-          <button id="breathing-toggle-btn" onclick="toggleBreathingExercise()" class="btn btn-primary" style="padding: 6px 20px; font-size: 11px; font-weight: 700; border-radius: 6px;">Start Exercise</button>
-        </div>
-
-        <!-- Daily Mood Selector Card -->
-        <div class="support-card" style="display:flex; flex-direction:column; justify-content:space-between; gap:16px; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);">
-          <div>
-            <div style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">🧠 Daily Mood Check-In</div>
-            <div style="display: flex; justify-content: space-between; gap: 8px; margin: 12px 0;">
-              <button onclick="selectDailyMood('great', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😄</button>
-              <button onclick="selectDailyMood('good', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">🙂</button>
-              <button onclick="selectDailyMood('okay', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😐</button>
-              <button onclick="selectDailyMood('stressed', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😰</button>
-              <button onclick="selectDailyMood('low', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😢</button>
-            </div>
-            <div id="mood-feedback-container" style="display:none; background: rgba(255,255,255,0.02); border-left: 2px solid var(--primary); padding: 8px 12px; border-radius: 0 6px 6px 0; margin-top: 8px;">
-              <p id="mood-feedback-text" style="font-size: 11px; line-height: 1.4; color: var(--text-secondary); margin: 0;"></p>
-            </div>
-          </div>
-          <div style="font-size: 10px; color: var(--text-muted); font-weight: 500;">How are you holding up today?</div>
-        </div>
-
-      </div>
-    </section>
-
-
-
-    <!-- STUDY HUB TAB -->
     <section id="studyhub" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">📺 Study & Video Resource Hub</h1>
@@ -2181,7 +1950,6 @@
       </div>
     </section>
 
-    <!-- FORMULA BOOK TAB -->
     <section id="formulas" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">📖 NCERT Formula & Key Facts Book</h1>
@@ -2205,7 +1973,85 @@
       </div>
     </section>
 
-<section id="support" class="tab-content">
+    <section id="emotional-support" class="tab-content">
+      <h1>❤️ Emotional Support</h1>
+      <div class="support-wrapper">
+        <div class="support-card support-emotional-card" style="flex: 1 1 100%;">
+          <div class="support-emotional-badge">❤️ YOUR SAFE SPACE</div>
+          <h2 class="support-heading">You are not alone in this — and it's okay to not be okay. 🤝</h2>
+          <p class="support-para">
+            As a psychologist specializing in academic performance and youth mental health, I want to remind you that the intense cognitive load and emotional strain you are experiencing during your NEET preparation is not a reflection of your capacity or resilience. The sheer volume of the syllabus, the high-stakes nature of mock tests, and the constant, subtle comparison with peers can easily trigger a chronic state of fight-or-flight in your nervous system. Experiencing burnout, test anxiety, or a dip in motivation is a completely <strong>natural and logical response</strong> to an unnatural amount of pressure. Acknowledging your stress is not a sign of weakness; it is the first step toward self-regulation and cognitive recovery.
+          </p>
+          <p class="support-para">
+            In my practice, I often observe that the weight of competitive exams is compounded by silent emotional burdens—be it the unspoken pressure of parental expectations, relationship shifts, financial anxieties, or the isolation of studying for long hours. When these emotional layers go unaddressed, they deplete your working memory, impair your focus, and make active recall incredibly difficult. Under chronic stress, the brain prioritizes survival over studying. If you feel overwhelmed or feel like your progress has stalled, remember: <strong>you are not failing; your system is simply asking for a pause.</strong> Your worth is not defined by a score on a mock test, nor is your future limited to a single exam.
+          </p>
+          <p class="support-para">
+            This platform is a <strong>safe, confidential, and entirely judgment-free space</strong> designed to support you as a complete human being. Whether you are dealing with debilitating imposter syndrome, panic attacks before exams, boundary conflicts at home, or simply need an empathetic ear to unload the silence of your study room—I am here. You do not need to justify your struggles or wait until you hit rock bottom to seek help. A single conversation can lower cortisol levels and help you find clarity. I will not lecture you to "just study harder" or dismiss your feelings. We will focus on emotional resilience, healthy pacing, and self-compassion.
+          </p>
+          <p class="support-para" style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-top: 16px; padding: 14px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 3px solid #fca5a5;">
+            <strong>🧠 A Psychologist's Insight:</strong> Prioritizing your mental health is not a detour from your preparation; it is the core engine of it. Emotional stability directly correlates with better memory consolidation during sleep, higher concentration levels, and improved retrieval performance under exam pressure. To take care of the exam, you must first take care of the person sitting for it. Be kind to yourself today.
+          </p>
+          <a href="https://instagram.com/shubh.m_01" target="_blank" class="support-emotional-insta-btn">
+            💬 Talk to me — DM on Instagram (@shubh.m_01)
+          </a>
+          <p style="text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 12px; opacity: 0.7;">
+            Available for voice notes, text, or call. No question is too small. No feeling is too silly. 🫶
+          </p>
+        </div>
+      </div>
+
+      <!-- Interactive Wellness Widgets Grid -->
+      <div class="support-wrapper" style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; width: 100%; max-width: 1000px; padding: 0 10px; box-sizing: border-box;">
+        
+        <!-- Motivational Quotes Card -->
+        <div class="support-card" style="display:flex; flex-direction:column; justify-content:space-between; gap:16px; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">✨ Daily Spark</div>
+            <p id="motivational-quote-text" style="font-size: 14px; font-style: italic; line-height: 1.6; color: var(--text-primary); margin: 0 0 8px 0;">"The only limit to our realization of tomorrow will be our doubts of today."</p>
+            <span id="motivational-quote-author" style="font-size: 11px; color: var(--text-muted); font-weight: 600;">— Franklin D. Roosevelt</span>
+          </div>
+          <button onclick="rotateMotivationalQuote()" class="btn btn-secondary" style="align-self: flex-start; padding: 6px 14px; font-size: 11px; font-weight: 700; border: 1px solid var(--border-color); border-radius: 6px;">Next Quote 🔄</button>
+        </div>
+
+        <!-- 4-7-8 Breathing Guide Card -->
+        <div class="support-card" style="display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); position: relative;">
+          <div style="align-self: flex-start; font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">🧘 Stress Reliever (4-7-8)</div>
+          
+          <!-- Animated Circle Container -->
+          <div style="width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; position: relative;">
+            <div id="breathing-circle-outer" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: var(--primary); opacity: 0.15; transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease; transform: scale(0.6);"></div>
+            <div id="breathing-circle-inner" style="width: 70px; height: 70px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #080c18; font-weight: 800; font-size: 12px; z-index: 2; transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1); transform: scale(0.6);">
+              Inhale
+            </div>
+          </div>
+          
+          <div id="breathing-phase-info" style="font-size: 11px; color: var(--text-muted); font-weight: 600; min-height: 16px;">Relax and click Start</div>
+          
+          <button id="breathing-toggle-btn" onclick="toggleBreathingExercise()" class="btn btn-primary" style="padding: 6px 20px; font-size: 11px; font-weight: 700; border-radius: 6px;">Start Exercise</button>
+        </div>
+
+        <!-- Daily Mood Selector Card -->
+        <div class="support-card" style="display:flex; flex-direction:column; justify-content:space-between; gap:16px; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">🧠 Daily Mood Check-In</div>
+            <div style="display: flex; justify-content: space-between; gap: 8px; margin: 12px 0;">
+              <button onclick="selectDailyMood('great', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😄</button>
+              <button onclick="selectDailyMood('good', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">🙂</button>
+              <button onclick="selectDailyMood('okay', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😐</button>
+              <button onclick="selectDailyMood('stressed', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😰</button>
+              <button onclick="selectDailyMood('low', this)" class="mood-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 18px; cursor: pointer; flex: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">😢</button>
+            </div>
+            <div id="mood-feedback-container" style="display:none; background: rgba(255,255,255,0.02); border-left: 2px solid var(--primary); padding: 8px 12px; border-radius: 0 6px 6px 0; margin-top: 8px;">
+              <p id="mood-feedback-text" style="font-size: 11px; line-height: 1.4; color: var(--text-secondary); margin: 0;"></p>
+            </div>
+          </div>
+          <div style="font-size: 10px; color: var(--text-muted); font-weight: 500;">How are you holding up today?</div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="support" class="tab-content">
 
   <h1>💛 Support This Project</h1>
 
@@ -2370,6 +2216,137 @@
 
   </div>
 </section>
+
+    <section id="settings" class="tab-content">
+      <div class="page-header">
+        <h1 class="page-title">Settings & Configuration</h1>
+        <p class="page-desc">Manage your workspace and theme preferences.</p>
+      </div>
+
+      <div class="glass-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px; border-left: 5px solid var(--primary);">
+        <h2 style="margin:0; font-size:18px;">🔑 Gemini AI Setup</h2>
+        <p style="font-size:13px; color:var(--text-muted); margin:0;">Power up AI features with your free Google Gemini API key</p>
+        
+        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px; border:1px solid var(--border-color);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label style="font-size:12px; font-weight:600;">API Key</label>
+            <a href="https://aistudio.google.com/apikey" target="_blank" style="font-size:11px; color:var(--primary); text-decoration:none;">Get Free API Key ↗</a>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <input type="password" id="ai-api-key-input" class="form-input" placeholder="Paste your Gemini API key..." style="flex:1;">
+            <button class="btn btn-secondary" onclick="toggleApiKeyVisibility()" style="padding:0 12px;">👁️</button>
+          </div>
+          
+          <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="saveApiKeyFromInput()" style="padding:8px 16px;">Save Key</button>
+            <button class="btn btn-secondary" onclick="testGeminiConnection()" style="padding:8px 16px;">Test Connection</button>
+            <button class="btn btn-secondary" onclick="clearApiKey()" style="padding:8px 16px; border-color:var(--accent-danger); color:var(--accent-danger);">Remove Key</button>
+          </div>
+          
+          <div id="ai-connection-status" style="margin-top:12px; font-size:12px; font-weight:600;"></div>
+        </div>
+        
+        <div class="glass-card" style="padding:12px; background:rgba(0,0,0,0.2); display:flex; gap:12px; align-items:center;">
+          <span style="font-size:20px;">🔒</span>
+          <div style="font-size:11px; color:var(--text-muted); line-height:1.4;">
+            <strong>Security Notice:</strong> Your API key is stored <em>only</em> in your browser's local storage.
+          </div>
+        </div>
+
+        <h3 style="margin:8px 0 0 0; font-size:14px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">AI Preferences</h3>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-size:12px; font-weight:600; display:block; margin-bottom:6px;">Language Preference</label>
+            <div style="display:flex; gap:16px;">
+              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
+                <input type="radio" name="ai-language" value="english" onclick="setAiPreference('ai_language', this.value)" checked> English
+              </label>
+              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
+                <input type="radio" name="ai-language" value="hinglish" onclick="setAiPreference('ai_language', this.value)"> Hinglish (English + Hindi)
+              </label>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px; font-weight:600; display:block; margin-bottom:6px;">Detail Level</label>
+            <div style="display:flex; gap:16px; flex-wrap:wrap;">
+              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
+                <input type="radio" name="ai-detail" value="concise" onclick="setAiPreference('ai_detail', this.value)"> Concise
+              </label>
+              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
+                <input type="radio" name="ai-detail" value="detailed" onclick="setAiPreference('ai_detail', this.value)"> Detailed
+              </label>
+              <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
+                <input type="radio" name="ai-detail" value="exam-focused" onclick="setAiPreference('ai_detail', this.value)" checked> Exam-focused
+              </label>
+            </div>
+          </div>
+          <label style="font-size:13px; display:flex; align-items:center; gap:8px; margin-top:4px;">
+            <input type="checkbox" id="ai-auto-suggest" onclick="setAiPreference('ai_auto_suggest', this.checked)" checked>
+            Enable Auto-suggestions
+          </label>
+        </div>
+      </div>
+
+      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
+        <h2>🎨 Custom Curated Themes</h2>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Choose a color palette that suits your focus space.</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <button class="btn btn-secondary theme-select-btn" data-theme="default-dark" onclick="applyTheme('default-dark')" style="border-left: 4px solid #fbbf24; text-align:left; padding-left:14px;">✨ Obsidian Amber (Dark)</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="light" onclick="applyTheme('light')" style="border-left: 4px solid #d97706; text-align:left; padding-left:14px; background:#ffffff; color:#0f172a;">☀️ Amber Classic (Light)</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="midnight-cyber" onclick="applyTheme('midnight-cyber')" style="border-left: 4px solid #00f2fe; text-align:left; padding-left:14px;">🌌 Midnight Cyber</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="forest-mint" onclick="applyTheme('forest-mint')" style="border-left: 4px solid #00d4aa; text-align:left; padding-left:14px;">🌿 Forest Mint</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="deep-cosmos" onclick="applyTheme('deep-cosmos')" style="border-left: 4px solid #ff9f1c; text-align:left; padding-left:14px;">🚀 Deep Cosmos</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="github-dark" onclick="applyTheme('github-dark')" style="border-left: 4px solid #58a6ff; text-align:left; padding-left:14px;">💻 GitHub Dark (Dev)</button>
+          <button class="btn btn-secondary theme-select-btn" data-theme="matrix-terminal" onclick="applyTheme('matrix-terminal')" style="border-left: 4px solid #00ff41; text-align:left; padding-left:14px;">📟 Matrix Terminal</button>
+        </div>
+      </div>
+
+      <!-- Accent Color customization card -->
+      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
+        <h2>🎨 Custom Accent Colors</h2>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Override the planner's primary accent color across all themes.</p>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap:10px;">
+          <button class="btn btn-secondary accent-select-btn" data-accent="default" onclick="applyAccentTheme('default')" style="border-left: 4px solid #00d4aa; text-align:left; padding-left:12px;">Teal Surge</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="aiims" onclick="applyAccentTheme('aiims')" style="border-left: 4px solid #378ADD; text-align:left; padding-left:12px;">Astra Blue</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="rosegold" onclick="applyAccentTheme('rosegold')" style="border-left: 4px solid #f43f5e; text-align:left; padding-left:12px;">Rose Gold</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="cyberpurple" onclick="applyAccentTheme('cyberpurple')" style="border-left: 4px solid #a855f7; text-align:left; padding-left:12px;">Cyber Purple</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="crimson" onclick="applyAccentTheme('crimson')" style="border-left: 4px solid #ef4444; text-align:left; padding-left:12px;">Crimson Focus</button>
+          <button class="btn btn-secondary accent-select-btn" data-accent="theme" onclick="applyAccentTheme('theme')" style="border-left: 4px solid #64748b; text-align:left; padding-left:12px;">Theme Default</button>
+        </div>
+      </div>
+
+      <!-- Study Reminders Configuration Card -->
+      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
+        <h2>🔔 Study Reminders & Notifications</h2>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Enable browser alerts to stay on track for scheduled mock tests, pomodoro focus timers, and spaced repetition revisions.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+          <div>
+            <span style="font-size:13px; font-weight:600; color:var(--text-primary);">Browser Notification Alerts</span>
+            <p style="font-size:11px; color:var(--text-muted); margin:4px 0 0 0;" id="notification-status-text">Status: Disabled</p>
+          </div>
+          <button class="btn btn-secondary" id="notification-toggle-btn" onclick="toggleNotifications()" style="padding:6px 16px; font-size:12px; font-weight:700;">Enable Notifications</button>
+        </div>
+      </div>
+
+      <div class="ai-config-card" style="max-width: 600px; margin: 24px auto 0 auto; display:flex; flex-direction:column; gap:16px;">
+        <h2>💾 Data Backup & Restore Center</h2>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Protect your progress! Export your mock test scores, logs, and Error Book entries, or restore them from a backup file.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="exportAllPlannerData()" style="flex:1; min-width:130px; font-weight:700;">📤 Export Backup</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()" style="flex:1; min-width:130px; font-weight:700;">📥 Import Backup</button>
+          <button class="btn btn-secondary" onclick="resetAllPlannerData()" style="flex:1; min-width:130px; border-color:var(--tertiary); color:var(--tertiary); font-weight:700;">⚠️ Reset App</button>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top: 8px;">
+          <button class="btn btn-primary" onclick="exportProgressReportPDF()" style="flex:1; min-width:200px; font-weight:700; background:linear-gradient(135deg, var(--primary), var(--primary-hover)); border:none;">📤 Export Beautiful Progress Report (PDF)</button>
+        </div>
+        <input type="file" id="import-file-input" style="display:none;" onchange="importAllPlannerData(event)" accept=".json">
+        <div id="backup-status" style="margin-top: 8px; font-size: 12px; font-weight: 600; display: none; text-align: center; color:var(--primary);"></div>
+      </div>
+      
+      <!-- Hidden print area for dynamic PDF export -->
+      <div id="print-report-area" style="display:none;"></div>
+    </section>
+
   </main>
   </div> <!-- end content-area -->
 </div> <!-- end app-layout -->
@@ -2599,17 +2576,16 @@
       <button class="drawer-item" data-tab="tracker" onclick="navigateTab('tracker')">🔥 Daily Tracker</button>
       <button class="drawer-item" data-tab="study-timer" onclick="navigateTab('study-timer')">⏱️ Study Timer</button>
       <button class="drawer-item" data-tab="analytics" onclick="navigateTab('analytics')">📈 Analytics</button>
-
-      <button class="drawer-item" data-tab="emotional-support" onclick="navigateTab('emotional-support')">❤️ Emotional Support</button>
-      <button class="drawer-item" data-tab="support" onclick="navigateTab('support')">💛 Support</button>
-      <button class="drawer-item" data-tab="errorbook" onclick="navigateTab('errorbook')">📕 Error Book</button>
-      <button class="drawer-item" data-tab="flashcards" onclick="navigateTab('flashcards')">🎴 Flashcards</button>
-      <button class="drawer-item" data-tab="studyhub" onclick="navigateTab('studyhub')">📺 Study Hub</button>
-      <button class="drawer-item" data-tab="formulas" onclick="navigateTab('formulas')">📖 Formula Book</button>
       <button class="drawer-item" data-tab="ai-tutor" onclick="navigateTab('ai-tutor')">🧠 AI Tutor</button>
       <button class="drawer-item" data-tab="ai-mocktest" onclick="navigateTab('ai-mocktest')">🖥️ AI Mock Test</button>
       <button class="drawer-item" data-tab="pdf-to-test" onclick="navigateTab('pdf-to-test')">📄 PDF to Test</button>
       <button class="drawer-item" data-tab="neet-news" onclick="navigateTab('neet-news')">📰 NEET News</button>
+      <button class="drawer-item" data-tab="errorbook" onclick="navigateTab('errorbook')">📕 Error Book</button>
+      <button class="drawer-item" data-tab="flashcards" onclick="navigateTab('flashcards')">🎴 Flashcards</button>
+      <button class="drawer-item" data-tab="studyhub" onclick="navigateTab('studyhub')">📺 Study Hub</button>
+      <button class="drawer-item" data-tab="formulas" onclick="navigateTab('formulas')">📖 Formula Book</button>
+      <button class="drawer-item" data-tab="emotional-support" onclick="navigateTab('emotional-support')">❤️ Emotional Support</button>
+      <button class="drawer-item" data-tab="support" onclick="navigateTab('support')">💛 Support</button>
       <button class="drawer-item" data-tab="settings" onclick="navigateTab('settings')">⚙️ Settings</button>
     </nav>
   </aside>
