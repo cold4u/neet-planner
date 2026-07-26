@@ -101,7 +101,6 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null) {
         if (err.message === "NO_API_KEY" || err.message === "INVALID_API_KEY") {
           throw err;
         }
-        // If it's a network error or fetch failure, continue to next fallback model
         console.warn(`Attempt on ${model} failed: ${err.message}. Trying next model...`);
       }
     }
@@ -1038,8 +1037,6 @@ function handleAiTabSwitch(tabId) {
     updateCharCount();
   } else if (tabId === 'neet-news') {
     renderNeetNews("all");
-  } else if (tabId === 'overview') {
-    generateStudyRecommendation();
   }
 }
 
