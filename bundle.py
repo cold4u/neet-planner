@@ -16,6 +16,13 @@ with open(os.path.join(base_dir, "style.css"), "r", encoding="utf-8") as f:
 with open(os.path.join(base_dir, "app.js"), "r", encoding="utf-8") as f:
     js_content = f.read()
 
+ai_js_path = os.path.join(base_dir, "ai-features.js")
+if os.path.exists(ai_js_path):
+    with open(ai_js_path, "r", encoding="utf-8") as f:
+        ai_js_content = f.read()
+else:
+    ai_js_content = ""
+
 with open(os.path.join(base_dir, "pyq_bank.json"), "r", encoding="utf-8") as f:
     pyq_bank_data = json.load(f)
 
@@ -91,13 +98,17 @@ html_content = re.sub(r'<link rel="stylesheet" href="style\.css[^"]*">', f"<styl
 print("Successfully inlined CSS.")
 
 # 4. Inline JS in HTML content
-script_pattern = r'<script defer src="app.js[^"]*"></script>'
+script_pattern = r'<script defer src="app\.js[^"]*"></script>'
 match = re.search(script_pattern, html_content)
 if match:
-    html_content = html_content.replace(match.group(0), f"<script>\n{js_content}\n</script>")
-    print("Successfully inlined JS.")
+    combined_js = js_content + "\n\n/* AI FEATURES MODULE */\n" + ai_js_content
+    html_content = html_content.replace(match.group(0), f"<script>\n{combined_js}\n</script>")
+    print("Successfully inlined app.js and ai-features.js into bundle.")
 else:
     print("Warning: Could not find script tag for app.js in HTML.")
+
+# Remove any separate <script defer src="ai-features.js"></script> tag in HTML if present
+html_content = re.sub(r'<script defer src="ai-features\.js[^"]*"></script>\s*', '', html_content)
 
 # 5. Save bundled HTML to both paths
 for out_path in [output_path_home, output_path_local]:
