@@ -591,7 +591,7 @@ function handleChatKeyPress(e) {
   }
 }
 
-async function callAiTutorWithGroqFirst(prompt, systemInstruction = "", onStatus = null, options = {}) {
+async function callAiWithGroqFirst(prompt, systemInstruction = "", onStatus = null, options = {}) {
   const groqKey = getGroqApiKey();
   const geminiKey = getApiKey();
 
@@ -599,25 +599,27 @@ async function callAiTutorWithGroqFirst(prompt, systemInstruction = "", onStatus
     throw new Error("NO_API_KEY");
   }
 
-  // 1. PRIMARY ENGINE for AI Tutor: Groq Cloud API (Llama-3.3 70B)
+  // 1. PRIMARY ENGINE: Groq Cloud API (Llama-3.3 70B)
   if (groqKey) {
     try {
-      if (onStatus) onStatus("⚡ Solving doubt with Groq AI (Llama-3.3 70B)...");
+      if (onStatus) onStatus("⚡ Processing with Groq AI (Llama-3.3 70B)...");
       return await callGroqAPI(prompt, systemInstruction, onStatus, options);
     } catch (groqErr) {
-      console.warn("[AI Tutor] Groq primary engine limit reached/failed. Failing over to Gemini API backup...", groqErr);
+      console.warn("[Groq First Engine] Groq primary engine limit reached/failed. Failing over to Gemini API backup...", groqErr);
       if (onStatus) onStatus("⚠️ Groq limit reached → Switched to Gemini AI backup...");
     }
   }
 
-  // 2. FAILOVER / BACKUP ENGINE for AI Tutor: Gemini API (6-Model Fallback Ring)
+  // 2. FAILOVER / BACKUP ENGINE: Gemini API (6-Model Fallback Ring)
   if (geminiKey) {
-    if (onStatus) onStatus("🧠 Solving doubt with Gemini AI backup engine...");
+    if (onStatus) onStatus("🧠 Processing with Gemini AI backup engine...");
     return await callGeminiAPI(prompt, systemInstruction, onStatus, options);
   }
 
-  throw new Error("All AI Tutor engines (Groq & Gemini) failed or rate limited.");
+  throw new Error("All AI engines (Groq & Gemini) failed or rate limited.");
 }
+
+const callAiTutorWithGroqFirst = callAiWithGroqFirst;
 
 function quickAsk(promptText) {
   const input = document.getElementById("tutor-chat-input");
@@ -1435,12 +1437,12 @@ async function generateStudyRecommendation() {
   const recContainer = document.getElementById("ai-study-recommendation");
   if (!recContainer) return;
 
-  if (!getApiKey()) {
-    recContainer.innerHTML = `<p style="font-size:12px; color:#aaa;">Please set your Gemini API key in Settings to get personalized study suggestions.</p>`;
+  if (!getGroqApiKey() && !getApiKey()) {
+    recContainer.innerHTML = `<p style="font-size:12px; color:#aaa;">Please set your Groq or Gemini API key in Settings to get personalized study suggestions.</p>`;
     return;
   }
 
-  recContainer.innerHTML = `<p style="font-size:12px; color:#fbbf24;">⚡ Analyzing your schedule and generating today's focus plan...</p>`;
+  recContainer.innerHTML = `<p style="font-size:12px; color:#fbbf24;">⚡ Analyzing your schedule and generating today's focus plan using Groq AI...</p>`;
 
   try {
     const prompt = `Give me a concise 3-bullet action plan for a NEET aspirant today. 
@@ -1448,7 +1450,7 @@ Bullet 1: Top priority subject & chapter
 Bullet 2: Target study hours & active recall strategy
 Bullet 3: Quick motivational tip`;
 
-    const recText = await callAiWithFailover(prompt, "You are a NEET study counselor.", null, { maxTokens: 400 });
+    const recText = await callAiWithGroqFirst(prompt, "You are a NEET study counselor.", null, { maxTokens: 400 });
     recContainer.innerHTML = `<div style="font-size:13px; line-height:1.6;">${parseMarkdownAndKaTeX(recText)}</div>`;
   } catch (err) {
     recContainer.innerHTML = `<p style="font-size:12px; color:#ef4444;">Could not load suggestion: ${err.message}</p>`;
@@ -1473,7 +1475,7 @@ async function analyzeMistakesWithAI() {
   resultContainer.innerHTML = `
     <div class="glass-card" style="padding:15px; text-align:center;">
       <div class="spinner" style="margin:0 auto 10px auto;"></div>
-      Analyzing your mistake patterns using AI...
+      Analyzing your mistake patterns using Groq AI...
     </div>
   `;
 
@@ -1481,7 +1483,7 @@ async function analyzeMistakesWithAI() {
     const prompt = `Analyze typical NEET mistake categories (Conceptual Error, Silly Calculation Error, Time Pressure, Formula Misapplication).
 Provide a 3-step action plan to eliminate repeat errors in Physics & Chemistry.`;
 
-    const analysis = await callAiWithFailover(prompt, "You are a NEET performance analyst.", null, { maxTokens: 600 });
+    const analysis = await callAiWithGroqFirst(prompt, "You are a NEET performance analyst.", null, { maxTokens: 600 });
     resultContainer.innerHTML = `
       <div class="glass-card" style="padding:16px;">
         <h3>🧬 AI Mistake DNA Analysis</h3>
