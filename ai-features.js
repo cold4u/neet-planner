@@ -379,14 +379,27 @@ function quickSaveApiKey(btn) {
 }
 
 function renderSetupRequiredCards() {
-  const key = getApiKey();
+  const geminiKey = getApiKey();
+  const serperKey = getSerperApiKey();
+
   const setupElements = document.querySelectorAll(".ai-setup-required-card");
   setupElements.forEach(el => {
-    el.style.display = key ? "none" : "block";
+    const parentSection = el.closest("section");
+    if (parentSection && parentSection.id === "ai-research") {
+      el.style.display = serperKey ? "none" : "block";
+    } else {
+      el.style.display = geminiKey ? "none" : "block";
+    }
   });
+
   const mainAiElements = document.querySelectorAll(".ai-feature-content");
   mainAiElements.forEach(el => {
-    el.style.display = key ? "block" : "none";
+    const parentSection = el.closest("section");
+    if (parentSection && parentSection.id === "ai-research") {
+      el.style.display = serperKey ? "block" : "none";
+    } else {
+      el.style.display = geminiKey ? "block" : "none";
+    }
   });
 }
 
@@ -1303,9 +1316,38 @@ const NEET_NEWS_ITEMS = [
   }
 ];
 
-function renderNeetNews(filter = "all") {
+async function renderNeetNews(filter = "all") {
   const container = document.getElementById("news-cards-container");
   if (!container) return;
+
+  const serperKey = getSerperApiKey();
+  if (serperKey) {
+    container.innerHTML = `
+      <div class="glass-card" style="grid-column: 1 / -1; text-align:center; padding:25px;">
+        <div class="spinner" style="margin:0 auto 10px auto;"></div>
+        Fetching live NEET news & NTA updates via Serper.dev News API...
+      </div>
+    `;
+
+    const liveNews = await fetchLiveSerperNews(filter);
+    if (liveNews && liveNews.length > 0) {
+      container.innerHTML = liveNews.map(item => `
+        <div class="news-card glass-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="badge" style="background:rgba(0,212,170,0.15); color:#00d4aa; font-size:11px; padding:2px 8px; border-radius:4px;">🌐 Serper Live News</span>
+            <span style="font-size:11px; color:#aaa;">${item.date || 'Recent'}</span>
+          </div>
+          <h4 style="margin:8px 0; font-size:15px; color:#fff; line-height:1.3;">${escapeHTML(item.title)}</h4>
+          <p style="font-size:12px; color:#ccc; line-height:1.5;">${escapeHTML(item.snippet || item.title)}</p>
+          <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:11px; color:#888;">${escapeHTML(item.source || 'Official Source')}</span>
+            <a href="${item.link}" target="_blank" class="btn btn-secondary" style="font-size:11px; text-decoration:none;">Read Article ↗</a>
+          </div>
+        </div>
+      `).join('');
+      return;
+    }
+  }
 
   const filtered = filter === "all" ? NEET_NEWS_ITEMS : NEET_NEWS_ITEMS.filter(item => item.category === filter);
 
@@ -1315,29 +1357,13 @@ function renderNeetNews(filter = "all") {
         <span class="badge" style="background:rgba(251,191,36,0.15); color:#fbbf24; font-size:11px; padding:2px 8px; border-radius:4px;">${item.badge}</span>
         <span style="font-size:11px; color:#aaa;">${item.date}</span>
       </div>
-      <h4 style="margin:8px 0; font-size:15px; color:#fff;">${item.title}</h4>
-      <p style="font-size:12px; color:#ccc; line-height:1.5;">${item.summary}</p>
+      <h4 style="margin:8px 0; font-size:15px; color:#fff;">${escapeHTML(item.title)}</h4>
+      <p style="font-size:12px; color:#ccc; line-height:1.5;">${escapeHTML(item.summary)}</p>
       <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
         <a href="${item.link}" target="_blank" style="color:#00d4aa; text-decoration:none; font-size:12px; font-weight:bold;">Official Portal ↗</a>
-        <button class="btn btn-secondary" onclick="summarizeNews('${escapeHTML(item.title)}')" style="font-size:11px;">⚡ Summarize with AI</button>
       </div>
     </div>
   `).join('');
-}
-
-async function summarizeNews(title) {
-  if (!getApiKey()) {
-    alert("Please set your Gemini API key in Settings first!");
-    showTab("settings");
-    return;
-  }
-  alert(`⚡ Summarizing "${title}" using Gemini AI...`);
-  try {
-    const summary = await callGeminiAPI(`Provide a 3-bullet summary of the NEET update titled: "${title}"`, "Summarize in 3 bullet points", null, { maxTokens: 300 });
-    alert(`📰 AI Summary:\n\n${summary}`);
-  } catch (err) {
-    alert(`❌ Summary failed: ${err.message}`);
-  }
 }
 
 function filterNews(cat) {
@@ -1604,25 +1630,10 @@ async function performDedicatedAiResearch() {
     return;
   }
 
-  const geminiKey = getApiKey();
   const serperKey = getSerperApiKey();
-
-  if (!geminiKey && !serperKey) {
-    const offlineReport = getOfflineNcertResearch(query);
-    if (statusCard) statusCard.style.display = "none";
-    container.innerHTML = `
-      <div class="glass-card" style="padding:14px; margin-bottom:14px; border:1px solid rgba(251,191,36,0.3); background:rgba(251,191,36,0.04);">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <span style="font-size:12px; font-weight:bold; color:#fbbf24;">💡 Offline NCERT Syllabus Research Mode (Active)</span>
-          <button class="btn btn-secondary" onclick="showTab('settings')" style="font-size:11px; padding:2px 8px;">⚙️ Add API Key for Live Web Research</button>
-        </div>
-      </div>
-      <div class="glass-card" style="padding:20px;">
-        <div style="font-size:13px; line-height:1.6; color:#e2e8f0;">
-          ${parseMarkdownAndKaTeX(offlineReport)}
-        </div>
-      </div>
-    `;
+  if (!serperKey) {
+    alert("Please configure your free Serper.dev API key in Settings first to run Live Web Research!");
+    showTab("settings");
     return;
   }
 
@@ -1631,102 +1642,95 @@ async function performDedicatedAiResearch() {
     statusCard.innerHTML = `
       <div class="glass-card" style="text-align:center; padding:20px;">
         <div class="spinner" style="margin:0 auto 10px auto;"></div>
-        <h4>🔬 Running AI Academic Research...</h4>
-        <p id="research-status-subtext" style="font-size:12px; color:#00d4aa;">Gathering research findings & NCERT analysis...</p>
+        <h4>🔍 Fetching Real-Time Google Search Results via Serper.dev API...</h4>
+        <p id="research-status-subtext" style="font-size:12px; color:#00d4aa;">Searching live web data & official circulars...</p>
       </div>
     `;
   }
   container.innerHTML = "";
 
   try {
-    let organicResults = [];
-    if (serperKey) {
-      try {
-        const res = await fetch("https://google.serper.dev/search", {
-          method: "POST",
-          headers: {
-            "X-API-KEY": serperKey,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ q: query, num: 6 })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          organicResults = data.organic || [];
-        }
-      } catch (serperErr) {
-        console.warn("Serper search failed, falling back to Gemini knowledge engine:", serperErr);
-      }
+    const res = await fetch("https://google.serper.dev/search", {
+      method: "POST",
+      headers: {
+        "X-API-KEY": serperKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ q: query, num: 8 })
+    });
+
+    if (!res.ok) {
+      throw new Error(`Serper.dev API Error HTTP ${res.status}`);
     }
 
-    // 1. Render Google Web Search Cards if available
-    let webCardsHtml = "";
-    if (organicResults.length > 0) {
-      webCardsHtml = `
-        <div class="glass-card" style="padding:16px;">
-          <h4 style="margin-top:0; color:#00d4aa;">🌐 Live Google Search Web Sources (${organicResults.length})</h4>
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-top:12px;">
-      `;
-      organicResults.forEach(item => {
-        let hostname = "";
-        try { hostname = item.link ? new URL(item.link).hostname : ""; } catch(e){}
-        webCardsHtml += `
-          <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; display:flex; flex-direction:column; justify-content:space-between;">
-            <a href="${item.link}" target="_blank" style="font-weight:bold; font-size:13px; color:#fbbf24; text-decoration:none; margin-bottom:4px; display:block;">${escapeHTML(item.title)} ↗</a>
-            <p style="font-size:11.5px; color:#ccc; line-height:1.4; margin:0 0 8px 0;">${escapeHTML(item.snippet || '')}</p>
-            <span style="font-size:10px; color:#888; margin-top:auto;">${escapeHTML(hostname)}</span>
-          </div>
-        `;
-      });
-      webCardsHtml += `</div></div>`;
-    }
-
-    // 2. Synthesize AI Research Digest via Gemini AI
-    let aiDigestText = "";
-    if (geminiKey) {
-      if (statusCard) {
-        const sub = document.getElementById("research-status-subtext");
-        if (sub) sub.textContent = "🧠 Synthesizing deep academic research digest with Gemini AI...";
-      }
-
-      let searchContextStr = "";
-      if (organicResults.length > 0) {
-        searchContextStr = "\n\nLive Search Findings:\n" + organicResults.map((r, idx) => `Source [${idx+1}]: ${r.title}\nSnippet: ${r.snippet}\nURL: ${r.link}`).join("\n\n");
-      }
-
-      const prompt = `Student Research Topic: "${query}"${searchContextStr}\n\nWrite a comprehensive Academic Research Digest & NCERT Analysis for a NEET aspirant. Organize with clear headers:
-1. Executive Summary & Core Concept
-2. Detailed Academic & NCERT Deep-Dive (including key formulas/reaction mechanisms/diagram descriptions)
-3. Exam Impact & High-Yield NEET Action Items`;
-
-      aiDigestText = await callGeminiAPI(prompt, "You are a senior NEET academic researcher.", null, { maxTokens: 1024 });
-    }
+    const data = await res.json();
+    const organicResults = data.organic || [];
+    const answerBox = data.answerBox || null;
+    const knowledgeGraph = data.knowledgeGraph || null;
 
     if (statusCard) statusCard.style.display = "none";
 
-    let aiDigestHtml = "";
-    if (aiDigestText) {
-      aiDigestHtml = `
-        <div class="glass-card" style="padding:20px; border:1px solid rgba(251,191,36,0.4);">
-          <h3 style="margin-top:0; color:#fbbf24; display:flex; align-items:center; gap:8px;">
-            <span>🤖 AI Academic Research Digest</span>
-          </h3>
-          <div style="font-size:13px; line-height:1.6; color:#e2e8f0;">
-            ${parseMarkdownAndKaTeX(aiDigestText)}
-          </div>
+    if (organicResults.length === 0 && !answerBox && !knowledgeGraph) {
+      container.innerHTML = `<div class="glass-card" style="padding:20px; text-align:center; color:#ef4444;">No live Google search results found for "${escapeHTML(query)}".</div>`;
+      return;
+    }
+
+    let html = "";
+
+    // 1. Serper Answer Box / Knowledge Graph (Direct Answer Summary)
+    if (answerBox) {
+      html += `
+        <div class="glass-card" style="padding:18px; margin-bottom:16px; border:1px solid rgba(0,212,170,0.5); background:rgba(0,212,170,0.04);">
+          <h4 style="margin-top:0; color:#00d4aa; display:flex; align-items:center; gap:6px;">
+            <span>⚡ Serper Google Direct Answer</span>
+          </h4>
+          <h5 style="margin:4px 0; font-size:14px; color:#fff;">${escapeHTML(answerBox.title || query)}</h5>
+          <p style="font-size:13px; color:#e2e8f0; line-height:1.5; margin:6px 0;">${escapeHTML(answerBox.answer || answerBox.snippet || '')}</p>
+        </div>
+      `;
+    } else if (knowledgeGraph) {
+      html += `
+        <div class="glass-card" style="padding:18px; margin-bottom:16px; border:1px solid rgba(251,191,36,0.5); background:rgba(251,191,36,0.04);">
+          <h4 style="margin-top:0; color:#fbbf24; display:flex; align-items:center; gap:6px;">
+            <span>📖 Serper Knowledge Graph: ${escapeHTML(knowledgeGraph.title || '')}</span>
+          </h4>
+          <p style="font-size:13px; color:#e2e8f0; line-height:1.5; margin:6px 0;">${escapeHTML(knowledgeGraph.description || '')}</p>
         </div>
       `;
     }
 
-    if (!aiDigestHtml && !webCardsHtml) {
-      container.innerHTML = `<div class="glass-card" style="padding:20px; text-align:center; color:#ef4444;">Please configure your Gemini API Key or Serper Key in Settings to view research results.</div>`;
-    } else {
-      container.innerHTML = aiDigestHtml + webCardsHtml;
+    // 2. Real-Time Google Search Web Cards
+    if (organicResults.length > 0) {
+      html += `
+        <div class="glass-card" style="padding:18px;">
+          <h4 style="margin-top:0; color:#00d4aa;">🌐 Live Google Search Results (${organicResults.length} Sources via Serper.dev)</h4>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:14px; margin-top:14px;">
+      `;
+
+      organicResults.forEach((item, idx) => {
+        let hostname = "";
+        try { hostname = item.link ? new URL(item.link).hostname : ""; } catch(e){}
+        html += `
+          <div style="padding:12px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:11px; font-weight:bold; color:#00d4aa;">Source #${idx + 1}</span>
+              <span style="font-size:10px; color:#aaa;">${escapeHTML(hostname)}</span>
+            </div>
+            <a href="${item.link}" target="_blank" style="font-weight:bold; font-size:13.5px; color:#fbbf24; text-decoration:none; margin-bottom:6px; display:block; line-height:1.3;">${escapeHTML(item.title)} ↗</a>
+            <p style="font-size:12px; color:#ccc; line-height:1.45; margin:0 0 10px 0;">${escapeHTML(item.snippet || '')}</p>
+            <a href="${item.link}" target="_blank" class="btn btn-secondary" style="font-size:11px; padding:4px 8px; text-decoration:none; text-align:center; align-self:flex-start; margin-top:auto;">Open Web Source ↗</a>
+          </div>
+        `;
+      });
+
+      html += `</div></div>`;
     }
+
+    container.innerHTML = html;
 
   } catch (err) {
     if (statusCard) statusCard.style.display = "none";
-    container.innerHTML = `<div class="glass-card" style="padding:20px; color:#ef4444; border:1px solid #ef4444;">❌ Research Failed: ${err.message}</div>`;
+    container.innerHTML = `<div class="glass-card" style="padding:20px; color:#ef4444; border:1px solid #ef4444;">❌ Serper Research Failed: ${err.message}</div>`;
   }
 }
 
