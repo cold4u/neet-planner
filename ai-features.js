@@ -650,10 +650,6 @@ Each object format:
     }
   }
 }
-      `;
-    }
-  }
-}
 
 // Robust JSON Parser that handles unescaped LaTeX backslashes, markdown code fences, control chars, and truncated JSON
 function robustParseJSON(rawText) {

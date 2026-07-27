@@ -101,10 +101,14 @@ else:
 
 
 # 4b. Inline ai-features.js in HTML content
-ai_script_pattern = r'<script defer src="ai-features\.js[^"]*"></script>'
-with open(os.path.join(base_dir, "ai-features.js"), "r", encoding="utf-8") as f:
-    ai_js_content = f.read()
-html_content = re.sub(ai_script_pattern, lambda m: f"<script>\n{ai_js_content}\n</script>", html_content)
+ai_match = re.search(r'<script defer src="ai-features\.js[^"]*"></script>', html_content)
+if ai_match:
+    with open(os.path.join(base_dir, "ai-features.js"), "r", encoding="utf-8") as f:
+        ai_js_content = f.read()
+    html_content = html_content.replace(ai_match.group(0), f"<script>\n{ai_js_content}\n</script>")
+    print("Successfully inlined ai-features.js.")
+else:
+    print("Warning: Could not find script tag for ai-features.js in HTML.")
 
 # 5. Save bundled HTML to both paths
 for out_path in [output_path_home, output_path_local]:
