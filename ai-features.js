@@ -1538,49 +1538,49 @@ const NEET_NEWS_ITEMS = [
 ];
 
 /* ==========================================================================
-   FEATURE: GNEWS.IO PRIMARY LIVE NEWS ENGINE & SERPER BACKUP
+   FEATURE: NEWSDATA.IO PRIMARY LIVE NEWS ENGINE & SERPER BACKUP
    ========================================================================== */
 
-function getGNewsApiKey() {
-  return (localStorage.getItem("gnews_api_key") || "").trim();
+function getNewsDataApiKey() {
+  return (localStorage.getItem("newsdata_api_key") || "").trim();
 }
 
-function onGNewsKeyTyped() {
-  const msgArea = document.getElementById("gnews-key-inline-msg");
+function onNewsDataKeyTyped() {
+  const msgArea = document.getElementById("newsdata-key-inline-msg");
   if (msgArea) msgArea.innerHTML = "";
 }
 
-function saveGNewsApiKey() {
-  const input = document.getElementById("setting-gnews-key");
-  const msgArea = document.getElementById("gnews-key-inline-msg");
+function saveNewsDataApiKey() {
+  const input = document.getElementById("setting-newsdata-key");
+  const msgArea = document.getElementById("newsdata-key-inline-msg");
   if (!input) return;
   const val = input.value.trim();
   if (!val) {
-    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">Please paste a valid GNews API key</span>`;
-    alert("Please enter a valid GNews API key!");
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">Please paste a valid NewsData.io API key (pub_...)</span>`;
+    alert("Please enter a valid NewsData.io API key!");
     return;
   }
-  localStorage.setItem("gnews_api_key", val);
-  updateGNewsApiKeyStatusUI(true);
-  if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">✅ GNews API Key saved successfully! Primary news engine active.</span>`;
+  localStorage.setItem("newsdata_api_key", val);
+  updateNewsDataApiKeyStatusUI(true);
+  if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">✅ NewsData.io API Key saved successfully! Primary news engine active.</span>`;
   renderNeetNews("all");
-  alert("🎉 GNews API Key saved successfully!");
+  alert("🎉 NewsData.io API Key saved successfully!");
 }
 
-function removeGNewsApiKey() {
-  localStorage.removeItem("gnews_api_key");
-  const input = document.getElementById("setting-gnews-key");
+function removeNewsDataApiKey() {
+  localStorage.removeItem("newsdata_api_key");
+  const input = document.getElementById("setting-newsdata-key");
   if (input) input.value = "";
-  const msgArea = document.getElementById("gnews-key-inline-msg");
-  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">🗑️ GNews API Key removed.</span>`;
-  updateGNewsApiKeyStatusUI(true);
+  const msgArea = document.getElementById("newsdata-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">🗑️ NewsData.io API Key removed.</span>`;
+  updateNewsDataApiKeyStatusUI(true);
   renderNeetNews("all");
 }
 
-function updateGNewsApiKeyStatusUI(forceSync = false) {
-  const key = getGNewsApiKey();
-  const badge = document.getElementById("gnews-key-status-badge");
-  const input = document.getElementById("setting-gnews-key");
+function updateNewsDataApiKeyStatusUI(forceSync = false) {
+  const key = getNewsDataApiKey();
+  const badge = document.getElementById("newsdata-key-status-badge");
+  const input = document.getElementById("setting-newsdata-key");
   if (input && (forceSync || !input.value.trim())) input.value = key;
   if (badge) {
     badge.innerHTML = key 
@@ -1589,50 +1589,50 @@ function updateGNewsApiKeyStatusUI(forceSync = false) {
   }
 }
 
-function toggleGNewsKeyVisibility() {
-  const input = document.getElementById("setting-gnews-key");
+function toggleNewsDataKeyVisibility() {
+  const input = document.getElementById("setting-newsdata-key");
   if (input) input.type = input.type === "password" ? "text" : "password";
 }
 
-async function testGNewsApiConnection() {
-  const input = document.getElementById("setting-gnews-key");
-  const badge = document.getElementById("gnews-key-status-badge");
-  const msgArea = document.getElementById("gnews-key-inline-msg");
+async function testNewsDataApiConnection() {
+  const input = document.getElementById("setting-newsdata-key");
+  const badge = document.getElementById("newsdata-key-status-badge");
+  const msgArea = document.getElementById("newsdata-key-inline-msg");
 
   if (input && input.value.trim()) {
-    localStorage.setItem("gnews_api_key", input.value.trim());
-    updateGNewsApiKeyStatusUI(true);
+    localStorage.setItem("newsdata_api_key", input.value.trim());
+    updateNewsDataApiKeyStatusUI(true);
   }
 
-  const key = getGNewsApiKey();
+  const key = getNewsDataApiKey();
   if (!key) {
     if (badge) badge.innerHTML = `<span style="color:#ef4444;">No Key</span>`;
-    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444;">Please enter your GNews API key first!</span>`;
-    alert("Please paste your GNews API key first!");
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444;">Please enter your NewsData.io API key first!</span>`;
+    alert("Please paste your NewsData.io API key first!");
     return;
   }
 
   if (badge) badge.innerHTML = `<span style="color:#fbbf24;">Testing...</span>`;
-  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">Connecting to GNews.io API...</span>`;
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">Connecting to NewsData.io API...</span>`;
 
   try {
-    const articles = await fetchLiveGNews("all");
+    const articles = await fetchLiveNewsData("all");
     if (articles && articles.length > 0) {
       if (badge) badge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected</span>`;
       if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🎉 Connection Successful! Fetched ${articles.length} news articles.</span>`;
-      alert(`🎉 GNews.io API Connection Successful! Fetched ${articles.length} live articles.`);
+      alert(`🎉 NewsData.io API Connection Successful! Fetched ${articles.length} live articles.`);
     } else {
-      throw new Error("No articles returned from GNews API.");
+      throw new Error("No articles returned from NewsData.io API.");
     }
   } catch (err) {
     if (badge) badge.innerHTML = `<span style="color:#ef4444;">Failed</span>`;
     if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444;">Connection failed: ${err.message}</span>`;
-    alert(`❌ GNews API Connection Failed: ${err.message}`);
+    alert(`❌ NewsData.io API Connection Failed: ${err.message}`);
   }
 }
 
-async function fetchLiveGNews(category = "all") {
-  const key = getGNewsApiKey();
+async function fetchLiveNewsData(category = "all") {
+  const key = getNewsDataApiKey();
   if (!key) return null;
 
   let query = "NEET NTA";
@@ -1641,13 +1641,13 @@ async function fetchLiveGNews(category = "all") {
   if (category === "counseling") query = "NEET MCC counseling";
 
   try {
-    const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&country=in&max=6&apikey=${key}`;
+    const url = `https://newsdata.io/api/1/latest?apikey=${key}&q=${encodeURIComponent(query)}&country=in&language=en`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
-    return data.articles || [];
+    return data.results || [];
   } catch (err) {
-    console.warn("GNews fetch failed:", err);
+    console.warn("NewsData fetch failed:", err);
     return null;
   }
 }
@@ -1656,34 +1656,34 @@ async function renderNeetNews(filter = "all") {
   const container = document.getElementById("news-cards-container");
   if (!container) return;
 
-  const gnewsKey = getGNewsApiKey();
+  const newsDataKey = getNewsDataApiKey();
   const serperKey = getSerperApiKey();
 
-  // 1. PRIMARY ENGINE FOR LIVE NEWS: GNews.io API
-  if (gnewsKey) {
+  // 1. PRIMARY ENGINE FOR LIVE NEWS: NewsData.io API
+  if (newsDataKey) {
     container.innerHTML = `
       <div class="glass-card" style="grid-column: 1 / -1; text-align:center; padding:20px;">
         <div class="spinner" style="margin:0 auto 10px auto;"></div>
-        📰 Fetching Real-Time NTA NEET News via GNews.io (Primary Engine)...
+        📰 Fetching Real-Time NTA NEET News via NewsData.io (Primary Engine)...
       </div>
     `;
 
-    const gArticles = await fetchLiveGNews(filter);
-    if (gArticles && gArticles.length > 0) {
-      container.innerHTML = gArticles.map(item => `
+    const ndArticles = await fetchLiveNewsData(filter);
+    if (ndArticles && ndArticles.length > 0) {
+      container.innerHTML = ndArticles.map(item => `
         <div class="news-card glass-card" style="padding:16px; display:flex; flex-direction:column; justify-content:space-between; border:1px solid rgba(59,130,246,0.3);">
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <span class="badge" style="background:rgba(59,130,246,0.15); color:#3b82f6; font-size:10px; padding:2px 8px; border-radius:4px;">📰 ${escapeHTML(item.source?.name || 'Live News')}</span>
-              <span style="font-size:10px; color:#aaa;">${item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : 'Today'}</span>
+              <span class="badge" style="background:rgba(59,130,246,0.15); color:#3b82f6; font-size:10px; padding:2px 8px; border-radius:4px;">📰 ${escapeHTML(item.source_id || 'NewsData.io')}</span>
+              <span style="font-size:10px; color:#aaa;">${item.pubDate ? new Date(item.pubDate).toLocaleDateString() : 'Today'}</span>
             </div>
-            ${item.image ? `<img src="${item.image}" alt="News Image" style="width:100%; height:130px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : ''}
+            ${item.image_url ? `<img src="${item.image_url}" alt="News Image" style="width:100%; height:130px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : ''}
             <h4 style="margin:0 0 8px 0; font-size:14px; color:#fff; line-height:1.3;">${escapeHTML(item.title)}</h4>
             <p style="font-size:12px; color:#ccc; line-height:1.45; margin:0;">${escapeHTML(item.description || item.content || '')}</p>
           </div>
           <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
-            <a href="${item.url}" target="_blank" class="btn btn-secondary" style="font-size:11px; text-decoration:none;">Read Story ↗</a>
-            <span style="font-size:10px; color:#3b82f6;">⚡ GNews Engine</span>
+            <a href="${item.link}" target="_blank" class="btn btn-secondary" style="font-size:11px; padding:4px 8px; text-decoration:none;">Read Story ↗</a>
+            <span style="font-size:10px; color:#3b82f6;">⚡ NewsData.io Engine</span>
           </div>
         </div>
       `).join('');
@@ -2289,18 +2289,18 @@ window.insertSubscript = insertSubscript;
 window.insertSuperscript = insertSuperscript;
 window.insertChemistrySymbol = insertChemistrySymbol;
 
-window.getGNewsApiKey = getGNewsApiKey;
-window.saveGNewsApiKey = saveGNewsApiKey;
-window.removeGNewsApiKey = removeGNewsApiKey;
-window.updateGNewsApiKeyStatusUI = updateGNewsApiKeyStatusUI;
-window.toggleGNewsKeyVisibility = toggleGNewsKeyVisibility;
-window.testGNewsApiConnection = testGNewsApiConnection;
-window.fetchLiveGNews = fetchLiveGNews;
+window.getNewsDataApiKey = getNewsDataApiKey;
+window.saveNewsDataApiKey = saveNewsDataApiKey;
+window.removeNewsDataApiKey = removeNewsDataApiKey;
+window.updateNewsDataApiKeyStatusUI = updateNewsDataApiKeyStatusUI;
+window.toggleNewsDataKeyVisibility = toggleNewsDataKeyVisibility;
+window.testNewsDataApiConnection = testNewsDataApiConnection;
+window.fetchLiveNewsData = fetchLiveNewsData;
 
 document.addEventListener("DOMContentLoaded", () => {
   updateApiKeyStatusUI(true);
   updateGroqApiKeyStatusUI(true);
-  updateGNewsApiKeyStatusUI(true);
+  updateNewsDataApiKeyStatusUI(true);
   updateSerperApiKeyStatusUI(true);
   renderSetupRequiredCards();
   renderNeetNews("all");
@@ -2324,14 +2324,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const removeGroqBtn = document.getElementById("btn-remove-groq-key");
   if (removeGroqBtn) removeGroqBtn.onclick = removeGroqApiKey;
 
-  const saveGNewsBtn = document.getElementById("btn-save-gnews-key");
-  if (saveGNewsBtn) saveGNewsBtn.onclick = saveGNewsApiKey;
+  const saveNewsDataBtn = document.getElementById("btn-save-newsdata-key");
+  if (saveNewsDataBtn) saveNewsDataBtn.onclick = saveNewsDataApiKey;
 
-  const testGNewsBtn = document.getElementById("btn-test-gnews-key");
-  if (testGNewsBtn) testGNewsBtn.onclick = testGNewsApiConnection;
+  const testNewsDataBtn = document.getElementById("btn-test-newsdata-key");
+  if (testNewsDataBtn) testNewsDataBtn.onclick = testNewsDataApiConnection;
 
-  const removeGNewsBtn = document.getElementById("btn-remove-gnews-key");
-  if (removeGNewsBtn) removeGNewsBtn.onclick = removeGNewsApiKey;
+  const removeNewsDataBtn = document.getElementById("btn-remove-newsdata-key");
+  if (removeNewsDataBtn) removeNewsDataBtn.onclick = removeNewsDataApiKey;
 
   const saveSerperBtn = document.getElementById("btn-save-serper-key");
   if (saveSerperBtn) saveSerperBtn.onclick = saveSerperApiKey;
@@ -2346,7 +2346,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function handleAiTabSwitch(tabId) {
   updateApiKeyStatusUI(true);
   updateGroqApiKeyStatusUI(true);
-  updateGNewsApiKeyStatusUI(true);
+  updateNewsDataApiKeyStatusUI(true);
   updateSerperApiKeyStatusUI(true);
   renderSetupRequiredCards();
 
