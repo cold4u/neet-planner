@@ -12,14 +12,14 @@
  * 8. NEET News & NTA Official Updates Hub + AI Summarizer
  */
 
-// Model Fallback Ring — Automatically rotates if any model hits 429 rate limits
+// Model Fallback Ring — Valid public Gemini v1beta endpoints
 const GEMINI_MODELS = [
   "gemini-2.0-flash",
-  "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
-  "gemini-1.5-flash"
+  "gemini-1.5-flash",
+  "gemini-1.5-flash-8b"
 ];
 
+const _invalidModels = new Set();
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
 // Helper: Sleep for delay
@@ -60,6 +60,7 @@ function _setCachedResponse(key, text) {
 function _getAvailableModel() {
   const now = Date.now();
   for (const model of GEMINI_MODELS) {
+    if (_invalidModels.has(model)) continue;
     const cooldownUntil = _modelCooldowns[model] || 0;
     if (now >= cooldownUntil) return model;
   }
@@ -192,7 +193,8 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
         }
 
         if (response.status === 404) {
-          _modelCooldowns[model] = Date.now() + 3600000;
+          _invalidModels.add(model);
+          console.warn(`[API] Model ${model} returned 404. Skipping...`);
           continue;
         }
 
@@ -1327,13 +1329,29 @@ function copyText(btn) {
    INITIALIZATION & TAB SWITCH HOOKS
    ========================================================================== */
 
-// Explicitly expose BYOK manager functions to window object for global onclick access
+// Explicitly expose ALL AI feature functions to window object for global HTML onclick access
 window.saveApiKey = saveApiKey;
 window.removeApiKey = removeApiKey;
 window.testApiKeyConnection = testApiKeyConnection;
 window.toggleKeyVisibility = toggleKeyVisibility;
 window.onKeyInputTyped = onKeyInputTyped;
 window.getApiKey = getApiKey;
+
+window.sendTutorMessage = sendTutorMessage;
+window.selectSubjectMode = selectSubjectMode;
+window.quickAsk = quickAsk;
+window.clearChat = clearChat;
+window.handleChatKeyPress = handleChatKeyPress;
+window.updateCharCount = updateCharCount;
+window.generateCbtTest = generateCbtTest;
+window.submitCbtTest = submitCbtTest;
+window.handlePdfDrop = handlePdfDrop;
+window.launchCbtFromPdf = launchCbtFromPdf;
+window.generateStudyRecommendation = generateStudyRecommendation;
+window.analyzeMistakesWithAI = analyzeMistakesWithAI;
+window.summarizeNews = summarizeNews;
+window.filterNews = filterNews;
+window.copyText = copyText;
 
 document.addEventListener("DOMContentLoaded", () => {
   updateApiKeyStatusUI();
