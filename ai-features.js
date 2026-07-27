@@ -1363,7 +1363,9 @@ ${extractedPdfText.slice(0, 14000)}`;
     if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
       extractedQuestionsList = parsedQuestions;
       if (statusCard) statusCard.style.display = "none";
-      renderPdfExtractedQuestions("🧠 Google Gemini AI Primary Engine");
+      // Directly launch CBT Mock Test!
+      showTab("ai-mocktest");
+      startCbtExam(extractedQuestionsList, extractedQuestionsList.length * 120);
       return;
     } else {
       throw new Error("Could not parse structured questions from PDF.");
