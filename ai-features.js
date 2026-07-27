@@ -1540,6 +1540,133 @@ async function performSerperSearch(query) {
   }
 }
 
+/* ==========================================================================
+   FEATURE: DEDICATED AI WEB & LITERATURE RESEARCH HUB
+   ========================================================================== */
+
+function quickResearch(query) {
+  const input = document.getElementById("research-query-input");
+  if (input) input.value = query;
+  performDedicatedAiResearch();
+}
+
+async function performDedicatedAiResearch() {
+  const input = document.getElementById("research-query-input");
+  const container = document.getElementById("research-results-container");
+  const statusCard = document.getElementById("research-status-card");
+  if (!input || !container) return;
+
+  const query = input.value.trim();
+  if (!query) {
+    alert("Please enter a research topic or query!");
+    return;
+  }
+
+  const serperKey = getSerperApiKey();
+  if (!serperKey) {
+    alert("Please set your free Serper.dev API key in Settings to enable Live AI Web Research!");
+    showTab("settings");
+    return;
+  }
+
+  if (statusCard) {
+    statusCard.style.display = "block";
+    statusCard.innerHTML = `
+      <div class="glass-card" style="text-align:center; padding:20px;">
+        <div class="spinner" style="margin:0 auto 10px auto;"></div>
+        <h4>🔍 Fetching Live Web Search Data via Serper.dev...</h4>
+        <p id="research-status-subtext" style="font-size:12px; color:#00d4aa;">Synthesizing academic findings with Gemini AI...</p>
+      </div>
+    `;
+  }
+  container.innerHTML = "";
+
+  try {
+    const res = await fetch("https://google.serper.dev/search", {
+      method: "POST",
+      headers: {
+        "X-API-KEY": serperKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ q: query, num: 6 })
+    });
+
+    if (!res.ok) {
+      throw new Error(`Serper API HTTP Error ${res.status}`);
+    }
+
+    const data = await res.json();
+    const organicResults = data.organic || [];
+
+    if (organicResults.length === 0) {
+      if (statusCard) statusCard.style.display = "none";
+      container.innerHTML = `<div class="glass-card" style="padding:20px; text-align:center; color:#ef4444;">No live web search results found for "${escapeHTML(query)}".</div>`;
+      return;
+    }
+
+    // 1. Render Real-Time Google Search Cards
+    let webCardsHtml = `
+      <div class="glass-card" style="padding:16px;">
+        <h4 style="margin-top:0; color:#00d4aa;">🌐 Live Google Search Web Sources (${organicResults.length})</h4>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-top:12px;">
+    `;
+
+    organicResults.forEach(item => {
+      let hostname = "";
+      try { hostname = item.link ? new URL(item.link).hostname : ""; } catch(e){}
+      webCardsHtml += `
+        <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; display:flex; flex-direction:column; justify-content:space-between;">
+          <a href="${item.link}" target="_blank" style="font-weight:bold; font-size:13px; color:#fbbf24; text-decoration:none; margin-bottom:4px; display:block;">${escapeHTML(item.title)} ↗</a>
+          <p style="font-size:11.5px; color:#ccc; line-height:1.4; margin:0 0 8px 0;">${escapeHTML(item.snippet || '')}</p>
+          <span style="font-size:10px; color:#888; margin-top:auto;">${escapeHTML(hostname)}</span>
+        </div>
+      `;
+    });
+
+    webCardsHtml += `</div></div>`;
+
+    // 2. Synthesize AI Research Digest via Gemini
+    if (statusCard) {
+      const sub = document.getElementById("research-status-subtext");
+      if (sub) sub.textContent = "🧠 Synthesizing deep academic research digest with Gemini AI...";
+    }
+
+    const searchContextStr = organicResults.map((r, idx) => `Source [${idx+1}]: ${r.title}\nSnippet: ${r.snippet}\nURL: ${r.link}`).join("\n\n");
+
+    const prompt = `Student Research Query: "${query}"\n\nLive Search Findings:\n${searchContextStr}\n\nWrite a comprehensive Academic Research Digest & NCERT Analysis for a NEET aspirant. Organize with clear headers:
+1. Executive Summary & Key Findings
+2. Detailed Academic / NCERT Breakdown
+3. Exam Impact & Action Items for NEET Aspirants`;
+
+    let aiDigestText = "";
+    if (getApiKey()) {
+      aiDigestText = await callGeminiAPI(prompt, "You are a senior NEET academic researcher.", null, { maxTokens: 1024 });
+    }
+
+    if (statusCard) statusCard.style.display = "none";
+
+    let aiDigestHtml = "";
+    if (aiDigestText) {
+      aiDigestHtml = `
+        <div class="glass-card" style="padding:20px; border:1px solid rgba(251,191,36,0.4);">
+          <h3 style="margin-top:0; color:#fbbf24; display:flex; align-items:center; gap:8px;">
+            <span>🤖 AI Academic Research Digest</span>
+          </h3>
+          <div style="font-size:13px; line-height:1.6; color:#e2e8f0;">
+            ${parseMarkdownAndKaTeX(aiDigestText)}
+          </div>
+        </div>
+      `;
+    }
+
+    container.innerHTML = aiDigestHtml + webCardsHtml;
+
+  } catch (err) {
+    if (statusCard) statusCard.style.display = "none";
+    container.innerHTML = `<div class="glass-card" style="padding:20px; color:#ef4444; border:1px solid #ef4444;">❌ Research Failed: ${err.message}</div>`;
+  }
+}
+
 async function fetchLiveSerperNews(category = "all") {
   const key = getSerperApiKey();
   if (!key) return null;
@@ -1598,6 +1725,8 @@ window.onSerperKeyTyped = onSerperKeyTyped;
 window.getSerperApiKey = getSerperApiKey;
 window.toggleResearchMode = toggleResearchMode;
 window.performSerperSearch = performSerperSearch;
+window.performDedicatedAiResearch = performDedicatedAiResearch;
+window.quickResearch = quickResearch;
 window.fetchLiveSerperNews = fetchLiveSerperNews;
 
 window.sendTutorMessage = sendTutorMessage;

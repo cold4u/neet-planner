@@ -4608,7 +4608,11 @@ sup {
       </button>
               <button class="nav-item" data-tab="ai-tutor" onclick="showTab('ai-tutor')">
           <span class="nav-icon">🧠</span>
-          <span class="nav-label">AI Tutor</span>
+          <span class="nav-label">AI Tutor (Doubts)</span>
+        </button>
+        <button class="nav-item" data-tab="ai-research" onclick="showTab('ai-research')">
+          <span class="nav-icon">🔬</span>
+          <span class="nav-label">AI Web Research</span>
         </button>
         <button class="nav-item" data-tab="ai-mocktest" onclick="showTab('ai-mocktest')">
           <span class="nav-icon">🖥️</span>
@@ -5816,6 +5820,43 @@ sup {
       </div>
     </section>
 
+    <!-- 🔬 DEDICATED AI WEB & LITERATURE RESEARCH TAB -->
+    <section id="ai-research" class="tab-content">
+      <div class="page-header">
+        <h2 class="page-title">🔬 AI Web & Literature Research Hub</h2>
+        <p class="page-desc">Search live web data, NTA/NMC official circulars, medical research papers, and deep NCERT concepts powered by Serper.dev & Gemini AI.</p>
+      </div>
+
+      <div class="ai-setup-required-card glass-card" style="display:none; text-align:center; padding:30px; margin-bottom:16px;">
+        <h3>🔑 Serper.dev API Key Required</h3>
+        <p style="font-size:12.5px; color:#ccc; margin:8px 0 16px 0;">Please enter your free Serper.dev API Key in Settings to enable live web research.</p>
+        <button type="button" class="btn btn-primary" onclick="showTab('settings')">⚙️ Go to Settings</button>
+      </div>
+
+      <div class="ai-feature-content">
+        <div class="glass-card" style="padding:20px; margin-bottom:16px;">
+          <h3>🔍 Search Live Academic & Medical Web Data</h3>
+          <p style="font-size:12px; color:#aaa; margin:4px 0 14px 0;">Query Google Search in real-time and generate synthesized AI research digests.</p>
+          
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+            <input type="text" id="research-query-input" class="form-control" placeholder="Enter research query e.g. NEET 2027 NMC eligibility criteria, CRISPR-Cas9 mechanism..." style="flex:1; min-width:260px;" onkeydown="if(event.key==='Enter')performDedicatedAiResearch()">
+            <button class="btn btn-primary" onclick="performDedicatedAiResearch()" style="padding:10px 20px;">🔍 Run AI Research</button>
+          </div>
+
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;" onclick="quickResearch('NTA NEET UG official circulars 2027 updates')">🔴 NTA Official Circulars</button>
+            <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;" onclick="quickResearch('NEET 2027 revised biology syllabus changes')">🔵 Syllabus Updates</button>
+            <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;" onclick="quickResearch('NCERT Biology Biotechnology DNA Recombinant technology deep concept')">🧬 NCERT Biotech Deep-Dive</button>
+            <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;" onclick="quickResearch('Latest medical research on Human Heart cardiac cycle mechanisms')">🧪 Medical Research Papers</button>
+          </div>
+        </div>
+
+        <div id="research-status-card" style="display:none; margin-bottom:16px;"></div>
+
+        <div id="research-results-container" style="display:flex; flex-direction:column; gap:16px;"></div>
+      </div>
+    </section>
+
     <!-- AI CBT MOCK TEST TAB -->
     <section id="ai-mocktest" class="tab-content">
       <div class="page-header">
@@ -6857,7 +6898,8 @@ sup {
       <button class="drawer-item" data-tab="flashcards" onclick="navigateTab('flashcards')">🎴 Flashcards</button>
       <button class="drawer-item" data-tab="studyhub" onclick="navigateTab('studyhub')">📺 Study Hub</button>
       <button class="drawer-item" data-tab="formulas" onclick="navigateTab('formulas')">📖 Formula Book</button>
-      <button class="drawer-item" data-tab="ai-tutor" onclick="navigateTab('ai-tutor')">🧠 AI Tutor</button>
+      <button class="drawer-item" data-tab="ai-tutor" onclick="navigateTab('ai-tutor')">🧠 AI Tutor (Doubts)</button>
+      <button class="drawer-item" data-tab="ai-research" onclick="navigateTab('ai-research')">🔬 AI Web Research</button>
       <button class="drawer-item" data-tab="ai-mocktest" onclick="navigateTab('ai-mocktest')">🖥️ AI Mock Test</button>
       <button class="drawer-item" data-tab="pdf-to-test" onclick="navigateTab('pdf-to-test')">📄 PDF to Test</button>
       <button class="drawer-item" data-tab="neet-news" onclick="navigateTab('neet-news')">📰 NEET News</button>
@@ -7956,7 +7998,7 @@ function safeSetSessionStorage(key, value) {
         if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
       } else if (tabId === 'formulas') {
         if (typeof renderTabFormulas === 'function') renderTabFormulas();
-      } else if (tabId === 'ai-tutor' || tabId === 'ai-mocktest' || tabId === 'pdf-to-test' || tabId === 'neet-news' || tabId === 'settings') {
+      } else if (tabId === 'ai-tutor' || tabId === 'ai-research' || tabId === 'ai-mocktest' || tabId === 'pdf-to-test' || tabId === 'neet-news' || tabId === 'settings') {
         if (typeof handleAiTabSwitch === 'function') {
           handleAiTabSwitch(tabId);
         }
@@ -16699,6 +16741,133 @@ async function performSerperSearch(query) {
   }
 }
 
+/* ==========================================================================
+   FEATURE: DEDICATED AI WEB & LITERATURE RESEARCH HUB
+   ========================================================================== */
+
+function quickResearch(query) {
+  const input = document.getElementById("research-query-input");
+  if (input) input.value = query;
+  performDedicatedAiResearch();
+}
+
+async function performDedicatedAiResearch() {
+  const input = document.getElementById("research-query-input");
+  const container = document.getElementById("research-results-container");
+  const statusCard = document.getElementById("research-status-card");
+  if (!input || !container) return;
+
+  const query = input.value.trim();
+  if (!query) {
+    alert("Please enter a research topic or query!");
+    return;
+  }
+
+  const serperKey = getSerperApiKey();
+  if (!serperKey) {
+    alert("Please set your free Serper.dev API key in Settings to enable Live AI Web Research!");
+    showTab("settings");
+    return;
+  }
+
+  if (statusCard) {
+    statusCard.style.display = "block";
+    statusCard.innerHTML = `
+      <div class="glass-card" style="text-align:center; padding:20px;">
+        <div class="spinner" style="margin:0 auto 10px auto;"></div>
+        <h4>🔍 Fetching Live Web Search Data via Serper.dev...</h4>
+        <p id="research-status-subtext" style="font-size:12px; color:#00d4aa;">Synthesizing academic findings with Gemini AI...</p>
+      </div>
+    `;
+  }
+  container.innerHTML = "";
+
+  try {
+    const res = await fetch("https://google.serper.dev/search", {
+      method: "POST",
+      headers: {
+        "X-API-KEY": serperKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ q: query, num: 6 })
+    });
+
+    if (!res.ok) {
+      throw new Error(`Serper API HTTP Error ${res.status}`);
+    }
+
+    const data = await res.json();
+    const organicResults = data.organic || [];
+
+    if (organicResults.length === 0) {
+      if (statusCard) statusCard.style.display = "none";
+      container.innerHTML = `<div class="glass-card" style="padding:20px; text-align:center; color:#ef4444;">No live web search results found for "${escapeHTML(query)}".</div>`;
+      return;
+    }
+
+    // 1. Render Real-Time Google Search Cards
+    let webCardsHtml = `
+      <div class="glass-card" style="padding:16px;">
+        <h4 style="margin-top:0; color:#00d4aa;">🌐 Live Google Search Web Sources (${organicResults.length})</h4>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-top:12px;">
+    `;
+
+    organicResults.forEach(item => {
+      let hostname = "";
+      try { hostname = item.link ? new URL(item.link).hostname : ""; } catch(e){}
+      webCardsHtml += `
+        <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; display:flex; flex-direction:column; justify-content:space-between;">
+          <a href="${item.link}" target="_blank" style="font-weight:bold; font-size:13px; color:#fbbf24; text-decoration:none; margin-bottom:4px; display:block;">${escapeHTML(item.title)} ↗</a>
+          <p style="font-size:11.5px; color:#ccc; line-height:1.4; margin:0 0 8px 0;">${escapeHTML(item.snippet || '')}</p>
+          <span style="font-size:10px; color:#888; margin-top:auto;">${escapeHTML(hostname)}</span>
+        </div>
+      `;
+    });
+
+    webCardsHtml += `</div></div>`;
+
+    // 2. Synthesize AI Research Digest via Gemini
+    if (statusCard) {
+      const sub = document.getElementById("research-status-subtext");
+      if (sub) sub.textContent = "🧠 Synthesizing deep academic research digest with Gemini AI...";
+    }
+
+    const searchContextStr = organicResults.map((r, idx) => `Source [${idx+1}]: ${r.title}\nSnippet: ${r.snippet}\nURL: ${r.link}`).join("\n\n");
+
+    const prompt = `Student Research Query: "${query}"\n\nLive Search Findings:\n${searchContextStr}\n\nWrite a comprehensive Academic Research Digest & NCERT Analysis for a NEET aspirant. Organize with clear headers:
+1. Executive Summary & Key Findings
+2. Detailed Academic / NCERT Breakdown
+3. Exam Impact & Action Items for NEET Aspirants`;
+
+    let aiDigestText = "";
+    if (getApiKey()) {
+      aiDigestText = await callGeminiAPI(prompt, "You are a senior NEET academic researcher.", null, { maxTokens: 1024 });
+    }
+
+    if (statusCard) statusCard.style.display = "none";
+
+    let aiDigestHtml = "";
+    if (aiDigestText) {
+      aiDigestHtml = `
+        <div class="glass-card" style="padding:20px; border:1px solid rgba(251,191,36,0.4);">
+          <h3 style="margin-top:0; color:#fbbf24; display:flex; align-items:center; gap:8px;">
+            <span>🤖 AI Academic Research Digest</span>
+          </h3>
+          <div style="font-size:13px; line-height:1.6; color:#e2e8f0;">
+            ${parseMarkdownAndKaTeX(aiDigestText)}
+          </div>
+        </div>
+      `;
+    }
+
+    container.innerHTML = aiDigestHtml + webCardsHtml;
+
+  } catch (err) {
+    if (statusCard) statusCard.style.display = "none";
+    container.innerHTML = `<div class="glass-card" style="padding:20px; color:#ef4444; border:1px solid #ef4444;">❌ Research Failed: ${err.message}</div>`;
+  }
+}
+
 async function fetchLiveSerperNews(category = "all") {
   const key = getSerperApiKey();
   if (!key) return null;
@@ -16757,6 +16926,8 @@ window.onSerperKeyTyped = onSerperKeyTyped;
 window.getSerperApiKey = getSerperApiKey;
 window.toggleResearchMode = toggleResearchMode;
 window.performSerperSearch = performSerperSearch;
+window.performDedicatedAiResearch = performDedicatedAiResearch;
+window.quickResearch = quickResearch;
 window.fetchLiveSerperNews = fetchLiveSerperNews;
 
 window.sendTutorMessage = sendTutorMessage;
