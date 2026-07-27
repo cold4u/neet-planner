@@ -1906,15 +1906,29 @@ function parseMarkdownAndKaTeX(text) {
   // 1. Clean up raw LaTeX \text{...} wrappers in chemical formulas & equations
   html = html.replace(/\\text\{([^}]+)\}/g, '$1');
 
-  // 2. Clean up LaTeX chemical arrows & symbols BEFORE HTML escaping
+  // 2. Clean up backslash-escaped multiplication stars (e.g. F = m \* a -> F = m × a)
+  html = html.replace(/\\\*/g, '×');
+
+  // 3. Clean up LaTeX chemical arrows, operators & Greek physics symbols BEFORE HTML escaping
   html = html.replace(/\\rightarrow|\\to|\\longrightarrow/g, '→');
   html = html.replace(/\\leftarrow|\\longleftarrow/g, '←');
   html = html.replace(/\\leftrightarrow|\\rightleftharpoons/g, '⇌');
   html = html.replace(/\\Delta|\\delta/g, 'Δ');
   html = html.replace(/\\pm/g, '±');
   html = html.replace(/\\times/g, '×');
+  html = html.replace(/\\cdot/g, '·');
+  html = html.replace(/\\div/g, '÷');
+  html = html.replace(/\\theta/g, 'θ');
+  html = html.replace(/\\alpha/g, 'α');
+  html = html.replace(/\\beta/g, 'β');
+  html = html.replace(/\\gamma/g, 'γ');
+  html = html.replace(/\\pi/g, 'π');
+  html = html.replace(/\\mu/g, 'μ');
+  html = html.replace(/\\lambda/g, 'λ');
+  html = html.replace(/\\omega/g, 'ω');
+  html = html.replace(/\\nu/g, 'ν');
 
-  // 3. Clean up raw math delimiters $ ... $ or $$ ... $$ wrapping chemical equations
+  // 4. Clean up raw math delimiters $ ... $ or $$ ... $$ wrapping equations
   html = html.replace(/\$\$([^\$]+)\$\$/g, '$1');
   html = html.replace(/\$([^\$]+)\$/g, '$1');
 
