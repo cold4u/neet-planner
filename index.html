@@ -1306,8 +1306,22 @@
           </div>
 
           <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+            <!-- CHEMISTRY & MATH FORMATTING QUICK TOOLBAR (SUBSCRIPT & SUPERSCRIPT) -->
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; background:rgba(255,255,255,0.04); padding:6px 10px; border-radius:8px; border:1px solid var(--glass-border);">
+              <span style="font-size:11px; color:#aaa; font-weight:bold;">🧪 Chemistry & Math Controls:</span>
+              <button type="button" class="btn btn-secondary" style="font-size:11px; padding:2px 8px;" onclick="insertSubscript('tutor-chat-input')" title="Subscript (e.g. H~2~O)">X<sub>2</sub> Sub</button>
+              <button type="button" class="btn btn-secondary" style="font-size:11px; padding:2px 8px;" onclick="insertSuperscript('tutor-chat-input')" title="Superscript (e.g. Fe^3+^)">X<sup>2</sup> Sup</button>
+              <button type="button" class="btn btn-secondary" style="font-size:11px; padding:2px 8px;" onclick="insertChemistrySymbol('⇌ ', 'tutor-chat-input')" title="Reversible Equilibrium Arrow">⇌</button>
+              <button type="button" class="btn btn-secondary" style="font-size:11px; padding:2px 8px;" onclick="insertChemistrySymbol('→ ', 'tutor-chat-input')" title="Reaction Arrow">→</button>
+              <button type="button" class="btn btn-secondary" style="font-size:11px; padding:2px 8px;" onclick="insertChemistrySymbol('Δ', 'tutor-chat-input')" title="Delta (Heat/Change)">Δ</button>
+              <button type="button" class="btn btn-secondary" style="font-size:11px; padding:2px 8px;" onclick="insertChemistrySymbol('H~2~O', 'tutor-chat-input')">H<sub>2</sub>O</button>
+              <button type="button" class="btn btn-secondary" style="font-size:11px; padding:2px 8px;" onclick="insertChemistrySymbol('CO~2~', 'tutor-chat-input')">CO<sub>2</sub></button>
+              <button type="button" class="btn btn-secondary" style="font-size:11px; padding:2px 8px;" onclick="insertChemistrySymbol('Fe^3+^', 'tutor-chat-input')">Fe<sup>3+</sup></button>
+              <button type="button" class="btn btn-secondary" style="font-size:11px; padding:2px 8px;" onclick="insertChemistrySymbol('SO~4~^2-^', 'tutor-chat-input')">SO<sub>4</sub><sup>2-</sup></button>
+            </div>
+
             <div style="display:flex; gap:8px;">
-              <textarea id="tutor-chat-input" class="form-control" rows="2" placeholder="Ask any NEET doubt... (Ctrl+Enter to send)" oninput="updateCharCount()" onkeydown="handleChatKeyPress(event)"></textarea>
+              <textarea id="tutor-chat-input" class="form-control" rows="2" placeholder="Ask any NEET doubt... e.g. H2O, Fe3+, Ka value (Ctrl+Enter to send)" oninput="updateCharCount()" onkeydown="handleChatKeyPress(event)"></textarea>
               <button class="btn btn-primary" onclick="sendTutorMessage()" style="align-self:flex-end; padding:12px 20px;">Send 🚀</button>
             </div>
             <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa;">

@@ -1611,17 +1611,64 @@ function parseMarkdownAndKaTeX(text) {
   // Support ~subscript~ syntax (e.g. H~2~O -> H<sub>2</sub>O)
   html = html.replace(/~([^~]+)~/g, '<sub>$1</sub>');
 
-  // Support ^superscript^ syntax (e.g. Fe^3+^ -> Fe<sup>3+</sup>)
+  // Support ^superscript^ syntax (e.g. Fe^3+^ -> Fe<sup>3+</sup>, 10^-3^ -> 10<sup>-3</sup>)
   html = html.replace(/\^([^\^]+)\^/g, '<sup>$1</sup>');
 
-  // Support chemical formula subscript shorthand (e.g. H_2O -> H<sub>2</sub>O, CO_2 -> CO<sub>2</sub>)
-  html = html.replace(/\b([A-Z][a-z]?)_([0-9]+)\b/g, '$1<sub>$2</sub>');
+  // Support chemical ion charges & superscripts in bracket notation e.g. Ca^{2+}, SO4^{2-}
+  html = html.replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>');
+  html = html.replace(/_\{([^}]+)\}/g, '<sub>$1</sub>');
+
+  // Support automatic chemical formula subscript (e.g. H_2O, CO_2, KMnO_4, H_2SO_4, CH_4, NH_3)
+  html = html.replace(/([A-Z][a-z]?)_([0-9]+)/g, '$1<sub>$2</sub>');
+
+  // Support common chemical arrows and Delta symbol
+  html = html.replace(/&lt;=&gt;|&lt;-&gt;/g, '⇌');
+  html = html.replace(/&lt;-/g, '←');
+  html = html.replace(/-&gt;/g, '→');
+  html = html.replace(/\\Delta|&amp;Delta;/g, 'Δ');
 
   // Formatting: Bold, Italics, Line breaks
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
   html = html.replace(/\n/g, '<br>');
   return html;
+}
+
+function insertSubscript(inputId = "tutor-chat-input") {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+  const selText = input.value.substring(start, end) || "2";
+  const replacement = `~${selText}~`;
+  input.value = input.value.substring(0, start) + replacement + input.value.substring(end);
+  input.focus();
+  input.setSelectionRange(start + 1, start + 1 + selText.length);
+  if (typeof updateCharCount === "function") updateCharCount();
+}
+
+function insertSuperscript(inputId = "tutor-chat-input") {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+  const selText = input.value.substring(start, end) || "+";
+  const replacement = `^${selText}^`;
+  input.value = input.value.substring(0, start) + replacement + input.value.substring(end);
+  input.focus();
+  input.setSelectionRange(start + 1, start + 1 + selText.length);
+  if (typeof updateCharCount === "function") updateCharCount();
+}
+
+function insertChemistrySymbol(symbol, inputId = "tutor-chat-input") {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+  input.value = input.value.substring(0, start) + symbol + input.value.substring(end);
+  input.focus();
+  input.setSelectionRange(start + symbol.length, start + symbol.length);
+  if (typeof updateCharCount === "function") updateCharCount();
 }
 
 function copyText(btn) {
@@ -2035,8 +2082,9 @@ window.removeGroqApiKey = removeGroqApiKey;
 window.updateGroqApiKeyStatusUI = updateGroqApiKeyStatusUI;
 window.toggleGroqKeyVisibility = toggleGroqKeyVisibility;
 window.testGroqApiConnection = testGroqApiConnection;
-window.callGroqAPI = callGroqAPI;
-window.callAiWithFailover = callAiWithFailover;
+window.insertSubscript = insertSubscript;
+window.insertSuperscript = insertSuperscript;
+window.insertChemistrySymbol = insertChemistrySymbol;
 
 document.addEventListener("DOMContentLoaded", () => {
   updateApiKeyStatusUI();
