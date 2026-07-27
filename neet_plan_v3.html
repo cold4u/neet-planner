@@ -16131,7 +16131,7 @@ Each object format:
 }
 `;
 
-      const rawText = await callAiWithFailover(prompt, "You are an NTA NEET exam setter. Output ONLY a valid JSON array.", (msg) => {
+      const rawText = await callAiWithGroqFirst(prompt, "You are an NTA NEET exam setter. Output ONLY a valid JSON array.", (msg) => {
         const sub = document.getElementById("cbt-status-subtext");
         if (sub) sub.textContent = msg;
       }, { maxTokens: 3000 });
