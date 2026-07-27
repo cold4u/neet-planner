@@ -5945,14 +5945,14 @@ sup {
     <!-- PDF TO TEST TAB -->
     <section id="pdf-to-test" class="tab-content">
       <div class="page-header">
-        <h2 class="page-title">📄 Local PDF.js Text & Question Extractor</h2>
-        <p class="page-desc">Extract text and parse questions from PDF files locally using PDF.js & Tesseract.js OCR (0 API Tokens Used).</p>
+        <h2 class="page-title">📄 AI PDF Question Extractor & MCQ Digitizer</h2>
+        <p class="page-desc">Extract, structure, and digitize NEET questions & options from PDF files using Gemini AI Multimodal Vision (Primary Engine) with PDF.js & Tesseract.js local backup.</p>
       </div>
 
       <div>
-        <div class="glass-card pdf-dropzone" style="border: 2px dashed #fbbf24; padding:40px; text-align:center; cursor:pointer;" ondragover="event.preventDefault()" ondrop="handlePdfDrop(event)">
+        <div class="glass-card pdf-dropzone" style="border: 2px dashed #00d4aa; padding:40px; text-align:center; cursor:pointer;" ondragover="event.preventDefault()" ondrop="handlePdfDrop(event)">
           <h3>📥 Drag & Drop PDF File Here</h3>
-          <p style="color:#aaa; font-size:12px; margin:8px 0 14px 0;">Supports digital & scanned PDF question papers, notes, and modules up to 50MB (PDF.js Engine)</p>
+          <p style="color:#aaa; font-size:12px; margin:8px 0 14px 0;">Supports digital & scanned PDF question papers, notes, and modules up to 50MB (Primary Engine: 🧠 Gemini AI Vision | Backup Engine: 📄 Local PDF.js)</p>
           <input type="file" id="pdf-file-input" accept="application/pdf" style="display:none;" onchange="handlePdfDrop(event)">
           <button class="btn btn-secondary" onclick="document.getElementById('pdf-file-input').click()">Browse PDF File</button>
         </div>
