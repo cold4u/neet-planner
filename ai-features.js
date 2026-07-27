@@ -13,16 +13,21 @@
  */
 
 const GEMINI_MODELS = [
+  "gemini-flash-latest",
   "gemini-2.0-flash",
   "gemini-2.0-flash-lite",
-  "gemini-2.0-flash-lite-preview-02-05",
-  "gemini-1.5-flash",
-  "gemini-1.5-flash-8b",
-  "gemini-1.5-pro"
+  "gemini-2.5-flash-lite",
+  "gemini-2.5-flash",
+  "gemini-1.5-flash"
 ];
 
 const _invalidModels = new Set();
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+
+function _resetModelState() {
+  for (const model of GEMINI_MODELS) delete _modelCooldowns[model];
+  _invalidModels.clear();
+}
 
 // Helper: Sleep for delay
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -269,6 +274,7 @@ function saveApiKey() {
   }
 
   localStorage.setItem("gemini_api_key", val);
+  _resetModelState();
   updateApiKeyStatusUI(true);
   
   if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">✅ API Key saved successfully!</span>`;
@@ -278,6 +284,7 @@ function saveApiKey() {
 
 function removeApiKey() {
   localStorage.removeItem("gemini_api_key");
+  _resetModelState();
   const keyInput = document.getElementById("setting-gemini-key");
   if (keyInput) keyInput.value = "";
   
@@ -303,6 +310,7 @@ async function testApiKeyConnection() {
   if (keyInput && keyInput.value.trim()) {
     // Auto-save key first so user doesn't have to click save manually!
     localStorage.setItem("gemini_api_key", keyInput.value.trim());
+    _resetModelState();
     renderSetupRequiredCards();
   }
 
@@ -375,6 +383,7 @@ function quickSaveApiKey(btn) {
   }
   const val = input.value.trim();
   localStorage.setItem("gemini_api_key", val);
+  _resetModelState();
   updateApiKeyStatusUI(true);
   renderSetupRequiredCards();
   alert("🎉 Gemini API Key activated! All AI features are ready.");
