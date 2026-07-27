@@ -584,10 +584,15 @@ window.quickSaveApiKey = quickSaveApiKey;
 
 let currentSubjectMode = "physics";
 
+const STRICT_NEET_SCOPE_PROMPT = `\n\n[STRICT SCOPE BOUNDARY REQUIREMENT]:
+You are strictly programmed to assist ONLY with Class 11 & Class 12 NEET UG Physics, Chemistry, Biology, NCERT Core Syllabus, and NEET PYQs.
+If the user asks ANY question outside of Class 11/12 NEET Physics, Chemistry, Biology, NCERT, or NEET PYQs (e.g. coding, history, general trivia, movies, non-NEET engineering, or casual off-topic talk), you MUST immediately decline politely with this exact output format:
+"⛔ **Out of NEET Scope**: I am strictly programmed to assist ONLY with Class 11 & 12 NEET UG Physics, Chemistry, Biology, NCERT concepts, and NEET PYQs. Please ask a doubt related to your NEET UG preparation."`;
+
 const SYSTEM_PROMPTS = {
-  physics: `You are an expert NEET Physics tutor. Focus on step-by-step mathematical solutions, Free Body Diagrams (FBD descriptions), vector analysis, unit checks, and NCERT formulas. Use LaTeX ($...$ and $$...$$). End with a "Quick Recall Point".`,
-  chemistry: `You are an expert NEET Chemistry tutor (Physical, Organic, Inorganic). Always format chemical formulas with proper subscripts and superscripts (e.g., H₂O, H~2~O, Fe^3+^, SO₄²⁻, or LaTeX $CH_3COOH$, $Fe^{3+}$). Focus on reaction mechanisms, electron displacement concepts, balanced equations, and NCERT exception points. Use LaTeX for equations. End with a "Quick Recall Point".`,
-  biology: `You are an expert NEET Biology tutor. Focus strictly on NCERT Class 11 & 12 textbook facts, diagrams, classification tables, mnemonics, and bold terms. Use bullet points and bold headers. End with a "Quick Recall Point".`
+  physics: `You are an expert NEET Physics tutor. Focus strictly on Class 11 & 12 NEET Physics syllabus, PYQs, step-by-step mathematical solutions, Free Body Diagrams (FBD descriptions), vector analysis, unit checks, and NCERT formulas. Use LaTeX ($...$ and $$...$$). End with a "Quick Recall Point".` + STRICT_NEET_SCOPE_PROMPT,
+  chemistry: `You are an expert NEET Chemistry tutor (Physical, Organic, Inorganic). Focus strictly on Class 11 & 12 NEET Chemistry syllabus, PYQs, reaction mechanisms, electron displacement concepts, balanced equations, and NCERT exception points. Format chemical formulas with proper subscripts/superscripts (e.g. H₂O, Fe³⁺, SO₄²⁻). End with a "Quick Recall Point".` + STRICT_NEET_SCOPE_PROMPT,
+  biology: `You are an expert NEET Biology tutor. Focus strictly on NCERT Class 11 & 12 Biology textbook facts, PYQs, diagrams, classification tables, mnemonics, and bold terms. Use bullet points and bold headers. End with a "Quick Recall Point".` + STRICT_NEET_SCOPE_PROMPT
 };
 
 function selectSubjectMode(mode) {
@@ -1216,30 +1221,35 @@ async function handlePdfDrop(e) {
   }
 
   const statusCard = document.getElementById("pdf-processing-status");
+  const groqKey = getGroqApiKey();
   const geminiKey = getApiKey();
 
-  // 1. PRIMARY ENGINE: Gemini AI Multimodal Vision Engine
-  if (geminiKey) {
-    if (statusCard) {
-      statusCard.style.display = "block";
-      statusCard.innerHTML = `
-        <div class="glass-card" style="text-align:center; padding:20px;">
-          <div class="spinner" style="margin:0 auto 10px auto;"></div>
-          <h4>🧠 Extracting & Structuring PDF Questions via Gemini AI (Primary Engine)...</h4>
-          <p id="pdf-status-subtext" style="font-size:12px; color:#00d4aa;">Reading PDF pages via Gemini Multimodal Vision...</p>
-        </div>
-      `;
+  if (!groqKey && !geminiKey) {
+    alert("Please configure your free Groq API Key or Gemini API Key in Settings first!");
+    showTab("settings");
+    return;
+  }
+
+  if (statusCard) {
+    statusCard.style.display = "block";
+    statusCard.innerHTML = `
+      <div class="glass-card" style="text-align:center; padding:20px;">
+        <div class="spinner" style="margin:0 auto 10px auto;"></div>
+        <h4>⚡ Extracting PDF & Structuring MCQs via Groq AI Engine (100% Primary)...</h4>
+        <p id="pdf-status-subtext" style="font-size:12px; color:#00d4aa;">Reading PDF text and digitizing NEET MCQs via Groq Llama-3.3 70B (~800 tokens/sec)...</p>
+      </div>
+    `;
+  }
+
+  try {
+    const pageTexts = await extractTextFromPdf(file, statusCard);
+    extractedPdfText = pageTexts.join("\n\n");
+
+    if (document.getElementById("pdf-status-subtext")) {
+      document.getElementById("pdf-status-subtext").textContent = "⚡ Groq AI (Llama-3.3 70B) structuring NEET questions, options, and explanations...";
     }
 
-    try {
-      const pageTexts = await extractTextFromPdf(file, statusCard);
-      extractedPdfText = pageTexts.join("\n\n");
-
-      if (document.getElementById("pdf-status-subtext")) {
-        document.getElementById("pdf-status-subtext").textContent = "🧠 Gemini AI analyzing paper layout and structuring NEET MCQs...";
-      }
-
-      const prompt = `Analyze the following extracted PDF text and return a structured JSON array of NEET multiple-choice questions (MCQs).
+    const prompt = `Analyze the following extracted PDF text and return a structured JSON array of NEET multiple-choice questions (MCQs).
 Rules:
 1. Output ONLY a raw JSON array of question objects.
 2. Escape all backslashes in LaTeX formulas.
@@ -1248,51 +1258,29 @@ Rules:
   "question": "Question text with LaTeX formulas",
   "options": ["Option A", "Option B", "Option C", "Option D"],
   "correct": 0,
-  "explanation": "Brief step-by-step solution",
+  "explanation": "Brief step-by-step NCERT solution",
   "subject": "Physics/Chemistry/Biology"
 }
 
 PDF TEXT CONTENT:
-${extractedPdfText.slice(0, 12000)}`;
+${extractedPdfText.slice(0, 14000)}`;
 
-      const sysPrompt = "You are an expert NEET exam paper digitizer. Output ONLY a valid JSON array.";
-      const rawRes = await callGeminiAPI(prompt, sysPrompt, null, { maxTokens: 2500 });
-      const parsedQuestions = robustParseJSON(rawRes);
+    const sysPrompt = "You are an expert NTA NEET exam paper digitizer. Output ONLY a valid JSON array.";
+    const rawRes = await callAiWithGroqFirst(prompt, sysPrompt, (statusMsg) => {
+      const sub = document.getElementById("pdf-status-subtext");
+      if (sub) sub.textContent = statusMsg;
+    }, { maxTokens: 3500 });
 
-      if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
-        extractedQuestionsList = parsedQuestions;
-        if (statusCard) statusCard.style.display = "none";
-        renderPdfExtractedQuestions("🧠 Gemini AI Primary Engine");
-        return;
-      }
-    } catch (gemErr) {
-      console.warn("[PDF Extractor] Gemini Primary Engine failed. Falling back to local PDF.js / Tesseract.js backup...", gemErr);
+    const parsedQuestions = robustParseJSON(rawRes);
+
+    if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
+      extractedQuestionsList = parsedQuestions;
+      if (statusCard) statusCard.style.display = "none";
+      renderPdfExtractedQuestions("⚡ Groq Cloud API Primary Engine (Llama-3.3 70B)");
+      return;
+    } else {
+      throw new Error("Could not parse structured questions from PDF.");
     }
-  }
-
-  // 2. SECONDARY BACKUP ENGINE: PDF.js & Tesseract.js Local Engine
-  if (statusCard) {
-    statusCard.style.display = "block";
-    statusCard.innerHTML = `
-      <div class="glass-card" style="text-align:center; padding:20px;">
-        <div class="spinner" style="margin:0 auto 10px auto;"></div>
-        <h4>📄 Extracting PDF Text via PDF.js / Tesseract.js Backup Engine...</h4>
-        <p id="pdf-status-subtext" style="font-size:12px; color:#fbbf24;">Processing pages locally in browser...</p>
-      </div>
-    `;
-  }
-
-  try {
-    const pageTexts = await extractTextFromPdf(file, statusCard);
-    if (!pageTexts || pageTexts.length === 0) {
-      throw new Error("Could not extract readable text from PDF.");
-    }
-
-    extractedPdfText = pageTexts.join("\n\n");
-    extractedQuestionsList = parseMcqsLocally(extractedPdfText);
-
-    if (statusCard) statusCard.style.display = "none";
-    renderPdfExtractedQuestions("📄 PDF.js / Tesseract.js Backup Engine");
 
   } catch (err) {
     if (statusCard) {
