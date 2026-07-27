@@ -16731,6 +16731,16 @@ async function fetchLiveSerperNews(category = "all") {
    INITIALIZATION & TAB SWITCH HOOKS
    ========================================================================== */
 
+// Backward compatibility safety stubs for legacy cached browser sessions
+window.getBraveApiKey = function() { return ""; };
+window.saveBraveApiKey = function() {};
+window.removeBraveApiKey = function() {};
+window.testBraveApiConnection = function() {};
+window.toggleBraveVisibility = function() {};
+window.onBraveKeyTyped = function() {};
+window.updateBraveApiKeyStatusUI = function() {};
+window.performBraveSearch = function() { return Promise.resolve(""); };
+
 // Explicitly expose ALL AI feature functions to window object for global HTML onclick access
 window.saveApiKey = saveApiKey;
 window.removeApiKey = removeApiKey;
