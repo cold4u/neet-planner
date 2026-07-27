@@ -1348,6 +1348,7 @@ window.analyzeMistakesWithAI = analyzeMistakesWithAI;
 window.summarizeNews = summarizeNews;
 window.filterNews = filterNews;
 window.copyText = copyText;
+window.handleAiTabSwitch = handleAiTabSwitch;
 
 document.addEventListener("DOMContentLoaded", () => {
   updateApiKeyStatusUI();

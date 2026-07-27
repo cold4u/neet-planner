@@ -1077,13 +1077,19 @@ function safeSetSessionStorage(key, value) {
       } else if (tabId === 'overview') {
         renderOverviewStats();
       } else if (tabId === 'study-timer') {
-        initStudyTimerTab();
+        if (typeof initStudyTimerTab === 'function') initStudyTimerTab();
       } else if (tabId === 'pomodoro') {
         if (typeof updatePomodoroSelectOptions === 'function') updatePomodoroSelectOptions();
       } else if (tabId === 'formulas') {
         if (typeof renderTabFormulas === 'function') renderTabFormulas();
+      } else if (tabId === 'ai-tutor' || tabId === 'ai-mocktest' || tabId === 'pdf-to-test' || tabId === 'neet-news' || tabId === 'settings') {
+        if (typeof handleAiTabSwitch === 'function') {
+          handleAiTabSwitch(tabId);
+        }
       }
     }
+    window.showTab = showTab;
+    window.navigateTab = navigateTab;
 
     function toggleMenu() {
       const drawer = document.getElementById('nav-drawer');
