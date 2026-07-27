@@ -1931,6 +1931,9 @@ function parseMarkdownAndKaTeX(text) {
   // Support ^superscript^ syntax (e.g. Fe^3+^ -> Fe<sup>3+</sup>, 10^-3^ -> 10<sup>-3</sup>)
   html = html.replace(/\^([^\^]+)\^/g, '<sup>$1</sup>');
 
+  // Support single-caret unit superscripts and powers (e.g. m/s^2 -> m/s<sup>2</sup>, m s^-2 -> m s<sup>-2</sup>, 10^5 -> 10<sup>5</sup>, Fe^3+ -> Fe<sup>3+</sup>)
+  html = html.replace(/\^([\-+]?[0-9a-zA-Z\+\-]+(?:\.[0-9]+)?)/g, '<sup>$1</sup>');
+
   // Support chemical ion charges & superscripts in bracket notation e.g. Ca^{2+}, SO4^{2-}
   html = html.replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>');
   html = html.replace(/_\{([^}]+)\}/g, '<sub>$1</sub>');
