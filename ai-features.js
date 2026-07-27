@@ -1394,80 +1394,85 @@ function copyText(btn) {
 
 
 /* ==========================================================================
-   FEATURE: BRAVE SEARCH RESEARCH ENGINE (BYOK)
+   FEATURE: SERPER.DEV SEARCH & NEWS ENGINE (BYOK)
    ========================================================================== */
 
 let isResearchModeActive = false;
 
-function getBraveApiKey() {
-  return (localStorage.getItem("brave_search_api_key") || "").trim();
+function getSerperApiKey() {
+  return (localStorage.getItem("serper_dev_api_key") || "").trim();
 }
 
-function onBraveKeyTyped() {
-  const msgArea = document.getElementById("brave-key-inline-msg");
+function onSerperKeyTyped() {
+  const msgArea = document.getElementById("serper-key-inline-msg");
   if (msgArea) msgArea.innerHTML = "";
 }
 
-function saveBraveApiKey() {
-  const keyInput = document.getElementById("setting-brave-key");
-  const msgArea = document.getElementById("brave-key-inline-msg");
+function saveSerperApiKey() {
+  const keyInput = document.getElementById("setting-serper-key");
+  const msgArea = document.getElementById("serper-key-inline-msg");
   if (!keyInput) return;
 
   const val = keyInput.value.trim();
   if (!val) {
-    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Please enter a valid Brave Search API key!</span>`;
-    alert("Please enter a valid Brave Search API key!");
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Please enter a valid Serper API key!</span>`;
+    alert("Please enter a valid Serper.dev API key!");
     return;
   }
 
-  localStorage.setItem("brave_search_api_key", val);
-  updateBraveApiKeyStatusUI(true);
-  if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">✅ Brave Research Key saved successfully!</span>`;
-  alert("✅ Brave Research API Key saved!");
+  localStorage.setItem("serper_dev_api_key", val);
+  updateSerperApiKeyStatusUI(true);
+  if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">✅ Serper Key saved successfully!</span>`;
+  alert("✅ Serper.dev API Key saved!");
 }
 
-function removeBraveApiKey() {
-  localStorage.removeItem("brave_search_api_key");
-  const keyInput = document.getElementById("setting-brave-key");
+function removeSerperApiKey() {
+  localStorage.removeItem("serper_dev_api_key");
+  const keyInput = document.getElementById("setting-serper-key");
   if (keyInput) keyInput.value = "";
-  const msgArea = document.getElementById("brave-key-inline-msg");
-  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">🗑️ Brave Key removed.</span>`;
-  updateBraveApiKeyStatusUI(true);
+  const msgArea = document.getElementById("serper-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">🗑️ Serper Key removed.</span>`;
+  updateSerperApiKeyStatusUI(true);
 }
 
-function toggleBraveVisibility() {
-  const input = document.getElementById("setting-brave-key");
+function toggleSerperVisibility() {
+  const input = document.getElementById("setting-serper-key");
   if (input) input.type = input.type === "password" ? "text" : "password";
 }
 
-async function testBraveApiConnection() {
-  const keyInput = document.getElementById("setting-brave-key");
-  const statusBadge = document.getElementById("brave-key-status-badge");
-  const msgArea = document.getElementById("brave-key-inline-msg");
+async function testSerperApiConnection() {
+  const keyInput = document.getElementById("setting-serper-key");
+  const statusBadge = document.getElementById("serper-key-status-badge");
+  const msgArea = document.getElementById("serper-key-inline-msg");
 
   if (keyInput && keyInput.value.trim()) {
-    localStorage.setItem("brave_search_api_key", keyInput.value.trim());
+    localStorage.setItem("serper_dev_api_key", keyInput.value.trim());
   }
 
-  const key = getBraveApiKey();
+  const key = getSerperApiKey();
   if (!key) {
-    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Please paste a Brave Search API key first!</span>`;
-    alert("Please paste a Brave Search API key first!");
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Please paste a Serper.dev API key first!</span>`;
+    alert("Please paste a Serper.dev API key first!");
     return;
   }
 
   if (statusBadge) statusBadge.innerHTML = `<span style="color:#fbbf24;">🟡 Testing...</span>`;
-  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">⚡ Testing connection to Brave Search API...</span>`;
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">⚡ Testing connection to Serper.dev API...</span>`;
 
   try {
-    const res = await fetch(`https://api.search.brave.com/res/v1/web/search?q=NEET+UG+2027&count=1`, {
-      headers: { "Accept": "application/json", "X-Subscription-Token": key }
+    const res = await fetch("https://google.serper.dev/search", {
+      method: "POST",
+      headers: {
+        "X-API-KEY": key,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ q: "NEET UG NTA official 2027", num: 1 })
     });
 
     if (res.ok) {
       if (statusBadge) statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Active</span>`;
-      if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🎉 Connection Successful! Brave Live Research active.</span>`;
-      alert("🎉 Connection Successful! Brave Search API connected.");
+      if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🎉 Connection Successful! Serper.dev Search & Live News active.</span>`;
+      alert("🎉 Connection Successful! Serper.dev API connected.");
     } else {
       throw new Error(`HTTP ${res.status}`);
     }
@@ -1478,10 +1483,10 @@ async function testBraveApiConnection() {
   }
 }
 
-function updateBraveApiKeyStatusUI(forceSync = false) {
-  const key = getBraveApiKey();
-  const badge = document.getElementById("brave-key-status-badge");
-  const input = document.getElementById("setting-brave-key");
+function updateSerperApiKeyStatusUI(forceSync = false) {
+  const key = getSerperApiKey();
+  const badge = document.getElementById("serper-key-status-badge");
+  const input = document.getElementById("setting-serper-key");
   if (input && (forceSync || !input.value.trim())) input.value = key;
   if (badge) {
     badge.innerHTML = key 
@@ -1495,39 +1500,71 @@ function toggleResearchMode() {
   const btn = document.getElementById("research-toggle-btn");
   if (btn) {
     if (isResearchModeActive) {
-      if (!getBraveApiKey()) {
-        alert("⚠️ Live Research requires a free Brave Search API key. Please configure your key in Settings!");
+      if (!getSerperApiKey()) {
+        alert("⚠️ Live Serper Research requires a free Serper.dev API key. Please configure your key in Settings!");
       }
       btn.style.background = "rgba(0,212,170,0.2)";
       btn.style.borderColor = "#00d4aa";
-      btn.innerHTML = "🔬 Live Research: ON 🟢";
+      btn.innerHTML = "🔬 Live Serper Research: ON 🟢";
     } else {
       btn.style.background = "transparent";
       btn.style.borderColor = "#00d4aa";
-      btn.innerHTML = "🔬 Live Research: OFF";
+      btn.innerHTML = "🔬 Live Serper Research: OFF";
     }
   }
 }
 
-async function performBraveSearch(query) {
-  const key = getBraveApiKey();
+async function performSerperSearch(query) {
+  const key = getSerperApiKey();
   if (!key) return "";
 
   try {
-    const endpoint = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=3`;
-    const res = await fetch(endpoint, {
-      headers: { "Accept": "application/json", "X-Subscription-Token": key }
+    const res = await fetch("https://google.serper.dev/search", {
+      method: "POST",
+      headers: {
+        "X-API-KEY": key,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ q: query, num: 4 })
     });
 
     if (!res.ok) return "";
     const data = await res.json();
-    const results = data.web?.results || [];
+    const results = data.organic || [];
     if (results.length === 0) return "";
 
-    return results.map(r => `• ${r.title}: ${r.description}`).join("\n");
+    return results.map(r => `• ${r.title}: ${r.snippet} (${r.link})`).join("\n");
   } catch (err) {
-    console.warn("Brave Search failed:", err);
+    console.warn("Serper Search failed:", err);
     return "";
+  }
+}
+
+async function fetchLiveSerperNews(category = "all") {
+  const key = getSerperApiKey();
+  if (!key) return null;
+
+  let query = "NEET UG NTA official news updates 2027";
+  if (category === "nta") query = "NTA NEET official notification circular";
+  if (category === "syllabus") query = "NEET syllabus changes NMC NTA update";
+  if (category === "counseling") query = "NEET MCC counseling admission news";
+
+  try {
+    const res = await fetch("https://google.serper.dev/news", {
+      method: "POST",
+      headers: {
+        "X-API-KEY": key,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ q: query, gl: "in", num: 6 })
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.news || [];
+  } catch (err) {
+    console.warn("Serper News fetch failed:", err);
+    return null;
   }
 }
 
@@ -1543,14 +1580,15 @@ window.toggleKeyVisibility = toggleKeyVisibility;
 window.onKeyInputTyped = onKeyInputTyped;
 window.getApiKey = getApiKey;
 
-window.saveBraveApiKey = saveBraveApiKey;
-window.removeBraveApiKey = removeBraveApiKey;
-window.testBraveApiConnection = testBraveApiConnection;
-window.toggleBraveVisibility = toggleBraveVisibility;
-window.onBraveKeyTyped = onBraveKeyTyped;
-window.getBraveApiKey = getBraveApiKey;
+window.saveSerperApiKey = saveSerperApiKey;
+window.removeSerperApiKey = removeSerperApiKey;
+window.testSerperApiConnection = testSerperApiConnection;
+window.toggleSerperVisibility = toggleSerperVisibility;
+window.onSerperKeyTyped = onSerperKeyTyped;
+window.getSerperApiKey = getSerperApiKey;
 window.toggleResearchMode = toggleResearchMode;
-window.performBraveSearch = performBraveSearch;
+window.performSerperSearch = performSerperSearch;
+window.fetchLiveSerperNews = fetchLiveSerperNews;
 
 window.sendTutorMessage = sendTutorMessage;
 window.selectSubjectMode = selectSubjectMode;
@@ -1571,7 +1609,7 @@ window.handleAiTabSwitch = handleAiTabSwitch;
 
 document.addEventListener("DOMContentLoaded", () => {
   updateApiKeyStatusUI();
-  updateBraveApiKeyStatusUI();
+  updateSerperApiKeyStatusUI();
   renderSetupRequiredCards();
   renderNeetNews("all");
 
@@ -1585,14 +1623,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const removeBtn = document.getElementById("btn-remove-api-key");
   if (removeBtn) removeBtn.onclick = removeApiKey;
 
-  const saveBraveBtn = document.getElementById("btn-save-brave-key");
-  if (saveBraveBtn) saveBraveBtn.onclick = saveBraveApiKey;
+  const saveSerperBtn = document.getElementById("btn-save-serper-key");
+  if (saveSerperBtn) saveSerperBtn.onclick = saveSerperApiKey;
 
-  const testBraveBtn = document.getElementById("btn-test-brave-key");
-  if (testBraveBtn) testBraveBtn.onclick = testBraveApiConnection;
+  const testSerperBtn = document.getElementById("btn-test-serper-key");
+  if (testSerperBtn) testSerperBtn.onclick = testSerperApiConnection;
 
-  const removeBraveBtn = document.getElementById("btn-remove-brave-key");
-  if (removeBraveBtn) removeBraveBtn.onclick = removeBraveApiKey;
+  const removeSerperBtn = document.getElementById("btn-remove-serper-key");
+  if (removeSerperBtn) removeSerperBtn.onclick = removeSerperApiKey;
 });
 
 function handleAiTabSwitch(tabId) {

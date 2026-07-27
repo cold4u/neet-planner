@@ -1473,28 +1473,28 @@
         </div>
       </div>
 
-      <!-- BRAVE SEARCH API BYOK SETUP CARD -->
+      <!-- SERPER.DEV SEARCH & NEWS API BYOK SETUP CARD -->
       <div class="glass-card" style="margin-bottom:20px; border:1px solid rgba(0,212,170,0.4);">
-        <h3>🔍 Brave Search API Setup (Live Web & Medical Research)</h3>
-        <p style="font-size:12px; color:#ccc; margin-top:4px;">Enter your free Brave Search API Key to enable live web research, latest NCERT updates, and medical paper research inside AI Tutor.</p>
+        <h3>🔍 Serper.dev Search & Live News API Setup (Google Engine)</h3>
+        <p style="font-size:12px; color:#ccc; margin-top:4px;">Enter your free Serper.dev API Key to enable real-time Google search research inside AI Tutor and live NTA news updates.</p>
         
         <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label style="font-weight:bold; font-size:13px;">Brave Search API Key</label>
-            <div id="brave-key-status-badge"><span style="color:#aaa; font-size:11px;">Optional</span></div>
+            <label style="font-weight:bold; font-size:13px;">Serper.dev API Key</label>
+            <div id="serper-key-status-badge"><span style="color:#aaa; font-size:11px;">Optional</span></div>
           </div>
           
           <div style="display:flex; gap:8px;">
-            <input type="password" id="setting-brave-key" class="form-control" placeholder="Paste your BSA... key here" style="flex:1;" oninput="onBraveKeyTyped()">
-            <button type="button" class="btn btn-secondary" onclick="toggleBraveVisibility()">👁️</button>
+            <input type="password" id="setting-serper-key" class="form-control" placeholder="Paste your Serper API key here" style="flex:1;" oninput="onSerperKeyTyped()">
+            <button type="button" class="btn btn-secondary" onclick="toggleSerperVisibility()">👁️</button>
           </div>
-          <div id="brave-key-inline-msg" style="font-size:12px; margin-top:2px;"></div>
+          <div id="serper-key-inline-msg" style="font-size:12px; margin-top:2px;"></div>
 
           <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
-            <button type="button" id="btn-save-brave-key" class="btn btn-primary" onclick="saveBraveApiKey()">💾 Save Brave Key</button>
-            <button type="button" id="btn-test-brave-key" class="btn btn-secondary" onclick="testBraveApiConnection()">🧪 Test Research API</button>
-            <a href="https://brave.com/search/api/" target="_blank" class="btn btn-secondary" style="text-decoration:none;">🔍 Get Free Key (1-Min) ↗</a>
-            <button type="button" id="btn-remove-brave-key" class="btn btn-secondary" onclick="removeBraveApiKey()" style="color:#ef4444; margin-left:auto;">🗑️ Remove Key</button>
+            <button type="button" id="btn-save-serper-key" class="btn btn-primary" onclick="saveSerperApiKey()">💾 Save Serper Key</button>
+            <button type="button" id="btn-test-serper-key" class="btn btn-secondary" onclick="testSerperApiConnection()">🧪 Test Search & News API</button>
+            <a href="https://serper.dev" target="_blank" class="btn btn-secondary" style="text-decoration:none;">🔍 Get Free Key (2,500 Queries) ↗</a>
+            <button type="button" id="btn-remove-serper-key" class="btn btn-secondary" onclick="removeSerperApiKey()" style="color:#ef4444; margin-left:auto;">🗑️ Remove Key</button>
           </div>
         </div>
       </div>
