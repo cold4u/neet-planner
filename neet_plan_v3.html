@@ -15812,6 +15812,34 @@ function handleChatKeyPress(e) {
   }
 }
 
+async function callAiTutorWithGroqFirst(prompt, systemInstruction = "", onStatus = null, options = {}) {
+  const groqKey = getGroqApiKey();
+  const geminiKey = getApiKey();
+
+  if (!groqKey && !geminiKey) {
+    throw new Error("NO_API_KEY");
+  }
+
+  // 1. PRIMARY ENGINE for AI Tutor: Groq Cloud API (Llama-3.3 70B)
+  if (groqKey) {
+    try {
+      if (onStatus) onStatus("⚡ Solving doubt with Groq AI (Llama-3.3 70B)...");
+      return await callGroqAPI(prompt, systemInstruction, onStatus, options);
+    } catch (groqErr) {
+      console.warn("[AI Tutor] Groq primary engine limit reached/failed. Failing over to Gemini API backup...", groqErr);
+      if (onStatus) onStatus("⚠️ Groq limit reached → Switched to Gemini AI backup...");
+    }
+  }
+
+  // 2. FAILOVER / BACKUP ENGINE for AI Tutor: Gemini API (6-Model Fallback Ring)
+  if (geminiKey) {
+    if (onStatus) onStatus("🧠 Solving doubt with Gemini AI backup engine...");
+    return await callGeminiAPI(prompt, systemInstruction, onStatus, options);
+  }
+
+  throw new Error("All AI Tutor engines (Groq & Gemini) failed or rate limited.");
+}
+
 function quickAsk(promptText) {
   const input = document.getElementById("tutor-chat-input");
   if (input) {
@@ -15834,8 +15862,8 @@ async function sendTutorMessage() {
   const userText = input.value.trim();
   if (!userText) return;
 
-  if (!getApiKey()) {
-    alert("Please set your free Gemini API Key in the Settings tab first!");
+  if (!getGroqApiKey() && !getApiKey()) {
+    alert("Please set your free Groq or Gemini API Key in the Settings tab first!");
     showTab("settings");
     return;
   }
@@ -15857,7 +15885,7 @@ async function sendTutorMessage() {
       }
     }
 
-    const aiResponse = await callAiWithFailover(userText, sysPrompt, (statusMsg) => {
+    const aiResponse = await callAiTutorWithGroqFirst(userText, sysPrompt, (statusMsg) => {
       updateTypingText(typingId, statusMsg);
     });
 
@@ -15867,9 +15895,9 @@ async function sendTutorMessage() {
   } catch (err) {
     removeChatMessage(typingId);
     if (err.message === "NO_API_KEY") {
-      appendChatMessage("ai", "⚠️ **Setup Required**: Please configure your Gemini API Key in the Settings tab.");
+      appendChatMessage("ai", "⚠️ **Setup Required**: Please configure your Groq API Key or Gemini API Key in the Settings tab.");
     } else if (err.message === "HTTP_429_EXCEEDED") {
-      appendChatMessage("ai", "⚠️ **Rate Limit Exceeded**: Google Free Tier limit reached across all model endpoints. Please wait 60 seconds or create a new free API key at [Google AI Studio](https://aistudio.google.com/apikey).");
+      appendChatMessage("ai", "⚠️ **Rate Limit Exceeded**: All AI engines (Groq & Gemini) are cooling down. Please wait 30 seconds.");
     } else {
       appendChatMessage("ai", `❌ **Error**: ${err.message}`);
     }
