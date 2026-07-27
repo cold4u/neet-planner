@@ -1550,6 +1550,48 @@ function quickResearch(query) {
   performDedicatedAiResearch();
 }
 
+function getOfflineNcertResearch(query) {
+  const qLower = query.toLowerCase();
+  
+  if (qLower.includes("circular") || qLower.includes("nta") || qLower.includes("update") || qLower.includes("news")) {
+    return `### 🔴 NTA & NMC Official Guidelines Summary
+- **NEET Exam Pattern:** Retains 180 mandatory MCQs out of 200 (Physics: 45, Chemistry: 45, Biology: 90).
+- **Marking Scheme:** +4 for correct answer, -1 for incorrect option, 0 for unattempted.
+- **Syllabus Baseline:** Fully aligned with Class 11 & 12 NCERT core syllabus (latest NMC revised guidelines).
+- **Official Portals:** [NTA NEET Portal](https://neet.nta.nic.in) | [NMC Official Site](https://www.nmc.org.in)`;
+  }
+  
+  if (qLower.includes("biotech") || qLower.includes("recombinant") || qLower.includes("crispr") || qLower.includes("dna")) {
+    return `### 🧬 NCERT Biology: Biotechnology & Recombinant DNA
+- **Key Concepts:** Restriction Endonucleases (Molecular Scissors), DNA Ligases, Recombinant Plasmids (pBR322), Gel Electrophoresis.
+- **High-Yield Steps:** 
+  1. Isolation of Genetic Material (DNA)
+  2. Cutting of DNA at specific sites by Restriction Enzymes
+  3. Amplification of Gene of Interest using PCR ($2^n$ molecules after $n$ cycles)
+  4. Insertion of Recombinant DNA into Host Cell/Organism
+- **NEET Exam Weightage:** ~5-7 MCQs per year in NEET UG Biology.`;
+  }
+
+  if (qLower.includes("cardiac") || qLower.includes("heart") || qLower.includes("medical") || qLower.includes("paper")) {
+    return `### 🧪 Human Physiology: Cardiac Cycle & Circulation
+- **Phase Durations (Total 0.8s):**
+  1. Joint Diastole: 0.4s
+  2. Atrial Systole: 0.1s
+  3. Ventricular Systole: 0.3s
+- **Heart Sounds:** 
+  - First sound **LUB** (closure of bicuspid/tricuspid valves)
+  - Second sound **DUB** (closure of semilunar valves)
+- **Stroke Volume:** $\\approx 70\\text{ mL}$, Cardiac Output = $\\text{Heart Rate} \\times \\text{Stroke Volume} = 72 \\times 70 \\approx 5000\\text{ mL/min} = 5\\text{ L/min}$.`;
+  }
+
+  return `### 📚 Academic & NCERT High-Yield Research Report: ${escapeHTML(query)}
+- **NCERT Core Focus:** High-yield conceptual area for NEET Physics/Chemistry/Biology preparation.
+- **Study Action Items:**
+  1. Read Class 11/12 NCERT textbook lines carefully with special focus on bold terms and summary tables.
+  2. Practice 50+ PYQ MCQs on this topic from the built-in PYQ Bank.
+  3. Add formula/mnemonic notes to your Error Book for active recall.`;
+}
+
 async function performDedicatedAiResearch() {
   const input = document.getElementById("research-query-input");
   const container = document.getElementById("research-results-container");
@@ -1566,8 +1608,21 @@ async function performDedicatedAiResearch() {
   const serperKey = getSerperApiKey();
 
   if (!geminiKey && !serperKey) {
-    alert("Please configure your free Gemini API key or Serper API key in Settings first!");
-    showTab("settings");
+    const offlineReport = getOfflineNcertResearch(query);
+    if (statusCard) statusCard.style.display = "none";
+    container.innerHTML = `
+      <div class="glass-card" style="padding:14px; margin-bottom:14px; border:1px solid rgba(251,191,36,0.3); background:rgba(251,191,36,0.04);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <span style="font-size:12px; font-weight:bold; color:#fbbf24;">💡 Offline NCERT Syllabus Research Mode (Active)</span>
+          <button class="btn btn-secondary" onclick="showTab('settings')" style="font-size:11px; padding:2px 8px;">⚙️ Add API Key for Live Web Research</button>
+        </div>
+      </div>
+      <div class="glass-card" style="padding:20px;">
+        <div style="font-size:13px; line-height:1.6; color:#e2e8f0;">
+          ${parseMarkdownAndKaTeX(offlineReport)}
+        </div>
+      </div>
+    `;
     return;
   }
 
