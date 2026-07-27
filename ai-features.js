@@ -386,7 +386,7 @@ function renderSetupRequiredCards() {
   });
   const mainAiElements = document.querySelectorAll(".ai-feature-content");
   mainAiElements.forEach(el => {
-    el.style.display = "block"; // ALWAYS keep AI feature controls visible!
+    el.style.display = key ? "block" : "none";
   });
 }
 
