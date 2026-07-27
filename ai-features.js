@@ -537,15 +537,19 @@ async function callAiWithFailover(prompt, systemInstruction = "", onStatus = nul
 
 function renderSetupRequiredCards() {
   const geminiKey = getApiKey();
+  const groqKey = getGroqApiKey();
   const serperKey = getSerperApiKey();
+  const hasAiKey = !!(geminiKey || groqKey);
 
   const setupElements = document.querySelectorAll(".ai-setup-required-card");
   setupElements.forEach(el => {
     const parentSection = el.closest("section");
     if (parentSection && parentSection.id === "ai-research") {
-      el.style.display = serperKey ? "none" : "block";
+      el.style.display = (serperKey || hasAiKey) ? "none" : "block";
+    } else if (parentSection && parentSection.id === "ai-tutor") {
+      el.style.display = hasAiKey ? "none" : "block";
     } else {
-      el.style.display = geminiKey ? "none" : "block";
+      el.style.display = (geminiKey || groqKey) ? "none" : "block";
     }
   });
 
@@ -553,9 +557,11 @@ function renderSetupRequiredCards() {
   mainAiElements.forEach(el => {
     const parentSection = el.closest("section");
     if (parentSection && parentSection.id === "ai-research") {
-      el.style.display = serperKey ? "block" : "none";
+      el.style.display = (serperKey || hasAiKey) ? "block" : "none";
+    } else if (parentSection && parentSection.id === "ai-tutor") {
+      el.style.display = hasAiKey ? "block" : "none";
     } else {
-      el.style.display = geminiKey ? "block" : "none";
+      el.style.display = (geminiKey || groqKey) ? "block" : "none";
     }
   });
 }
@@ -2087,9 +2093,9 @@ window.insertSuperscript = insertSuperscript;
 window.insertChemistrySymbol = insertChemistrySymbol;
 
 document.addEventListener("DOMContentLoaded", () => {
-  updateApiKeyStatusUI();
-  updateGroqApiKeyStatusUI();
-  updateSerperApiKeyStatusUI();
+  updateApiKeyStatusUI(true);
+  updateGroqApiKeyStatusUI(true);
+  updateSerperApiKeyStatusUI(true);
   renderSetupRequiredCards();
   renderNeetNews("all");
 
@@ -2123,8 +2129,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function handleAiTabSwitch(tabId) {
-  updateApiKeyStatusUI();
-  updateGroqApiKeyStatusUI();
+  updateApiKeyStatusUI(true);
+  updateGroqApiKeyStatusUI(true);
+  updateSerperApiKeyStatusUI(true);
   renderSetupRequiredCards();
 
   if (tabId === 'ai-tutor') {
