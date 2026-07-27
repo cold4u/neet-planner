@@ -5765,10 +5765,18 @@ sup {
         <p class="page-desc">Ask any doubt from Physics, Chemistry, or Biology. Powered by BYOK Gemini 2.0 Flash.</p>
       </div>
 
-      <div class="ai-setup-required-card glass-card" style="display:none; text-align:center; padding:30px;">
-        <h3>🔑 Setup Required</h3>
-        <p>Please enter your free Gemini API Key in the Settings tab to unlock AI Tutor.</p>
-        <button class="btn btn-primary" onclick="showTab('settings')">⚙️ Go to Settings</button>
+      <div class="ai-setup-required-card glass-card" style="display:none; padding:14px; margin-bottom:14px; border:1px solid rgba(251,191,36,0.4); background:rgba(251,191,36,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+          <div>
+            <span style="font-weight:bold; font-size:13px; color:#fbbf24;">🔑 Free Gemini API Key Required</span>
+            <p style="font-size:11px; color:#ccc; margin:2px 0 0 0;">Paste your free key from Google AI Studio below to unlock all AI features immediately.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex:1; max-width:420px;">
+            <input type="password" class="form-control inline-gemini-key-input" placeholder="Paste AIzaSy... key here" style="flex:1; font-size:12px; height:36px;">
+            <button type="button" class="btn btn-primary" onclick="quickSaveApiKey(this)" style="font-size:12px; height:36px; padding:0 14px; white-space:nowrap;">💾 Save & Activate</button>
+          </div>
+          <a href="https://aistudio.google.com/apikey" target="_blank" style="font-size:11px; color:#00d4aa; text-decoration:none; white-space:nowrap;">Get Free Key ↗</a>
+        </div>
       </div>
 
       <div class="ai-feature-content">
@@ -5816,10 +5824,18 @@ sup {
         <p class="page-desc">Generate instant NEET-pattern MCQ test papers and practice on a full NTA exam interface.</p>
       </div>
 
-      <div class="ai-setup-required-card glass-card" style="display:none; text-align:center; padding:30px;">
-        <h3>🔑 Setup Required</h3>
-        <p>Please enter your free Gemini API Key in the Settings tab to generate AI mock tests.</p>
-        <button class="btn btn-primary" onclick="showTab('settings')">⚙️ Go to Settings</button>
+      <div class="ai-setup-required-card glass-card" style="display:none; padding:14px; margin-bottom:14px; border:1px solid rgba(251,191,36,0.4); background:rgba(251,191,36,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+          <div>
+            <span style="font-weight:bold; font-size:13px; color:#fbbf24;">🔑 Free Gemini API Key Required</span>
+            <p style="font-size:11px; color:#ccc; margin:2px 0 0 0;">Paste your free key from Google AI Studio below to unlock all AI features immediately.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex:1; max-width:420px;">
+            <input type="password" class="form-control inline-gemini-key-input" placeholder="Paste AIzaSy... key here" style="flex:1; font-size:12px; height:36px;">
+            <button type="button" class="btn btn-primary" onclick="quickSaveApiKey(this)" style="font-size:12px; height:36px; padding:0 14px; white-space:nowrap;">💾 Save & Activate</button>
+          </div>
+          <a href="https://aistudio.google.com/apikey" target="_blank" style="font-size:11px; color:#00d4aa; text-decoration:none; white-space:nowrap;">Get Free Key ↗</a>
+        </div>
       </div>
 
       <div class="ai-feature-content">
@@ -5887,10 +5903,18 @@ sup {
         <p class="page-desc">Upload any NEET coaching PDF/question paper to extract MCQs and take an instant CBT test.</p>
       </div>
 
-      <div class="ai-setup-required-card glass-card" style="display:none; text-align:center; padding:30px;">
-        <h3>🔑 Setup Required</h3>
-        <p>Please enter your free Gemini API Key in Settings to extract PDF questions.</p>
-        <button class="btn btn-primary" onclick="showTab('settings')">⚙️ Go to Settings</button>
+      <div class="ai-setup-required-card glass-card" style="display:none; padding:14px; margin-bottom:14px; border:1px solid rgba(251,191,36,0.4); background:rgba(251,191,36,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+          <div>
+            <span style="font-weight:bold; font-size:13px; color:#fbbf24;">🔑 Free Gemini API Key Required</span>
+            <p style="font-size:11px; color:#ccc; margin:2px 0 0 0;">Paste your free key from Google AI Studio below to unlock all AI features immediately.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex:1; max-width:420px;">
+            <input type="password" class="form-control inline-gemini-key-input" placeholder="Paste AIzaSy... key here" style="flex:1; font-size:12px; height:36px;">
+            <button type="button" class="btn btn-primary" onclick="quickSaveApiKey(this)" style="font-size:12px; height:36px; padding:0 14px; white-space:nowrap;">💾 Save & Activate</button>
+          </div>
+          <a href="https://aistudio.google.com/apikey" target="_blank" style="font-size:11px; color:#00d4aa; text-decoration:none; white-space:nowrap;">Get Free Key ↗</a>
+        </div>
       </div>
 
       <div class="ai-feature-content">
@@ -15490,6 +15514,20 @@ function updateApiKeyStatusUI(forceSyncInput = false) {
   }
 }
 
+function quickSaveApiKey(btn) {
+  const container = btn.closest(".ai-setup-required-card");
+  const input = container ? container.querySelector(".inline-gemini-key-input") : null;
+  if (!input || !input.value.trim()) {
+    alert("Please paste a valid Gemini API key first!");
+    return;
+  }
+  const val = input.value.trim();
+  localStorage.setItem("gemini_api_key", val);
+  updateApiKeyStatusUI(true);
+  renderSetupRequiredCards();
+  alert("🎉 Gemini API Key activated! All AI features are ready.");
+}
+
 function renderSetupRequiredCards() {
   const key = getApiKey();
   const setupElements = document.querySelectorAll(".ai-setup-required-card");
@@ -15498,9 +15536,11 @@ function renderSetupRequiredCards() {
   });
   const mainAiElements = document.querySelectorAll(".ai-feature-content");
   mainAiElements.forEach(el => {
-    el.style.display = key ? "block" : "none";
+    el.style.display = "block"; // ALWAYS keep AI feature controls visible!
   });
 }
+
+window.quickSaveApiKey = quickSaveApiKey;
 
 
 /* ==========================================================================

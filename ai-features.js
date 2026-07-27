@@ -364,6 +364,20 @@ function updateApiKeyStatusUI(forceSyncInput = false) {
   }
 }
 
+function quickSaveApiKey(btn) {
+  const container = btn.closest(".ai-setup-required-card");
+  const input = container ? container.querySelector(".inline-gemini-key-input") : null;
+  if (!input || !input.value.trim()) {
+    alert("Please paste a valid Gemini API key first!");
+    return;
+  }
+  const val = input.value.trim();
+  localStorage.setItem("gemini_api_key", val);
+  updateApiKeyStatusUI(true);
+  renderSetupRequiredCards();
+  alert("🎉 Gemini API Key activated! All AI features are ready.");
+}
+
 function renderSetupRequiredCards() {
   const key = getApiKey();
   const setupElements = document.querySelectorAll(".ai-setup-required-card");
@@ -372,9 +386,11 @@ function renderSetupRequiredCards() {
   });
   const mainAiElements = document.querySelectorAll(".ai-feature-content");
   mainAiElements.forEach(el => {
-    el.style.display = key ? "block" : "none";
+    el.style.display = "block"; // ALWAYS keep AI feature controls visible!
   });
 }
+
+window.quickSaveApiKey = quickSaveApiKey;
 
 
 /* ==========================================================================
