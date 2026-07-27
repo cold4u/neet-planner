@@ -1221,11 +1221,11 @@ async function handlePdfDrop(e) {
   }
 
   const statusCard = document.getElementById("pdf-processing-status");
-  const groqKey = getGroqApiKey();
   const geminiKey = getApiKey();
+  const groqKey = getGroqApiKey();
 
-  if (!groqKey && !geminiKey) {
-    alert("Please configure your free Groq API Key or Gemini API Key in Settings first!");
+  if (!geminiKey && !groqKey) {
+    alert("Please configure your free Gemini API Key or Groq API Key in Settings first!");
     showTab("settings");
     return;
   }
@@ -1235,8 +1235,8 @@ async function handlePdfDrop(e) {
     statusCard.innerHTML = `
       <div class="glass-card" style="text-align:center; padding:20px;">
         <div class="spinner" style="margin:0 auto 10px auto;"></div>
-        <h4>⚡ Extracting PDF & Structuring MCQs via Groq AI Engine (100% Primary)...</h4>
-        <p id="pdf-status-subtext" style="font-size:12px; color:#00d4aa;">Reading PDF text and digitizing NEET MCQs via Groq Llama-3.3 70B (~800 tokens/sec)...</p>
+        <h4>🧠 Extracting PDF & Structuring MCQs via Gemini AI (100% Primary Engine)...</h4>
+        <p id="pdf-status-subtext" style="font-size:12px; color:#00d4aa;">Reading PDF pages & digitizing NEET MCQs via Gemini Multimodal Vision...</p>
       </div>
     `;
   }
@@ -1244,10 +1244,6 @@ async function handlePdfDrop(e) {
   try {
     const pageTexts = await extractTextFromPdf(file, statusCard);
     extractedPdfText = pageTexts.join("\n\n");
-
-    if (document.getElementById("pdf-status-subtext")) {
-      document.getElementById("pdf-status-subtext").textContent = "⚡ Groq AI (Llama-3.3 70B) structuring NEET questions, options, and explanations...";
-    }
 
     const prompt = `Analyze the following extracted PDF text and return a structured JSON array of NEET multiple-choice questions (MCQs).
 Rules:
@@ -1266,17 +1262,44 @@ PDF TEXT CONTENT:
 ${extractedPdfText.slice(0, 14000)}`;
 
     const sysPrompt = "You are an expert NTA NEET exam paper digitizer. Output ONLY a valid JSON array.";
-    const rawRes = await callAiWithGroqFirst(prompt, sysPrompt, (statusMsg) => {
-      const sub = document.getElementById("pdf-status-subtext");
-      if (sub) sub.textContent = statusMsg;
-    }, { maxTokens: 3500 });
+    let rawRes = null;
+
+    // 1. PRIMARY ENGINE: Google Gemini API (100% Absolute Priority)
+    if (geminiKey) {
+      try {
+        if (document.getElementById("pdf-status-subtext")) {
+          document.getElementById("pdf-status-subtext").textContent = "🧠 Gemini AI analyzing paper layout and structuring NEET MCQs...";
+        }
+        rawRes = await callGeminiAPI(prompt, sysPrompt, (msg) => {
+          const sub = document.getElementById("pdf-status-subtext");
+          if (sub) sub.textContent = msg;
+        }, { maxTokens: 3500 });
+      } catch (gemErr) {
+        console.warn("[PDF Extractor] Gemini primary engine limit/error. Failing over to Groq API backup...", gemErr);
+      }
+    }
+
+    // 2. FAILOVER BACKUP ENGINE: Groq Cloud API (Llama-3.3 70B)
+    if (!rawRes && groqKey) {
+      if (document.getElementById("pdf-status-subtext")) {
+        document.getElementById("pdf-status-subtext").textContent = "⚡ Switched to Groq AI Backup Engine to digitize NEET MCQs...";
+      }
+      rawRes = await callGroqAPI(prompt, sysPrompt, (msg) => {
+        const sub = document.getElementById("pdf-status-subtext");
+        if (sub) sub.textContent = msg;
+      }, { maxTokens: 3500 });
+    }
+
+    if (!rawRes) {
+      throw new Error("Could not connect to Gemini API or Groq API. Please check your API keys.");
+    }
 
     const parsedQuestions = robustParseJSON(rawRes);
 
     if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
       extractedQuestionsList = parsedQuestions;
       if (statusCard) statusCard.style.display = "none";
-      renderPdfExtractedQuestions("⚡ Groq Cloud API Primary Engine (Llama-3.3 70B)");
+      renderPdfExtractedQuestions("🧠 Google Gemini AI Primary Engine");
       return;
     } else {
       throw new Error("Could not parse structured questions from PDF.");
