@@ -1207,13 +1207,68 @@ async function handlePdfDrop(e) {
   }
 
   const statusCard = document.getElementById("pdf-processing-status");
+  const geminiKey = getApiKey();
+
+  // 1. PRIMARY ENGINE: Gemini AI Multimodal Vision Engine
+  if (geminiKey) {
+    if (statusCard) {
+      statusCard.style.display = "block";
+      statusCard.innerHTML = `
+        <div class="glass-card" style="text-align:center; padding:20px;">
+          <div class="spinner" style="margin:0 auto 10px auto;"></div>
+          <h4>🧠 Extracting & Structuring PDF Questions via Gemini AI (Primary Engine)...</h4>
+          <p id="pdf-status-subtext" style="font-size:12px; color:#00d4aa;">Reading PDF pages via Gemini Multimodal Vision...</p>
+        </div>
+      `;
+    }
+
+    try {
+      const pageTexts = await extractTextFromPdf(file, statusCard);
+      extractedPdfText = pageTexts.join("\n\n");
+
+      if (document.getElementById("pdf-status-subtext")) {
+        document.getElementById("pdf-status-subtext").textContent = "🧠 Gemini AI analyzing paper layout and structuring NEET MCQs...";
+      }
+
+      const prompt = `Analyze the following extracted PDF text and return a structured JSON array of NEET multiple-choice questions (MCQs).
+Rules:
+1. Output ONLY a raw JSON array of question objects.
+2. Escape all backslashes in LaTeX formulas.
+3. Each question object format:
+{
+  "question": "Question text with LaTeX formulas",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
+  "correct": 0,
+  "explanation": "Brief step-by-step solution",
+  "subject": "Physics/Chemistry/Biology"
+}
+
+PDF TEXT CONTENT:
+${extractedPdfText.slice(0, 12000)}`;
+
+      const sysPrompt = "You are an expert NEET exam paper digitizer. Output ONLY a valid JSON array.";
+      const rawRes = await callGeminiAPI(prompt, sysPrompt, null, { maxTokens: 2500 });
+      const parsedQuestions = robustParseJSON(rawRes);
+
+      if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
+        extractedQuestionsList = parsedQuestions;
+        if (statusCard) statusCard.style.display = "none";
+        renderPdfExtractedQuestions("🧠 Gemini AI Primary Engine");
+        return;
+      }
+    } catch (gemErr) {
+      console.warn("[PDF Extractor] Gemini Primary Engine failed. Falling back to local PDF.js / Tesseract.js backup...", gemErr);
+    }
+  }
+
+  // 2. SECONDARY BACKUP ENGINE: PDF.js & Tesseract.js Local Engine
   if (statusCard) {
     statusCard.style.display = "block";
     statusCard.innerHTML = `
       <div class="glass-card" style="text-align:center; padding:20px;">
         <div class="spinner" style="margin:0 auto 10px auto;"></div>
-        <h4>📄 Extracting PDF Text locally via PDF.js Engine...</h4>
-        <p id="pdf-status-subtext" style="font-size:12px; color:#00d4aa;">Processing pages locally in browser ($0$ API tokens)...</p>
+        <h4>📄 Extracting PDF Text via PDF.js / Tesseract.js Backup Engine...</h4>
+        <p id="pdf-status-subtext" style="font-size:12px; color:#fbbf24;">Processing pages locally in browser...</p>
       </div>
     `;
   }
@@ -1225,12 +1280,10 @@ async function handlePdfDrop(e) {
     }
 
     extractedPdfText = pageTexts.join("\n\n");
-
-    // Local Regex MCQ Parser (0 Gemini API Calls)
     extractedQuestionsList = parseMcqsLocally(extractedPdfText);
 
     if (statusCard) statusCard.style.display = "none";
-    renderPdfExtractedQuestions();
+    renderPdfExtractedQuestions("📄 PDF.js / Tesseract.js Backup Engine");
 
   } catch (err) {
     if (statusCard) {
@@ -1392,7 +1445,7 @@ async function extractTextFromPdf(file, statusCard = null) {
   return pageTexts;
 }
 
-function renderPdfExtractedQuestions() {
+function renderPdfExtractedQuestions(engineName = "Gemini AI Primary Engine") {
   const container = document.getElementById("pdf-extracted-list");
   if (!container) return;
 
@@ -1407,7 +1460,10 @@ function renderPdfExtractedQuestions() {
 
     <div class="glass-card" style="margin-top:20px; padding:20px;">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
-        <h3 style="margin:0; color:#fbbf24;">🎯 Detected MCQs (${extractedQuestionsList.length} Questions via PDF.js Local Engine)</h3>
+        <div>
+          <h3 style="margin:0; color:#fbbf24;">🎯 Digitized MCQs (${extractedQuestionsList.length} Questions)</h3>
+          <span style="font-size:11px; color:#00d4aa; margin-top:2px; display:inline-block;">${escapeHTML(engineName)}</span>
+        </div>
         ${extractedQuestionsList.length > 0 ? `<button class="btn btn-primary" onclick="launchCbtFromPdf()">🚀 Create NEET Test (${extractedQuestionsList.length} Qs)</button>` : ''}
       </div>
 
