@@ -456,7 +456,16 @@ async function sendTutorMessage() {
   const typingId = appendTypingIndicator();
 
   try {
-    const sysPrompt = SYSTEM_PROMPTS[currentSubjectMode] || SYSTEM_PROMPTS.physics;
+    let sysPrompt = SYSTEM_PROMPTS[currentSubjectMode] || SYSTEM_PROMPTS.physics;
+
+    if (isResearchModeActive && getBraveApiKey()) {
+      updateTypingText(typingId, "🔬 Researching live NCERT & web data with Brave API...");
+      const researchContext = await performBraveSearch(userText);
+      if (researchContext) {
+        sysPrompt += `\n\n[Live Web & NCERT Research Findings]:\n${researchContext}\nUse these live research findings to ground your answer with high accuracy.`;
+      }
+    }
+
     const aiResponse = await callGeminiAPI(userText, sysPrompt, (statusMsg) => {
       updateTypingText(typingId, statusMsg);
     });
@@ -1009,7 +1018,7 @@ async function handlePdfDrop(e) {
   }
 
   try {
-    const pageTexts = await extractTextFromPdf(file);
+    const pageTexts = await extractTextFromPdf(file, statusCard);
     if (!pageTexts || pageTexts.length === 0) {
       throw new Error("Could not extract readable text from PDF.");
     }
@@ -1087,7 +1096,7 @@ ${chunkText}`;
   }
 }
 
-async function extractTextFromPdf(file) {
+async function extractTextFromPdf(file, statusCard = null) {
   if (!window.pdfjsLib) {
     throw new Error("PDF.js library is not loaded.");
   }
@@ -1096,15 +1105,62 @@ async function extractTextFromPdf(file) {
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   const pageTexts = [];
 
-  // Extract up to 30 pages
+  // 1. Digital Text Extraction via PDF.js Engine
   const totalPages = Math.min(pdf.numPages, 30);
+  let totalCharsExtracted = 0;
+
   for (let i = 1; i <= totalPages; i++) {
     const page = await pdf.getPage(i);
     const textContent = await page.getTextContent();
     const pageStrings = textContent.items.map(item => item.str);
     const pText = pageStrings.join(" ");
-    if (pText.trim().length > 20) {
+    if (pText.trim().length > 15) {
       pageTexts.push(pText);
+      totalCharsExtracted += pText.trim().length;
+    }
+  }
+
+  // 2. Scanned / Image PDF Fallback via Tesseract.js OCR Engine
+  if (totalCharsExtracted < 50 && window.Tesseract) {
+    console.log("[PDF Engine] Scanned PDF detected (digital text < 50 chars). Falling back to Tesseract.js OCR Engine...");
+    
+    const ocrTexts = [];
+    const ocrPages = Math.min(pdf.numPages, 10); // OCR up to 10 scanned pages
+
+    for (let pageNum = 1; pageNum <= ocrPages; pageNum++) {
+      if (statusCard) {
+        statusCard.innerHTML = `
+          <div class="glass-card" style="text-align:center; padding:20px;">
+            <div class="spinner" style="margin:0 auto 10px auto;"></div>
+            <h4>📷 Scanned PDF Detected! Running Tesseract.js OCR Engine...</h4>
+            <p id="pdf-status-subtext" style="font-size:12px; color:#fbbf24;">Recognizing scanned text on Page ${pageNum} of ${ocrPages}...</p>
+          </div>
+        `;
+      }
+
+      try {
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+        const ocrResult = await Tesseract.recognize(canvas, 'eng');
+        const recognizedText = ocrResult.data ? ocrResult.data.text : "";
+
+        if (recognizedText.trim().length > 15) {
+          ocrTexts.push(recognizedText);
+        }
+      } catch (ocrErr) {
+        console.warn(`OCR page ${pageNum} failed:`, ocrErr);
+      }
+    }
+
+    if (ocrTexts.length > 0) {
+      return ocrTexts;
     }
   }
 
@@ -1338,6 +1394,144 @@ function copyText(btn) {
 
 
 /* ==========================================================================
+   FEATURE: BRAVE SEARCH RESEARCH ENGINE (BYOK)
+   ========================================================================== */
+
+let isResearchModeActive = false;
+
+function getBraveApiKey() {
+  return (localStorage.getItem("brave_search_api_key") || "").trim();
+}
+
+function onBraveKeyTyped() {
+  const msgArea = document.getElementById("brave-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = "";
+}
+
+function saveBraveApiKey() {
+  const keyInput = document.getElementById("setting-brave-key");
+  const msgArea = document.getElementById("brave-key-inline-msg");
+  if (!keyInput) return;
+
+  const val = keyInput.value.trim();
+  if (!val) {
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Please enter a valid Brave Search API key!</span>`;
+    alert("Please enter a valid Brave Search API key!");
+    return;
+  }
+
+  localStorage.setItem("brave_search_api_key", val);
+  updateBraveApiKeyStatusUI(true);
+  if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">✅ Brave Research Key saved successfully!</span>`;
+  alert("✅ Brave Research API Key saved!");
+}
+
+function removeBraveApiKey() {
+  localStorage.removeItem("brave_search_api_key");
+  const keyInput = document.getElementById("setting-brave-key");
+  if (keyInput) keyInput.value = "";
+  const msgArea = document.getElementById("brave-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">🗑️ Brave Key removed.</span>`;
+  updateBraveApiKeyStatusUI(true);
+}
+
+function toggleBraveVisibility() {
+  const input = document.getElementById("setting-brave-key");
+  if (input) input.type = input.type === "password" ? "text" : "password";
+}
+
+async function testBraveApiConnection() {
+  const keyInput = document.getElementById("setting-brave-key");
+  const statusBadge = document.getElementById("brave-key-status-badge");
+  const msgArea = document.getElementById("brave-key-inline-msg");
+
+  if (keyInput && keyInput.value.trim()) {
+    localStorage.setItem("brave_search_api_key", keyInput.value.trim());
+  }
+
+  const key = getBraveApiKey();
+  if (!key) {
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Please paste a Brave Search API key first!</span>`;
+    alert("Please paste a Brave Search API key first!");
+    return;
+  }
+
+  if (statusBadge) statusBadge.innerHTML = `<span style="color:#fbbf24;">🟡 Testing...</span>`;
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">⚡ Testing connection to Brave Search API...</span>`;
+
+  try {
+    const res = await fetch(`https://api.search.brave.com/res/v1/web/search?q=NEET+UG+2027&count=1`, {
+      headers: { "Accept": "application/json", "X-Subscription-Token": key }
+    });
+
+    if (res.ok) {
+      if (statusBadge) statusBadge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Active</span>`;
+      if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🎉 Connection Successful! Brave Live Research active.</span>`;
+      alert("🎉 Connection Successful! Brave Search API connected.");
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch (err) {
+    if (statusBadge) statusBadge.innerHTML = `<span style="color:#ef4444; font-weight:bold;">🔴 Failed</span>`;
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ Connection failed: ${err.message}</span>`;
+    alert(`❌ Connection failed: ${err.message}`);
+  }
+}
+
+function updateBraveApiKeyStatusUI(forceSync = false) {
+  const key = getBraveApiKey();
+  const badge = document.getElementById("brave-key-status-badge");
+  const input = document.getElementById("setting-brave-key");
+  if (input && (forceSync || !input.value.trim())) input.value = key;
+  if (badge) {
+    badge.innerHTML = key 
+      ? `<span style="color:#00d4aa; font-weight:bold;">🟢 Key Saved (Ready)</span>`
+      : `<span style="color:#aaa; font-size:11px;">Optional</span>`;
+  }
+}
+
+function toggleResearchMode() {
+  isResearchModeActive = !isResearchModeActive;
+  const btn = document.getElementById("research-toggle-btn");
+  if (btn) {
+    if (isResearchModeActive) {
+      if (!getBraveApiKey()) {
+        alert("⚠️ Live Research requires a free Brave Search API key. Please configure your key in Settings!");
+      }
+      btn.style.background = "rgba(0,212,170,0.2)";
+      btn.style.borderColor = "#00d4aa";
+      btn.innerHTML = "🔬 Live Research: ON 🟢";
+    } else {
+      btn.style.background = "transparent";
+      btn.style.borderColor = "#00d4aa";
+      btn.innerHTML = "🔬 Live Research: OFF";
+    }
+  }
+}
+
+async function performBraveSearch(query) {
+  const key = getBraveApiKey();
+  if (!key) return "";
+
+  try {
+    const endpoint = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=3`;
+    const res = await fetch(endpoint, {
+      headers: { "Accept": "application/json", "X-Subscription-Token": key }
+    });
+
+    if (!res.ok) return "";
+    const data = await res.json();
+    const results = data.web?.results || [];
+    if (results.length === 0) return "";
+
+    return results.map(r => `• ${r.title}: ${r.description}`).join("\n");
+  } catch (err) {
+    console.warn("Brave Search failed:", err);
+    return "";
+  }
+}
+
+/* ==========================================================================
    INITIALIZATION & TAB SWITCH HOOKS
    ========================================================================== */
 
@@ -1348,6 +1542,15 @@ window.testApiKeyConnection = testApiKeyConnection;
 window.toggleKeyVisibility = toggleKeyVisibility;
 window.onKeyInputTyped = onKeyInputTyped;
 window.getApiKey = getApiKey;
+
+window.saveBraveApiKey = saveBraveApiKey;
+window.removeBraveApiKey = removeBraveApiKey;
+window.testBraveApiConnection = testBraveApiConnection;
+window.toggleBraveVisibility = toggleBraveVisibility;
+window.onBraveKeyTyped = onBraveKeyTyped;
+window.getBraveApiKey = getBraveApiKey;
+window.toggleResearchMode = toggleResearchMode;
+window.performBraveSearch = performBraveSearch;
 
 window.sendTutorMessage = sendTutorMessage;
 window.selectSubjectMode = selectSubjectMode;
@@ -1368,6 +1571,7 @@ window.handleAiTabSwitch = handleAiTabSwitch;
 
 document.addEventListener("DOMContentLoaded", () => {
   updateApiKeyStatusUI();
+  updateBraveApiKeyStatusUI();
   renderSetupRequiredCards();
   renderNeetNews("all");
 
@@ -1380,6 +1584,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const removeBtn = document.getElementById("btn-remove-api-key");
   if (removeBtn) removeBtn.onclick = removeApiKey;
+
+  const saveBraveBtn = document.getElementById("btn-save-brave-key");
+  if (saveBraveBtn) saveBraveBtn.onclick = saveBraveApiKey;
+
+  const testBraveBtn = document.getElementById("btn-test-brave-key");
+  if (testBraveBtn) testBraveBtn.onclick = testBraveApiConnection;
+
+  const removeBraveBtn = document.getElementById("btn-remove-brave-key");
+  if (removeBraveBtn) removeBraveBtn.onclick = removeBraveApiKey;
 });
 
 function handleAiTabSwitch(tabId) {
