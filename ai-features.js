@@ -1898,9 +1898,12 @@ async function performDedicatedAiResearch() {
     return;
   }
 
+  const groqKey = getGroqApiKey();
   const serperKey = getSerperApiKey();
-  if (!serperKey) {
-    alert("Please configure your free Serper.dev API key in Settings first to run Live Web Research!");
+  const geminiKey = getApiKey();
+
+  if (!groqKey && !serperKey && !geminiKey) {
+    alert("Please configure your free Groq API key or Serper API key in Settings first!");
     showTab("settings");
     return;
   }
@@ -1910,95 +1913,139 @@ async function performDedicatedAiResearch() {
     statusCard.innerHTML = `
       <div class="glass-card" style="text-align:center; padding:20px;">
         <div class="spinner" style="margin:0 auto 10px auto;"></div>
-        <h4>🔍 Fetching Real-Time Google Search Results via Serper.dev API...</h4>
-        <p id="research-status-subtext" style="font-size:12px; color:#00d4aa;">Searching live web data & official circulars...</p>
+        <h4>🔬 Running Deep AI & Web Research...</h4>
+        <p id="research-status-subtext" style="font-size:12px; color:#00d4aa;">⚡ Primary Engine: Groq AI (Llama-3.3 70B) | Backup Engine: Serper.dev Google Search...</p>
       </div>
     `;
   }
   container.innerHTML = "";
 
-  try {
-    const res = await fetch("https://google.serper.dev/search", {
-      method: "POST",
-      headers: {
-        "X-API-KEY": serperKey,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ q: query, num: 8 })
-    });
+  let groqResearchHtml = "";
+  let serperWebCardsHtml = "";
 
-    if (!res.ok) {
-      throw new Error(`Serper.dev API Error HTTP ${res.status}`);
-    }
+  // 1. PRIMARY ENGINE FOR RESEARCH: Groq AI (Llama-3.3 70B)
+  if (groqKey) {
+    try {
+      if (document.getElementById("research-status-subtext")) {
+        document.getElementById("research-status-subtext").textContent = "⚡ Generating Academic Research Digest with Groq Cloud Llama-3.3 70B Primary Engine...";
+      }
+      const sysPrompt = "You are a senior NEET academic researcher and exam consultant. Produce a detailed, structured Academic & NCERT Research Digest for the student's query. Use bold headings, bullet points, and LaTeX formulas. Sections: 1. Core NCERT Concepts & Syllabus Impact, 2. Key Formulas / Mechanisms, 3. NEET Exam Strategy & High-Yield Action Plan.";
+      const digestText = await callGroqAPI(query, sysPrompt, null, { maxTokens: 1200 });
 
-    const data = await res.json();
-    const organicResults = data.organic || [];
-    const answerBox = data.answerBox || null;
-    const knowledgeGraph = data.knowledgeGraph || null;
-
-    if (statusCard) statusCard.style.display = "none";
-
-    if (organicResults.length === 0 && !answerBox && !knowledgeGraph) {
-      container.innerHTML = `<div class="glass-card" style="padding:20px; text-align:center; color:#ef4444;">No live Google search results found for "${escapeHTML(query)}".</div>`;
-      return;
-    }
-
-    let html = "";
-
-    // 1. Serper Answer Box / Knowledge Graph (Direct Answer Summary)
-    if (answerBox) {
-      html += `
-        <div class="glass-card" style="padding:18px; margin-bottom:16px; border:1px solid rgba(0,212,170,0.5); background:rgba(0,212,170,0.04);">
-          <h4 style="margin-top:0; color:#00d4aa; display:flex; align-items:center; gap:6px;">
-            <span>⚡ Serper Google Direct Answer</span>
-          </h4>
-          <h5 style="margin:4px 0; font-size:14px; color:#fff;">${escapeHTML(answerBox.title || query)}</h5>
-          <p style="font-size:13px; color:#e2e8f0; line-height:1.5; margin:6px 0;">${escapeHTML(answerBox.answer || answerBox.snippet || '')}</p>
-        </div>
-      `;
-    } else if (knowledgeGraph) {
-      html += `
-        <div class="glass-card" style="padding:18px; margin-bottom:16px; border:1px solid rgba(251,191,36,0.5); background:rgba(251,191,36,0.04);">
-          <h4 style="margin-top:0; color:#fbbf24; display:flex; align-items:center; gap:6px;">
-            <span>📖 Serper Knowledge Graph: ${escapeHTML(knowledgeGraph.title || '')}</span>
-          </h4>
-          <p style="font-size:13px; color:#e2e8f0; line-height:1.5; margin:6px 0;">${escapeHTML(knowledgeGraph.description || '')}</p>
-        </div>
-      `;
-    }
-
-    // 2. Real-Time Google Search Web Cards
-    if (organicResults.length > 0) {
-      html += `
-        <div class="glass-card" style="padding:18px;">
-          <h4 style="margin-top:0; color:#00d4aa;">🌐 Live Google Search Results (${organicResults.length} Sources via Serper.dev)</h4>
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:14px; margin-top:14px;">
-      `;
-
-      organicResults.forEach((item, idx) => {
-        let hostname = "";
-        try { hostname = item.link ? new URL(item.link).hostname : ""; } catch(e){}
-        html += `
-          <div style="padding:12px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; display:flex; flex-direction:column; justify-content:space-between;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-size:11px; font-weight:bold; color:#00d4aa;">Source #${idx + 1}</span>
-              <span style="font-size:10px; color:#aaa;">${escapeHTML(hostname)}</span>
-            </div>
-            <a href="${item.link}" target="_blank" style="font-weight:bold; font-size:13.5px; color:#fbbf24; text-decoration:none; margin-bottom:6px; display:block; line-height:1.3;">${escapeHTML(item.title)} ↗</a>
-            <p style="font-size:12px; color:#ccc; line-height:1.45; margin:0 0 10px 0;">${escapeHTML(item.snippet || '')}</p>
-            <a href="${item.link}" target="_blank" class="btn btn-secondary" style="font-size:11px; padding:4px 8px; text-decoration:none; text-align:center; align-self:flex-start; margin-top:auto;">Open Web Source ↗</a>
+      groqResearchHtml = `
+        <div class="glass-card" style="margin-bottom:20px; border:1px solid #fbbf24; background:rgba(251,191,36,0.03); padding:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(251,191,36,0.2); padding-bottom:10px;">
+            <h3 style="margin:0; color:#fbbf24;">⚡ AI Academic Research Digest (Groq Cloud Llama-3.3 70B Primary Engine)</h3>
+            <span style="font-size:11px; background:rgba(251,191,36,0.15); color:#fbbf24; padding:3px 8px; border-radius:12px; border:1px solid rgba(251,191,36,0.4);">⚡ Primary Groq Engine</span>
           </div>
-        `;
+          <div style="font-size:13.5px; line-height:1.6; color:#e2e8f0;">
+            ${parseMarkdownAndKaTeX(digestText)}
+          </div>
+        </div>
+      `;
+    } catch (groqErr) {
+      console.warn("[Research Hub] Groq primary engine failed/limit reached. Falling back to backup engine...", groqErr);
+    }
+  }
+
+  // Fallback to Gemini if Groq fails or is unconfigured
+  if (!groqResearchHtml && geminiKey) {
+    try {
+      if (document.getElementById("research-status-subtext")) {
+        document.getElementById("research-status-subtext").textContent = "🧠 Generating Academic Digest with Gemini AI backup engine...";
+      }
+      const sysPrompt = "You are a senior NEET academic researcher and exam consultant. Produce a detailed, structured Academic & NCERT Research Digest for the student's query. Use bold headings, bullet points, and LaTeX formulas. Sections: 1. Core NCERT Concepts & Syllabus Impact, 2. Key Formulas / Mechanisms, 3. NEET Exam Strategy & High-Yield Action Plan.";
+      const digestText = await callGeminiAPI(query, sysPrompt, null, { maxTokens: 1200 });
+
+      groqResearchHtml = `
+        <div class="glass-card" style="margin-bottom:20px; border:1px solid #fbbf24; background:rgba(251,191,36,0.03); padding:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(251,191,36,0.2); padding-bottom:10px;">
+            <h3 style="margin:0; color:#fbbf24;">🧠 AI Academic Research Digest (Gemini AI Backup Engine)</h3>
+            <span style="font-size:11px; background:rgba(251,191,36,0.15); color:#fbbf24; padding:3px 8px; border-radius:12px; border:1px solid rgba(251,191,36,0.4);">🧠 Gemini Backup Engine</span>
+          </div>
+          <div style="font-size:13.5px; line-height:1.6; color:#e2e8f0;">
+            ${parseMarkdownAndKaTeX(digestText)}
+          </div>
+        </div>
+      `;
+    } catch (gemErr) {
+      console.warn("[Research Hub] Gemini fallback failed:", gemErr);
+    }
+  }
+
+  // 2. BACKUP ENGINE FOR SEARCH DATA: Serper.dev API (Google Search Engine)
+  if (serperKey) {
+    try {
+      if (document.getElementById("research-status-subtext")) {
+        document.getElementById("research-status-subtext").textContent = "🔍 Fetching live Google search results via Serper.dev backup engine...";
+      }
+      const res = await fetch("https://google.serper.dev/search", {
+        method: "POST",
+        headers: {
+          "X-API-KEY": serperKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ q: query, num: 6 })
       });
 
-      html += `</div></div>`;
+      if (res.ok) {
+        const data = await res.json();
+        const organicResults = data.organic || [];
+        const answerBox = data.answerBox || null;
+
+        let searchCards = "";
+        if (answerBox) {
+          searchCards += `
+            <div class="glass-card" style="padding:16px; margin-bottom:16px; border:1px solid #00d4aa; background:rgba(0,212,170,0.03);">
+              <h4 style="margin:0 0 6px 0; color:#00d4aa;">💡 Direct Google Answer Box (Serper Engine)</h4>
+              <h5 style="margin:0 0 6px 0; color:#fff;">${escapeHTML(answerBox.title || query)}</h5>
+              <p style="font-size:13px; color:#e2e8f0; line-height:1.5; margin:0;">${escapeHTML(answerBox.answer || answerBox.snippet || "")}</p>
+            </div>
+          `;
+        }
+
+        if (organicResults.length > 0) {
+          searchCards += `
+            <div class="glass-card" style="padding:18px;">
+              <h4 style="margin:0 0 12px 0; color:#00d4aa;">🌐 Live Google Search Results (${organicResults.length} Web Sources via Serper Backup Engine)</h4>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+                ${organicResults.map((item, idx) => `
+                  <div style="padding:12px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span style="font-size:11px; font-weight:bold; color:#00d4aa;">Result #${idx + 1}</span>
+                      </div>
+                      <a href="${item.link}" target="_blank" style="font-weight:bold; font-size:13px; color:#fbbf24; text-decoration:none; display:block; margin-bottom:4px;">${escapeHTML(item.title)} ↗</a>
+                      <p style="font-size:12px; color:#ccc; line-height:1.45; margin:0;">${escapeHTML(item.snippet || '')}</p>
+                    </div>
+                    <a href="${item.link}" target="_blank" class="btn btn-secondary" style="font-size:11px; padding:3px 8px; text-decoration:none; text-align:center; align-self:flex-start; margin-top:10px;">Open Source ↗</a>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        serperWebCardsHtml = searchCards;
+      }
+    } catch (serperErr) {
+      console.warn("[Research Hub] Serper backup search failed:", serperErr);
     }
+  }
 
-    container.innerHTML = html;
+  if (statusCard) statusCard.style.display = "none";
 
-  } catch (err) {
-    if (statusCard) statusCard.style.display = "none";
-    container.innerHTML = `<div class="glass-card" style="padding:20px; color:#ef4444; border:1px solid #ef4444;">❌ Serper Research Failed: ${err.message}</div>`;
+  // 3. Built-in Offline NCERT Syllabus Fallback if no engines generated results
+  if (!groqResearchHtml && !serperWebCardsHtml) {
+    const offlineText = getOfflineNcertResearch(query);
+    container.innerHTML = `
+      <div class="glass-card" style="padding:20px; border:1px solid #fbbf24;">
+        <h3 style="color:#fbbf24; margin-top:0;">📚 Offline NCERT Syllabus Research Engine</h3>
+        <div style="font-size:13px; line-height:1.6;">${parseMarkdownAndKaTeX(offlineText)}</div>
+      </div>
+    `;
+  } else {
+    container.innerHTML = groqResearchHtml + serperWebCardsHtml;
   }
 }
 
