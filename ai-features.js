@@ -999,6 +999,7 @@ function resetCbtPanel() {
    FEATURE 3: PDF QUESTION EXTRACTOR
    ========================================================================== */
 
+let extractedPdfText = "";
 let extractedQuestionsList = [];
 
 async function handlePdfDrop(e) {
@@ -1012,20 +1013,14 @@ async function handlePdfDrop(e) {
     return;
   }
 
-  if (!getApiKey()) {
-    alert("Please set your Gemini API key in Settings first!");
-    showTab("settings");
-    return;
-  }
-
   const statusCard = document.getElementById("pdf-processing-status");
   if (statusCard) {
     statusCard.style.display = "block";
     statusCard.innerHTML = `
       <div class="glass-card" style="text-align:center; padding:20px;">
         <div class="spinner" style="margin:0 auto 10px auto;"></div>
-        <h4>Reading PDF text using PDF.js...</h4>
-        <p id="pdf-status-subtext" style="font-size:12px; color:#aaa;">Extracted text will be parsed into NEET MCQs using Gemini AI...</p>
+        <h4>📄 Extracting PDF Text locally via PDF.js Engine...</h4>
+        <p id="pdf-status-subtext" style="font-size:12px; color:#00d4aa;">Processing pages locally in browser ($0$ API tokens)...</p>
       </div>
     `;
   }
@@ -1036,64 +1031,10 @@ async function handlePdfDrop(e) {
       throw new Error("Could not extract readable text from PDF.");
     }
 
-    // Chunk text into blocks of ~3500 characters (~5-10 questions per chunk)
-    const textChunks = [];
-    let currentChunk = "";
-    for (const pText of pageTexts) {
-      if ((currentChunk + pText).length > 3500) {
-        if (currentChunk.trim().length > 0) textChunks.push(currentChunk);
-        currentChunk = pText;
-      } else {
-        currentChunk += "\n" + pText;
-      }
-    }
-    if (currentChunk.trim().length > 0) textChunks.push(currentChunk);
+    extractedPdfText = pageTexts.join("\n\n");
 
-    extractedQuestionsList = [];
-
-    for (let cIdx = 0; cIdx < textChunks.length; cIdx++) {
-      const chunkText = textChunks[cIdx];
-      if (statusCard) {
-        statusCard.innerHTML = `
-          <div class="glass-card" style="text-align:center; padding:20px;">
-            <div class="spinner" style="margin:0 auto 10px auto;"></div>
-            <h4>Extracting NEET MCQs from PDF (Part ${cIdx + 1} of ${textChunks.length})...</h4>
-            <p id="pdf-status-subtext" style="font-size:12px; color:#fbbf24;">Found ${extractedQuestionsList.length} questions so far...</p>
-          </div>
-        `;
-      }
-
-      const prompt = `Extract all multiple choice questions from this text chunk.
-Return ONLY a valid JSON array of objects without markdown headers:
-[{
-  "question": "Question text with LaTeX formulas using double backslashes",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "correct": 0,
-  "explanation": "Brief 1-2 sentence explanation",
-  "subject": "Physics"
-}]
-
-Text Chunk:
-${chunkText}`;
-
-      try {
-        const rawResult = await callGeminiAPI(prompt, "You are a PDF question extractor. Output JSON array only.", (msg) => {
-          const sub = document.getElementById("pdf-status-subtext");
-          if (sub) sub.textContent = msg;
-        }, { maxTokens: 3000 });
-        
-        const batch = robustParseJSON(rawResult);
-        if (Array.isArray(batch) && batch.length > 0) {
-          extractedQuestionsList.push(...batch);
-        }
-      } catch (chunkErr) {
-        console.warn(`Chunk ${cIdx + 1} failed: ${chunkErr.message}`);
-      }
-    }
-
-    if (extractedQuestionsList.length === 0) {
-      throw new Error("No valid MCQs could be extracted from this PDF.");
-    }
+    // Local Regex MCQ Parser (0 Gemini API Calls)
+    extractedQuestionsList = parseMcqsLocally(extractedPdfText);
 
     if (statusCard) statusCard.style.display = "none";
     renderPdfExtractedQuestions();
@@ -1109,6 +1050,86 @@ ${chunkText}`;
   }
 }
 
+function parseMcqsLocally(fullText) {
+  if (!fullText) return [];
+  const questions = [];
+  const text = fullText.replace(/\r\n/g, "\n").replace(/\t/g, " ");
+
+  const qBlockRegex = /(?:Q(?:uestion)?\s*[\d]+[\.\:]?|[\d]+\s*[\.\)])\s+/gi;
+  const matches = [...text.matchAll(qBlockRegex)];
+
+  if (matches.length < 2) {
+    const paragraphs = text.split(/\n\s*\n+/);
+    paragraphs.forEach((p, idx) => {
+      const cleanP = p.trim();
+      if (cleanP.length > 25) {
+        const opts = extractOptionsLocally(cleanP);
+        questions.push({
+          question: cleanQuestionText(cleanP, opts.rawOptionsText),
+          options: opts.options.length >= 2 ? opts.options : ["Option A", "Option B", "Option C", "Option D"],
+          correct: 0,
+          explanation: "Parsed locally via PDF.js Regex Engine",
+          subject: "NEET Practice"
+        });
+      }
+    });
+    return questions.slice(0, 50);
+  }
+
+  for (let i = 0; i < matches.length; i++) {
+    const start = matches[i].index;
+    const end = (i + 1 < matches.length) ? matches[i + 1].index : text.length;
+    const block = text.substring(start, end).trim();
+
+    if (block.length > 15) {
+      const opts = extractOptionsLocally(block);
+      questions.push({
+        question: cleanQuestionText(block, opts.rawOptionsText),
+        options: opts.options.length >= 2 ? opts.options : ["Option A", "Option B", "Option C", "Option D"],
+        correct: 0,
+        explanation: "Parsed locally via PDF.js Regex Engine",
+        subject: "NEET Practice"
+      });
+    }
+  }
+
+  return questions;
+}
+
+function extractOptionsLocally(blockText) {
+  const optRegex = /(?:[\(\[]?[A-D1-4][\)\.\:\-]\s*|\b[A-D]\b[\.\)]\s*)([^\(\)\n\r]+)/g;
+  const matches = [...blockText.matchAll(optRegex)];
+  const options = [];
+  let rawOptionsText = "";
+
+  if (matches.length >= 2) {
+    matches.forEach(m => {
+      const optStr = m[1].trim();
+      if (optStr.length > 0 && options.length < 4) {
+        options.push(optStr);
+      }
+    });
+    rawOptionsText = matches[0][0];
+  }
+
+  return { options, rawOptionsText };
+}
+
+function cleanQuestionText(blockText, rawOptionsStartStr) {
+  let qText = blockText;
+  if (rawOptionsStartStr && qText.includes(rawOptionsStartStr)) {
+    qText = qText.split(rawOptionsStartStr)[0];
+  }
+  qText = qText.replace(/^(?:Q(?:uestion)?\s*[\d]+[\.\:]?|[\d]+\s*[\.\)])\s*/i, "").trim();
+  return qText || blockText;
+}
+
+function copyExtractedPdfText() {
+  if (!extractedPdfText) return;
+  navigator.clipboard.writeText(extractedPdfText);
+  alert("📋 Full extracted PDF text copied to clipboard!");
+}
+
 async function extractTextFromPdf(file, statusCard = null) {
   if (!window.pdfjsLib) {
     throw new Error("PDF.js library is not loaded.");
@@ -1118,7 +1139,6 @@ async function extractTextFromPdf(file, statusCard = null) {
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   const pageTexts = [];
 
-  // 1. Digital Text Extraction via PDF.js Engine
   const totalPages = Math.min(pdf.numPages, 30);
   let totalCharsExtracted = 0;
 
@@ -1133,12 +1153,11 @@ async function extractTextFromPdf(file, statusCard = null) {
     }
   }
 
-  // 2. Scanned / Image PDF Fallback via Tesseract.js OCR Engine
   if (totalCharsExtracted < 50 && window.Tesseract) {
     console.log("[PDF Engine] Scanned PDF detected (digital text < 50 chars). Falling back to Tesseract.js OCR Engine...");
     
     const ocrTexts = [];
-    const ocrPages = Math.min(pdf.numPages, 10); // OCR up to 10 scanned pages
+    const ocrPages = Math.min(pdf.numPages, 10);
 
     for (let pageNum = 1; pageNum <= ocrPages; pageNum++) {
       if (statusCard) {
@@ -1185,17 +1204,26 @@ function renderPdfExtractedQuestions() {
   if (!container) return;
 
   container.innerHTML = `
-    <div class="glass-card" style="margin-top:20px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3>📄 Extracted Questions (${extractedQuestionsList.length})</h3>
-        <button class="btn btn-primary" onclick="launchCbtFromPdf()">🚀 Create NEET Test</button>
+    <div class="glass-card" style="margin-top:20px; padding:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+        <h3 style="margin:0; color:#00d4aa;">📄 Extracted PDF Text (${extractedPdfText.length} Characters)</h3>
+        <button class="btn btn-secondary" onclick="copyExtractedPdfText()" style="font-size:12px;">📋 Copy Text to Clipboard</button>
       </div>
+      <textarea readonly class="form-control" style="width:100%; height:180px; font-family:var(--font-mono); font-size:12px; line-height:1.5; color:#ccc;" placeholder="Extracted PDF text...">${escapeHTML(extractedPdfText)}</textarea>
+    </div>
+
+    <div class="glass-card" style="margin-top:20px; padding:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+        <h3 style="margin:0; color:#fbbf24;">🎯 Detected MCQs (${extractedQuestionsList.length} Questions via PDF.js Local Engine)</h3>
+        ${extractedQuestionsList.length > 0 ? `<button class="btn btn-primary" onclick="launchCbtFromPdf()">🚀 Create NEET Test (${extractedQuestionsList.length} Qs)</button>` : ''}
+      </div>
+
       <div style="display:flex; flex-direction:column; gap:12px;">
         ${extractedQuestionsList.map((q, i) => `
-          <div style="padding:12px; background:rgba(255,255,255,0.03); border-radius:8px;">
-            <div><strong>Q${i+1}:</strong> ${escapeHTML(q.question)}</div>
-            <div style="font-size:12px; color:#aaa; margin-top:4px;">
-              Options: ${q.options ? q.options.join(" | ") : ''}
+          <div style="padding:12px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px;">
+            <div style="font-weight:bold; font-size:13px; color:#fff;">Q${i+1}: ${escapeHTML(q.question)}</div>
+            <div style="font-size:12px; color:#aaa; margin-top:6px;">
+              Options: ${q.options ? q.options.map(o => escapeHTML(o)).join(" | ") : ''}
             </div>
           </div>
         `).join('')}
@@ -1805,6 +1833,7 @@ window.updateCharCount = updateCharCount;
 window.generateCbtTest = generateCbtTest;
 window.submitCbtTest = submitCbtTest;
 window.handlePdfDrop = handlePdfDrop;
+window.copyExtractedPdfText = copyExtractedPdfText;
 window.launchCbtFromPdf = launchCbtFromPdf;
 window.generateStudyRecommendation = generateStudyRecommendation;
 window.analyzeMistakesWithAI = analyzeMistakesWithAI;

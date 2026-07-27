@@ -1436,20 +1436,14 @@
     <!-- PDF TO TEST TAB -->
     <section id="pdf-to-test" class="tab-content">
       <div class="page-header">
-        <h2 class="page-title">📄 PDF Question Extractor to NEET Test</h2>
-        <p class="page-desc">Upload any NEET coaching PDF/question paper to extract MCQs and take an instant CBT test.</p>
+        <h2 class="page-title">📄 Local PDF.js Text & Question Extractor</h2>
+        <p class="page-desc">Extract text and parse questions from PDF files locally using PDF.js & Tesseract.js OCR (0 API Tokens Used).</p>
       </div>
 
-      <div class="ai-setup-required-card glass-card" style="display:none; text-align:center; padding:30px; margin-bottom:16px;">
-        <h3>🔑 Gemini API Key Required</h3>
-        <p style="font-size:12.5px; color:#ccc; margin:8px 0 16px 0;">Please enter your free Gemini API Key in Settings to extract PDF questions.</p>
-        <button type="button" class="btn btn-primary" onclick="showTab('settings')">⚙️ Go to Settings</button>
-      </div>
-
-      <div class="ai-feature-content">
+      <div>
         <div class="glass-card pdf-dropzone" style="border: 2px dashed #fbbf24; padding:40px; text-align:center; cursor:pointer;" ondragover="event.preventDefault()" ondrop="handlePdfDrop(event)">
-          <h3>📥 Drag & Drop PDF Question Paper Here</h3>
-          <p style="color:#aaa; font-size:12px; margin:8px 0 14px 0;">Supports Allen, Akash, PW, and NTA PDF papers up to 20MB</p>
+          <h3>📥 Drag & Drop PDF File Here</h3>
+          <p style="color:#aaa; font-size:12px; margin:8px 0 14px 0;">Supports digital & scanned PDF question papers, notes, and modules up to 50MB (PDF.js Engine)</p>
           <input type="file" id="pdf-file-input" accept="application/pdf" style="display:none;" onchange="handlePdfDrop(event)">
           <button class="btn btn-secondary" onclick="document.getElementById('pdf-file-input').click()">Browse PDF File</button>
         </div>
