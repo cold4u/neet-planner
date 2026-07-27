@@ -800,6 +800,70 @@ let cbtState = {
   totalSeconds: 0
 };
 
+async function generateAiChapterTest(chapterName) {
+  if (!chapterName) return;
+
+  if (!getGroqApiKey() && !getApiKey()) {
+    alert("Please configure your free Groq API Key or Gemini API Key in Settings first!");
+    showTab("settings");
+    return;
+  }
+
+  showTab("ai-mocktest");
+
+  const statusCard = document.getElementById("cbt-generation-status");
+  if (statusCard) {
+    statusCard.style.display = "block";
+    statusCard.innerHTML = `
+      <div class="glass-card" style="text-align:center; padding:20px;">
+        <div class="spinner" style="margin:0 auto 10px auto;"></div>
+        <h4>⚡ Generating 10-Question AI Chapter Test for "${escapeHTML(chapterName)}" via Groq AI...</h4>
+        <p id="cbt-status-subtext" style="font-size:12px; color:#00d4aa;">Connecting to Groq Cloud API (Llama-3.3 70B ~800 tokens/sec)...</p>
+      </div>
+    `;
+  }
+
+  try {
+    const prompt = `Generate a high-yield NTA NEET exam practice test consisting of 10 Multiple-Choice Questions (MCQs) for the chapter: "${chapterName}".
+Rules:
+1. Output ONLY a valid raw JSON array of 10 question objects.
+2. Formats:
+{
+  "question": "Question text with LaTeX formulas ($...$)",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
+  "correct": 0,
+  "explanation": "Step-by-step NCERT solution with key formulas",
+  "subject": "Physics/Chemistry/Biology",
+  "chapter": "${chapterName}"
+}
+3. Include conceptual, numerical, and statement-based questions aligned with latest NMC guidelines.`;
+
+    const sysInstruction = "You are an NTA NEET exam setter. Output ONLY a valid JSON array.";
+    const rawText = await callAiWithGroqFirst(prompt, sysInstruction, (msg) => {
+      const sub = document.getElementById("cbt-status-subtext");
+      if (sub) sub.textContent = msg;
+    }, { maxTokens: 3000 });
+
+    const questions = robustParseJSON(rawText);
+
+    if (!Array.isArray(questions) || questions.length === 0) {
+      throw new Error("Could not parse chapter test questions.");
+    }
+
+    if (statusCard) statusCard.style.display = "none";
+    startCbtExam(questions, 10 * 120);
+
+  } catch (err) {
+    if (statusCard) {
+      statusCard.innerHTML = `
+        <div class="glass-card" style="border:1px solid #ef4444; color:#ef4444; padding:15px;">
+          ❌ Chapter Test Generation Failed: ${err.message}
+        </div>
+      `;
+    }
+  }
+}
+
 async function generateCbtTest() {
   if (!getApiKey()) {
     alert("Please configure your Gemini API key in Settings first!");
@@ -2495,6 +2559,7 @@ window.clearChat = clearChat;
 window.handleChatKeyPress = handleChatKeyPress;
 window.updateCharCount = updateCharCount;
 window.generateCbtTest = generateCbtTest;
+window.generateAiChapterTest = generateAiChapterTest;
 window.submitCbtTest = submitCbtTest;
 window.handlePdfDrop = handlePdfDrop;
 window.copyExtractedPdfText = copyExtractedPdfText;
