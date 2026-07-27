@@ -12,11 +12,13 @@
  * 8. NEET News & NTA Official Updates Hub + AI Summarizer
  */
 
-// Model Fallback Ring — Valid public Gemini v1beta endpoints
 const GEMINI_MODELS = [
   "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
+  "gemini-2.0-flash-lite-preview-02-05",
   "gemini-1.5-flash",
-  "gemini-1.5-flash-8b"
+  "gemini-1.5-flash-8b",
+  "gemini-1.5-pro"
 ];
 
 const _invalidModels = new Set();
@@ -155,15 +157,15 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
       payload.system_instruction = { parts: [{ text: systemInstruction }] };
     }
 
-    // Try available models (skip models on cooldown)
-    for (let attempt = 0; attempt < GEMINI_MODELS.length + 1; attempt++) {
+    // Try available models across the 6-model Gemini fallback ring
+    for (let attempt = 0; attempt < GEMINI_MODELS.length * 2; attempt++) {
       const model = _getAvailableModel();
 
       if (!model) {
         const nextExpiry = _getNextCooldownExpiry();
-        const waitSec = Math.ceil((nextExpiry - Date.now()) / 1000);
-        if (waitSec > 0 && waitSec <= 120) {
-          if (onStatus) onStatus(`⏳ All AI models cooling down. Resuming in ${waitSec}s...`);
+        const waitSec = Math.max(1, Math.ceil((nextExpiry - Date.now()) / 1000));
+        if (waitSec > 0 && waitSec <= 65) {
+          if (onStatus) onStatus(`⏳ All Gemini models cooling down. Auto-retrying fallback ring in ${waitSec}s...`);
           await sleep(Math.min(waitSec * 1000, 65000));
           continue;
         }
@@ -174,7 +176,7 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
 
       try {
         if (onStatus && attempt > 0) {
-          onStatus(`⚡ Trying ${model}...`);
+          onStatus(`⚡ Model limit reached → Falling back to ${model}...`);
         }
 
         _lastRequestTime = Date.now();
@@ -187,14 +189,14 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
 
         if (response.status === 429) {
           _modelCooldowns[model] = Date.now() + MODEL_COOLDOWN_MS;
-          console.warn(`[API] ${model} → 429, cooling down 65s`);
-          if (onStatus) onStatus(`⚠️ ${model} rate limited. Trying backup...`);
+          console.warn(`[Gemini Fallback Ring] ${model} → 429 Rate Limit. Falling back to next model...`);
+          if (onStatus) onStatus(`⚠️ ${model} limit reached → Falling back to backup Gemini model...`);
           continue;
         }
 
         if (response.status === 404) {
           _invalidModels.add(model);
-          console.warn(`[API] Model ${model} returned 404. Skipping...`);
+          console.warn(`[Gemini Fallback Ring] Model ${model} returned 404. Skipping...`);
           continue;
         }
 
@@ -204,9 +206,9 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
           if (msg.includes("API key not valid") || msg.includes("API_KEY_INVALID")) {
             throw new Error("INVALID_API_KEY");
           }
-          if (msg.includes("quota") || msg.includes("rate") || msg.includes("Resource has been exhausted")) {
+          if (msg.includes("quota") || msg.includes("rate") || msg.includes("Resource has been exhausted") || msg.includes("429")) {
             _modelCooldowns[model] = Date.now() + MODEL_COOLDOWN_MS;
-            if (onStatus) onStatus(`⚠️ ${model} quota exhausted. Trying backup...`);
+            if (onStatus) onStatus(`⚠️ ${model} quota exhausted → Falling back to backup Gemini model...`);
             continue;
           }
           throw new Error(msg);
@@ -230,7 +232,7 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
         if (err.message === "NO_API_KEY" || err.message === "INVALID_API_KEY" || err.message === "HTTP_429_EXCEEDED") {
           throw err;
         }
-        console.warn(`[API] ${model} failed: ${err.message}`);
+        console.warn(`[Gemini Fallback Ring] ${model} failed: ${err.message}. Trying next fallback model...`);
       }
     }
 
