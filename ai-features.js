@@ -1961,6 +1961,135 @@ function toggleResearchMode() {
   }
 }
 
+/* ==========================================================================
+   FEATURE: TAVILY AI SEARCH PRIMARY ENGINE & SERPER BACKUP ENGINE
+   ========================================================================== */
+
+function getTavilyApiKey() {
+  return (localStorage.getItem("tavily_api_key") || "").trim();
+}
+
+function onTavilyKeyTyped() {
+  const msgArea = document.getElementById("tavily-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = "";
+}
+
+function saveTavilyApiKey() {
+  const input = document.getElementById("setting-tavily-key");
+  const msgArea = document.getElementById("tavily-key-inline-msg");
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) {
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">Please paste a valid Tavily API key (tvly-...)</span>`;
+    alert("Please enter a valid Tavily API key!");
+    return;
+  }
+  localStorage.setItem("tavily_api_key", val);
+  updateTavilyApiKeyStatusUI(true);
+  if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">✅ Tavily API Key saved successfully! Primary research engine active.</span>`;
+  alert("🎉 Tavily API Key saved successfully!");
+}
+
+function removeTavilyApiKey() {
+  localStorage.removeItem("tavily_api_key");
+  const input = document.getElementById("setting-tavily-key");
+  if (input) input.value = "";
+  const msgArea = document.getElementById("tavily-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">🗑️ Tavily API Key removed.</span>`;
+  updateTavilyApiKeyStatusUI(true);
+}
+
+function updateTavilyApiKeyStatusUI(forceSync = false) {
+  const key = getTavilyApiKey();
+  const badge = document.getElementById("tavily-key-status-badge");
+  const input = document.getElementById("setting-tavily-key");
+  if (input && (forceSync || !input.value.trim())) input.value = key;
+  if (badge) {
+    badge.innerHTML = key 
+      ? `<span style="color:#00d4aa; font-weight:bold;">🟢 Primary Research Ready</span>`
+      : `<span style="color:#aaa; font-size:11px;">Optional (Primary Research)</span>`;
+  }
+}
+
+function toggleTavilyKeyVisibility() {
+  const input = document.getElementById("setting-tavily-key");
+  if (input) input.type = input.type === "password" ? "text" : "password";
+}
+
+async function testTavilyApiConnection() {
+  const input = document.getElementById("setting-tavily-key");
+  const badge = document.getElementById("tavily-key-status-badge");
+  const msgArea = document.getElementById("tavily-key-inline-msg");
+
+  if (input && input.value.trim()) {
+    localStorage.setItem("tavily_api_key", input.value.trim());
+    updateTavilyApiKeyStatusUI(true);
+  }
+
+  const key = getTavilyApiKey();
+  if (!key) {
+    if (badge) badge.innerHTML = `<span style="color:#ef4444;">No Key</span>`;
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444;">Please enter your Tavily API key first!</span>`;
+    alert("Please paste your Tavily API key first!");
+    return;
+  }
+
+  if (badge) badge.innerHTML = `<span style="color:#fbbf24;">Testing...</span>`;
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">Connecting to Tavily AI Search API...</span>`;
+
+  try {
+    const res = await fetch("https://api.tavily.com/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: key,
+        query: "NEET UG NTA official syllabus 2027",
+        search_depth: "basic",
+        max_results: 2
+      })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (badge) badge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected</span>`;
+      if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🎉 Connection Successful! Tavily AI Search active.</span>`;
+      alert(`🎉 Tavily API Connection Successful! Returned ${data.results?.length || 0} results.`);
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch (err) {
+    if (badge) badge.innerHTML = `<span style="color:#ef4444;">Failed</span>`;
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444;">Connection failed: ${err.message}</span>`;
+    alert(`❌ Tavily API Connection Failed: ${err.message}`);
+  }
+}
+
+async function performTavilySearch(query) {
+  const key = getTavilyApiKey();
+  if (!key) return null;
+
+  try {
+    const res = await fetch("https://api.tavily.com/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: key,
+        query: query,
+        search_depth: "advanced",
+        include_answer: true,
+        max_results: 5
+      })
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.warn("Tavily search failed:", err);
+    return null;
+  }
+}
+
 async function performSerperSearch(query) {
   const key = getSerperApiKey();
   if (!key) return "";
@@ -2051,12 +2180,13 @@ async function performDedicatedAiResearch() {
     return;
   }
 
-  const groqKey = getGroqApiKey();
+  const tavilyKey = getTavilyApiKey();
   const serperKey = getSerperApiKey();
+  const groqKey = getGroqApiKey();
   const geminiKey = getApiKey();
 
-  if (!groqKey && !serperKey && !geminiKey) {
-    alert("Please configure your free Groq API key or Serper API key in Settings first!");
+  if (!tavilyKey && !serperKey && !groqKey && !geminiKey) {
+    alert("Please configure your free Tavily API key or Serper API key in Settings first!");
     showTab("settings");
     return;
   }
@@ -2067,66 +2197,72 @@ async function performDedicatedAiResearch() {
       <div class="glass-card" style="text-align:center; padding:20px;">
         <div class="spinner" style="margin:0 auto 10px auto;"></div>
         <h4>🔬 Running Deep AI & Web Research...</h4>
-        <p id="research-status-subtext" style="font-size:12px; color:#00d4aa;">⚡ Primary Engine: Groq AI (Llama-3.3 70B) | Backup Engine: Serper.dev Google Search...</p>
+        <p id="research-status-subtext" style="font-size:12px; color:#00d4aa;">🌐 Primary Engine: Tavily AI Search | Backup Engine: Serper.dev Google Search...</p>
       </div>
     `;
   }
   container.innerHTML = "";
 
-  let groqResearchHtml = "";
-  let serperWebCardsHtml = "";
+  let primaryResearchHtml = "";
+  let backupSearchHtml = "";
 
-  // 1. PRIMARY ENGINE FOR RESEARCH: Groq AI (Llama-3.3 70B)
-  if (groqKey) {
+  // 1. PRIMARY ENGINE FOR RESEARCH: Tavily AI Search API
+  if (tavilyKey) {
     try {
       if (document.getElementById("research-status-subtext")) {
-        document.getElementById("research-status-subtext").textContent = "⚡ Generating Academic Research Digest with Groq Cloud Llama-3.3 70B Primary Engine...";
+        document.getElementById("research-status-subtext").textContent = "🌐 Fetching Deep AI Research Digest & Direct Answer with Tavily Primary Engine...";
       }
-      const sysPrompt = "You are a senior NEET academic researcher and exam consultant. Produce a detailed, structured Academic & NCERT Research Digest for the student's query. Use bold headings, bullet points, and LaTeX formulas. Sections: 1. Core NCERT Concepts & Syllabus Impact, 2. Key Formulas / Mechanisms, 3. NEET Exam Strategy & High-Yield Action Plan.";
-      const digestText = await callGroqAPI(query, sysPrompt, null, { maxTokens: 1200 });
+      const tavData = await performTavilySearch(query);
+      if (tavData) {
+        let tavCardsHtml = "";
 
-      groqResearchHtml = `
-        <div class="glass-card" style="margin-bottom:20px; border:1px solid #fbbf24; background:rgba(251,191,36,0.03); padding:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(251,191,36,0.2); padding-bottom:10px;">
-            <h3 style="margin:0; color:#fbbf24;">⚡ AI Academic Research Digest (Groq Cloud Llama-3.3 70B Primary Engine)</h3>
-            <span style="font-size:11px; background:rgba(251,191,36,0.15); color:#fbbf24; padding:3px 8px; border-radius:12px; border:1px solid rgba(251,191,36,0.4);">⚡ Primary Groq Engine</span>
+        if (tavData.answer) {
+          tavCardsHtml += `
+            <div class="glass-card" style="padding:16px; margin-bottom:16px; border:1px solid #a855f7; background:rgba(168,85,247,0.04);">
+              <h4 style="margin:0 0 6px 0; color:#a855f7;">💡 Direct AI Answer Synthesis (Tavily Primary Engine)</h4>
+              <p style="font-size:13.5px; color:#e2e8f0; line-height:1.6; margin:0;">${parseMarkdownAndKaTeX(tavData.answer)}</p>
+            </div>
+          `;
+        }
+
+        const results = tavData.results || [];
+        if (results.length > 0) {
+          const cardsList = results.map(r => `
+            <div class="glass-card" style="padding:14px; margin-bottom:12px; border:1px solid rgba(168,85,247,0.3);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span class="badge" style="background:rgba(168,85,247,0.15); color:#a855f7; font-size:10px; padding:2px 8px; border-radius:4px;">🌐 Tavily Verified Citation</span>
+                <span style="font-size:10px; color:#aaa;">Relevance Score: ${Math.round((r.score || 0.9) * 100)}%</span>
+              </div>
+              <h4 style="margin:0 0 6px 0; font-size:14px; color:#fff;">${escapeHTML(r.title)}</h4>
+              <p style="font-size:12px; color:#ccc; line-height:1.45; margin:0 0 8px 0;">${escapeHTML(r.content || '')}</p>
+              <a href="${r.url}" target="_blank" class="btn btn-secondary" style="font-size:11px; padding:4px 8px; text-decoration:none;">Visit Academic Source ↗</a>
+            </div>
+          `).join('');
+
+          tavCardsHtml += `
+            <div style="margin-top:16px;">
+              <h4 style="color:#a855f7; margin-bottom:12px;">📚 Top Academic Web Sources & Citations (Tavily Engine)</h4>
+              ${cardsList}
+            </div>
+          `;
+        }
+
+        primaryResearchHtml = `
+          <div class="glass-card" style="margin-bottom:20px; border:1px solid #a855f7; background:rgba(168,85,247,0.02); padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(168,85,247,0.2); padding-bottom:10px;">
+              <h3 style="margin:0; color:#a855f7;">🌐 Tavily Deep AI Web Research Digest</h3>
+              <span style="font-size:11px; background:rgba(168,85,247,0.15); color:#a855f7; padding:3px 8px; border-radius:12px; border:1px solid rgba(168,85,247,0.4);">🌐 Primary Engine</span>
+            </div>
+            ${tavCardsHtml}
           </div>
-          <div style="font-size:13.5px; line-height:1.6; color:#e2e8f0;">
-            ${parseMarkdownAndKaTeX(digestText)}
-          </div>
-        </div>
-      `;
-    } catch (groqErr) {
-      console.warn("[Research Hub] Groq primary engine failed/limit reached. Falling back to backup engine...", groqErr);
+        `;
+      }
+    } catch (tavErr) {
+      console.warn("[Research Hub] Tavily primary engine failed. Falling back to Serper backup...", tavErr);
     }
   }
 
-  // Fallback to Gemini if Groq fails or is unconfigured
-  if (!groqResearchHtml && geminiKey) {
-    try {
-      if (document.getElementById("research-status-subtext")) {
-        document.getElementById("research-status-subtext").textContent = "🧠 Generating Academic Digest with Gemini AI backup engine...";
-      }
-      const sysPrompt = "You are a senior NEET academic researcher and exam consultant. Produce a detailed, structured Academic & NCERT Research Digest for the student's query. Use bold headings, bullet points, and LaTeX formulas. Sections: 1. Core NCERT Concepts & Syllabus Impact, 2. Key Formulas / Mechanisms, 3. NEET Exam Strategy & High-Yield Action Plan.";
-      const digestText = await callGeminiAPI(query, sysPrompt, null, { maxTokens: 1200 });
-
-      groqResearchHtml = `
-        <div class="glass-card" style="margin-bottom:20px; border:1px solid #fbbf24; background:rgba(251,191,36,0.03); padding:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(251,191,36,0.2); padding-bottom:10px;">
-            <h3 style="margin:0; color:#fbbf24;">🧠 AI Academic Research Digest (Gemini AI Backup Engine)</h3>
-            <span style="font-size:11px; background:rgba(251,191,36,0.15); color:#fbbf24; padding:3px 8px; border-radius:12px; border:1px solid rgba(251,191,36,0.4);">🧠 Gemini Backup Engine</span>
-          </div>
-          <div style="font-size:13.5px; line-height:1.6; color:#e2e8f0;">
-            ${parseMarkdownAndKaTeX(digestText)}
-          </div>
-        </div>
-      `;
-    } catch (gemErr) {
-      console.warn("[Research Hub] Gemini fallback failed:", gemErr);
-    }
-  }
-
-  // 2. BACKUP ENGINE FOR SEARCH DATA: Serper.dev API (Google Search Engine)
+  // 2. BACKUP ENGINE FOR RESEARCH: Serper.dev API (Google Search Engine)
   if (serperKey) {
     try {
       if (document.getElementById("research-status-subtext")) {
@@ -2158,28 +2294,38 @@ async function performDedicatedAiResearch() {
         }
 
         if (organicResults.length > 0) {
+          const cardsList = organicResults.map((item, idx) => `
+            <div style="padding:12px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                  <span style="font-size:11px; font-weight:bold; color:#00d4aa;">Result #${idx + 1}</span>
+                </div>
+                <a href="${item.link}" target="_blank" style="font-weight:bold; font-size:13px; color:#fbbf24; text-decoration:none; display:block; margin-bottom:4px;">${escapeHTML(item.title)} ↗</a>
+                <p style="font-size:12px; color:#ccc; line-height:1.45; margin:0;">${escapeHTML(item.snippet || '')}</p>
+              </div>
+              <a href="${item.link}" target="_blank" class="btn btn-secondary" style="font-size:11px; padding:3px 8px; text-decoration:none; text-align:center; align-self:flex-start; margin-top:10px;">Open Source ↗</a>
+            </div>
+          `).join('');
+
           searchCards += `
-            <div class="glass-card" style="padding:18px;">
-              <h4 style="margin:0 0 12px 0; color:#00d4aa;">🌐 Live Google Search Results (${organicResults.length} Web Sources via Serper Backup Engine)</h4>
+            <div style="margin-top:16px;">
+              <h4 style="color:#00d4aa; margin-bottom:12px;">🌐 Live Google Search Results (${organicResults.length} Web Sources via Serper Backup Engine)</h4>
               <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
-                ${organicResults.map((item, idx) => `
-                  <div style="padding:12px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; display:flex; flex-direction:column; justify-content:space-between;">
-                    <div>
-                      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                        <span style="font-size:11px; font-weight:bold; color:#00d4aa;">Result #${idx + 1}</span>
-                      </div>
-                      <a href="${item.link}" target="_blank" style="font-weight:bold; font-size:13px; color:#fbbf24; text-decoration:none; display:block; margin-bottom:4px;">${escapeHTML(item.title)} ↗</a>
-                      <p style="font-size:12px; color:#ccc; line-height:1.45; margin:0;">${escapeHTML(item.snippet || '')}</p>
-                    </div>
-                    <a href="${item.link}" target="_blank" class="btn btn-secondary" style="font-size:11px; padding:3px 8px; text-decoration:none; text-align:center; align-self:flex-start; margin-top:10px;">Open Source ↗</a>
-                  </div>
-                `).join('')}
+                ${cardsList}
               </div>
             </div>
           `;
         }
 
-        serperWebCardsHtml = searchCards;
+        backupSearchHtml = `
+          <div class="glass-card" style="margin-bottom:20px; border:1px solid #00d4aa; background:rgba(0,212,170,0.02); padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(0,212,170,0.2); padding-bottom:10px;">
+              <h3 style="margin:0; color:#00d4aa;">🔍 Live Web Search Cards (Serper.dev Backup Engine)</h3>
+              <span style="font-size:11px; background:rgba(0,212,170,0.15); color:#00d4aa; padding:3px 8px; border-radius:12px; border:1px solid rgba(0,212,170,0.4);">🔍 Serper Backup Engine</span>
+            </div>
+            ${searchCards}
+          </div>
+        `;
       }
     } catch (serperErr) {
       console.warn("[Research Hub] Serper backup search failed:", serperErr);
@@ -2188,18 +2334,20 @@ async function performDedicatedAiResearch() {
 
   if (statusCard) statusCard.style.display = "none";
 
-  // 3. Built-in Offline NCERT Syllabus Fallback if no engines generated results
-  if (!groqResearchHtml && !serperWebCardsHtml) {
+  let finalHtml = "";
+  if (primaryResearchHtml) finalHtml += primaryResearchHtml;
+  if (backupSearchHtml) finalHtml += backupSearchHtml;
+  if (!finalHtml) {
     const offlineText = getOfflineNcertResearch(query);
-    container.innerHTML = `
+    finalHtml = `
       <div class="glass-card" style="padding:20px; border:1px solid #fbbf24;">
         <h3 style="color:#fbbf24; margin-top:0;">📚 Offline NCERT Syllabus Research Engine</h3>
         <div style="font-size:13px; line-height:1.6;">${parseMarkdownAndKaTeX(offlineText)}</div>
       </div>
     `;
-  } else {
-    container.innerHTML = groqResearchHtml + serperWebCardsHtml;
   }
+
+  container.innerHTML = finalHtml;
 }
 
 async function fetchLiveSerperNews(category = "all") {
@@ -2300,11 +2448,20 @@ window.toggleNewsDataKeyVisibility = toggleNewsDataKeyVisibility;
 window.testNewsDataApiConnection = testNewsDataApiConnection;
 window.fetchLiveNewsData = fetchLiveNewsData;
 
+window.getTavilyApiKey = getTavilyApiKey;
+window.saveTavilyApiKey = saveTavilyApiKey;
+window.removeTavilyApiKey = removeTavilyApiKey;
+window.updateTavilyApiKeyStatusUI = updateTavilyApiKeyStatusUI;
+window.toggleTavilyKeyVisibility = toggleTavilyKeyVisibility;
+window.testTavilyApiConnection = testTavilyApiConnection;
+window.performTavilySearch = performTavilySearch;
+
 document.addEventListener("DOMContentLoaded", () => {
   updateApiKeyStatusUI(true);
   updateGroqApiKeyStatusUI(true);
   updateNewsDataApiKeyStatusUI(true);
   updateSerperApiKeyStatusUI(true);
+  updateTavilyApiKeyStatusUI(true);
   renderSetupRequiredCards();
   renderNeetNews("all");
 
@@ -2344,6 +2501,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const removeSerperBtn = document.getElementById("btn-remove-serper-key");
   if (removeSerperBtn) removeSerperBtn.onclick = removeSerperApiKey;
+
+  const saveTavilyBtn = document.getElementById("btn-save-tavily-key");
+  if (saveTavilyBtn) saveTavilyBtn.onclick = saveTavilyApiKey;
+
+  const testTavilyBtn = document.getElementById("btn-test-tavily-key");
+  if (testTavilyBtn) testTavilyBtn.onclick = testTavilyApiConnection;
+
+  const removeTavilyBtn = document.getElementById("btn-remove-tavily-key");
+  if (removeTavilyBtn) removeTavilyBtn.onclick = removeTavilyApiKey;
 });
 
 function handleAiTabSwitch(tabId) {
@@ -2351,6 +2517,7 @@ function handleAiTabSwitch(tabId) {
   updateGroqApiKeyStatusUI(true);
   updateNewsDataApiKeyStatusUI(true);
   updateSerperApiKeyStatusUI(true);
+  updateTavilyApiKeyStatusUI(true);
   renderSetupRequiredCards();
 
   if (tabId === 'ai-tutor') {
