@@ -1508,6 +1508,32 @@
         </div>
       </div>
 
+      <!-- GROQ CLOUD API BYOK BACKUP FAILOVER CARD -->
+      <div class="glass-card" style="margin-bottom:20px; border:1px solid rgba(249,115,22,0.4);">
+        <h3>⚡ Groq Cloud API Setup (Secondary Backup Engine)</h3>
+        <p style="font-size:12.5px; color:#ccc; margin-top:4px;">Enter your free Groq API Key to enable instant automatic failover (Llama-3.3 70B & Llama-3.1 8B) when Gemini API reaches its rate limits!</p>
+        
+        <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-weight:bold; font-size:13px;">Groq API Key</label>
+            <div id="groq-key-status-badge"><span style="color:#aaa; font-size:11px;">Optional Failover</span></div>
+          </div>
+          
+          <div style="display:flex; gap:8px;">
+            <input type="password" id="setting-groq-key" class="form-control" placeholder="Paste your gsk_... key here" style="flex:1;" oninput="onGroqKeyTyped()">
+            <button type="button" class="btn btn-secondary" onclick="toggleGroqKeyVisibility()">👁️</button>
+          </div>
+          <div id="groq-key-inline-msg" style="font-size:12px; margin-top:2px;"></div>
+
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+            <button type="button" id="btn-save-groq-key" class="btn btn-primary" onclick="saveGroqApiKey()">💾 Save Groq Key</button>
+            <button type="button" id="btn-test-groq-key" class="btn btn-secondary" onclick="testGroqApiConnection()">🧪 Test Connection</button>
+            <a href="https://console.groq.com/keys" target="_blank" class="btn btn-secondary" style="text-decoration:none;">⚡ Get Free Groq Key ↗</a>
+            <button type="button" id="btn-remove-groq-key" class="btn btn-secondary" onclick="removeGroqApiKey()" style="color:#ef4444; margin-left:auto;">🗑️ Remove Key</button>
+          </div>
+        </div>
+      </div>
+
       <!-- SERPER.DEV SEARCH & NEWS API BYOK SETUP CARD -->
       <div class="glass-card" style="margin-bottom:20px; border:1px solid rgba(0,212,170,0.4);">
         <h3>🔍 Serper.dev Search & Live News API Setup (Google Engine)</h3>

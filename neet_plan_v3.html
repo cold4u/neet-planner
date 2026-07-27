@@ -6003,6 +6003,32 @@ sup {
         </div>
       </div>
 
+      <!-- GROQ CLOUD API BYOK BACKUP FAILOVER CARD -->
+      <div class="glass-card" style="margin-bottom:20px; border:1px solid rgba(249,115,22,0.4);">
+        <h3>⚡ Groq Cloud API Setup (Secondary Backup Engine)</h3>
+        <p style="font-size:12.5px; color:#ccc; margin-top:4px;">Enter your free Groq API Key to enable instant automatic failover (Llama-3.3 70B & Llama-3.1 8B) when Gemini API reaches its rate limits!</p>
+        
+        <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-weight:bold; font-size:13px;">Groq API Key</label>
+            <div id="groq-key-status-badge"><span style="color:#aaa; font-size:11px;">Optional Failover</span></div>
+          </div>
+          
+          <div style="display:flex; gap:8px;">
+            <input type="password" id="setting-groq-key" class="form-control" placeholder="Paste your gsk_... key here" style="flex:1;" oninput="onGroqKeyTyped()">
+            <button type="button" class="btn btn-secondary" onclick="toggleGroqKeyVisibility()">👁️</button>
+          </div>
+          <div id="groq-key-inline-msg" style="font-size:12px; margin-top:2px;"></div>
+
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+            <button type="button" id="btn-save-groq-key" class="btn btn-primary" onclick="saveGroqApiKey()">💾 Save Groq Key</button>
+            <button type="button" id="btn-test-groq-key" class="btn btn-secondary" onclick="testGroqApiConnection()">🧪 Test Connection</button>
+            <a href="https://console.groq.com/keys" target="_blank" class="btn btn-secondary" style="text-decoration:none;">⚡ Get Free Groq Key ↗</a>
+            <button type="button" id="btn-remove-groq-key" class="btn btn-secondary" onclick="removeGroqApiKey()" style="color:#ef4444; margin-left:auto;">🗑️ Remove Key</button>
+          </div>
+        </div>
+      </div>
+
       <!-- SERPER.DEV SEARCH & NEWS API BYOK SETUP CARD -->
       <div class="glass-card" style="margin-bottom:20px; border:1px solid rgba(0,212,170,0.4);">
         <h3>🔍 Serper.dev Search & Live News API Setup (Google Engine)</h3>
@@ -15575,6 +15601,161 @@ function quickSaveApiKey(btn) {
   alert("🎉 Gemini API Key activated! All AI features are ready.");
 }
 
+/* ==========================================================================
+   FEATURE: GROQ CLOUD API ENGINE (SECONDARY BACKUP FAILOVER)
+   ========================================================================== */
+
+function getGroqApiKey() {
+  return (localStorage.getItem("groq_api_key") || "").trim();
+}
+
+function onGroqKeyTyped() {
+  const msgArea = document.getElementById("groq-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = "";
+}
+
+function saveGroqApiKey() {
+  const input = document.getElementById("setting-groq-key");
+  const msgArea = document.getElementById("groq-key-inline-msg");
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) {
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444; font-weight:bold;">Please paste a valid Groq API key (gsk_...)</span>`;
+    alert("Please enter a valid Groq API key!");
+    return;
+  }
+  localStorage.setItem("groq_api_key", val);
+  updateGroqApiKeyStatusUI(true);
+  if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">✅ Groq API Key saved successfully! Backup active.</span>`;
+  alert("🎉 Groq API Key saved successfully!");
+}
+
+function removeGroqApiKey() {
+  localStorage.removeItem("groq_api_key");
+  const input = document.getElementById("setting-groq-key");
+  if (input) input.value = "";
+  const msgArea = document.getElementById("groq-key-inline-msg");
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">🗑️ Groq API Key removed.</span>`;
+  updateGroqApiKeyStatusUI(true);
+}
+
+function updateGroqApiKeyStatusUI(forceSync = false) {
+  const key = getGroqApiKey();
+  const badge = document.getElementById("groq-key-status-badge");
+  const input = document.getElementById("setting-groq-key");
+  if (input && (forceSync || !input.value.trim())) input.value = key;
+  if (badge) {
+    badge.innerHTML = key 
+      ? `<span style="color:#00d4aa; font-weight:bold;">🟢 Key Active (Backup Ready)</span>`
+      : `<span style="color:#aaa; font-size:11px;">Optional Failover</span>`;
+  }
+}
+
+function toggleGroqKeyVisibility() {
+  const input = document.getElementById("setting-groq-key");
+  if (input) {
+    input.type = input.type === "password" ? "text" : "password";
+  }
+}
+
+async function testGroqApiConnection() {
+  const input = document.getElementById("setting-groq-key");
+  const badge = document.getElementById("groq-key-status-badge");
+  const msgArea = document.getElementById("groq-key-inline-msg");
+
+  if (input && input.value.trim()) {
+    localStorage.setItem("groq_api_key", input.value.trim());
+    updateGroqApiKeyStatusUI(true);
+  }
+
+  const key = getGroqApiKey();
+  if (!key) {
+    if (badge) badge.innerHTML = `<span style="color:#ef4444;">No Key</span>`;
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444;">Please enter your Groq API key first!</span>`;
+    alert("Please paste your Groq API key first!");
+    return;
+  }
+
+  if (badge) badge.innerHTML = `<span style="color:#fbbf24;">Testing...</span>`;
+  if (msgArea) msgArea.innerHTML = `<span style="color:#fbbf24;">Connecting to Groq Cloud API...</span>`;
+
+  try {
+    const text = await callGroqAPI("Hello, reply with 1 short sentence.", "You are a test bot");
+    if (badge) badge.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🟢 Connected</span>`;
+    if (msgArea) msgArea.innerHTML = `<span style="color:#00d4aa; font-weight:bold;">🎉 Connection Successful! Llama-3.3 70B active.</span>`;
+    alert(`🎉 Groq API Connection Successful!\n\nResponse: "${text}"`);
+  } catch (err) {
+    if (badge) badge.innerHTML = `<span style="color:#ef4444;">Failed</span>`;
+    if (msgArea) msgArea.innerHTML = `<span style="color:#ef4444;">Connection failed: ${err.message}</span>`;
+    alert(`❌ Groq API Connection Failed: ${err.message}`);
+  }
+}
+
+async function callGroqAPI(prompt, systemInstruction = "", onStatus = null, options = {}) {
+  const groqKey = getGroqApiKey();
+  if (!groqKey) {
+    throw new Error("NO_GROQ_KEY");
+  }
+
+  if (onStatus) onStatus("⚡ Gemini limit reached → Switched to Groq AI (Llama-3.3 70B)...");
+
+  const messages = [];
+  if (systemInstruction) {
+    messages.push({ role: "system", content: systemInstruction });
+  }
+  messages.push({ role: "user", content: prompt });
+
+  const modelsToTry = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"];
+
+  for (const m of modelsToTry) {
+    try {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${groqKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: m,
+          messages: messages,
+          temperature: 0.7,
+          max_tokens: options.maxTokens || 1024
+        })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error?.message || `Groq API Error HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      const answerText = data.choices?.[0]?.message?.content;
+      if (!answerText) throw new Error("Empty response from Groq API.");
+
+      return answerText;
+
+    } catch (err) {
+      console.warn(`Groq model ${m} failed:`, err);
+    }
+  }
+
+  throw new Error("All Groq models failed or rate limited.");
+}
+
+async function callAiWithFailover(prompt, systemInstruction = "", onStatus = null, options = {}) {
+  try {
+    return await callGeminiAPI(prompt, systemInstruction, onStatus, options);
+  } catch (geminiErr) {
+    const groqKey = getGroqApiKey();
+    if (groqKey && (geminiErr.message === "HTTP_429_EXCEEDED" || geminiErr.message.includes("429") || geminiErr.message.includes("cooling down") || geminiErr.message.includes("quota"))) {
+      console.warn("[Failover Engine] Gemini rate limit reached! Failing over to Groq Cloud API...");
+      if (onStatus) onStatus("⚡ Gemini rate limit reached → Seamless failover to Groq AI (Llama-3.3 70B)...");
+      return await callGroqAPI(prompt, systemInstruction, onStatus, options);
+    }
+    throw geminiErr;
+  }
+}
+
 function renderSetupRequiredCards() {
   const geminiKey = getApiKey();
   const serperKey = getSerperApiKey();
@@ -15676,7 +15857,7 @@ async function sendTutorMessage() {
       }
     }
 
-    const aiResponse = await callGeminiAPI(userText, sysPrompt, (statusMsg) => {
+    const aiResponse = await callAiWithFailover(userText, sysPrompt, (statusMsg) => {
       updateTypingText(typingId, statusMsg);
     });
 
@@ -15848,7 +16029,7 @@ Each object format:
 }
 `;
 
-      const rawText = await callGeminiAPI(prompt, "You are an NTA NEET exam setter. Output ONLY a valid JSON array.", (msg) => {
+      const rawText = await callAiWithFailover(prompt, "You are an NTA NEET exam setter. Output ONLY a valid JSON array.", (msg) => {
         const sub = document.getElementById("cbt-status-subtext");
         if (sub) sub.textContent = msg;
       }, { maxTokens: 3000 });
@@ -16460,7 +16641,7 @@ Bullet 1: Top priority subject & chapter
 Bullet 2: Target study hours & active recall strategy
 Bullet 3: Quick motivational tip`;
 
-    const recText = await callGeminiAPI(prompt, "You are a NEET study counselor.", null, { maxTokens: 400 });
+    const recText = await callAiWithFailover(prompt, "You are a NEET study counselor.", null, { maxTokens: 400 });
     recContainer.innerHTML = `<div style="font-size:13px; line-height:1.6;">${parseMarkdownAndKaTeX(recText)}</div>`;
   } catch (err) {
     recContainer.innerHTML = `<p style="font-size:12px; color:#ef4444;">Could not load suggestion: ${err.message}</p>`;
@@ -16476,8 +16657,8 @@ async function analyzeMistakesWithAI() {
   const resultContainer = document.getElementById("error-analysis-result");
   if (!resultContainer) return;
 
-  if (!getApiKey()) {
-    alert("Please set your Gemini API key in Settings first!");
+  if (!getApiKey() && !getGroqApiKey()) {
+    alert("Please set your Gemini or Groq API key in Settings first!");
     showTab("settings");
     return;
   }
@@ -16485,7 +16666,7 @@ async function analyzeMistakesWithAI() {
   resultContainer.innerHTML = `
     <div class="glass-card" style="padding:15px; text-align:center;">
       <div class="spinner" style="margin:0 auto 10px auto;"></div>
-      Analyzing your mistake patterns using Gemini AI...
+      Analyzing your mistake patterns using AI...
     </div>
   `;
 
@@ -16493,7 +16674,7 @@ async function analyzeMistakesWithAI() {
     const prompt = `Analyze typical NEET mistake categories (Conceptual Error, Silly Calculation Error, Time Pressure, Formula Misapplication).
 Provide a 3-step action plan to eliminate repeat errors in Physics & Chemistry.`;
 
-    const analysis = await callGeminiAPI(prompt, "You are a NEET performance analyst.", null, { maxTokens: 600 });
+    const analysis = await callAiWithFailover(prompt, "You are a NEET performance analyst.", null, { maxTokens: 600 });
     resultContainer.innerHTML = `
       <div class="glass-card" style="padding:16px;">
         <h3>🧬 AI Mistake DNA Analysis</h3>
@@ -17039,8 +17220,18 @@ window.filterNews = filterNews;
 window.copyText = copyText;
 window.handleAiTabSwitch = handleAiTabSwitch;
 
+window.getGroqApiKey = getGroqApiKey;
+window.saveGroqApiKey = saveGroqApiKey;
+window.removeGroqApiKey = removeGroqApiKey;
+window.updateGroqApiKeyStatusUI = updateGroqApiKeyStatusUI;
+window.toggleGroqKeyVisibility = toggleGroqKeyVisibility;
+window.testGroqApiConnection = testGroqApiConnection;
+window.callGroqAPI = callGroqAPI;
+window.callAiWithFailover = callAiWithFailover;
+
 document.addEventListener("DOMContentLoaded", () => {
   updateApiKeyStatusUI();
+  updateGroqApiKeyStatusUI();
   updateSerperApiKeyStatusUI();
   renderSetupRequiredCards();
   renderNeetNews("all");
@@ -17055,6 +17246,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const removeBtn = document.getElementById("btn-remove-api-key");
   if (removeBtn) removeBtn.onclick = removeApiKey;
 
+  const saveGroqBtn = document.getElementById("btn-save-groq-key");
+  if (saveGroqBtn) saveGroqBtn.onclick = saveGroqApiKey;
+
+  const testGroqBtn = document.getElementById("btn-test-groq-key");
+  if (testGroqBtn) testGroqBtn.onclick = testGroqApiConnection;
+
+  const removeGroqBtn = document.getElementById("btn-remove-groq-key");
+  if (removeGroqBtn) removeGroqBtn.onclick = removeGroqApiKey;
+
   const saveSerperBtn = document.getElementById("btn-save-serper-key");
   if (saveSerperBtn) saveSerperBtn.onclick = saveSerperApiKey;
 
@@ -17067,6 +17267,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function handleAiTabSwitch(tabId) {
   updateApiKeyStatusUI();
+  updateGroqApiKeyStatusUI();
   renderSetupRequiredCards();
 
   if (tabId === 'ai-tutor') {
