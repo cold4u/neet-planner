@@ -1901,7 +1901,25 @@ function escapeHTML(str) {
 
 function parseMarkdownAndKaTeX(text) {
   if (!text) return "";
-  let html = escapeHTML(text);
+  let html = text;
+
+  // 1. Clean up raw LaTeX \text{...} wrappers in chemical formulas & equations
+  html = html.replace(/\\text\{([^}]+)\}/g, '$1');
+
+  // 2. Clean up LaTeX chemical arrows & symbols BEFORE HTML escaping
+  html = html.replace(/\\rightarrow|\\to|\\longrightarrow/g, '→');
+  html = html.replace(/\\leftarrow|\\longleftarrow/g, '←');
+  html = html.replace(/\\leftrightarrow|\\rightleftharpoons/g, '⇌');
+  html = html.replace(/\\Delta|\\delta/g, 'Δ');
+  html = html.replace(/\\pm/g, '±');
+  html = html.replace(/\\times/g, '×');
+
+  // 3. Clean up raw math delimiters $ ... $ or $$ ... $$ wrapping chemical equations
+  html = html.replace(/\$\$([^\$]+)\$\$/g, '$1');
+  html = html.replace(/\$([^\$]+)\$/g, '$1');
+
+  // 4. Escape HTML safety
+  html = escapeHTML(html);
 
   // Restore allowed sub and sup HTML tags from AI or user input
   html = html.replace(/&lt;sub&gt;(.*?)&lt;\/sub&gt;/gi, '<sub>$1</sub>');
@@ -1917,14 +1935,16 @@ function parseMarkdownAndKaTeX(text) {
   html = html.replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>');
   html = html.replace(/_\{([^}]+)\}/g, '<sub>$1</sub>');
 
-  // Support automatic chemical formula subscript (e.g. H_2O, CO_2, KMnO_4, H_2SO_4, CH_4, NH_3)
+  // Support automatic chemical formula subscript (e.g. C_6H_12O_6, H_2O, CO_2, KMnO_4, H_2SO_4, CH_4, NH_3)
   html = html.replace(/([A-Z][a-z]?)_([0-9]+)/g, '$1<sub>$2</sub>');
 
-  // Support common chemical arrows and Delta symbol
+  // Support chemical formula number attachment (e.g., C6H12O6, H2O, CO2, 6O2, 6CO2, 6H2O)
+  html = html.replace(/([A-Z][a-z]?)([0-9]+)(?=[A-Z\s\+\-→⇌\(\)]|$)/g, '$1<sub>$2</sub>');
+
+  // Support common chemical arrows and Delta symbol from HTML entity replacements
   html = html.replace(/&lt;=&gt;|&lt;-&gt;/g, '⇌');
   html = html.replace(/&lt;-/g, '←');
   html = html.replace(/-&gt;/g, '→');
-  html = html.replace(/\\Delta|&amp;Delta;/g, 'Δ');
 
   // Formatting: Bold, Italics, Line breaks
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
