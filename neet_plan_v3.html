@@ -15617,9 +15617,9 @@ async function sendTutorMessage() {
   try {
     let sysPrompt = SYSTEM_PROMPTS[currentSubjectMode] || SYSTEM_PROMPTS.physics;
 
-    if (isResearchModeActive && getBraveApiKey()) {
-      updateTypingText(typingId, "🔬 Researching live NCERT & web data with Brave API...");
-      const researchContext = await performBraveSearch(userText);
+    if (isResearchModeActive && getSerperApiKey()) {
+      updateTypingText(typingId, "🔬 Researching live NCERT & web data with Serper.dev API...");
+      const researchContext = await performSerperSearch(userText);
       if (researchContext) {
         sysPrompt += `\n\n[Live Web & NCERT Research Findings]:\n${researchContext}\nUse these live research findings to ground your answer with high accuracy.`;
       }
