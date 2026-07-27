@@ -1548,6 +1548,32 @@
         </div>
       </div>
 
+      <!-- GNEWS API BYOK PRIMARY NEWS CARD -->
+      <div class="glass-card" style="margin-bottom:20px; border:1px solid rgba(59,130,246,0.4);">
+        <h3>📰 GNews.io API Setup (Primary Live News Engine)</h3>
+        <p style="font-size:12.5px; color:#ccc; margin-top:4px;">Enter your free GNews.io API Key to fetch real-time NTA NEET news headlines and official circulars (Primary Engine).</p>
+        
+        <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-weight:bold; font-size:13px;">GNews.io API Key</label>
+            <div id="gnews-key-status-badge"><span style="color:#aaa; font-size:11px;">Optional (Primary News)</span></div>
+          </div>
+          
+          <div style="display:flex; gap:8px;">
+            <input type="password" id="setting-gnews-key" class="form-control" placeholder="Paste your GNews API key here" style="flex:1;" oninput="onGNewsKeyTyped()">
+            <button type="button" class="btn btn-secondary" onclick="toggleGNewsKeyVisibility()">👁️</button>
+          </div>
+          <div id="gnews-key-inline-msg" style="font-size:12px; margin-top:2px;"></div>
+
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+            <button type="button" id="btn-save-gnews-key" class="btn btn-primary" onclick="saveGNewsApiKey()">💾 Save GNews Key</button>
+            <button type="button" id="btn-test-gnews-key" class="btn btn-secondary" onclick="testGNewsApiConnection()">🧪 Test Connection</button>
+            <a href="https://gnews.io" target="_blank" class="btn btn-secondary" style="text-decoration:none;">📰 Get Free Key (100 Req/Day) ↗</a>
+            <button type="button" id="btn-remove-gnews-key" class="btn btn-secondary" onclick="removeGNewsApiKey()" style="color:#ef4444; margin-left:auto;">🗑️ Remove Key</button>
+          </div>
+        </div>
+      </div>
+
       <!-- SERPER.DEV SEARCH & NEWS API BYOK SETUP CARD -->
       <div class="glass-card" style="margin-bottom:20px; border:1px solid rgba(0,212,170,0.4);">
         <h3>🔍 Serper.dev Search & Live News API Setup (Google Engine)</h3>
