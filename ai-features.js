@@ -153,10 +153,14 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
     const payload = {
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: options.maxTokens || 1024  // Default 1K (strict cap to prevent wastage)
+        temperature: options.temperature || 0.3,
+        maxOutputTokens: options.maxTokens || 4096
       }
     };
+
+    if (options.jsonMode) {
+      payload.generationConfig.responseMimeType = "application/json";
+    }
 
     if (systemInstruction) {
       payload.system_instruction = { parts: [{ text: systemInstruction }] };
@@ -497,18 +501,24 @@ async function callGroqAPI(prompt, systemInstruction = "", onStatus = null, opti
 
   for (const m of modelsToTry) {
     try {
+      const reqBody = {
+        model: m,
+        messages: messages,
+        temperature: options.temperature || 0.3,
+        max_tokens: options.maxTokens || 4096
+      };
+
+      if (options.jsonMode) {
+        reqBody.response_format = { type: "json_object" };
+      }
+
       const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${groqKey}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          model: m,
-          messages: messages,
-          temperature: 0.7,
-          max_tokens: options.maxTokens || 1024
-        })
+        body: JSON.stringify(reqBody)
       });
 
       if (!res.ok) {
@@ -960,26 +970,16 @@ Each object format:
   }
 }
 
-// Robust JSON Parser that handles unescaped LaTeX backslashes, markdown code fences, control chars, and truncated JSON
+// Bulletproof JSON Parser that extracts questions from root arrays, wrapped objects, and truncated AI outputs
 function robustParseJSON(rawText) {
   if (!rawText) throw new Error("Empty text received from AI.");
 
   let text = rawText.trim();
 
-  // Strip markdown code fences if present
+  // Strip markdown code fences
   text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
 
-  // Find array bounds [ ... ]
-  const firstSquare = text.indexOf('[');
-  let lastSquare = text.lastIndexOf(']');
-  
-  if (firstSquare !== -1 && lastSquare > firstSquare) {
-    text = text.substring(firstSquare, lastSquare + 1);
-  } else if (firstSquare !== -1) {
-    text = text.substring(firstSquare);
-  }
-
-  // Helper: sanitize common JSON issues from AI output
+  // Helper to sanitize common JSON string errors (unescaped backslashes, control chars, trailing commas)
   function sanitize(s) {
     return s
       .replace(/\\(?!["\\\//bfnrtu])/g, "\\\\")
@@ -987,48 +987,81 @@ function robustParseJSON(rawText) {
       .replace(/,\s*([\]}])/g, "$1");
   }
 
-  // Normalize questions list (handles compact keys q, o, c, e, s or standard keys)
-  function normalizeList(arr) {
-    if (!Array.isArray(arr) || arr.length === 0) return null;
-    return arr.map(q => ({
-      question: q.question || q.q || "Question",
-      options: Array.isArray(q.options) ? q.options : (Array.isArray(q.o) ? q.o : ["Option A", "Option B", "Option C", "Option D"]),
-      correct: typeof q.correct === 'number' ? q.correct : (typeof q.c === 'number' ? q.c : 0),
-      explanation: q.explanation || q.e || "Solution",
-      subject: q.subject || q.s || "General"
-    }));
+  // Helper to extract array of questions from any parsed JSON (root array or wrapper object)
+  function extractQuestionsArray(obj) {
+    if (!obj) return null;
+    let list = null;
+    if (Array.isArray(obj)) {
+      list = obj;
+    } else if (typeof obj === 'object') {
+      list = obj.questions || obj.mcqs || obj.data || obj.items || obj.results || Object.values(obj).find(v => Array.isArray(v));
+    }
+    if (!Array.isArray(list) || list.length === 0) return null;
+
+    const normalized = list.map(q => {
+      if (!q || typeof q !== 'object') return null;
+      return {
+        question: q.question || q.q || q.title || q.text || "Question",
+        options: Array.isArray(q.options) ? q.options : (Array.isArray(q.o) ? q.o : ["Option A", "Option B", "Option C", "Option D"]),
+        correct: typeof q.correct === 'number' ? q.correct : (typeof q.c === 'number' ? q.c : 0),
+        explanation: q.explanation || q.e || q.solution || "Solution",
+        subject: q.subject || q.s || "General"
+      };
+    }).filter(Boolean);
+
+    return normalized.length > 0 ? normalized : null;
   }
 
-  // Attempt 1: Direct JSON.parse
+  // Step 1: Direct JSON parse
   try {
-    const r1 = JSON.parse(text);
-    const norm = normalizeList(r1);
-    if (norm) return norm;
+    const parsed = JSON.parse(text);
+    const result = extractQuestionsArray(parsed);
+    if (result) return result;
   } catch (e1) {}
 
-  // Attempt 2: Sanitized parse
+  // Step 2: Sanitized JSON parse
   try {
-    const r2 = JSON.parse(sanitize(text));
-    const norm = normalizeList(r2);
-    if (norm) return norm;
+    const parsed = JSON.parse(sanitize(text));
+    const result = extractQuestionsArray(parsed);
+    if (result) return result;
   } catch (e2) {}
 
-  // Attempt 3: Progressive truncation repair (salvages all completed objects up to cutoff point)
-  let work = text;
-  for (let attempt = 0; attempt < 25; attempt++) {
+  // Step 3: Extract from first '[' or '{'
+  const firstSquare = text.indexOf('[');
+  const firstCurly = text.indexOf('{');
+
+  let subText = text;
+  if (firstSquare !== -1 && (firstCurly === -1 || firstSquare < firstCurly)) {
+    subText = text.substring(firstSquare);
+  } else if (firstCurly !== -1) {
+    subText = text.substring(firstCurly);
+  }
+
+  try {
+    const parsed = JSON.parse(sanitize(subText));
+    const result = extractQuestionsArray(parsed);
+    if (result) return result;
+  } catch (e3) {}
+
+  // Step 4: Truncation Repair — progressive backwards slice to last complete object '}'
+  let work = subText;
+  for (let attempt = 0; attempt < 35; attempt++) {
     const lastCurly = work.lastIndexOf('}');
     if (lastCurly <= 0) break;
-    let candidate = work.substring(0, lastCurly + 1);
-    const arrStart = candidate.indexOf('[');
-    if (arrStart >= 0) candidate = candidate.substring(arrStart);
-    candidate = candidate.trim();
-    if (!candidate.endsWith(']')) candidate += "\n]";
+    let candidate = work.substring(0, lastCurly + 1).trim();
+
+    if (candidate.startsWith('[') && !candidate.endsWith(']')) {
+      candidate += "\n]";
+    } else if (candidate.startsWith('{') && !candidate.endsWith('}')) {
+      candidate += "\n]}";
+    }
+
     try {
       const parsed = JSON.parse(sanitize(candidate));
-      const norm = normalizeList(parsed);
-      if (norm) {
-        console.log(`[robustParseJSON] Successfully salvaged ${norm.length} questions from truncated response.`);
-        return norm;
+      const result = extractQuestionsArray(parsed);
+      if (result) {
+        console.log(`[robustParseJSON] Successfully salvaged ${result.length} questions from truncated AI response!`);
+        return result;
       }
     } catch(e) {}
     work = work.substring(0, lastCurly);
@@ -1346,7 +1379,7 @@ ${extractedPdfText.slice(0, 25000)}`;
         rawRes = await callGeminiAPI(prompt, sysPrompt, (msg) => {
           const sub = document.getElementById("pdf-status-subtext");
           if (sub) sub.textContent = msg;
-        }, { maxTokens: 8192 });
+        }, { maxTokens: 8192, jsonMode: true });
       } catch (gemErr) {
         console.warn("[PDF Extractor] Gemini primary engine limit/error. Failing over to Groq API backup...", gemErr);
       }
@@ -1360,7 +1393,7 @@ ${extractedPdfText.slice(0, 25000)}`;
       rawRes = await callGroqAPI(prompt, sysPrompt, (msg) => {
         const sub = document.getElementById("pdf-status-subtext");
         if (sub) sub.textContent = msg;
-      }, { maxTokens: 8192 });
+      }, { maxTokens: 8192, jsonMode: true });
     }
 
     if (!rawRes) {
