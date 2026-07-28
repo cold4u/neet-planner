@@ -973,55 +973,68 @@ function robustParseJSON(rawText) {
   const firstSquare = text.indexOf('[');
   let lastSquare = text.lastIndexOf(']');
   
-  // If array is truncated (no closing ]), repair it by finding the last complete object }
-  if (firstSquare !== -1 && (lastSquare === -1 || lastSquare <= firstSquare)) {
-    const lastCurly = text.lastIndexOf('}');
-    if (lastCurly > firstSquare) {
-      text = text.substring(firstSquare, lastCurly + 1) + "\n]";
-      lastSquare = text.lastIndexOf(']');
-    }
-  }
-
   if (firstSquare !== -1 && lastSquare > firstSquare) {
     text = text.substring(firstSquare, lastSquare + 1);
+  } else if (firstSquare !== -1) {
+    text = text.substring(firstSquare);
+  }
+
+  // Helper: sanitize common JSON issues from AI output
+  function sanitize(s) {
+    return s
+      .replace(/\\(?!["\\\//bfnrtu])/g, "\\\\")
+      .replace(/[\u0000-\u001F]+/g, " ")
+      .replace(/,\s*([\]}])/g, "$1");
+  }
+
+  // Normalize questions list (handles compact keys q, o, c, e, s or standard keys)
+  function normalizeList(arr) {
+    if (!Array.isArray(arr) || arr.length === 0) return null;
+    return arr.map(q => ({
+      question: q.question || q.q || "Question",
+      options: Array.isArray(q.options) ? q.options : (Array.isArray(q.o) ? q.o : ["Option A", "Option B", "Option C", "Option D"]),
+      correct: typeof q.correct === 'number' ? q.correct : (typeof q.c === 'number' ? q.c : 0),
+      explanation: q.explanation || q.e || "Solution",
+      subject: q.subject || q.s || "General"
+    }));
   }
 
   // Attempt 1: Direct JSON.parse
   try {
-    return JSON.parse(text);
+    const r1 = JSON.parse(text);
+    const norm = normalizeList(r1);
+    if (norm) return norm;
   } catch (e1) {}
 
-  // Attempt 2: Sanitize unescaped LaTeX backslashes & control characters
+  // Attempt 2: Sanitized parse
   try {
-    let sanitized = text
-      .replace(/\\(?!["\\/bfnrtu])/g, "\\\\")
-      .replace(/[\u0000-\u001F]+/g, " ");
-
-    return JSON.parse(sanitized);
+    const r2 = JSON.parse(sanitize(text));
+    const norm = normalizeList(r2);
+    if (norm) return norm;
   } catch (e2) {}
 
-  // Attempt 3: Clean up trailing commas
-  try {
-    let cleaned = text
-      .replace(/\\(?!["\\/bfnrtu])/g, "\\\\")
-      .replace(/,\s*([\]}])/g, "$1");
-
-    return JSON.parse(cleaned);
-  } catch (e3) {
-    // Attempt 4: Truncate to last complete '}' and close array
+  // Attempt 3: Progressive truncation repair (salvages all completed objects up to cutoff point)
+  let work = text;
+  for (let attempt = 0; attempt < 25; attempt++) {
+    const lastCurly = work.lastIndexOf('}');
+    if (lastCurly <= 0) break;
+    let candidate = work.substring(0, lastCurly + 1);
+    const arrStart = candidate.indexOf('[');
+    if (arrStart >= 0) candidate = candidate.substring(arrStart);
+    candidate = candidate.trim();
+    if (!candidate.endsWith(']')) candidate += "\n]";
     try {
-      const lastCurly = text.lastIndexOf('}');
-      if (lastCurly > 0) {
-        let repaired = text.substring(0, lastCurly + 1) + "\n]";
-        repaired = repaired
-          .replace(/\\(?!["\\/bfnrtu])/g, "\\\\")
-          .replace(/,\s*([\]}])/g, "$1");
-        return JSON.parse(repaired);
+      const parsed = JSON.parse(sanitize(candidate));
+      const norm = normalizeList(parsed);
+      if (norm) {
+        console.log(`[robustParseJSON] Successfully salvaged ${norm.length} questions from truncated response.`);
+        return norm;
       }
-    } catch(e4) {}
-
-    throw new Error(`AI generated incomplete JSON response. Try generating fewer questions or click Generate again.`);
+    } catch(e) {}
+    work = work.substring(0, lastCurly);
   }
+
+  throw new Error("Could not parse structured questions from PDF. Please check your API key or try again.");
 }
 
 function startCbtExam(questionsList, totalSeconds) {
@@ -1309,23 +1322,19 @@ async function handlePdfDrop(e) {
     const pageTexts = await extractTextFromPdf(file, statusCard);
     extractedPdfText = pageTexts.join("\n\n");
 
-    const prompt = `Analyze the following extracted PDF text and return a structured JSON array of NEET multiple-choice questions (MCQs).
+    const prompt = `Analyze the following extracted PDF text and return a structured JSON array of ALL NEET multiple-choice questions (MCQs) found in the document (up to 50 questions).
 Rules:
-1. Output ONLY a raw JSON array of question objects.
-2. Escape all backslashes in LaTeX formulas.
-3. Each question object format:
-{
-  "question": "Question text with LaTeX formulas",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "correct": 0,
-  "explanation": "Brief step-by-step NCERT solution",
-  "subject": "Physics/Chemistry/Biology"
-}
+1. Output ONLY a raw JSON array — no markdown, no code fences, no commentary.
+2. Format as compact JSON objects to save bandwidth and fit up to 50 questions:
+{"q":"Question text","o":["Option A","Option B","Option C","Option D"],"c":0,"e":"Short 1-line solution","s":"Physics/Chemistry/Biology"}
+3. "c" is the 0-indexed integer of the correct option (0 for A, 1 for B, 2 for C, 3 for D).
+4. Use plain text for formulas (e.g. "F = m × a", "C6H12O6", "9.8 m/s^2"). Never use raw LaTeX.
+5. Extract as many questions as available (up to 50).
 
 PDF TEXT CONTENT:
-${extractedPdfText.slice(0, 14000)}`;
+${extractedPdfText.slice(0, 25000)}`;
 
-    const sysPrompt = "You are an expert NTA NEET exam paper digitizer. Output ONLY a valid JSON array.";
+    const sysPrompt = "You are an expert NTA NEET exam paper digitizer. Output ONLY a valid compact JSON array. No markdown fences. Keep explanations very short (1 line). Use plain text for formulas, never LaTeX.";
     let rawRes = null;
 
     // 1. PRIMARY ENGINE: Google Gemini API (100% Absolute Priority)
@@ -1337,7 +1346,7 @@ ${extractedPdfText.slice(0, 14000)}`;
         rawRes = await callGeminiAPI(prompt, sysPrompt, (msg) => {
           const sub = document.getElementById("pdf-status-subtext");
           if (sub) sub.textContent = msg;
-        }, { maxTokens: 3500 });
+        }, { maxTokens: 8192 });
       } catch (gemErr) {
         console.warn("[PDF Extractor] Gemini primary engine limit/error. Failing over to Groq API backup...", gemErr);
       }
@@ -1351,7 +1360,7 @@ ${extractedPdfText.slice(0, 14000)}`;
       rawRes = await callGroqAPI(prompt, sysPrompt, (msg) => {
         const sub = document.getElementById("pdf-status-subtext");
         if (sub) sub.textContent = msg;
-      }, { maxTokens: 3500 });
+      }, { maxTokens: 8192 });
     }
 
     if (!rawRes) {
