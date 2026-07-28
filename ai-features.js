@@ -2751,3 +2751,104 @@ if (window.showTab) {
     handleAiTabSwitch(tabId);
   };
 }
+
+/* ==========================================================================
+   FEATURE: AI EMOTIONAL & MINDSET COMPANION CHATBOT
+   ========================================================================== */
+
+const MINDSET_SYSTEM_PROMPT = `You are a compassionate, empathetic, and gentle AI Mindset & Emotional Support Companion dedicated to helping students during difficult times in their academic journey.
+
+YOUR MISSION & TONALITY:
+1. Be deeply empathetic, warm, patient, and non-judgmental.
+2. Validate the student's feelings of stress, burnout, low test scores, anxiety, fatigue, or self-doubt. Remind them that it's completely normal to feel this way.
+3. Provide gentle grounding techniques, practical emotional regulation tips (like deep breathing, taking short walks, breaking tasks into tiny micro-steps), and uplifting words of comfort.
+4. Keep your responses warm, comforting, and easy to read (use formatting, bullet points, and gentle emojis).
+5. Never lecture them to "just study harder". Focus on emotional well-being, self-compassion, and mental clarity.`;
+
+let mindsetChatHistoryList = [];
+
+function quickAskMindset(promptText) {
+  const input = document.getElementById("mindset-chat-input");
+  if (input) {
+    input.value = promptText;
+    sendMindsetChatMessage();
+  }
+}
+
+function appendMindsetChatMessage(sender, text) {
+  const history = document.getElementById("mindset-chat-history");
+  if (!history) return;
+
+  const msgDiv = document.createElement("div");
+  msgDiv.className = `chat-msg ${sender === 'user' ? 'user-msg' : 'ai-msg'}`;
+  msgDiv.style.margin = "10px 0";
+  msgDiv.style.padding = "12px 16px";
+  msgDiv.style.borderRadius = "12px";
+  msgDiv.style.maxWidth = "85%";
+  
+  if (sender === 'user') {
+    msgDiv.style.marginLeft = "auto";
+    msgDiv.style.background = "linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)";
+    msgDiv.style.color = "#fff";
+  } else {
+    msgDiv.style.marginRight = "auto";
+    msgDiv.style.background = "rgba(255,255,255,0.05)";
+    msgDiv.style.border = "1px solid rgba(255,255,255,0.1)";
+    msgDiv.style.color = "#eee";
+  }
+
+  const senderName = sender === 'user' ? 'You' : '💚 AI Emotional Companion';
+  msgDiv.innerHTML = `
+    <div style="font-size:11px; opacity:0.8; margin-bottom:4px; font-weight:bold;">${senderName}</div>
+    <div style="font-size:13px; line-height:1.6;">${parseMarkdownAndKaTeX(text)}</div>
+  `;
+
+  history.appendChild(msgDiv);
+  history.scrollTop = history.scrollHeight;
+}
+
+async function sendMindsetChatMessage() {
+  const input = document.getElementById("mindset-chat-input");
+  if (!input) return;
+  const userText = input.value.trim();
+  if (!userText) return;
+
+  if (!getGroqApiKey() && !getApiKey()) {
+    alert("Please set your free Groq or Gemini API Key in the Settings tab first!");
+    showTab("settings");
+    return;
+  }
+
+  input.value = "";
+  appendMindsetChatMessage("user", userText);
+
+  // Status loading indicator
+  const statusEl = document.getElementById("mindset-chat-status");
+  if (statusEl) {
+    statusEl.style.display = "block";
+    statusEl.textContent = "💚 AI Companion is listening and typing a comforting reply...";
+  }
+
+  try {
+    mindsetChatHistoryList.push({ role: "user", text: userText });
+    
+    // Keep last 6 exchanges for context
+    const recentHistory = mindsetChatHistoryList.slice(-6).map(h => `${h.role.toUpperCase()}: ${h.text}`).join("\n");
+    const fullPrompt = `${recentHistory}\n\nPlease reply with an empathetic, supportive, and comforting message for the student.`;
+
+    const aiReply = await callAiWithGroqFirst(fullPrompt, MINDSET_SYSTEM_PROMPT, (statusMsg) => {
+      if (statusEl) statusEl.textContent = statusMsg;
+    });
+
+    mindsetChatHistoryList.push({ role: "model", text: aiReply });
+    appendMindsetChatMessage("ai", aiReply);
+
+  } catch (err) {
+    appendMindsetChatMessage("ai", `❤️ I am here for you. (Error connecting to AI: ${err.message}. Please check your API key in Settings).`);
+  } finally {
+    if (statusEl) statusEl.style.display = "none";
+  }
+}
+
+window.sendMindsetChatMessage = sendMindsetChatMessage;
+window.quickAskMindset = quickAskMindset;
