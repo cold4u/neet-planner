@@ -2898,7 +2898,7 @@ async function sendMindsetChatMessage() {
     const recentHistory = mindsetChatHistoryList.slice(-6).map(h => `${h.role.toUpperCase()}: ${h.text}`).join("\n");
     const fullPrompt = `${recentHistory}\n\nPlease reply with an empathetic, supportive, and comforting message for the student.`;
 
-    const aiReply = await callAiWithGroqFirst(fullPrompt, MINDSET_SYSTEM_PROMPT, (statusMsg) => {
+    const aiReply = await callAiWithFailover(fullPrompt, MINDSET_SYSTEM_PROMPT, (statusMsg) => {
       if (statusEl) statusEl.textContent = statusMsg;
     });
 
