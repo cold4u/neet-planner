@@ -17909,10 +17909,10 @@ if (window.showTab) {
 }
 
 /* ==========================================================================
-   FEATURE: AI EMOTIONAL & MINDSET COMPANION CHATBOT
+   FEATURE: 24/7 AI EMOTIONAL & MINDSET COMPANION CHATBOT
    ========================================================================== */
 
-const MINDSET_SYSTEM_PROMPT = `You are a compassionate, empathetic, and gentle AI Mindset & Emotional Support Companion dedicated to helping students during difficult times in their academic journey.
+const MINDSET_SYSTEM_PROMPT = `You are a compassionate, empathetic, and gentle AI Mindset & Emotional Support Counselor dedicated to helping students during difficult times in their academic journey.
 
 YOUR MISSION & TONALITY:
 1. Be deeply empathetic, warm, patient, and non-judgmental.
@@ -17923,12 +17923,66 @@ YOUR MISSION & TONALITY:
 
 let mindsetChatHistoryList = [];
 
+// Fallback empathetic responses if API key is missing or network fails
+function getFallbackEmpatheticReply(userText) {
+  const text = (userText || "").toLowerCase();
+  if (text.includes("overwhelmed") || text.includes("burnout") || text.includes("tired")) {
+    return `❤️ **I hear you, and your feelings are 100% valid.**
+
+Studying for competitive exams takes a huge toll on your mind and body. Feeling overwhelmed or burnt out isn't a sign of failure — it's your mind asking for a moment to breathe.
+
+**Here is what you can do right now:**
+1. 🧘 **Take a 15-minute complete pause:** Step away from your desk, stretch, or try the 4-7-8 breathing exercise below.
+2. 💧 **Hydrate & rest your eyes:** Drink a glass of water and close your eyes for a few minutes.
+3. 📝 **Shrink your goal:** Don't worry about the whole syllabus today. Focus on just ONE small topic when you return.
+
+You are doing much better than you think. Be gentle with yourself today! 🌸`;
+  }
+
+  if (text.includes("low") || text.includes("marks") || text.includes("score") || text.includes("test")) {
+    return `💔 **A mock test score measures a single moment in time, NOT your potential or self-worth.**
+
+It is completely painful when your score doesn't match your hard work. But remember: mock tests exist to catch mistakes NOW so you don't make them in the final exam!
+
+**Three steps to recover:**
+1. 🌿 **Separate yourself from the score:** You are a human being preparing for a journey, not a number.
+2. 🔍 **Log errors calmly:** Place incorrect questions into your **Error Book** without judgment.
+3. 🎯 **Focus on growth:** Every mistake analyzed is 4 marks saved in the actual exam.
+
+Take a breath. You are on the right path, and progress isn't always linear! 🤝`;
+  }
+
+  if (text.includes("pressure") || text.includes("family") || text.includes("parents") || text.includes("peer")) {
+    return `👨‍👩‍👦 **Handling expectations is one of the heaviest burdens a student carries.**
+
+It's completely natural to feel anxious when you feel others are watching or expecting results. But remember: **your life journey belongs to YOU.**
+
+**Remind yourself:**
+* 🛡️ You don't need to prove your worth to anyone by sacrificing your mental health.
+* 🌿 Focus only on what you can control: your daily effort and your own peace of mind.
+* 💬 Take things one day at a time. Your hard work will speak for itself.
+
+I am right here with you! Stay strong and take care of yourself first. 💚`;
+  }
+
+  return `🌸 **Thank you for sharing your thoughts with me.**
+
+No matter how tough or overwhelming things feel right now, please know that you are not alone on this journey. Experiencing stress or self-doubt is a natural part of preparing for a high-stakes exam.
+
+**A gentle reminder for today:**
+* 💖 **Prioritize self-compassion:** Take breaks when needed without feeling guilty.
+* 🎯 **Focus on small steps:** Progress happens one day, one chapter, one page at a time.
+* 🧘 **Breathe deeply:** You have overcome hard days before, and you will get through this too.
+
+Whenever you need a safe space to unload your stress, I am here for you! 🫶`;
+}
+
 function quickAskMindset(promptText) {
   const input = document.getElementById("mindset-chat-input");
   if (input) {
     input.value = promptText;
-    sendMindsetChatMessage();
   }
+  sendMindsetChatMessage();
 }
 
 function appendMindsetChatMessage(sender, text) {
@@ -17954,9 +18008,11 @@ function appendMindsetChatMessage(sender, text) {
   }
 
   const senderName = sender === 'user' ? 'You' : '💚 AI Emotional Companion';
+  const htmlContent = typeof parseMarkdownAndKaTeX === 'function' ? parseMarkdownAndKaTeX(text) : text.replace(/\n/g, "<br>");
+
   msgDiv.innerHTML = `
     <div style="font-size:11px; opacity:0.8; margin-bottom:4px; font-weight:bold;">${senderName}</div>
-    <div style="font-size:13px; line-height:1.6;">${parseMarkdownAndKaTeX(text)}</div>
+    <div style="font-size:13px; line-height:1.6;">${htmlContent}</div>
   `;
 
   history.appendChild(msgDiv);
@@ -17969,12 +18025,6 @@ async function sendMindsetChatMessage() {
   const userText = input.value.trim();
   if (!userText) return;
 
-  if (!getGroqApiKey() && !getApiKey()) {
-    alert("Please set your free Groq or Gemini API Key in the Settings tab first!");
-    showTab("settings");
-    return;
-  }
-
   input.value = "";
   appendMindsetChatMessage("user", userText);
 
@@ -17985,10 +18035,22 @@ async function sendMindsetChatMessage() {
     statusEl.textContent = "💚 AI Companion is listening and typing a comforting reply...";
   }
 
+  mindsetChatHistoryList.push({ role: "user", text: userText });
+
+  const hasKey = !!(getGroqApiKey() || getApiKey());
+
+  if (!hasKey) {
+    // If no key configured, immediately use built-in compassionate counselor fallback
+    setTimeout(() => {
+      const fallbackReply = getFallbackEmpatheticReply(userText);
+      mindsetChatHistoryList.push({ role: "model", text: fallbackReply });
+      appendMindsetChatMessage("ai", fallbackReply);
+      if (statusEl) statusEl.style.display = "none";
+    }, 600);
+    return;
+  }
+
   try {
-    mindsetChatHistoryList.push({ role: "user", text: userText });
-    
-    // Keep last 6 exchanges for context
     const recentHistory = mindsetChatHistoryList.slice(-6).map(h => `${h.role.toUpperCase()}: ${h.text}`).join("\n");
     const fullPrompt = `${recentHistory}\n\nPlease reply with an empathetic, supportive, and comforting message for the student.`;
 
@@ -18000,7 +18062,10 @@ async function sendMindsetChatMessage() {
     appendMindsetChatMessage("ai", aiReply);
 
   } catch (err) {
-    appendMindsetChatMessage("ai", `❤️ I am here for you. (Error connecting to AI: ${err.message}. Please check your API key in Settings).`);
+    console.warn("[Mindset Companion] API error, falling back to built-in counselor reply:", err);
+    const fallbackReply = getFallbackEmpatheticReply(userText);
+    mindsetChatHistoryList.push({ role: "model", text: fallbackReply });
+    appendMindsetChatMessage("ai", fallbackReply);
   } finally {
     if (statusEl) statusEl.style.display = "none";
   }
