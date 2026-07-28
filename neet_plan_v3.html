@@ -15327,6 +15327,9 @@ async function callGeminiAPI(prompt, systemInstruction = "", onStatus = null, op
       const model = _getAvailableModel();
 
       if (!model) {
+        if (getGroqApiKey()) {
+          throw new Error("HTTP_429_EXCEEDED");
+        }
         const nextExpiry = _getNextCooldownExpiry();
         const waitSec = Math.max(1, Math.ceil((nextExpiry - Date.now()) / 1000));
         if (waitSec > 0 && waitSec <= 65) {
@@ -18054,9 +18057,24 @@ async function sendMindsetChatMessage() {
     const recentHistory = mindsetChatHistoryList.slice(-6).map(h => `${h.role.toUpperCase()}: ${h.text}`).join("\n");
     const fullPrompt = `${recentHistory}\n\nPlease reply with an empathetic, supportive, and comforting message for the student.`;
 
-    const aiReply = await callAiWithFailover(fullPrompt, MINDSET_SYSTEM_PROMPT, (statusMsg) => {
+    // 7-second timeout promise race: never leave the student hanging
+    const apiCallPromise = callAiWithFailover(fullPrompt, MINDSET_SYSTEM_PROMPT, (statusMsg) => {
       if (statusEl) statusEl.textContent = statusMsg;
     });
+
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => resolve("TIMEOUT_FALLBACK"), 7000);
+    });
+
+    const result = await Promise.race([apiCallPromise, timeoutPromise]);
+
+    let aiReply = "";
+    if (result === "TIMEOUT_FALLBACK" || !result) {
+      console.warn("[Mindset Companion] API call timed out after 7s. Using instant counselor response.");
+      aiReply = getFallbackEmpatheticReply(userText);
+    } else {
+      aiReply = result;
+    }
 
     mindsetChatHistoryList.push({ role: "model", text: aiReply });
     appendMindsetChatMessage("ai", aiReply);
