@@ -18,7 +18,7 @@
   <meta name="theme-color" content="#060913">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>SHUBxCOLD — 309-Day Ultimate Planner</title>
+  <title>SHUBxCOLD — 278-Day Ultimate Planner</title>
   <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap' rel='stylesheet'>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
   <style>
@@ -4655,7 +4655,7 @@ sup {
     <section id="overview" class="tab-content active">
       <div class="page-header">
         <h1 class="page-title">Preparation Overview</h1>
-        <p class="page-desc">Your customized 309-day timeline to achieve NEET 2027 success.</p>
+        <p class="page-desc">Your customized 278-day timeline to achieve NEET 2027 success starting today (July 29, 2026).</p>
       </div>
 
       <!-- Today's Plan Hero Card -->
@@ -4911,9 +4911,9 @@ sup {
       </div>
 
       <div class="glass-card">
-        <h2 style="margin-top:0;">Welcome to NEET 309-Day Planner</h2>
+        <h2 style="margin-top:0;">Welcome to NEET 278-Day Planner</h2>
         <p style="line-height:1.6; color:#94a3b8;">
-          This interactive dashboard tracks your progress w.r.t the target date of <strong>May 3, 2027</strong>. 
+          This interactive dashboard tracks your progress starting today (July 29, 2026) w.r.t the target NEET exam date of <strong>May 2, 2027</strong>. 
           Use the tabs to navigate your daily tasks, look up NEET syllabus checklists, solve past exam questions offline, and track your daily study hours.
         </p>
       </div>
@@ -4927,22 +4927,22 @@ sup {
         </div>
 
         <div class="phase-badge-strip pb-1">
-          <h3 style="margin:0 0 4px 0;">Phase 1: Class 11 Deep (Days 16–115)</h3>
+          <h3 style="margin:0 0 4px 0;">Phase 1: Class 11 Deep (Days 16–105)</h3>
           <p style="margin:0; font-size:13px; color:var(--text-muted);">In-depth study of Class 11 concepts. Focus on strong foundations with a 3-step chapter method (Understand, Practice, Revise).</p>
         </div>
 
         <div class="phase-badge-strip pb-2">
-          <h3 style="margin:0 0 4px 0;">Phase 2: Class 12 + Links (Days 116–215)</h3>
+          <h3 style="margin:0 0 4px 0;">Phase 2: Class 12 + Links (Days 106–224)</h3>
           <p style="margin:0; font-size:13px; color:var(--text-muted);">Class 12 syllabus coverage along with key concepts from Class 11 to keep retention high.</p>
         </div>
 
         <div class="phase-badge-strip pb-3">
-          <h3 style="margin:0 0 4px 0;">Phase 3: Revision Sprint (Days 216–275)</h3>
+          <h3 style="margin:0 0 4px 0;">Phase 3: Revision Sprint (Days 225–255)</h3>
           <p style="margin:0; font-size:13px; color:var(--text-muted);">Aggressive full-syllabus mock practice, formulas revision, and target weaknesses identification.</p>
         </div>
 
         <div class="phase-badge-strip pb-4">
-          <h3 style="margin:0 0 4px 0;">Phase 4: Mock Mastery (Days 276–309)</h3>
+          <h3 style="margin:0 0 4px 0;">Phase 4: Mock Mastery (Days 256–278)</h3>
           <p style="margin:0; font-size:13px; color:var(--text-muted);">Simulate real exam timing with daily mock papers, focus on speed/accuracy, and error correction.</p>
         </div>
       </div>
@@ -6641,8 +6641,8 @@ sup {
           <div style="display: flex; gap: 14px; align-items: flex-start;">
             <span style="font-size: 20px;">📅</span>
             <div>
-              <h3 style="margin: 0 0 4px 0; color: #ff6b6b; font-size: 15px; font-weight: 700;">309-Day Master Schedule</h3>
-              <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;">Class 11 & 12 roadmap structured day-by-day and week-by-week starting June 29, 2026.</p>
+              <h3 style="margin: 0 0 4px 0; color: #ff6b6b; font-size: 15px; font-weight: 700;">278-Day Master Schedule</h3>
+              <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;">Class 11 & 12 roadmap structured day-by-day and week-by-week starting July 29, 2026.</p>
             </div>
           </div>
           
@@ -7423,14 +7423,14 @@ function safeSetSessionStorage(key, value) {
       safeSetLocalStorage("planStart", "2026-07-29T00:00:00");
     }
 
-    // 309-Day Plan Engine
+    // 278-Day Plan Engine
     let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-07-29T00:00:00");
     if (isNaN(parsedStartDate.getTime())) {
       parsedStartDate = new Date(2026, 6, 29, 0, 0, 0); // July 29, 2026
     }
     const START_DATE = parsedStartDate;
-    const EXAM_DATE = new Date(2027, 4, 3, 0, 0, 0); // May 3, 2027
-    const DIFF = Math.ceil((EXAM_DATE - START_DATE) / (1000 * 60 * 60 * 24)) + 1; // 309 days
+    const EXAM_DATE = new Date(2027, 4, 2, 0, 0, 0); // May 2, 2027 (NEET Exam Day)
+    const DIFF = Math.ceil((EXAM_DATE - START_DATE) / (1000 * 60 * 60 * 24)) + 1; // 278 days
 
     
         // --- Yakeen NEET 2.0 2027 Date-Based Planner Database ---

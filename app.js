@@ -552,14 +552,14 @@ function safeSetSessionStorage(key, value) {
       safeSetLocalStorage("planStart", "2026-07-29T00:00:00");
     }
 
-    // 309-Day Plan Engine
+    // 278-Day Plan Engine
     let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-07-29T00:00:00");
     if (isNaN(parsedStartDate.getTime())) {
       parsedStartDate = new Date(2026, 6, 29, 0, 0, 0); // July 29, 2026
     }
     const START_DATE = parsedStartDate;
-    const EXAM_DATE = new Date(2027, 4, 3, 0, 0, 0); // May 3, 2027
-    const DIFF = Math.ceil((EXAM_DATE - START_DATE) / (1000 * 60 * 60 * 24)) + 1; // 309 days
+    const EXAM_DATE = new Date(2027, 4, 2, 0, 0, 0); // May 2, 2027 (NEET Exam Day)
+    const DIFF = Math.ceil((EXAM_DATE - START_DATE) / (1000 * 60 * 60 * 24)) + 1; // 278 days
 
     
         // --- Yakeen NEET 2.0 2027 Date-Based Planner Database ---
