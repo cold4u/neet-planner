@@ -7447,6 +7447,11 @@ function safeSetSessionStorage(key, value) {
       let rev_che_idx = 0;
       let rev_bio_idx = 0;
       
+      const BATCH_LECTURES_KEYS = Object.keys(BATCH_LECTURES);
+      const BATCH_TESTS_KEYS = Object.keys(BATCH_TESTS);
+      let lectureIdx = 0;
+      let testIdx = 0;
+      
       for (let d = 0; d < DIFF; d++) {
         const currentDate = new Date(START_DATE);
         currentDate.setDate(START_DATE.getDate() + d);
@@ -7483,27 +7488,31 @@ function safeSetSessionStorage(key, value) {
           bio = "🟢 Post-Exam Review";
           phyNote = cheNote = bioNote = "Review your response sheet and relax.";
           phase = 4;
-        } else if (BATCH_TESTS[dateKey]) {
-          const t = BATCH_TESTS[dateKey];
-          type = (t.name.indexOf("Part Test") !== -1) ? 'test' : 'mock';
-          phy = `📝 Test: ${t.name}`;
-          che = `📝 Test: ${t.name}`;
-          bio = `📝 Test: ${t.name}`;
-          phyNote = cheNote = bioNote = `Syllabus: ${t.syllabus}`;
-          phase = (currentDate > new Date(2027, 2, 9)) ? 2 : 1;
         } else if (isSunday) {
-          type = 'rest';
-          phy = "🟢 Self Study / Backlog Clearance";
-          che = "🟢 Self Study / Backlog Clearance";
-          bio = "🟢 Self Study / Backlog Clearance";
-          phyNote = cheNote = bioNote = "Clear your backlogs, review notes, and get some rest.";
+          const testKey = BATCH_TESTS_KEYS[testIdx];
+          if (testKey && BATCH_TESTS[testKey] && testIdx < BATCH_TESTS_KEYS.length) {
+            const t = BATCH_TESTS[testKey];
+            type = (t.name.indexOf("Part Test") !== -1) ? 'test' : 'mock';
+            phy = `📝 Test: ${t.name}`;
+            che = `📝 Test: ${t.name}`;
+            bio = `📝 Test: ${t.name}`;
+            phyNote = cheNote = bioNote = `Syllabus: ${t.syllabus}`;
+            testIdx++;
+          } else {
+            type = 'rest';
+            phy = "🟢 Self Study / Backlog Clearance";
+            che = "🟢 Self Study / Backlog Clearance";
+            bio = "🟢 Self Study / Backlog Clearance";
+            phyNote = cheNote = bioNote = "Clear your backlogs, review notes, and get some rest.";
+          }
           phase = (currentDate > new Date(2027, 2, 9)) ? 2 : 1;
         } else {
           // Weekdays
           if (currentDate <= new Date(2027, 2, 9)) {
             phase = 1;
-            if (BATCH_LECTURES[dateKey]) {
-              const l = BATCH_LECTURES[dateKey];
+            const origKey = BATCH_LECTURES_KEYS[lectureIdx];
+            if (origKey && BATCH_LECTURES[origKey]) {
+              const l = BATCH_LECTURES[origKey];
               phy = l.p || "Physics Practice & Revision";
               che = l.c || "Chemistry Practice & Revision";
               bio = l.b || "Biology Practice & Revision";
@@ -7515,6 +7524,7 @@ function safeSetSessionStorage(key, value) {
               phyNote = l.p ? "Watch lecture, make notes, solve DPP" : "Practice previous topics";
               cheNote = l.c ? "Watch lecture, make notes, solve DPP" : "Practice previous topics";
               bioNote = l.b ? "Watch lecture, make notes, solve DPP" : "Practice previous topics";
+              lectureIdx++;
             } else {
               phy = "Physics Practice & Revision";
               che = "Chemistry Practice & Revision";
