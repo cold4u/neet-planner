@@ -2142,8 +2142,44 @@ function safeSetSessionStorage(key, value) {
     
     // Analytics calculations & rendering
     function calculateStreak() {
-      if (typeof done === 'undefined' || !done) return 0;
-      return Object.values(done).filter(Boolean).length;
+      if (trackerLogs.length === 0) return 0;
+      
+      const dates = new Set();
+      trackerLogs.forEach(l => {
+        const total = l.phyHours + l.cheHours + l.bioHours;
+        if (total > 0 && l.date) {
+          dates.add(l.date);
+        }
+      });
+      
+      if (dates.size === 0) return 0;
+      
+      let streak = 0;
+      let check = new Date();
+      let todayStr = check.toISOString().split('T')[0];
+      
+      check.setDate(check.getDate() - 1);
+      let yesterdayStr = check.toISOString().split('T')[0];
+      
+      let currentCheck = new Date();
+      if (dates.has(todayStr)) {
+        currentCheck = new Date(todayStr);
+      } else if (dates.has(yesterdayStr)) {
+        currentCheck = new Date(yesterdayStr);
+      } else {
+        return 0; // streak broken
+      }
+      
+      while (true) {
+        const dStr = currentCheck.toISOString().split('T')[0];
+        if (dates.has(dStr)) {
+          streak++;
+          currentCheck.setDate(currentCheck.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+      return streak;
     }
     
     function renderAnalytics() {
@@ -3228,7 +3264,7 @@ function logQuickStudy(e) {
 
 function updateLoginStats() {
   // 1. Days left
-  const EXAM_DATE = new Date(2027, 4, 2, 0, 0, 0);
+  const EXAM_DATE = new Date(2027, 4, 3, 0, 0, 0);
   const diff = EXAM_DATE - new Date();
   const daysLeft = diff > 0 ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : 0;
   const daysEl = document.getElementById('login-stat-days');
@@ -3245,7 +3281,36 @@ function updateLoginStats() {
   if (progEl) progEl.textContent = pct + '%';
   
   // 3. Streak
-  const streak = calculateStreak();
+  let localLogs = [];
+  try {
+    localLogs = JSON.parse(safeGetLocalStorage('neet_v3_tracker') || '[]');
+  } catch(e){}
+  
+  let streak = 0;
+  if (localLogs.length > 0) {
+    const logDates = new Set(localLogs.map(l => l.date));
+    let checkDate = new Date();
+    const todayStr = checkDate.toISOString().split('T')[0];
+    
+    let yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yestStr = yesterday.toISOString().split('T')[0];
+    
+    if (logDates.has(todayStr) || logDates.has(yestStr)) {
+      if (!logDates.has(todayStr)) {
+        checkDate = yesterday;
+      }
+      while (true) {
+        const dateStr = checkDate.toISOString().split('T')[0];
+        if (logDates.has(dateStr)) {
+          streak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+    }
+  }
   const streakEl = document.getElementById('login-stat-streak');
   if (streakEl) streakEl.textContent = streak;
 }
@@ -6997,11 +7062,26 @@ function calculateTargetStreakDynamic() {
   
   updatedDates.sort();
   safeSetLocalStorage('neet_v3_target_streak_dates', JSON.stringify(updatedDates));
-  if (typeof updateOverviewStats === 'function') {
-    updateOverviewStats();
+  
+  let streak = 0;
+  let cursor = new Date();
+  
+  if (!updatedDates.includes(todayStr)) {
+    cursor.setDate(cursor.getDate() - 1);
   }
+  
+  while (true) {
+    const cursorStr = cursor.toISOString().split('T')[0];
+    if (updatedDates.includes(cursorStr)) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  
   const badge = document.getElementById('target-streak-count');
-  if (badge) badge.textContent = calculateStreak();
+  if (badge) badge.textContent = streak;
 }
 
 // --- FEATURE 2: SUBJECT-WISE ACCURACY ANALYTICS ---
