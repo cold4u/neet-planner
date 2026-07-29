@@ -881,7 +881,6 @@ function safeSetSessionStorage(key, value) {
     function toggleDone(dayNum) {
       done[dayNum] = !done[dayNum];
       saveDone();
-      if (typeof invalidateStreakCache === 'function') invalidateStreakCache();
       renderPlan();
       updateOverviewStats();
       if (typeof renderTestList === 'function') renderTestList();
@@ -2142,98 +2141,9 @@ function safeSetSessionStorage(key, value) {
     }
     
     // Analytics calculations & rendering
-    let _cachedStreak = null;
-    let _streakDirty = true;
-
-    function invalidateStreakCache() {
-      _streakDirty = true;
-    }
-
     function calculateStreak() {
-      if (!_streakDirty && _cachedStreak !== null) {
-        return _cachedStreak;
-      }
-
-      const dates = new Set();
-      
-      // 1. Collect completed dates from Day-by-Day schedule
-      if (typeof PLAN !== 'undefined' && Array.isArray(PLAN) && typeof done !== 'undefined') {
-        for (let i = 0; i < PLAN.length; i++) {
-          const r = PLAN[i];
-          if (r && r.day && done[r.day] && r.dateKey) {
-            dates.add(r.dateKey);
-          }
-        }
-      }
-      
-      // 2. Collect dates from Study Hours Tracker logs
-      if (typeof trackerLogs !== 'undefined' && Array.isArray(trackerLogs)) {
-        for (let i = 0; i < trackerLogs.length; i++) {
-          const l = trackerLogs[i];
-          if (l && l.date && ((l.phyHours || 0) + (l.cheHours || 0) + (l.bioHours || 0)) > 0) {
-            dates.add(l.date);
-          }
-        }
-      }
-
-      // 3. Collect dates from Target streak checklist
-      try {
-        const rawTargets = safeGetLocalStorage('neet_v3_target_streak_dates');
-        if (rawTargets) {
-          const targetDates = JSON.parse(rawTargets);
-          if (Array.isArray(targetDates)) {
-            for (let i = 0; i < targetDates.length; i++) {
-              dates.add(targetDates[i]);
-            }
-          }
-        }
-      } catch(e){}
-      
-      if (dates.size === 0) {
-        _cachedStreak = 0;
-        _streakDirty = false;
-        return 0;
-      }
-      
-      const formatLocalDate = (d) => {
-        const yyyy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const dd = String(d.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
-      };
-
-      const now = new Date();
-      const todayStr = formatLocalDate(now);
-      
-      const yest = new Date(now);
-      yest.setDate(yest.getDate() - 1);
-      const yesterdayStr = formatLocalDate(yest);
-      
-      let currentCheck;
-      if (dates.has(todayStr)) {
-        currentCheck = new Date(now);
-      } else if (dates.has(yesterdayStr)) {
-        currentCheck = yest;
-      } else {
-        _cachedStreak = 0;
-        _streakDirty = false;
-        return 0;
-      }
-      
-      let streak = 0;
-      while (true) {
-        const dStr = formatLocalDate(currentCheck);
-        if (dates.has(dStr)) {
-          streak++;
-          currentCheck.setDate(currentCheck.getDate() - 1);
-        } else {
-          break;
-        }
-      }
-      
-      _cachedStreak = streak;
-      _streakDirty = false;
-      return streak;
+      if (typeof done === 'undefined' || !done) return 0;
+      return Object.values(done).filter(Boolean).length;
     }
     
     function renderAnalytics() {
@@ -7087,9 +6997,6 @@ function calculateTargetStreakDynamic() {
   
   updatedDates.sort();
   safeSetLocalStorage('neet_v3_target_streak_dates', JSON.stringify(updatedDates));
-  if (typeof invalidateStreakCache === 'function') {
-    invalidateStreakCache();
-  }
   if (typeof updateOverviewStats === 'function') {
     updateOverviewStats();
   }
