@@ -10202,80 +10202,43 @@ function updateTodayPlanCard() {
     const month = now.toLocaleDateString('en-IN', { month: 'short' });
     const day = now.toLocaleDateString('en-IN', { day: 'numeric' });
     
-    if (dayNum <= 0) {
-      const daysUntil = Math.abs(dayNum) + 1;
-      const daysUntilText = daysUntil === 1 ? "tomorrow" : `in ${daysUntil} days`;
-      heroDayTitle.textContent = `Plan Starts 29 June (${daysUntilText})`;
+    const r = PLAN.find(item => item.day === dayNum) || PLAN[0];
+    if (r) {
+      heroDayTitle.textContent = `Day ${r.day} — ${weekday}, ${month} ${day}`;
       
+      // Prep subject badges
+      const hours = getTodayTargetHours(r.day, r.type);
       if (heroBadges) {
         heroBadges.innerHTML = `
-          <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics: 0h</span>
-          <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chem: 0h</span>
-          <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Bio: 0h</span>
+          <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics: ${hours.phy}h</span>
+          <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chem: ${hours.che}h</span>
+          <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Bio: ${hours.bio}h</span>
         `;
       }
       
-      if (heroPhy) heroPhy.innerHTML = `<div>Pre-Study: Physics foundations</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">Plan officially begins on 29 June. Check the Day-by-Day calendar tab below for the full schedule.</div>`;
-      if (heroChe) heroChe.innerHTML = `<div>Pre-Study: Chemistry fundamentals</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">Prepare your NCERT textbooks and notebooks.</div>`;
-      if (heroBio) heroBio.innerHTML = `<div>Pre-Study: Biology overview</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:normal;">Set up your daily schedule and rest up.</div>`;
-      
+      if (heroPhy) heroPhy.innerHTML = formatTopic(r.phy, r.phyNote);
+      if (heroChe) heroChe.innerHTML = formatTopic(r.che, r.cheNote);
+      if (heroBio) heroBio.innerHTML = formatTopic(r.bio, r.bioNote);
+
+      // Circular progress & button
       const circle = document.getElementById('today-progress-circle');
       const pctText = document.getElementById('today-progress-pct');
       const toggleBtn = document.getElementById('hero-toggle-done-btn');
+      const isDone = done[r.day] || false;
+      const pctVal = isDone ? 100 : 0;
+      
       if (circle && pctText) {
-        pctText.textContent = '0%';
-        circle.style.strokeDashoffset = 213.6;
+        pctText.textContent = `${pctVal}%`;
+        const circumference = 213.6;
+        const offset = circumference - (pctVal / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
       }
       if (toggleBtn) {
-        toggleBtn.style.display = 'none';
-      }
-    } else {
-      const r = PLAN.find(item => item.day === dayNum);
-      if (r) {
-        heroDayTitle.textContent = `Day ${r.day} — ${weekday}, ${month} ${day}`;
-        
-        // Prep subject badges
-        const hours = getTodayTargetHours(r.day, r.type);
-        if (heroBadges) {
-          heroBadges.innerHTML = `
-            <span class="subject-badge badge-phy" style="padding:2px 8px; font-size:10px;">⚡ Physics: ${hours.phy}h</span>
-            <span class="subject-badge badge-che" style="padding:2px 8px; font-size:10px;">🧪 Chem: ${hours.che}h</span>
-            <span class="subject-badge badge-bio" style="padding:2px 8px; font-size:10px;">🧬 Bio: ${hours.bio}h</span>
-          `;
-        }
-        
-        if (heroPhy) heroPhy.innerHTML = formatTopic(r.phy, r.phyNote);
-        if (heroChe) heroChe.innerHTML = formatTopic(r.che, r.cheNote);
-        if (heroBio) heroBio.innerHTML = formatTopic(r.bio, r.bioNote);
-
-        // Circular progress & button
-        const circle = document.getElementById('today-progress-circle');
-        const pctText = document.getElementById('today-progress-pct');
-        const toggleBtn = document.getElementById('hero-toggle-done-btn');
-        const isDone = done[r.day] || false;
-        const pctVal = isDone ? 100 : 0;
-        
-        if (circle && pctText) {
-          pctText.textContent = `${pctVal}%`;
-          const circumference = 213.6;
-          const offset = circumference - (pctVal / 100) * circumference;
-          circle.style.strokeDashoffset = offset;
-        }
-        if (toggleBtn) {
-          toggleBtn.style.display = 'inline-block';
-          toggleBtn.textContent = isDone ? '✓ Completed' : 'Mark Completed';
-          toggleBtn.style.background = isDone ? 'rgba(0, 212, 170, 0.15)' : 'var(--bg-surface)';
-          toggleBtn.style.color = isDone ? 'var(--accent-success)' : 'var(--text-primary)';
-          toggleBtn.style.borderColor = isDone ? 'rgba(0, 212, 170, 0.4)' : 'var(--border-color)';
-        }
-      } else {
-        const rDefault = PLAN[0];
-        if (rDefault) {
-          heroDayTitle.textContent = `Day 1 — ${weekday}, ${month} ${day}`;
-          if (heroPhy) heroPhy.innerHTML = formatTopic(rDefault.phy, rDefault.phyNote);
-          if (heroChe) heroChe.innerHTML = formatTopic(rDefault.che, rDefault.cheNote);
-          if (heroBio) heroBio.innerHTML = formatTopic(rDefault.bio, rDefault.bioNote);
-        }
+        toggleBtn.style.display = 'inline-block';
+        toggleBtn.textContent = isDone ? '✓ Completed' : 'Mark Completed';
+        toggleBtn.style.background = isDone ? 'rgba(0, 212, 170, 0.15)' : 'var(--bg-surface)';
+        toggleBtn.style.color = isDone ? 'var(--accent-success)' : 'var(--text-primary)';
+        toggleBtn.style.borderColor = isDone ? 'rgba(0, 212, 170, 0.4)' : 'var(--border-color)';
       }
     }
   } catch (e) {
@@ -10289,16 +10252,14 @@ function updateTodayPlanCard() {
 }
 
 function getTodayDayNum() {
-  let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-07-29T00:00:00");
-  if (isNaN(parsedStartDate.getTime())) {
-    parsedStartDate = new Date(2026, 6, 29, 0, 0, 0);
-  }
-  const START_DATE = parsedStartDate;
+  // Target start date is fixed to July 29, 2026 (Month 6 = July)
+  const START_DATE = new Date(2026, 6, 29, 0, 0, 0);
   const now = new Date();
   const d1 = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), START_DATE.getDate());
   const d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const diffTime = d2 - d1;
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  const computedDay = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  return computedDay < 1 ? 1 : computedDay;
 }
 
 function getTodayTargetHours(dayNum, type) {
