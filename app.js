@@ -2147,44 +2147,8 @@ function safeSetSessionStorage(key, value) {
     
     // Analytics calculations & rendering
     function calculateStreak() {
-      if (trackerLogs.length === 0) return 0;
-      
-      const dates = new Set();
-      trackerLogs.forEach(l => {
-        const total = l.phyHours + l.cheHours + l.bioHours;
-        if (total > 0 && l.date) {
-          dates.add(l.date);
-        }
-      });
-      
-      if (dates.size === 0) return 0;
-      
-      let streak = 0;
-      let check = new Date();
-      let todayStr = check.toISOString().split('T')[0];
-      
-      check.setDate(check.getDate() - 1);
-      let yesterdayStr = check.toISOString().split('T')[0];
-      
-      let currentCheck = new Date();
-      if (dates.has(todayStr)) {
-        currentCheck = new Date(todayStr);
-      } else if (dates.has(yesterdayStr)) {
-        currentCheck = new Date(yesterdayStr);
-      } else {
-        return 0; // streak broken
-      }
-      
-      while (true) {
-        const dStr = currentCheck.toISOString().split('T')[0];
-        if (dates.has(dStr)) {
-          streak++;
-          currentCheck.setDate(currentCheck.getDate() - 1);
-        } else {
-          break;
-        }
-      }
-      return streak;
+      if (typeof done === 'undefined' || !done) return 0;
+      return Object.values(done).filter(Boolean).length;
     }
     
     function renderAnalytics() {
