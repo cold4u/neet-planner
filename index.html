@@ -415,13 +415,6 @@
         </div>
       </div>
 
-      <div class="glass-card">
-        <h2 style="margin-top:0;">Welcome to NEET 278-Day Planner</h2>
-        <p style="line-height:1.6; color:#94a3b8;">
-          This interactive dashboard tracks your progress starting today (July 29, 2026) w.r.t the target NEET exam date of <strong>May 2, 2027</strong>. 
-          Use the tabs to navigate your daily tasks, look up NEET syllabus checklists, solve past exam questions offline, and track your daily study hours.
-        </p>
-      </div>
 
       <div class="glass-card">
         <h2 style="margin-top:0;">5-Phase Strategy</h2>
@@ -2129,80 +2122,7 @@
 
 
 
-  <!-- Welcome Summary Modal -->
-  <div class="modal" id="welcome-summary-modal" style="display:none;">
-    <div class="modal-content" style="max-width: 600px; background: rgba(8, 12, 24, 0.98); border: 1px solid rgba(255, 200, 50, 0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.65); padding: 32px; border-radius: 12px;">
-      <button class="close-btn" onclick="var m=document.getElementById('welcome-summary-modal');if(m)m.style.display='none';document.body.classList.remove('modal-open');document.documentElement.classList.remove('modal-open');document.body.style.top='';document.body.style.position='';document.body.style.width='';document.body.style.overflow='';if(typeof closeWelcomeSummary==='function'){try{closeWelcomeSummary();}catch(e){}}" style="color: var(--text-muted); font-size: 24px; top: 18px; right: 20px; z-index: 9999;">✕</button>
-      <h2 style="margin-top: 0; color: var(--primary); font-size: 20px; font-weight: 800; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; padding-right: 45px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-        <span>✨ NEET Elite Workspace v3.0</span>
-        <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Owner: <a href="https://instagram.com/shubh.m_01" target="_blank" style="color:var(--primary); font-weight:700; text-decoration:none; border-bottom:1px dashed var(--primary);">@shubh.m_01</a></span>
-      </h2>
-      <div class="welcome-modal-scrollable" style="overflow-y: auto; max-height: 420px; padding-right: 8px; margin-top: 15px; text-align: left; -webkit-overflow-scrolling: touch; touch-action: pan-y;">
-        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">
-          Welcome to the ultimate preparation dashboard designed for serious NEET aspirants. Here is a quick preview of your integrated tools:
-        </p>
-        
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div style="display: flex; gap: 14px; align-items: flex-start;">
-            <span style="font-size: 20px;">📅</span>
-            <div>
-              <h3 style="margin: 0 0 4px 0; color: #ff6b6b; font-size: 15px; font-weight: 700;">278-Day Master Schedule</h3>
-              <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;">Class 11 & 12 roadmap structured day-by-day and week-by-week starting July 29, 2026.</p>
-            </div>
-          </div>
-          
-          <div style="display: flex; gap: 14px; align-items: flex-start;">
-            <span style="font-size: 20px;">🤖</span>
-            <div>
-              <h3 style="margin: 0 0 4px 0; color: #60a5fa; font-size: 15px; font-weight: 700;">AI CBT Exam Engine</h3>
-              <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;">Simulate live NEET conditions with solved papers, high-resolution diagrams, and adaptive mock tests.</p>
-            </div>
-          </div>
-          
-          <div style="display: flex; gap: 14px; align-items: flex-start;">
-            <span style="font-size: 20px;">📕</span>
-            <div>
-              <h3 style="margin: 0 0 4px 0; color: var(--secondary); font-size: 15px; font-weight: 700;">Integrated Error Book</h3>
-              <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;">Log mistakes from mock tests, tag failure categories (Silly, Conceptual, Time), and track revision progress.</p>
-            </div>
-          </div>
-          
-          <div style="display: flex; gap: 14px; align-items: flex-start;">
-            <span style="font-size: 20px;">⚡</span>
-            <div>
-              <h3 style="margin: 0 0 4px 0; color: var(--tertiary); font-size: 15px; font-weight: 700;">Automatic Backlog Rescuer</h3>
-              <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;">Never fall behind. The engine identifies skipped days and automatically redistributes lectures into future slots.</p>
-            </div>
-          </div>
-          
-          <div style="display: flex; gap: 14px; align-items: flex-start;">
-            <span style="font-size: 20px;">🎴</span>
-            <div>
-              <h3 style="margin: 0 0 4px 0; color: var(--accent-success); font-size: 15px; font-weight: 700;">Active Recall Decks</h3>
-              <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;">High-yield 3D flipping cards for core physics formulas, organic reagents, and biological classification keys.</p>
-            </div>
-          </div>
 
-          <div style="display: flex; gap: 14px; align-items: flex-start;">
-            <span style="font-size: 20px;">❤️</span>
-            <div>
-              <h3 style="margin: 0 0 4px 0; color: #fca5a5; font-size: 15px; font-weight: 700;">Emotional Support Hub</h3>
-              <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;">Stressed or overwhelmed? Connect directly to talk about study pressures, relationships, or personal issues.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <button class="btn btn-primary" onclick="var m=document.getElementById('welcome-summary-modal');if(m)m.style.display='none';document.body.classList.remove('modal-open');document.documentElement.classList.remove('modal-open');document.body.style.top='';document.body.style.position='';document.body.style.width='';document.body.style.overflow='';if(typeof closeWelcomeSummary==='function'){try{closeWelcomeSummary();}catch(e){}}" style="width: 100%; padding: 12px; margin-top: 25px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #000; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0, 212, 170, 0.2);">
-        Enter Workspace 🚀
-      </button>
-      
-      <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-        <input type="checkbox" id="hide-welcome-cb" style="width: 14px; height: 14px; cursor: pointer; accent-color: var(--primary);">
-        <label for="hide-welcome-cb" style="color: var(--text-muted); font-size: 12px; cursor: pointer; user-select: none;">Don't show this message again</label>
-      </div>
-    </div>
-  </div>
 
   <!-- QUICK STUDY LOG MODAL -->
   <div class="modal" id="quick-log-modal">
@@ -2385,8 +2305,8 @@
     </div>
   </aside>
 
-  <script defer src="app.js?v=3.5.0"></script>
+  <script defer src="app.js?v=3.6.0"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script defer src="ai-features.js?v=3.5.0"></script>
+  <script defer src="ai-features.js?v=3.6.0"></script>
 </body>
 </html>

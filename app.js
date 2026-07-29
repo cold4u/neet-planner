@@ -3634,34 +3634,9 @@ function initOnLoad() {
   try { renderOverviewCounselorAlert(); } catch(e) { console.error("Error in renderOverviewCounselorAlert init:", e); }
 
   try {
-    const hideWelcome = safeGetLocalStorage('neet_hide_welcome_modal');
+    safeSetLocalStorage('neet_hide_welcome_modal', 'true');
     const modal = document.getElementById('welcome-summary-modal');
-    if (hideWelcome === 'true') {
-      // Already hidden via inline style in HTML, nothing to do
-      if (modal) modal.style.display = 'none';
-    } else {
-      // Show the welcome modal
-      if (modal) {
-        modal.style.display = 'flex';
-        modal.classList.add('active');
-      }
-
-      // Save scroll position before locking
-      window._scrollLockY = window.scrollY || window.pageYOffset || 0;
-      document.body.style.top = `-${window._scrollLockY}px`;
-      document.body.classList.add('modal-open');
-      document.documentElement.classList.add('modal-open');
-
-      // Block touch scroll on the modal overlay, allowing the inner container to scroll
-      if (modal) {
-        modal.addEventListener('touchmove', function(e) {
-          const scrollable = e.target.closest('.welcome-modal-scrollable');
-          if (!scrollable) {
-            e.preventDefault();
-          }
-        }, { passive: false });
-      }
-    }
+    if (modal) modal.style.display = 'none';
   } catch(e) { 
     console.error("Error handling welcome modal:", e); 
   }
