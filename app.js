@@ -547,15 +547,15 @@ function safeSetSessionStorage(key, value) {
     window.PHYS_CHAPS_SET = new Set(P1_PHY.concat(P2_PHY).map(c => c.ch.toLowerCase().replace(/[^a-z0-9]/g, '')));
     window.CHEM_CHAPS_SET = new Set(P1_CHE.concat(P2_CHE).map(c => c.ch.toLowerCase().replace(/[^a-z0-9]/g, '')));
     
-    // Force plan start date to exactly June 29, 2026 before evaluation
-    if (safeGetLocalStorage("planStart") !== "2026-06-29T00:00:00") {
-      safeSetLocalStorage("planStart", "2026-06-29T00:00:00");
+    // Force plan start date to exactly July 29, 2026 (Today is Day 1) before evaluation
+    if (safeGetLocalStorage("planStart") !== "2026-07-29T00:00:00") {
+      safeSetLocalStorage("planStart", "2026-07-29T00:00:00");
     }
 
     // 309-Day Plan Engine
-    let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-06-29T00:00:00");
+    let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-07-29T00:00:00");
     if (isNaN(parsedStartDate.getTime())) {
-      parsedStartDate = new Date(2026, 5, 29, 0, 0, 0); // June 29, 2026
+      parsedStartDate = new Date(2026, 6, 29, 0, 0, 0); // July 29, 2026
     }
     const START_DATE = parsedStartDate;
     const EXAM_DATE = new Date(2027, 4, 3, 0, 0, 0); // May 3, 2027
@@ -3408,9 +3408,9 @@ function updateTodayPlanCard() {
 }
 
 function getTodayDayNum() {
-  let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-06-29T00:00:00");
+  let parsedStartDate = new Date(safeGetLocalStorage("planStart") || "2026-07-29T00:00:00");
   if (isNaN(parsedStartDate.getTime())) {
-    parsedStartDate = new Date(2026, 5, 29, 0, 0, 0);
+    parsedStartDate = new Date(2026, 6, 29, 0, 0, 0);
   }
   const START_DATE = parsedStartDate;
   const now = new Date();
@@ -3445,7 +3445,7 @@ function renderHeatmap() {
     hoursMap[log.date] = (hoursMap[log.date] || 0) + totalH;
   });
   
-  const START_DATE_RAW = safeGetLocalStorage("planStart") || "2026-06-29T00:00:00";
+  const START_DATE_RAW = safeGetLocalStorage("planStart") || "2026-07-29T00:00:00";
   const startPlan = new Date(START_DATE_RAW);
   const startDate = new Date(startPlan);
   startDate.setDate(startPlan.getDate() - startPlan.getDay()); // Go to previous Sunday
@@ -3571,8 +3571,8 @@ window.applyTheme = applyTheme;
 function initOnLoad() {
   // Initialize planStart date if not already set or if it's not the target start date
   const storedPlanStart = safeGetLocalStorage("planStart");
-  if (storedPlanStart !== "2026-06-29T00:00:00") {
-    safeSetLocalStorage("planStart", "2026-06-29T00:00:00");
+  if (storedPlanStart !== "2026-07-29T00:00:00") {
+    safeSetLocalStorage("planStart", "2026-07-29T00:00:00");
   }
   
   // Set date input defaults to today
