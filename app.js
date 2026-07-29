@@ -893,10 +893,14 @@ function safeSetSessionStorage(key, value) {
     
     // Calendar rendering
     function renderCal() {
-      const q = (document.getElementById('srch') || {value:''}).value.toLowerCase();
-      const ph = (document.getElementById('phf') || {value:''}).value;
-      const subFilter = (document.getElementById('subf') || {value:''}).value;
-      const wk = (document.getElementById('wkf') || {value:''}).value;
+      const srchEl = document.getElementById('srch');
+      const q = (srchEl && srchEl.value ? String(srchEl.value) : '').toLowerCase();
+      const phEl = document.getElementById('phf');
+      const ph = phEl && phEl.value ? String(phEl.value) : '';
+      const subEl = document.getElementById('subf');
+      const subFilter = subEl && subEl.value ? String(subEl.value) : '';
+      const wkEl = document.getElementById('wkf');
+      const wk = wkEl && wkEl.value ? String(wkEl.value) : '';
       
       const filtered = PLAN.filter(r => {
         if (ph !== "" && r.phase != ph) return false;
@@ -1977,7 +1981,8 @@ function safeSetSessionStorage(key, value) {
     
     // Tests & Mocks list
     function renderTestList() {
-      const q = (document.getElementById('test-srch') || {value:''}).value.toLowerCase();
+      const testSrchEl = document.getElementById('test-srch');
+      const q = (testSrchEl && testSrchEl.value ? String(testSrchEl.value) : '').toLowerCase();
       
       const tests = PLAN.filter(r => (r.type === 'test' || r.type === 'mock') && 
         (!q || r.phy.toLowerCase().includes(q) || r.che.toLowerCase().includes(q) || r.bio.toLowerCase().includes(q) || `day ${r.day}`.includes(q) || r.date.toLowerCase().includes(q) || (r.phyNote && r.phyNote.toLowerCase().includes(q)))
@@ -3555,7 +3560,7 @@ function initOnLoad() {
 
   // Dynamically load week options in select
   const wkSel = document.getElementById('wkf');
-  if (wkSel) {
+  if (wkSel && wkSel.options && typeof wkSel.appendChild === 'function') {
     // Clear out existing options except first
     while (wkSel.options.length > 1) {
       wkSel.remove(1);
@@ -3919,9 +3924,12 @@ function renderErrorBookList() {
   const container = document.getElementById('errorbook-list-container');
   if (!container) return;
   
-  const searchQ = (document.getElementById('err-srch') || {value:''}).value.toLowerCase();
-  const subFilter = (document.getElementById('err-filter-sub') || {value:''}).value;
-  const catFilter = (document.getElementById('err-filter-cat') || {value:''}).value;
+  const errSrchEl = document.getElementById('err-srch');
+  const searchQ = (errSrchEl && errSrchEl.value ? String(errSrchEl.value) : '').toLowerCase();
+  const subEl = document.getElementById('err-filter-sub');
+  const subFilter = subEl && subEl.value ? String(subEl.value) : '';
+  const catEl = document.getElementById('err-filter-cat');
+  const catFilter = catEl && catEl.value ? String(catEl.value) : '';
   
   const filtered = errorBookItems.filter(item => {
     if (subFilter && item.subject !== subFilter) return false;
@@ -6541,8 +6549,10 @@ if (!window.YT) {
   const firstScriptTag = document.getElementsByTagName('script')[0];
   if (firstScriptTag && firstScriptTag.parentNode) {
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  } else {
+  } else if (document.head) {
     document.head.appendChild(tag);
+  } else if (document.body) {
+    document.body.appendChild(tag);
   }
 }
 
